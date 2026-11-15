@@ -55,6 +55,7 @@ export default function App() {
       <header className="flex flex-col gap-6 px-6 pt-16 pb-12 lg:px-12">
         <Eyebrow>Eva by WearMeds · app wireframes</Eyebrow>
         <h1 className="max-w-5xl text-hero tracking-tight">Two views of the same care: the passenger's and the crew's.</h1>
+        <p className="max-w-3xl text-xl text-muted"><span className="text-ink">Eva</span> — the health copilot for your missions, explorations and daily life.</p>
         <nav className="flex flex-wrap gap-2 text-sm"><a href="#passenger"><Badge>Passenger app</Badge></a><a href="#crew"><Badge>Crew dashboard</Badge></a><a href="#earth"><Badge>Earth view</Badge></a><a href="#system"><Badge>Design system</Badge></a></nav>
       </header>
       <Section id="passenger" eyebrow="View 1 · passenger" title="Passenger app and wristband">

@@ -203,7 +203,9 @@ export const Phone = ({ children, tabbar, caption, number, tone = "default" }) =
 )
 export const TabBar = ({ items, active }) => (
   <nav className="mx-5 mb-3 flex items-center justify-around rounded-full bg-raised py-3">
-    {items.map(({ icon: I, label }) => <span key={label} aria-label={label} className={cn("grid size-11 place-items-center rounded-full", label === active ? "bg-ink text-on-light" : "text-muted")}><I size={20} /></span>)}
+    {items.map(({ icon: I, label, center }) => center
+      ? <span key={label} aria-label={label} className={cn("-my-3 grid size-16 place-items-center rounded-full bg-background ring-2", label === active ? "ring-info" : "ring-line")}><I size={20} /></span>
+      : <span key={label} aria-label={label} className={cn("grid size-11 place-items-center rounded-full", label === active ? "bg-ink text-on-light" : "text-muted")}><I size={20} /></span>)}
   </nav>
 )
 /** the wristband's own wide screen (interface part), drawn flat */

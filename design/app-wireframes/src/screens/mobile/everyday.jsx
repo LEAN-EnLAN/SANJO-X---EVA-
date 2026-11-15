@@ -1,6 +1,7 @@
 import { Phone, Headline, Button, IconButton, Card, CardHeader, CardTitle, Badge, StatusDot, Progress, Sparkline, ListRow, IconTile, Check, Segmented } from "@/ds"
 import { PhoneTop, Label, Reading, Tile, Legend, PhotoTile, Thumb, Hero, IconLine } from "@/ds/mobile-extra"
-import { Check as CheckIcon, Bell, LayoutGrid, ChevronLeft, Info, ArrowRight, CalendarDays, Plus, Compass, NotebookPen, BellRing, CircleCheck } from "lucide-react"
+import { Check as CheckIcon, Bell, LayoutGrid, ChevronLeft, Info, ArrowRight, CalendarDays, Plus, Compass, NotebookPen, BellRing, CircleCheck, Mic } from "lucide-react"
+import { EvaMascot } from "@/ds/eva-extra"
 import { Tabs } from "./shared"
 
 export function Welcome() {
@@ -51,7 +52,12 @@ export function Home() {
       <PhoneTop left={<IconButton label="Menu"><LayoutGrid size={18} /></IconButton>} right={<IconButton label="Alerts"><Bell size={18} /></IconButton>} />
       <div className="flex flex-col gap-1">
         <Label>Day 94 of 212</Label>
-        <Headline as="h1" className="text-5xl leading-none">Good morning, Ana</Headline>
+        <Headline as="h1" className="text-4xl leading-none">Good morning, Ana</Headline>
+      </div>
+      <div className="flex items-center gap-3 rounded-full bg-info/10 py-1.5 pr-1.5 pl-2 ring-1 ring-info/30">
+        <EvaMascot mood="wink" size="sm" />
+        <div className="flex flex-1 flex-col"><span className="text-sm text-ink">Ask Eva</span><span className="text-xs text-muted">"How am I today?"</span></div>
+        <IconButton tone="light" label="Hold to talk to Eva"><Mic size={18} /></IconButton>
       </div>
       <Card>
         <CardHeader className="items-center">
@@ -143,7 +149,7 @@ export function Plan() {
     { src: "img/icons/water.webp", title: "Drink 2 L of water", sub: "1.2 of 2 L", done: false },
     { src: "img/icons/vitamin-d.webp", title: "Take vitamin D", sub: "Done · breakfast", done: true },
     { src: "img/icons/sleep.webp", title: "Sleep 22:30 to 06:30", sub: "Lights dim 22:00", done: false },
-    { src: "img/icons/eva-orb.webp", title: "Check in with Eva", sub: "Done 09:12", done: true },
+    { src: "img/eva/eva-neutral.webp", title: "Check in with Eva", sub: "Done 09:12", done: true },
   ]
   return (
     <Phone number="04" caption="Today's plan" tabbar={<Tabs active="Plan" />}>
