@@ -1,8 +1,9 @@
+<script>document.documentElement.dataset.theme="dark"</script>
 <title>Eva by WearMeds</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=Manrope:wght@400;600&family=Space+Grotesk:wght@400;500&family=JetBrains+Mono:wght@400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="team-rail.css">
 <style>
 /* Layout: Two Create type on pure white / pure black, with theme-matched asset families. Our own scroll engine scrubs: cabin parallax hero, wristband orbit + exploded view, Case A/B scrollytelling, harness exploded view, layered solar alert, horizontal Earth→Mars link, Mars halftone arrival, product slabs, dealt parts grid, team rail, rising wordmark. */
@@ -17,10 +18,6 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme]){--canvas:#000000;--ink:#f4f3f0;--rule:#2a2a2a;--muted:rgba(244,243,240,.6);--mark:#ffd84a;--star:255,255,255;color-scheme:dark}}
 :root[data-theme="dark"],:root[data-theme="mars"],:root[data-theme="lime"]{--canvas:#000000;--ink:#f4f3f0;--rule:#2a2a2a;--muted:rgba(244,243,240,.6);--mark:#ffd84a;--star:255,255,255;color-scheme:dark}
-/* theme palette — each theme changes colour AND layout: Mono light/dark (Two Create), Clinical blue (rounded, centred), Mission orange (mono labels, uppercase, hard rules), Editorial lime (serif display, asymmetric heads) */
-:root[data-theme="blue"]{--ink:#0b1a3a;--rule:#dde3f3;--muted:rgba(11,26,58,.6);--accent:#1f45ff;--mark:#c9d5ff;--star:31,69,255;--radius:26px;--head:"Manrope",Arial,sans-serif;--label-c:#1f45ff;--h1-c:#7d95ff}
-:root[data-theme="mars"]{--rule:#3b1d12;--accent:#ff5a1f;--mark:#ff5a1f;--star:255,150,110;--head:"Space Grotesk",Arial,sans-serif;--label-c:#ff5a1f;--h1-c:#ff5a1f}
-:root[data-theme="lime"]{--rule:#27330f;--accent:#c8ff3d;--mark:#c8ff3d;--star:210,255,150;--radius:14px;--head:"Instrument Serif",Georgia,serif;--label-c:#c8ff3d;--h1-c:#c8ff3d}
 /* theme-matched asset families: .tl = white family, .td = black family */
 .td{display:none!important}
 @media (prefers-color-scheme:dark){:root:not([data-theme]) .tl{display:none!important}:root:not([data-theme]) .td{display:block!important}}
@@ -48,31 +45,6 @@ img{display:block;max-width:100%}
 
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--canvas)}
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:400;height:72px;background:var(--canvas);border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;font-size:var(--t-sec);letter-spacing:-.01em}
-.tpick{display:flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
-.tpick button{width:22px;height:22px;padding:0;border:1px solid var(--rule);border-radius:50%;background:none;cursor:pointer;display:grid;place-items:center;transition:transform .3s var(--ease)}
-.tpick button i{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(127,127,127,.35)}
-.tpick button:hover{transform:scale(1.15)}.tpick button[aria-checked="true"]{border-color:var(--ink)}
-.tpick .tname{margin-left:6px;color:var(--muted);min-width:9.5em}
-@media (max-width:600px){.tpick .tname{display:none}.tpick{gap:4px}}
-/* Clinical blue: rounded, centred heads, quiet weight */
-:root[data-theme="blue"] .sh{flex-direction:column;align-items:center;text-align:center}
-:root[data-theme="blue"] .ed{text-align:center}
-:root[data-theme="blue"] .prop{font-weight:600;letter-spacing:-.03em}
-:root[data-theme="blue"] .nav a,:root[data-theme="blue"] .mark{color:var(--accent)}
-:root[data-theme="blue"] .slab,:root[data-theme="blue"] .part-card .im,:root[data-theme="blue"] .close a{border-radius:var(--radius);overflow:hidden}
-/* Mission orange: control-room uppercase, mono labels, hard accent rules */
-:root[data-theme="mars"] .prop,:root[data-theme="mars"] .sh{text-transform:uppercase;letter-spacing:-.025em}
-:root[data-theme="mars"] .label,:root[data-theme="mars"] .tpick{font-family:"JetBrains Mono",ui-monospace,monospace}
-:root[data-theme="mars"] .label{font-size:clamp(13px,1.2vw,17px);letter-spacing:.08em}
-:root[data-theme="mars"] .label::before{content:"// "}
-:root[data-theme="mars"] .sh{border-top:2px solid var(--accent)}
-:root[data-theme="mars"] .nav{border-bottom-color:var(--accent)}
-/* Editorial lime: serif display, larger heads, asymmetric header rows */
-:root[data-theme="lime"] .prop{font-size:calc(var(--t-prop)*1.28);line-height:.95;letter-spacing:-.01em}
-:root[data-theme="lime"] .hero .copy h1{font-style:italic;letter-spacing:-.02em}
-:root[data-theme="lime"] .sh{flex-direction:row-reverse;text-align:right;font-family:var(--head);font-size:calc(var(--t-sec)*1.2);border-top:0}
-:root[data-theme="lime"] .label{font-size:clamp(13px,1.3vw,18px);letter-spacing:.14em}
-:root[data-theme="lime"] .nav a{font-family:var(--head);font-style:italic}
 .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-top:1px solid var(--rule);padding-top:14px;min-height:72px;font-size:var(--t-sec);line-height:1.02;letter-spacing:-.01em}
 .space .sh{border-color:var(--space-rule)}
 
@@ -310,7 +282,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 }
 </style>
 
-<nav class="nav g" aria-label="Main"><a href="#top">WearMeds</a><div class="tpick" role="radiogroup" aria-label="Theme"><button type="button" role="radio" data-t="light" aria-label="Mono light"><i style="background:#fff"></i></button><button type="button" role="radio" data-t="dark" aria-label="Mono dark"><i style="background:#000"></i></button><button type="button" role="radio" data-t="blue" aria-label="Clinical blue"><i style="background:#1f45ff"></i></button><button type="button" role="radio" data-t="mars" aria-label="Mission orange"><i style="background:#ff5a1f"></i></button><button type="button" role="radio" data-t="lime" aria-label="Editorial lime"><i style="background:#c8ff3d"></i></button><span class="tname" id="tname">Theme</span></div></nav>
+<nav class="nav g" aria-label="Main"><a href="#top">WearMeds</a></nav>
 
 <main id="top">
   <!-- 1 · Hero -->
@@ -538,14 +510,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 <script>
 (()=>{
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-/* theme picker: remembers the choice per viewer; with no choice the page follows the system light/dark */
-{const names={light:'Mono light',dark:'Mono dark',blue:'Clinical blue',mars:'Mission orange',lime:'Editorial lime'}, btns=[...document.querySelectorAll('.tpick button')], tn=document.getElementById('tname'), root=document.documentElement;
-  let cur=null; try{cur=localStorage.getItem('wm-theme')}catch(e){}
-  const sysDark=()=>matchMedia('(prefers-color-scheme: dark)').matches;
-  const apply=(t,save)=>{if(t)root.dataset.theme=t;else delete root.dataset.theme; const eff=t||(sysDark()?'dark':'light');
-    btns.forEach(b=>b.setAttribute('aria-checked',String(b.dataset.t===eff))); tn.textContent=names[eff];
-    if(save){try{localStorage.setItem('wm-theme',t)}catch(e){}} if(window.__measureAll)__measureAll()};
-  apply(names[cur]?cur:null,false); btns.forEach(b=>b.addEventListener('click',()=>apply(b.dataset.t,true)))}
+
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const io2=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, ic3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, oc3=t=>1-Math.pow(1-t,3);
 const docTop=el=>{let y=0;for(let n=el;n;n=n.offsetParent)y+=n.offsetTop;return y};
