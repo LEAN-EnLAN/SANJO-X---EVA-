@@ -40,3 +40,8 @@ Design source of truth: the app wireframes (`design/app-wireframes`, tokens in `
 ## AI-generated images
 
 Every illustration in the app is AI-generated concept art made for team Sanjo-X (NASA Space Apps Challenge 2026, Rosario): the 3D icons, Eva's mascot states, the app icon, the launch screen, the large detail photos and the wristband v2 renders (`static/img/icons`, `eva`, `hero`, `band`, `splash*`, `static/icons`). The wristband renders in `static/img/band` are the home card, the ECG photo, the parts and suit-mode views on `/app/band`, the two emergency thumbnails and the 8 frames of the 360° turn, cropped and resized from the Codex v2 kit. The team wrote the prompts with Claude, and the images were generated with an OpenAI image model through Codex. They are illustrative, show no real person or device, and contain no NASA insignia or branding. This notice replaces on-screen labels: the app itself shows none.
+
+
+## Fonts
+
+Sora and Inter (both SIL Open Font License 1.1, from Google Fonts, latin subset) are self-hosted in `static/fonts/` so the app works offline.

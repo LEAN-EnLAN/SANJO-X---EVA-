@@ -43,7 +43,7 @@ One Rust binary (`eva`) serves everything: the astronaut PWA, the crew/ground da
 
 | Module | What it owns |
 |---|---|
-| `main.rs` | CLI: `serve` (`--station` adds one simulated medical station), `sim`, `demo` (always with the station), `bench`, `verify`; starts tasks and the HTTP(S) server |
+| `main.rs` | plain `fn main`: parses the CLI, loads the env file (`envfile.rs`: `--env-file`, `./.env`, `.env`/`eva.env` next to the binary; real env vars win) while single-threaded, then builds the tokio runtime. CLI: `serve` (`--station` adds one simulated medical station), `sim`, `demo` (always with the station), `bench`, `verify`; starts tasks and the HTTP(S) server |
 | `lib.rs` | module list (the crate is a library so tests and benches can reach everything) |
 | `protocol/` | **Eva Link**: `wire` (varints, CRC-16), `frame` (header, types, priorities), `payload` (incl. `StationCmd`, `StationEvent`, `StationStatus`), `delta` (vitals), `queue` (store-and-forward, ACK/NACK, RTT, `retransmit_now`), `profile` (link simulator), `stats` (bytes), `Endpoint` |
 | `state.rs` | `AppState` (world, chain, clock, mesh, agent config, UI event bus, `hub_down`, the simulated LoRa `air`, station command outbox), `World` (incl. the hub's `StationView`), `LinkStatus`, demo reset |
@@ -52,14 +52,14 @@ One Rust binary (`eva`) serves everything: the astronaut PWA, the crew/ground da
 | `seed.rs` | demo data matching the wireframes (Ana 4B, Leo 3B, Tomás 1B, Priya, Diego, Kwame…) |
 | `clock.rs` | mission clock (day 96, 13:58 at start) with fast-forward |
 | `sim.rs` | simulated bands: healthy baseline + server-side scenario overlay; `eva sim` client |
-| `eva_agent/` | `reflex` (layer 1), `guard` (topic guard, ADR-012: injection removal, keyword scope, Groq scope classifier + Prompt Guard, output check, per-seat rate limit), `tools` (registry, refusal guard), `schema` (JSON-schema validator for tool args), `chat`, `offline` (intents + Now/Why/How/Next answers), `speech` (STT/TTS, browser-voice fallback), `vision`, `prompt`, `config` (one config per pipeline, key redaction), emergency flow and case timeline in `mod.rs` |
+| `eva_agent/` | `reflex` (layer 1), `guard` (topic guard, ADR-012: injection removal, keyword scope, Groq scope classifier + Prompt Guard, output check, per-seat rate limit), `tools` (registry, refusal guard), `schema` (JSON-schema validator for tool args), `chat`, `offline` (intents + Now/Why/How/Next answers), `speech` (STT/TTS, browser-voice fallback), `vision`, `prompt`, `config` (one config per pipeline, key redaction), `status` (`/api/eva/status`: online or on-board rules and why, start-up probe, health from every call, `eva-status` SSE), emergency flow and case timeline in `mod.rs` |
 | `chain.rs` | hash-chained, Ed25519-signed record log, node keys, replay from JSONL, verify (records and files), sync states (ADR-010) |
 | `mesh.rs` | mesh registry: nodes, relay, hub heartbeat (ping + presence every 2 s; silent while "Hub down") |
 | `link.rs` | `/link`: one transport-agnostic session per client (`session`; WebSocket adapter `handle`, in-process `local_session`), every role incl. Station; drops everything while "Hub down"; forwards the simulated LoRa air to apps; ground-side chain `Mirror` (verifies hash + signature, pins ship keys, persisted to `mirror-<node>.jsonl`) |
 | `bench.rs` | `eva bench`: message sizes vs JSON/CBOR, throughput, link profiles, live server run (BENCHMARKS.md) |
 | `uplink.rs` | ship → ground client: records + vitals through a simulated profile, acks back |
 | `tls.rs` | self-signed certificate for `--tls` (rcgen) |
-| `web/` | `mod.rs` router and embedded assets, `pages` (screens, `/station`), `views` (askama view models, incl. `StationStrip`, `StationGrid`, `StationTile`), `sse` (`/sse/station`: strip and grid), `api` (`/api/station/tap`, `/api/station/button`, dev `hub_down`), `export`, `ui` (class lookups, own icons) |
+| `web/` | `mod.rs` router and embedded assets, `pages` (screens, `/station`, wristband mode `/app/wrist*`), `views` (askama view models, incl. `StationStrip`, `StationGrid`, `StationTile`), `sse` (`/sse/station`: strip and grid), `api` (`/api/station/tap`, `/api/station/button`, dev `hub_down`), `export`, `ui` (class lookups, own icons) |
 
 Templates live in `app/templates/` (`app/`, `dash/`, `dev/`, `export/`, `station/`); static files in `app/static/` (built CSS, vendored htmx, our JS, images, manifest, service worker). Everything in `static/` is compiled into the binary with rust-embed (in debug builds it is read from disk, so edits show without recompiling).
 

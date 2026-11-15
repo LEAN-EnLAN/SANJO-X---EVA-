@@ -101,3 +101,16 @@ The demo needs **no internet**, only a network between the laptop and the phones
 | Eva answers "offline rules" although a key is set | no internet, or `--offline` / `EVA_OFFLINE=1` | Expected fallback; answers stay in the Now / Why / How / Next format. |
 | Port already in use | an old `eva` still running | `pkill eva`, or `--port` / `--ground-port`. |
 | `eva verify` says TAMPERED | a chain file was edited, or signed with another key | That is the feature. For the demo, reset with fresh data dirs. |
+
+
+## Wristband mode (show the band's own UI)
+
+The same app is the wristband's screen. Three ways to show it:
+
+1. **Rotate a phone** (auto-rotate on): the app becomes the band UI by itself, and back when you turn it upright. In the APK, *Open as → Wristband (landscape)* locks it.
+2. **Laptop**: Chrome devtools → device toolbar → Responsive → **640 × 360** (also 480 × 270 or 800 × 450).
+3. **Any size**: add `?mode=wristband` (`?mode=auto` to undo).
+
+What to show: the watch face (Eva's light, the time, pulse / SpO₂ / skin), swipe to the three vitals panels (tap one to open it), Eva's quick-ask with three chips, the 30 s ECG, and **Help: hold 2 seconds** (a tap never calls the crew). Then start the cardiac arrest from the dev panel with a band-sized window on 3B: "Ana needs help" with the arrow, **I'm going** → the CPR metronome that vibrates on every compression. Closing the case brings the band back to its face.
+
+If Eva says **On-board rules**: the hub has no key. Put `eva.env` (one line, `GROQ_API_KEY=…`) next to the `eva` program and start it again (RUNNING.md).

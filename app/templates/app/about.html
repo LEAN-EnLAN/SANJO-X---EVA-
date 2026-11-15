@@ -15,4 +15,10 @@
   <h2 class="mb-3 text-base text-ink">About and credits</h2>
   {% include "_credits.html" %}
 </section>
+<section class="card flex flex-col gap-3" aria-label="Smooth mode">
+  <div class="flex items-center justify-between gap-3"><h2 class="text-h3 text-ink">Smooth mode</h2><span class="text-label text-muted" data-smooth-state>Auto</span></div>
+  <p class="text-label text-muted">Lite turns off the glass blur and the drifting light behind Eva for slower phones.</p>
+  <div class="flex gap-2" role="group" aria-label="Smooth mode"><button type="button" class="chip press aria-pressed:bg-eva/25" data-smooth="auto" aria-pressed="true">Auto</button><button type="button" class="chip press aria-pressed:bg-eva/25" data-smooth="full" aria-pressed="false">Full</button><button type="button" class="chip press aria-pressed:bg-eva/25" data-smooth="lite" aria-pressed="false">Lite</button></div>
+  <p class="text-caption text-muted">Version {{ crate::web::ui::version() }}</p>
+</section>
 <p class="text-center text-xs text-muted">Eva by WearMeds · team Sanjo-X</p>

@@ -332,7 +332,7 @@
     if (!sheet) {
       sheet = varSpring(host, "--sheet-y", 100, "gentle");
       var base = sheet.onUpdate;
-      sheet.onUpdate = function (y) { base(y); document.documentElement.style.setProperty("--sheet-y", y.toFixed(2)); if (y >= 99.5 && sheet.target >= 100) { host.classList.add("hidden"); host.setAttribute("aria-hidden", "true"); document.documentElement.classList.remove("sheet-open"); } };
+      sheet.onUpdate = function (y) { base(y); if (y >= 99.5 && sheet.target >= 100) { host.classList.add("hidden"); host.setAttribute("aria-hidden", "true"); document.documentElement.classList.remove("sheet-open"); } };
       dragSheet(host);
     }
     return sheet;

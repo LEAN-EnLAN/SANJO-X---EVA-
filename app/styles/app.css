@@ -353,9 +353,8 @@ html[data-eva-mode="rules"] .tab-eva::after { content: ""; position: absolute; t
 /* bottom sheet: --sheet-y is 0 (open) to 100 (closed), driven by a spring and the finger */
 .sheet-panel { transform: translateY(calc(var(--sheet-y, 100) * 1%)); border-radius: 2rem 2rem 0 0; background: var(--color-raised); box-shadow: var(--e3); will-change: transform; }
 .sheet-backdrop { opacity: calc(1 - var(--sheet-y, 100) / 100); background: #070A14B3; }
-/* iOS-style: the app behind the sheet steps back to .96 */
-#app-shell { transform-origin: 50% 0; }
-html.sheet-open #app-shell { transform: scale(calc(1 - (100 - var(--sheet-y, 100)) / 100 * 0.04)); border-radius: 16px; overflow: clip; }
+/* (the iOS "app steps back to .96" effect was measured: scaling the shell re-parents the fixed tab
+   bar and restyles the whole page every frame, so the sheet keeps only its backdrop) */
 
 /* things that fill up (rings, bars) grow in once when a screen appears: --g goes 0 → 1 */
 .ring-fill { stroke-dashoffset: calc(100 - (100 - var(--ring, 0)) * var(--g, 1)); transition: stroke-dashoffset var(--dur-spring-gentle) var(--ease-spring-gentle); }

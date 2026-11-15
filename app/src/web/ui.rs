@@ -25,6 +25,11 @@ impl<T: Copy> Val<T> for &&T {
     }
 }
 
+/// The app version (Cargo.toml), for About.
+pub fn version() -> &'static str {
+    env!("CARGO_PKG_VERSION")
+}
+
 pub fn stamp(ms: impl Val<u64>) -> String {
     crate::clock::stamp(ms.val())
 }

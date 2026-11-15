@@ -103,9 +103,12 @@
     if (!M()) return;
     var kind = M().lastKind;
     if (kind === "refresh" || kind === "fade" || wrist()) return;
-    var vh = window.innerHeight, kids = Array.prototype.filter.call(root.children, function (c) { return c.offsetParent !== null && !c.classList.contains("hidden"); });
+    var vh = window.innerHeight, kids = Array.prototype.filter.call(root.children, function (c) { return !c.classList.contains("hidden") && c.getAttribute("hidden") === null; });
+    if (reduced.matches) return;
+    // read every position first, then write: no forced layout per child
+    var tops = kids.map(function (el) { return el.getBoundingClientRect().top; });
     kids.forEach(function (el, i) {
-      if (el.getBoundingClientRect().top > vh || reduced.matches) return;
+      if (tops[i] > vh) return;
       el.style.opacity = "0"; el.style.transform = "translateY(16px) scale(.98)"; el.style.willChange = "transform";
       var t = new (M().Spring)(0, "swift", function (x) {
         el.style.opacity = Math.min(1, x * 1.4).toFixed(3);

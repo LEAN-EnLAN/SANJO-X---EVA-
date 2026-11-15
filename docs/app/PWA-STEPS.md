@@ -73,3 +73,33 @@ One short section per step. Each says what changed and why, so the reasoning liv
 **What.** Every picture of the wristband now shows the v2 design (Codex renders in `static/img/band`, about 2× display size, WebP q82): the home card, the ECG photo, the emergency thumbnails, and on `/app/band` the parts (lifts off, screen part, sensor base, pins), suit mode and a 360° turn built from 8 turntable frames. Drag or swipe turns it on the gentle spring and it settles on the nearest frame; arrows and ←/→ step 45°; with reduced motion it is one still frame plus the arrows. The service worker is `eva-shell-v7`.
 
 **Why.** A two-part band is hard to picture from one photo, and turning it with a finger shows how the parts, straps and pins fit in a second.
+
+## Step 13 · Visual system v2 "Aurora"
+
+**What.** Deep navy lit from the top instead of pure black (one static radial layer behind the app, plus a per-screen domain tint that cross-fades). Three surface layers, cards without outlines (an inner top highlight and a soft shadow instead), one card system (hero card, standard card, list row, tile) and two button families (gradient primary, glass secondary). Sora for headlines and numbers, Inter for text, both self-hosted (`static/fonts`, 82 KB, preloaded, in the service worker). Body text is 15 px, nothing under 12 px. Domain colours with gradient pairs (heart, oxygen, temperature, mood, Eva teal, sleep, water, food, band orange). Stroke icons are 2 px, the active tab uses filled icons.
+
+**Why.** The old screens read as outlined boxes on a void with system fonts at one weight: "a dev build". Depth from light, real type hierarchy and colour that carries meaning (red is the heart, blue is oxygen) make the app feel made for the people wearing the band, and the domain colour lets a glance find the right number.
+
+## Step 14 · A header without debug, a glass tab bar
+
+**What.** The native seat `<select>` and the "Mesh 0" text left the header. An avatar chip opens a sheet with one row per seat; a "Link" pill shows the Eva Link dot and keeps the mesh size and round trip in its title. The tab bar floats as glass (the only `backdrop-filter` in the app, dropped in lite mode) with labels, a tinted capsule that slides and stretches between tabs, and Eva raised in the centre with a status ring (teal, violet while thinking, red on alert, an amber notch on her on-board rules). A fade under the bar keeps content from colliding with it.
+
+**Why.** The header is on every screen; anything that looks like a developer control there makes the whole app look unfinished. The seat switch still matters for the demo, so it lives one tap away in a proper sheet.
+
+## Step 15 · Alive, not busy
+
+**What.** `fx.js` (on the single rAF loop of `motion.js`): the heart ring beats at the real bpm (a lub-dub transform whose phase survives the SSE redraw each second), numbers roll digit by digit, Eva sits on a three-blob aurora that changes colour with her state, screens land with a short stagger, buttons ripple, a burst celebrates goals, skeletons appear only after 160 ms, haptics follow one map. New springs `swift` (pages, morphs, takeovers) and `glide` (band coast). A tapped vital morphs into its detail with a view transition where the WebView supports it. A lite mode (a 60-frame probe at start, or About → Smooth mode) drops the glass blur, the drift and half the particles.
+
+**Why.** Springs already moved screens, but nothing felt alive: numbers snapped, the heart did not beat. Each effect animates only `transform` and `opacity`, pauses off screen, and stops for reduced motion, so the life costs no frames on a mid-range phone (MOTION.md has the fps check).
+
+## Step 16 · Eva says why she is on her on-board rules
+
+**What.** `GET /api/eva/status` and an `eva-status` SSE event; the Eva tab chip and banner, the dashboard pill and the dev-panel row read it. The binary loads `GROQ_API_KEY` from `--env-file`, `./.env`, or `.env`/`eva.env` next to it (RUNNING.md).
+
+**Why.** On a teammate's laptop without the key, Eva silently fell back and looked "disabled". Now the app says she is on her on-board rules (never "broken", never "AI"), what still works, and the exact fix, and a key in a file next to the program is enough.
+
+## Step 17 · Wristband mode
+
+**What.** The same PWA becomes the band's UI on a small wide screen. An inline script in `head.html` decides before the first paint (landscape ≤ 480 px high and ≥ 8:5, or tiny) and jumps to the twin URL; `wrist.js` flips on rotation without reloading and rewrites every `/app/*` load into `#screen` to its `/app/wrist*` twin in one `htmx:configRequest` listener, so every existing trigger (SSE `go-emergency`, `go-storm`, `go-home`, banners, follow-ups) works unchanged. `/app/wrist` is one horizontal scroll-snap track of five pages (face, vitals, Eva quick-ask, 30 s ECG, Help); emergency and storm takeovers reuse the phone's view models. Everything is in `rem` and the root font size follows the screen height. The manifest's orientation is `any`; the service worker (`eva-shell-v8`) caches the wrist screens.
+
+**Why.** The band's screen module is a small 16:9 display, and the demo needs to show it without new hardware: a phone in landscape, or devtools at 640 × 360, is the band. One shell and one set of routes means the phone, the band, the dashboard and the station move together on the same SSE events. Black background because the real display is OLED behind black glass. Help needs a 2 s hold because a wrist gets bumped. Haptics carry more than on the phone, because a wrist is felt, not watched.
