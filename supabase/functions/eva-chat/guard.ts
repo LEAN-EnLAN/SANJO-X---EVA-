@@ -121,6 +121,7 @@ const SPACE_TERMS = [
 ] as const;
 
 const HEALTH_TERMS = [
+  "how am i", "am i ok", "am i okay", "how do i feel", "how i feel", "my vitals", "my pulse", "my heart", "my oxygen", "my body",
   "health*", "heart*", "pulse", "bpm", "blood", "blood pressure", "spo2", "saturation", "ecg", "ekg", "rhythm",
   "breath*", "lung", "sleep*", "tired", "fatigue*", "hydrat*", "dehydrat*", "water", "drink", "nutrition*",
   "food", "meal", "calorie", "kcal", "diet", "exercise", "workout", "muscle", "bone", "stress*", "anxi*", "mood",
@@ -160,7 +161,7 @@ export type Topic = "space" | "health" | "greeting" | "off_topic";
 
 // Spanish vocabulary, so questions typed in Spanish reach the model too (the site has an ES toggle).
 const SPACE_TERMS_ES = ["espacio", "espacial", "nave", "astronauta", "tripulación", "tripulacion", "marte", "luna", "órbita", "orbita", "despegue", "lanzamiento", "microgravedad", "gravedad", "radiación", "radiacion", "tormenta solar", "refugio", "estación", "estacion", "misión", "mision", "traje", "pulsera", "brazalete"] as const;
-const HEALTH_TERMS_ES = ["salud", "duele", "dolor", "cabeza", "mareo", "mareado", "mareada", "náusea", "nausea", "vómito", "vomito", "fiebre", "temperatura", "pulso", "corazón", "corazon", "respirar", "respiración", "respiracion", "oxígeno", "oxigeno", "sueño", "dormir", "cansado", "cansada", "estrés", "estres", "ansiedad", "ánimo", "animo", "triste", "agua", "hidratación", "hidratacion", "comida", "comer", "medicina", "médico", "medico", "síntoma", "sintoma", "presión", "presion", "ecg", "electrocardiograma", "rcp", "dea", "desfibrilador", "herida", "sangre", "diario", "me siento", "siento"] as const;
+const HEALTH_TERMS_ES = ["cómo estoy", "como estoy", "estoy bien", "mis signos", "mi pulso", "mi corazón", "mi corazon", "salud", "duele", "dolor", "cabeza", "mareo", "mareado", "mareada", "náusea", "nausea", "vómito", "vomito", "fiebre", "temperatura", "pulso", "corazón", "corazon", "respirar", "respiración", "respiracion", "oxígeno", "oxigeno", "sueño", "dormir", "cansado", "cansada", "estrés", "estres", "ansiedad", "ánimo", "animo", "triste", "agua", "hidratación", "hidratacion", "comida", "comer", "medicina", "médico", "medico", "síntoma", "sintoma", "presión", "presion", "ecg", "electrocardiograma", "rcp", "dea", "desfibrilador", "herida", "sangre", "diario", "me siento", "siento"] as const;
 const GREETINGS_ES = ["hola", "buen día", "buen dia", "buenas", "gracias", "quién sos", "quien sos", "qué podés hacer", "que podes hacer", "quién eres", "quien eres", "qué sos", "que sos", "qué eres", "que eres", "sos una ia", "eres una ia", "sos un robot", "sos una super inteligencia"] as const;
 
 export function classifyTopic(u: string): Topic {
