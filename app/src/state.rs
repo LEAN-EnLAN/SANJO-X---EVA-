@@ -1,0 +1,276 @@
+//! Shared application state: the world (passengers, alerts, cases, journal…),
+//! the hash chain, the mission clock, the mesh registry and the UI event bus.
+//!
+//! Locks are `std::sync` and are never held across an `.await`.
+
+use crate::chain::{Chain, SyncState};
+use crate::clock::{MissionClock, DAY_MS};
+use crate::eva_agent::AgentConfig;
+use crate::mesh::Mesh;
+use crate::model::*;
+use crate::protocol::profile::LinkProfile;
+use crate::protocol::queue::QueueDepth;
+use crate::protocol::stats::StatsRow;
+use crate::seed;
+use serde::Serialize;
+use std::collections::HashMap;
+use std::path::PathBuf;
+use std::sync::{Arc, Mutex, RwLock};
+use tokio::sync::broadcast;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, clap::ValueEnum)]
+#[serde(rename_all = "lowercase")]
+pub enum NodeRole {
+    /// on board: owns the wristbands, signs the chain, uplinks to the ground
+    Ship,
+    /// on Earth (or ISS mission control): mirrors the chain, acknowledges records
+    Ground,
+}
+
+impl NodeRole {
+    pub fn name(self) -> &'static str {
+        match self {
+            NodeRole::Ship => "ship",
+            NodeRole::Ground => "ground",
+        }
+    }
+}
+
+/// Events that make open pages refresh. SSE handlers render fragments on each.
+#[derive(Debug, Clone)]
+pub enum UiEvent {
+    /// periodic refresh (vitals, KPIs, queue)
+    Tick,
+    /// an emergency was opened for `seat`; helpers' apps switch screen
+    Emergency { seat: String },
+    /// solar storm started or ended
+    Storm,
+    /// Eva's state changed (seat None = dashboard Eva)
+    Eva { seat: Option<String>, mood: EvaMood },
+    /// a chat message was added for this seat
+    Chat { seat: String },
+    /// move a seat's app to a screen (tool `show_screen`)
+    Navigate { seat: String, screen: String },
+    /// the demo was reset
+    Reset,
+}
+
+#[derive(Debug, Clone, Serialize, Default)]
+pub struct LinkStatus {
+    pub connected: bool,
+    pub peer: Option<String>,
+    pub profile: String,
+    pub profile_label: String,
+    pub up: bool,
+    pub rtt_ms: f64,
+    pub rto_ms: u64,
+    pub depth: QueueDepth,
+    pub bytes_sent: u64,
+    pub bytes_received: u64,
+    pub datagrams_lost: u64,
+    pub stats: Vec<StatsRow>,
+    pub last_contact_ms: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Storm {
+    pub since_ms: u64,
+    pub ends_ms: u64,
+    pub in_shelter: Vec<String>,
+}
+
+#[derive(Debug)]
+pub struct World {
+    pub role: NodeRole,
+    pub ship_name: String,
+    pub passengers: Vec<Passenger>,
+    pub alerts: Vec<Alert>,
+    pub cases: Vec<Case>,
+    pub journal: Vec<JournalEntry>,
+    pub meals: Vec<Meal>,
+    pub reminders: Vec<Reminder>,
+    pub chats: Vec<ChatMsg>,
+    pub messages: Vec<LinkMessage>,
+    pub storm: Option<Storm>,
+    pub moods: HashMap<String, EvaMood>,
+    pub dash_mood: EvaMood,
+    pub link: LinkStatus,
+    /// requested uplink profile (dev panel); the uplink task applies it
+    pub link_profile: LinkProfile,
+    /// Eva filtered these minor events instead of alerting
+    pub filtered_events: u32,
+    next_id: u64,
+}
+
+impl World {
+    pub fn seeded(role: NodeRole, ship_name: &str, now_ms: u64) -> Self {
+        let day_start = (now_ms / DAY_MS) * DAY_MS;
+        let mut passengers = seed::passengers();
+        for p in passengers.iter_mut() {
+            p.last_ms = now_ms;
+            if let Some(e) = p.ecg.as_mut() {
+                e.ts_ms = day_start + if p.seat == "4A" { 12 * 3_600_000 + 40 * 60_000 } else { 8 * 3_600_000 + 6 * 60_000 };
+            }
+        }
+        World {
+            role,
+            ship_name: ship_name.into(),
+            passengers,
+            alerts: seed::alerts(day_start),
+            cases: Vec::new(),
+            journal: seed::journal(day_start),
+            meals: seed::meals(day_start),
+            reminders: vec![Reminder { id: 1, seat: "4B".into(), at_ms: day_start + 14 * 3_600_000 + 30 * 60_000, text: "Drink a glass of water".into(), done: false }],
+            chats: Vec::new(),
+            messages: Vec::new(),
+            storm: None,
+            moods: HashMap::new(),
+            dash_mood: EvaMood::Idle,
+            link: LinkStatus { profile: "near-space".into(), profile_label: "Near-space uplink".into(), ..Default::default() },
+            link_profile: LinkProfile::near_space(),
+            filtered_events: 23,
+            next_id: 100,
+        }
+    }
+
+    pub fn next_id(&mut self) -> u64 {
+        self.next_id += 1;
+        self.next_id
+    }
+    pub fn passenger(&self, seat: &str) -> Option<&Passenger> {
+        self.passengers.iter().find(|p| p.seat.eq_ignore_ascii_case(seat))
+    }
+    pub fn passenger_mut(&mut self, seat: &str) -> Option<&mut Passenger> {
+        self.passengers.iter_mut().find(|p| p.seat.eq_ignore_ascii_case(seat))
+    }
+    pub fn by_stream_mut(&mut self, id: u32) -> Option<&mut Passenger> {
+        self.passengers.iter_mut().find(|p| p.id == id)
+    }
+    pub fn open_case_for(&self, seat: &str) -> Option<&Case> {
+        self.cases.iter().find(|c| c.open && c.seat == seat)
+    }
+    pub fn open_case(&self) -> Option<&Case> {
+        self.cases.iter().rev().find(|c| c.open)
+    }
+    pub fn mood(&self, seat: &str) -> EvaMood {
+        self.moods.get(seat).copied().unwrap_or(EvaMood::Idle)
+    }
+    /// Seats Eva has asked to help in an open case, with their task.
+    pub fn helper_task(&self, seat: &str) -> Option<(&Case, &Helper)> {
+        self.cases.iter().filter(|c| c.open).find_map(|c| c.helpers.iter().find(|h| h.seat == seat).map(|h| (c, h)))
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ServerConfig {
+    pub role: NodeRole,
+    pub port: u16,
+    pub peer: Option<String>,
+    pub data_dir: PathBuf,
+    pub node_name: String,
+}
+
+pub struct AppState {
+    pub cfg: ServerConfig,
+    pub world: RwLock<World>,
+    pub chain: Mutex<Chain>,
+    pub clock: Arc<MissionClock>,
+    pub tx: broadcast::Sender<UiEvent>,
+    pub mesh: Mesh,
+    pub agent: AgentConfig,
+    pub http: reqwest::Client,
+    /// ground side: one Eva Link endpoint per ship session (survives reconnects)
+    pub peers: Mutex<HashMap<String, crate::protocol::Endpoint>>,
+    /// ground side: mirror of the ship's chain as received
+    pub mirror: Mutex<crate::link::Mirror>,
+    /// ground side: messages typed on the ground for the ship
+    pub to_ship: Mutex<Vec<String>>,
+}
+
+pub type Shared = Arc<AppState>;
+
+impl AppState {
+    pub fn new(cfg: ServerConfig, clock: Arc<MissionClock>, agent: AgentConfig) -> anyhow::Result<Shared> {
+        let now = clock.now_ms();
+        let chain_path = cfg.data_dir.join(format!("chain-{}.jsonl", cfg.node_name));
+        let mut chain = Chain::open(&chain_path, &cfg.node_name)?;
+        if chain.is_empty() && cfg.role == NodeRole::Ship {
+            seed_chain(&mut chain, now);
+        }
+        let report = chain.verify();
+        if !report.ok {
+            tracing::warn!("chain {} failed verification at record {:?}", chain_path.display(), report.first_bad);
+        }
+        let (tx, _) = broadcast::channel(256);
+        let world = World::seeded(cfg.role, &cfg.node_name, now);
+        let http = reqwest::Client::builder().timeout(std::time::Duration::from_secs(45)).build()?;
+        Ok(Arc::new(AppState {
+            cfg,
+            world: RwLock::new(world),
+            chain: Mutex::new(chain),
+            clock,
+            tx,
+            mesh: Mesh::default(),
+            agent,
+            http,
+            peers: Mutex::new(HashMap::new()),
+            mirror: Mutex::new(crate::link::Mirror::default()),
+            to_ship: Mutex::new(Vec::new()),
+        }))
+    }
+
+    pub fn now(&self) -> u64 {
+        self.clock.now_ms()
+    }
+    pub fn emit(&self, ev: UiEvent) {
+        let _ = self.tx.send(ev);
+    }
+
+    /// Layer 3: append to the hash chain. Returns the record seq.
+    pub fn log(&self, kind: &str, subject: &str, body: serde_json::Value) -> u64 {
+        let now = self.now();
+        self.chain.lock().expect("chain lock").append(now, kind, subject, body)
+    }
+
+    pub fn set_mood(&self, seat: Option<&str>, mood: EvaMood) {
+        {
+            let mut w = self.world.write().expect("world");
+            match seat {
+                Some(s) => {
+                    w.moods.insert(s.to_string(), mood);
+                }
+                None => w.dash_mood = mood,
+            }
+        }
+        self.emit(UiEvent::Eva { seat: seat.map(String::from), mood });
+    }
+
+    /// Demo reset: world, chain and clock back to the start.
+    pub fn reset(&self) {
+        self.clock.reset_to(seed::DEMO_DAY, seed::DEMO_HH, seed::DEMO_MM);
+        let now = self.now();
+        {
+            let mut chain = self.chain.lock().expect("chain");
+            chain.reset();
+            if self.cfg.role == NodeRole::Ship {
+                seed_chain(&mut chain, now);
+            }
+        }
+        {
+            let mut w = self.world.write().expect("world");
+            let profile = w.link_profile.clone();
+            *w = World::seeded(self.cfg.role, &self.cfg.node_name, now);
+            w.link_profile = profile;
+        }
+        *self.mirror.lock().expect("mirror") = crate::link::Mirror::default();
+        self.emit(UiEvent::Reset);
+    }
+}
+
+fn seed_chain(chain: &mut Chain, now: u64) {
+    let day_start = (now / DAY_MS) * DAY_MS;
+    for (ts, kind, subject, body) in seed::chain_records(day_start) {
+        let seq = chain.append(ts, kind, subject, body);
+        chain.set_state(seq, SyncState::Acked, ts + 8_000);
+    }
+}
