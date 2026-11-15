@@ -42,3 +42,7 @@ lto = "thin"
 codegen-units = 4
 strip = true
 panic = "abort"
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
