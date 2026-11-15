@@ -1,0 +1,1580 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Eva Research Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --ink: #0c0c0c;
+    --muted: #666462;
+    --rule: #e3e1dd;
+    --paper: #ffffff;
+    --paper-ink: #0c0c0c;
+    --paper-muted: #6b6966;
+    --paper-rule: #dedbd6;
+    --paper-line: rgba(12, 12, 12, 0.07);
+    --paper-hover: #f6f4f0;
+    --glass-hi: rgba(255, 255, 255, 0.66);
+    --glass: rgba(255, 255, 255, 0.40);
+    --glass-edge: rgba(255, 255, 255, 0.85);
+    --glass-line: rgba(255, 255, 255, 0.45);
+    --glass-ink: #0c0c0c;
+    --glass-muted: rgba(12, 12, 12, 0.66);
+    --shadow: rgba(12, 12, 12, 0.16);
+    --focus: #0c0c0c;
+    --art-filter: none;
+
+    --font: "PP Neue Montreal", "Inter", Arial, sans-serif;
+    --fs-display: clamp(38px, 7.708vw, 111px);
+    --fs-section: clamp(26px, 3.085vw, 44.4px);
+    --fs-label: clamp(20px, 2.315vw, 33.3px);
+    --fs-utility: clamp(15px, 1.543vw, 22.2px);
+    --gutter-l: max(20px, env(safe-area-inset-left));
+    --gutter-r: max(20px, env(safe-area-inset-right));
+    --stage-h: 400px;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #000000;
+      --ink: #f4f3f1;
+      --muted: #9b9996;
+      --rule: #3d3d3d;
+      --paper: #131313;
+      --paper-ink: #f4f3f1;
+      --paper-muted: #a3a19d;
+      --paper-rule: #2e2e2e;
+      --paper-line: rgba(255, 255, 255, 0.06);
+      --paper-hover: #1c1c1c;
+      --glass-hi: rgba(0, 0, 0, 0.62);
+      --glass: rgba(0, 0, 0, 0.36);
+      --glass-edge: rgba(255, 255, 255, 0.22);
+      --glass-line: rgba(255, 255, 255, 0.12);
+      --glass-ink: #f7f6f4;
+      --glass-muted: rgba(247, 246, 244, 0.70);
+      --shadow: rgba(0, 0, 0, 0.7);
+      --focus: #f4f3f1;
+      --art-filter: brightness(0.8) saturate(1.05);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #000000;
+    --ink: #f4f3f1;
+    --muted: #9b9996;
+    --rule: #3d3d3d;
+    --paper: #131313;
+    --paper-ink: #f4f3f1;
+    --paper-muted: #a3a19d;
+    --paper-rule: #2e2e2e;
+    --paper-line: rgba(255, 255, 255, 0.06);
+    --paper-hover: #1c1c1c;
+    --glass-hi: rgba(0, 0, 0, 0.62);
+    --glass: rgba(0, 0, 0, 0.36);
+    --glass-edge: rgba(255, 255, 255, 0.22);
+    --glass-line: rgba(255, 255, 255, 0.12);
+    --glass-ink: #f7f6f4;
+    --glass-muted: rgba(247, 246, 244, 0.70);
+    --shadow: rgba(0, 0, 0, 0.7);
+    --focus: #f4f3f1;
+    --art-filter: brightness(0.8) saturate(1.05);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--ink); color: var(--bg); }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+  .page { overflow-x: clip; min-height: 100vh; background: var(--bg); }
+
+  /* Navigation band */
+  .nav {
+    position: sticky; top: 0; z-index: 400;
+    height: 72px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 var(--gutter-r) 0 var(--gutter-l);
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--fs-section); line-height: 1.02; letter-spacing: -0.01em;
+  }
+  .ulink {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0 1px; background-position: 0 100%; background-repeat: no-repeat;
+    transition: background-size 0.45s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+  .ulink:hover { background-size: 100% 1px; }
+
+  /* Promise */
+  .promise {
+    padding: 20px var(--gutter-r) 0 var(--gutter-l);
+    margin: 0;
+    font-size: var(--fs-display); line-height: 1.02; letter-spacing: -0.01em; font-weight: 400;
+    max-width: 1300px;
+  }
+  .promise span { display: inline; }
+  @media (min-width: 900px) { .promise span { display: block; } }
+  .intro {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 40px;
+    padding: 40px var(--gutter-r) 0 var(--gutter-l);
+    font-size: var(--fs-utility); line-height: 1.1; color: var(--muted);
+  }
+  .intro p { margin: 0; max-width: 36em; }
+
+  /* Ruled section header */
+  .section { margin-top: 120px; }
+  .section-head {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+    min-height: 72px;
+    padding: max(14.4px, 1vw) var(--gutter-r) 14px var(--gutter-l);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head h2 {
+    margin: 0; font-weight: 400;
+    font-size: var(--fs-section); line-height: 1.02; letter-spacing: -0.01em;
+  }
+  .section-head .aside {
+    font-size: var(--fs-section); line-height: 1.02; letter-spacing: -0.01em;
+    text-transform: uppercase; color: var(--muted); white-space: nowrap;
+  }
+
+  /* Folder grid */
+  .grid {
+    list-style: none; margin: 0;
+    padding: 60px var(--gutter-r) 0 var(--gutter-l);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+    gap: 72px 20px;
+  }
+
+  .folder { position: relative; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .folder.is-open { z-index: 20; }
+  .stage {
+    position: relative;
+    height: var(--stage-h);
+  }
+  .folder.in .stage { animation: rise 0.9s var(--ease) both; }
+  .folder.in .files { animation: deal 1s var(--ease) 0.12s both; }
+  @keyframes rise { from { transform: translateY(40px); } to { transform: none; } }
+  @keyframes deal { from { transform: translateY(70px); } to { transform: none; } }
+
+  .tilt {
+    position: absolute; inset: 0;
+    --mx: 0; --my: 0;
+    transform: perspective(1400px) rotateX(calc(var(--my) * -3deg)) rotateY(calc(var(--mx) * 4deg));
+    transition: transform 0.5s var(--ease);
+  }
+  .folder:has(.front:focus-visible) .stage { outline: 2px solid var(--focus); outline-offset: 8px; }
+
+  /* Back panel with generated art */
+  .back {
+    position: absolute; left: 0; right: 0; top: 36px; bottom: 0;
+    overflow: hidden;
+    clip-path: polygon(0 0, 36% 0, calc(36% + 26px) 26px, 100% 26px, 100% 100%, 0 100%);
+    background: var(--rule);
+  }
+  .back canvas {
+    position: absolute; inset: -12px;
+    width: calc(100% + 24px); height: calc(100% + 24px);
+    display: block;
+    filter: var(--art-filter);
+    transform: translate(calc(var(--mx) * -8px), calc(var(--my) * -8px));
+    transition: transform 0.5s var(--ease);
+  }
+  .back-index {
+    position: absolute; left: 14px; top: 5px; z-index: 1;
+    font-size: 14px; line-height: 1; letter-spacing: 0.02em;
+    color: #fff; mix-blend-mode: difference;
+  }
+
+  /* Files */
+  .files {
+    list-style: none; margin: 0; padding: 0;
+    position: absolute; inset: 0;
+    z-index: 2;
+    --step: calc(min(54px, (var(--stage-h) - 170px) / max(1, var(--n) - 1)));
+    transition: z-index 0s linear 0s;
+  }
+  .folder.is-open .files { z-index: 4; transition: z-index 0s linear 0.16s; }
+  .files li { display: contents; }
+  .file {
+    position: absolute; left: 8%; top: 0;
+    width: 84%; height: 150px;
+    display: flex; flex-direction: column;
+    padding: 11px 14px 0;
+    background-color: var(--paper);
+    background-image: repeating-linear-gradient(180deg, transparent 0 13px, var(--paper-line) 13px 14px);
+    background-size: 100% 70px; background-position: 0 66px; background-repeat: repeat-x;
+    color: var(--paper-ink);
+    border: 1px solid var(--paper-rule);
+    box-shadow: 0 10px 28px -12px var(--shadow);
+    --c: calc(var(--i) - (var(--n) - 1) / 2);
+    --tx: calc(var(--c) * 5px);
+    --ty: calc(62px + var(--i) * 9px);
+    --tr: calc(var(--c) * 1.1deg);
+    transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--tr));
+    transform-origin: 50% 100%;
+    transition: transform 0.7s var(--ease) calc(var(--i) * 28ms), background-color 0.2s;
+  }
+  .folder:not(.is-open):hover .file,
+  .folder:not(.is-open):focus-within .file {
+    --ty: calc(44px + var(--i) * 13px);
+    --tr: calc(var(--c) * 1.8deg);
+  }
+  .folder.is-open .file {
+    --tx: calc(-9.5% + var(--i) * 4px);
+    --ty: calc(6px + var(--i) * var(--step));
+    --tr: calc(var(--c) * -0.8deg);
+  }
+  .file:hover { background-color: var(--paper-hover); }
+  .file:focus-visible { outline-offset: -4px; }
+  .file-top { display: flex; align-items: baseline; gap: 10px; }
+  .file-title {
+    flex: 1; min-width: 0;
+    font-size: 17px; line-height: 1.15;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .file-arrow { font-size: 17px; line-height: 1; transition: transform 0.3s var(--ease); }
+  .file:hover .file-arrow, .file:focus-visible .file-arrow { transform: translate(2px, -2px); }
+  .file-meta {
+    display: flex; justify-content: space-between; gap: 10px;
+    margin-top: 5px;
+    font-size: 12.5px; line-height: 1.2; color: var(--paper-muted);
+    white-space: nowrap;
+  }
+  .file-meta span:first-child { overflow: hidden; text-overflow: ellipsis; }
+  .file-state { text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Glass front panel */
+  .front {
+    -webkit-appearance: none; appearance: none;
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+    height: 252px; width: 100%;
+    margin: 0; border: 0; border-radius: 0;
+    padding: 42px 22px 20px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    text-align: left; font: inherit; color: var(--glass-ink);
+    background: linear-gradient(180deg, var(--glass-hi) 0%, var(--glass) 70%);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+    backdrop-filter: blur(22px) saturate(1.5);
+    box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 0 0 1px var(--glass-line);
+    clip-path: polygon(0 24px, 58% 24px, calc(58% + 24px) 0, 100% 0, 100% 100%, 0 100%);
+    transform-origin: 50% 100%;
+    transform: perspective(1000px) rotateX(var(--fx, 0deg));
+    transition: transform 0.75s var(--ease);
+    cursor: pointer;
+  }
+  .front:focus-visible { outline: none; }
+  .folder:not(.is-open):hover .front,
+  .folder:not(.is-open):focus-within .front { --fx: -16deg; }
+  .folder.is-open .front { --fx: -62deg; transition-duration: 0.85s; }
+  .front-plus {
+    position: absolute; right: 18px; top: 3px;
+    font-size: 24px; line-height: 1;
+    transition: transform 0.5s var(--ease);
+  }
+  .folder.is-open .front-plus { transform: rotate(45deg); }
+  .front-label {
+    display: block;
+    font-size: var(--fs-label); line-height: 1.1; text-transform: uppercase;
+    padding-right: 10px;
+  }
+  .front-foot { display: block; }
+  .front-meta { display: block; font-size: 17px; line-height: 1.2; }
+  .front-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--glass-line);
+    font-size: 12.5px; line-height: 1; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--glass-muted);
+  }
+  .pips { display: inline-flex; gap: 4px; }
+  .pip { width: 10px; height: 10px; border: 1px solid currentColor; }
+  .pip.on { background: var(--glass-ink); border-color: var(--glass-ink); }
+
+  /* Caption row */
+  .caption {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 16px; padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    font-size: var(--fs-utility); line-height: 1.1;
+  }
+  .caption .hint { text-transform: uppercase; color: var(--muted); }
+  .folder:hover .caption .hint { color: var(--ink); }
+
+  /* Progress rows */
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .row {
+    display: grid;
+    grid-template-columns: minmax(64px, 7%) 1fr minmax(180px, 20%) 280px;
+    gap: 4px 20px; align-items: baseline;
+    padding: 14px var(--gutter-r) 14px var(--gutter-l);
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--fs-label); line-height: 1.1;
+  }
+  .row .num { color: var(--muted); }
+  .row .owner { color: var(--muted); }
+  .row .status { text-transform: uppercase; text-align: right; white-space: nowrap; }
+  .row.is-open .status { color: var(--muted); }
+  .row.is-done .task { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: var(--muted); }
+
+  /* Footer */
+  .footer { padding-top: 180px; }
+  .mark {
+    margin: 0 var(--gutter-r) 0 var(--gutter-l);
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .mark svg { display: block; width: 100%; height: auto; fill: currentColor; }
+  .foot-line {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px;
+    padding: 14px var(--gutter-r) max(28px, env(safe-area-inset-bottom)) var(--gutter-l);
+    font-size: var(--fs-utility); line-height: 1.1;
+  }
+  .foot-line .muted { color: var(--muted); }
+
+  @media (max-width: 700px) {
+    :root {
+      --gutter-l: max(16px, env(safe-area-inset-left));
+      --gutter-r: max(16px, env(safe-area-inset-right));
+      --stage-h: 390px;
+    }
+    .section { margin-top: 80px; }
+    .section-head .aside { white-space: normal; text-align: right; max-width: 50%; }
+    .grid { padding-top: 40px; gap: 56px 20px; }
+    .row {
+      grid-template-columns: 44px 1fr auto;
+      grid-template-areas: "num task task" ". owner status";
+      gap: 4px 12px;
+      font-size: 20px;
+    }
+    .row .num { grid-area: num; }
+    .row .task { grid-area: task; }
+    .row .owner { grid-area: owner; font-size: 16px; }
+    .row .status { grid-area: status; font-size: 16px; }
+    .footer { padding-top: 120px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 1ms !important; animation-delay: 0s !important;
+      transition-duration: 1ms !important; transition-delay: 0s !important;
+    }
+    .tilt, .back canvas { transform: none !important; }
+  }
+
+  /* ---------- Hub additions ---------- */
+  :root { --fs-body: clamp(15px, 1.15vw, 17px); --teal: #1FE5C4; }
+  .nav-links { display: flex; gap: 22px; font-size: var(--fs-body); overflow-x: auto; white-space: nowrap; scrollbar-width: none; margin-left: 20px; }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav > .ulink:first-child { font-size: var(--fs-section); }
+  .block { padding: 48px var(--gutter-r) 0 var(--gutter-l); }
+  .lead { margin: 0; max-width: 32em; font-size: var(--fs-label); line-height: 1.12; letter-spacing: -0.01em; }
+  .note { margin: 0; max-width: 46em; font-size: var(--fs-body); line-height: 1.4; color: var(--muted); }
+  .note b { color: var(--ink); font-weight: 400; text-transform: uppercase; letter-spacing: 0.04em; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 36px 24px; }
+  .item h3 { margin: 0 0 10px; padding-top: 10px; border-top: 1px solid var(--rule); font-weight: 400; font-size: var(--fs-body); text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  .item p { margin: 0; font-size: var(--fs-body); line-height: 1.4; }
+  .item ul { margin: 0; padding: 0; list-style: none; font-size: var(--fs-body); line-height: 1.4; }
+  .item li { padding: 6px 0; border-bottom: 1px solid var(--rule); }
+  .item li:last-child { border-bottom: 0; }
+  .item .k { color: var(--muted); }
+  .sub { margin: 56px 0 18px; font-weight: 400; font-size: var(--fs-label); line-height: 1.1; letter-spacing: -0.01em; }
+  .layers { counter-reset: l; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 24px; }
+  .layers li { counter-increment: l; border-top: 1px solid var(--ink); padding-top: 10px; font-size: var(--fs-body); line-height: 1.4; }
+  .layers li::before { content: "0" counter(l); display: block; color: var(--muted); margin-bottom: 6px; }
+  .guard { margin-top: 48px; padding: 18px 20px; border: 1px solid var(--ink); font-size: var(--fs-label); line-height: 1.12; letter-spacing: -0.01em; }
+  .guard small { display: block; margin-top: 10px; font-size: var(--fs-body); line-height: 1.4; color: var(--muted); letter-spacing: 0; }
+  .bay { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .bay li { border: 1px solid var(--rule); padding: 10px 12px; min-height: 72px; font-size: var(--fs-body); line-height: 1.25; background: var(--paper); }
+  .bay li b { display: block; font-weight: 400; color: var(--muted); font-size: 13px; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .bay li.on { border: 2px solid var(--teal); border-left-width: 8px; }
+  .bay li.on b { color: var(--ink); }
+  .tag { display: inline-block; padding: 2px 8px; border: 1px solid currentColor; font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; vertical-align: middle; }
+  .tree { display: flex; flex-direction: column; align-items: stretch; }
+  .node { border: 1px solid var(--ink); padding: 14px 16px; background: var(--paper); font-size: var(--fs-body); line-height: 1.35; }
+  .node b { display: block; font-weight: 400; font-size: var(--fs-label); line-height: 1.1; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .node small { color: var(--muted); font-size: var(--fs-body); }
+  .node.hub { border-width: 2px; }
+  .edge { text-align: center; padding: 22px 8px; position: relative; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  .edge::before { content: ""; position: absolute; left: 50%; top: 0; height: 9px; border-left: 1px solid var(--ink); }
+  .edge::after { content: ""; position: absolute; left: 50%; bottom: 0; height: 9px; border-left: 1px solid var(--ink); }
+  .clients { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 14px; }
+  .clients > div { display: flex; flex-direction: column; }
+  .clients .node { flex: 1; }
+  .fallback { margin-top: 28px; border: 1px dashed var(--ink); padding: 14px 16px; font-size: var(--fs-body); line-height: 1.4; }
+  .fallback b { font-weight: 400; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); display: block; margin-bottom: 6px; }
+  .fallback ul { margin: 0; padding-left: 18px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 32px 20px; }
+  .tile { border-top: 1px solid var(--ink); padding-top: 10px; }
+  .tile .n { display: block; font-size: var(--fs-section); line-height: 1.02; letter-spacing: -0.01em; }
+  .tile .c { display: block; margin-top: 8px; font-size: var(--fs-body); line-height: 1.35; color: var(--muted); }
+  .tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: var(--fs-body); line-height: 1.3; min-width: 520px; }
+  th, td { text-align: left; padding: 10px 14px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 400; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-size: 13px; }
+  .tl { list-style: none; margin: 0; padding: 0; }
+  .tl li { display: grid; grid-template-columns: minmax(130px, 11%) 1fr minmax(110px, 12%); gap: 4px 20px; padding: 14px var(--gutter-r) 14px var(--gutter-l); border-bottom: 1px solid var(--rule); font-size: var(--fs-body); line-height: 1.4; }
+  .tl .when { color: var(--muted); }
+  .tl .who { color: var(--muted); text-align: right; }
+  .tl li.pend { background: var(--paper-hover); }
+  .qrows .row { font-size: var(--fs-body); line-height: 1.35; align-items: start; grid-template-columns: minmax(48px, 5%) 1fr minmax(120px, 14%) minmax(110px, 12%); }
+  .qrows .row .status { font-size: 13px; letter-spacing: 0.04em; }
+  .lang { display: flex; align-items: center; flex: none; margin-left: 12px; font-size: var(--fs-body); letter-spacing: 0.04em; color: var(--muted); }
+  .lang button { -webkit-appearance: none; appearance: none; background: none; border: 0; border-radius: 0; margin: 0; padding: 8px 6px; min-width: 32px; min-height: 40px; font: inherit; letter-spacing: inherit; color: var(--muted); cursor: pointer; background-image: linear-gradient(currentColor, currentColor); background-size: 0 1px; background-position: 6px calc(100% - 8px); background-repeat: no-repeat; transition: background-size 0.45s cubic-bezier(0.645, 0.045, 0.355, 1); }
+  .lang button:hover { color: var(--ink); background-size: calc(100% - 12px) 1px; }
+  .lang button[aria-pressed="true"] { color: var(--ink); background-size: calc(100% - 12px) 1px; }
+  @media (max-width: 900px) { .clients { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) {
+    .clients { grid-template-columns: 1fr; }
+    table { min-width: 0; font-size: 14px; }
+    th, td { padding-right: 10px; }
+    .tl li { grid-template-columns: 1fr; }
+    .tl .who { text-align: left; }
+    .qrows .row { grid-template-columns: 36px 1fr; grid-template-areas: "num task" ". owner" ". status"; font-size: 15px; }
+    .qrows .row .owner, .qrows .row .status { font-size: 13px; text-align: left; }
+    .nav { height: 64px; }
+    .nav-links { margin-left: 12px; gap: 16px; }
+    .lang { margin-left: 4px; }
+    .nav > .ulink:first-child { font-size: 26px; }
+    .block { padding-top: 36px; }
+    .sub { margin-top: 44px; }
+    .bay li { padding: 8px 8px; min-height: 64px; font-size: 14px; }
+  }
+  .file.is-internal { cursor: default; }
+  .file.is-internal:hover { background-color: transparent; }
+</style></head><body>
+<div class="page">
+  <header class="nav">
+    <a class="ulink" href="#top" aria-label="Eva, back to top">Eva</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a class="ulink" href="#hardware">Wristband</a>
+      <a class="ulink" href="#link">Link</a>
+      <a class="ulink" href="#research">Research</a>
+      <a class="ulink" href="#decisions">Decisions</a>
+      <a class="ulink" href="#app">App</a>
+      <a class="ulink" href="#open">Open</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" lang="en" aria-label="English" aria-pressed="true">EN</button>
+      <span aria-hidden="true">/</span>
+      <button type="button" id="lang-es" lang="es" aria-label="Español" aria-pressed="false">ES</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <h1 class="promise">
+      <span>Eva reads, records,</span>
+      <span>supports diagnosis</span>
+      <span>and warns.</span>
+    </h1>
+    <div class="intro">
+      <p>Team Sanjo-X · NASA Space Apps Challenge 2026 · Rosario · now in Phase 3, the sellable. The research hub for Eva by WearMeds: the copilot, the wristband, the station, the sources and the build. The AED decides the shock, never Eva.</p>
+      <p id="summary">Eight folders</p>
+    </div>
+
+    <!-- EVA -->
+    <section class="section" id="eva" aria-labelledby="eva-title">
+      <div class="section-head">
+        <h2 id="eva-title">Eva, the health copilot</h2>
+        <span class="aside">The centre</span>
+      </div>
+      <div class="block">
+        <p class="lead">Eva is a multimodal Super Intelligence assistant (text, voice, images, video) that reads your WearMeds wristband in real time, logs everything, keeps an emotional journal with you, gives diagnostic support, guides emergencies and sends the record to mission control. Eva is the innovation; the wristband is her form factor.</p>
+      </div>
+      <div class="block">
+        <div class="cols">
+          <div class="item"><h3>Reads</h3><p>Pulse, SpO₂, estimated breathing, skin temperature, EDA, movement and sleep, compared with your personal baseline.</p></div>
+          <div class="item"><h3>Records</h3><p>A daily log (sleep, activity, water, food, mood), signed on board and sent to Earth with a delivery receipt.</p></div>
+          <div class="item"><h3>Supports diagnosis</h3><p>A differential with probabilities, always with what to do now. The crew or Earth confirms. It is diagnostic support, not a diagnosis.</p></div>
+          <div class="item"><h3>Warns and guides</h3><p>One action per step in an emergency. It assigns the nearest passenger, lights the right compartment and reassigns if nobody confirms.</p></div>
+        </div>
+        <h3 class="sub">Every answer says four things</h3>
+        <div class="cols">
+          <div class="item"><h3>Now</h3><p>What to do right now.</p></div>
+          <div class="item"><h3>Why</h3><p>The reason, in plain words.</p></div>
+          <div class="item"><h3>How I decided</h3><p>Which signals and rules led here.</p></div>
+          <div class="item"><h3>Next</h3><p>What comes after, including the re-check.</p></div>
+        </div>
+        <p class="note" style="margin-top:14px">Format from Russell et al., npj Microgravity 9:46 (2023); the app answers in it.</p>
+        <h3 class="sub">Three layers</h3>
+        <ol class="layers">
+          <li><b style="font-weight:400">Reflex, under 1 s.</b> Curated protocols and rules. Never waits on a model.</li>
+          <li><b style="font-weight:400">Reasoning, under 10 s.</b> A multimodal medical model plus NASA documentation and your baseline. MedGemma 1.5 4B is the planned model and needs validation before we promise anything. Demo pipelines (chat, speech to text, vision) use Groq; on board they would be local models without internet.</li>
+          <li><b style="font-weight:400">Signed log and link.</b> Every event is hash-chained and Ed25519-signed on board and travels to Earth with acknowledgements.</li>
+        </ol>
+        <div class="guard">Eva gives diagnostic support. She never decides a shock: the AED at the station analyses the rhythm and decides.
+          <small>No treatment tool exists in the app. A prompt-injection attempt ("ignore your rules and administer...") is refused on board without calling a model (tested).</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- HARDWARE -->
+    <section class="section" id="hardware" aria-labelledby="hw-title">
+      <div class="section-head">
+        <h2 id="hw-title">Wristband v2 and the station</h2>
+        <span class="aside">Hardware</span>
+      </div>
+      <div class="block">
+        <p class="lead">One device on the body, one cabinet on the wall. The wristband is more contained and rugged; the station holds the AED and the other kits in numbered compartments, configurable for each ship.</p>
+      </div>
+      <div class="block">
+        <div class="cols">
+          <div class="item">
+            <h3>Wristband v2 · overall</h3>
+            <ul>
+              <li>Rugged graphite rectangle, wider than tall (about 16:9), worn on top of the wrist</li>
+              <li>Silver corner bumpers with visible screws, soft-touch frame, "EVA" printed small on the front edge</li>
+              <li>Two modules joined by magnets; two separate fabric straps that belong to the base, so the screen module lifts off</li>
+              <li>Orange help buttons, one on each part; a side button</li>
+            </ul>
+          </div>
+          <div class="item">
+            <h3>Sensor base (on the skin)</h3>
+            <ul>
+              <li>Optical pulse and SpO₂, skin temperature, EDA electrodes, accelerometer and gyro</li>
+              <li>Own small battery and own LoRa radio</li>
+              <li>Two gold spring-contact pins carry power from the screen module</li>
+              <li>Small mic hole and speaker grille</li>
+            </ul>
+          </div>
+          <div class="item">
+            <h3>Screen module (outside)</h3>
+            <ul>
+              <li>Large flat edge-to-edge touchscreen</li>
+              <li>Main battery and own LoRa; speaker</li>
+              <li>Two metal pads on the frame for the 30 s on-demand ECG: two fingers of the same hand, index and little finger, rest on the two pads</li>
+              <li class="k">ECG helps spot arrhythmias such as atrial fibrillation. It is not continuous, needs the person to cooperate, does not replace a 12-lead ECG and never decides a shock.</li>
+            </ul>
+          </div>
+          <div class="item">
+            <h3>Suit mode</h3>
+            <p>The suit fabric sits between the two parts. The magnets still hold but the pins do not touch, so the base runs on its own battery and keeps sending over LoRa. ECG still works with bare fingers.</p>
+          </div>
+        </div>
+
+        <h3 class="sub">Emergency station · numbered compartments</h3>
+        <div class="cols" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))">
+          <div class="item">
+            <ol class="bay" aria-label="Station compartments">
+              <li class="on"><b>01</b>AED and spare pads</li>
+              <li><b>02</b>Breathing</li>
+              <li><b>03</b>Diagnostics</li>
+              <li><b>04</b>Ultrasound</li>
+              <li><b>05</b>Wounds</li>
+              <li><b>06</b>Restraint</li>
+              <li><b>07</b>Oral meds</li>
+              <li><b>08</b>Injectables (crew kit)</li>
+              <li><b>09</b>IV access</li>
+              <li><b>10</b>Eyes and dental</li>
+              <li><b>11</b>Airway</li>
+              <li><b>12</b>Hygiene</li>
+            </ol>
+          </div>
+          <div class="item">
+            <ul>
+              <li>Numbered compartments, configurable for each ship; the grid shows one example layout</li>
+              <li>A wall-mounted cabinet in a habitable module, each compartment behind a clear window with a light strip</li>
+              <li>On top: an Eva screen ("Take the AED"), a red emergency button and a printed backup guide</li>
+              <li>When Eva asks for an item, its compartment lights up teal and the screen says what to take</li>
+              <li>Door sensors and an item sensor report "AED taken". The AED analyses the rhythm and decides the shock</li>
+              <li class="k">Variant: a centre cabinet whose side doors open onto compartments 07 to 12.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LINK -->
+    <section class="section" id="link" aria-labelledby="link-title">
+      <div class="section-head">
+        <h2 id="link-title">How everything links</h2>
+        <span class="aside">Recommended</span>
+      </div>
+      <div class="block">
+        <p class="lead">One host, everything else a client.</p>
+        <p class="note" style="margin-top:14px"><span class="tag">Proposed</span> This architecture is the team's recommended design. It answers two questions: is the backend a local computer, and is the station a host or a client?</p>
+      </div>
+      <div class="block">
+        <div class="tree">
+          <div class="node"><b>Earth · ground instance</b>Receives and acknowledges the signed records; verifies hash chain and signature. <small>Built: <code>eva serve --role ground</code></small></div>
+          <div class="edge">Near-space link · signed records · acknowledgements</div>
+          <div class="node hub"><b>Ship hub · the one host</b>Hosts the Super Intelligence · stores everything. A local computer: runs Eva, the signed log and the dashboard, stores and forwards to Earth, and serves the app (PWA). At the demo, the laptop on the table is the hub. <small>Built: <code>eva demo</code></small></div>
+          <div class="clients">
+            <div><div class="edge">LoRa · mesh relay</div><div class="node"><b>Wristbands</b>Both parts talk LoRa to the hub and relay for each other when one is out of range.</div></div>
+            <div><div class="edge">Ship Wi-Fi</div><div class="node"><b>Phone or tablet</b>Optional big screen for the same person, running the app.</div></div>
+            <div><div class="edge">LoRa · case events</div><div class="node"><b>Station · a client</b>Own small computer, Eva screen, lights, door and item sensors, LoRa and backup battery. Subscribes to case events; reports back "door 01 open", "AED taken". Reports enter the signed log.</div></div>
+            <div><div class="edge">Served by the hub</div><div class="node"><b>Crew dashboard</b>Case timeline, roster and exports for the crew and for Earth.</div></div>
+          </div>
+        </div>
+        <div class="fallback">
+          <b>If the hub is down, the critical path does not depend on it</b>
+          <ul>
+            <li>The wristband broadcasts its no-pulse alarm over LoRa.</li>
+            <li>The station listens directly, lights compartment 01 and sounds an alert.</li>
+            <li>The station's red button broadcasts an alarm to every wristband.</li>
+            <li>When the hub returns, station and wristbands upload what happened and the hash chain keeps it in order.</li>
+          </ul>
+        </div>
+        <p class="note" style="margin-top:18px"><b>Why this shape</b> One source of truth for the log and Eva's state. Cheap, simple clients. Works offline on the ship. For the demo one laptop is enough: phones act as wristbands and screens, and a tablet or second browser window plays the station.</p>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section class="section" id="research" aria-labelledby="research-title">
+      <div class="section-head">
+        <h2 id="research-title">Research and sources</h2>
+        <span class="aside" id="research-count">08 folders</span>
+      </div>
+      <div class="block">
+        <p class="lead">Main source: Russell et al., npj Microgravity 9:46 (2023).</p>
+        <p class="note" style="margin-top:14px">Russell BK, Burian BK, Hilmers DC, Beard BL, Martin K, Pletcher DL, Easter B, Lehnhardt K, Levin D. The value of a spaceflight clinical decision support system for earth-independent medical operations. <i>npj Microgravity</i> 9, 46 (2023). <a class="ulink" href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener noreferrer">doi:10.1038/s41526-023-00284-1</a> · CC BY 4.0. A perspective article with a preliminary analysis; its authors say clinical and operational validity has not yet been peer reviewed.</p>
+        <p class="note" style="margin-top:10px">NASA Human Health and Performance data sharing: <a class="ulink" href="https://www.nasa.gov/directorates/esdmd/hhp/human-health-and-performance-data-sharing/" target="_blank" rel="noopener noreferrer">nasa.gov/directorates/esdmd/hhp/human-health-and-performance-data-sharing</a></p>
+      </div>
+      <div class="block">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Verified figure</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td>One-way communication delay can exceed 20 minutes; crews must detect, diagnose and treat on their own</td><td><a class="ulink" href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener noreferrer">Russell et al. 2023</a></td></tr>
+              <tr><td>The ISS crew medical officer often has about 40 hours of medical training</td><td><a class="ulink" href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener noreferrer">Russell et al. 2023</a></td></tr>
+              <tr><td>More than 100 medical conditions relevant to spaceflight</td><td><a class="ulink" href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener noreferrer">Russell et al. 2023</a></td></tr>
+              <tr><td>Decision support that lifts the crew to an experienced physician's level cut deaths by at least 34% in a simulated 26-month mission (preliminary analysis)</td><td><a class="ulink" href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener noreferrer">Russell et al. 2023</a></td></tr>
+              <tr><td>About 70% with significant vision changes on 6 to 12 month ISS missions; 85% of 71 astronauts with at least one nasal or sinus problem</td><td>Team-verified figures</td></tr>
+              <tr><td>Communication delay: minutes from Earth in each direction</td><td><a class="ulink" href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener noreferrer">Russell et al. 2023</a></td></tr>
+              <tr><td>Inspiration4 R+1, metabolic panel: 16 of 72 changes against a personal baseline, 7 of 72 against lab ranges (exploratory: 4 crew, 3 baseline points)</td><td><a class="ulink" href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-575" target="_blank" rel="noopener noreferrer">NASA OSDR OSD-575</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note" style="margin-top:14px">Eva takes the paper's idea to passengers with no medical training. Not used because they have no source: "90% eyes" and "70% respiratory".</p>
+      </div>
+      <div class="block">
+        <h3 class="sub" style="margin-top:0">What we build on</h3>
+        <div class="cols">
+          <div class="item"><h3>Prior work</h3><p>NASA's ARCHeR study (Artemis Research for Crew Health and Readiness) had the Artemis II crew (April 2026) wear the ActLumus wrist actigraph by Condor Instruments (São Paulo). It measures motion, sleep, light exposure with 10 spectral light sensors, and temperature, and has an event button.</p></div>
+          <div class="item"><h3>The gap</h3><p>It records data for analysis after the mission. It does not alert or guide the crew.</p></div>
+          <div class="item"><h3>Where Eva fits</h3><p>Eva is the layer on top of existing sensing: within 10 seconds of an event, the person knows what to do, where to go and how.</p></div>
+        </div>
+        <p class="note" style="margin-top:14px">Sources are in the Prior work folder below. Team working documents are listed by title only.</p>
+      </div>
+      <ul class="grid" id="grid"></ul>
+    </section>
+
+    <!-- DECISIONS -->
+    <section class="section" id="decisions" aria-labelledby="dec-title">
+      <div class="section-head">
+        <h2 id="dec-title">Decisions</h2>
+        <span class="aside">Latest first</span>
+      </div>
+      <p class="note block">From the team's decision log, Rosario time.</p>
+      <ol class="tl" style="margin-top:28px; border-top:1px solid var(--rule)">
+        <li class="pend"><span class="when">Sun 15/11 · today</span><span><span class="tag">Proposed</span> Wristband v2, the station with numbered compartments and the ship-hub link architecture. Recommended design, still to be confirmed.</span><span class="who">Team</span></li>
+        <li><span class="when">Sun 15/11 08:56</span><span>Super Intelligence image notice goes in the README and the submission description, not inside the app. On-screen labels removed.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 07:15</span><span>Eva is the selling and innovation point; the UI is built around her: simple and friendly, spring motion, separate speech-to-text, text-to-speech, chat and vision pipelines, and own tool calls. None can give a shock or a treatment.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 07:10</span><span>Communications are designed for near space, not deep space: seconds of latency, intermittent low-bandwidth links. Landing, video and deck must not contradict it: the trip is “in space”.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 07:10</span><span>Build the real app in Rust + htmx, one binary, local and reliable first: PWA, crew and ground dashboards, exports, mesh ping and a very light protocol.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 05:00</span><span>Eva is the centre of the proposal and the engineering; the wristband is her form factor. Three-layer architecture restored. Demo voice through Groq, key only in local environment variables.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 03:00</span><span>The wristband is the only device on the body. The shock comes from the AED at the ship's emergency station, which analyses the rhythm and decides. Injectables out of scope. 30 s ECG on two plates.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 02:40</span><span>Both wristband parts have their own battery and LoRa; the base sends its data by LoRa joined or with the suit between.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 02:25</span><span>Main source of the work: Russell et al. 2023, cited in the report, landing, video, app and deck.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sun 15/11 02:20</span><span>Wristband shape follows the team reference: rugged rectangular module, flat screen, textile strap. Base sensors: optical, thermal, EDA, accelerometer and gyro.</span><span class="who">Team</span></li>
+        <li><span class="when">Sun 15/11 01:45</span><span>Wristband in two parts joined by magnets. Spring pins power the base; with the suit between, the pins do not touch and the base uses its own battery.</span><span class="who">Team</span></li>
+        <li><span class="when">Sun 15/11 00:05</span><span>Edge cases filtered to cardiac arrest, cabin depressurisation and solar alert (scope still to confirm). The shock is decided by validated rhythm analysis, never by the Super Intelligence.</span><span class="who">Hazzi and Naza</span></li>
+        <li><span class="when">Sat 14/11 22:25</span><span>The assistant is called Eva everywhere, including the research brief.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sat 14/11 18:20</span><span>Final name: Eva. Wearables sold under the WearMeds brand. Presented as a real product to investors.</span><span class="who">Team</span></li>
+        <li><span class="when">Sat 14/11 15:30</span><span>Pivot to simple, well-built IoT. Corrected pitch figures. Language: Eva "guides, records and warns".</span><span class="who">Team</span></li>
+        <li><span class="when">Sat 14/11 13:20</span><span>100% own code. Stack: Rust + htmx + HTML, one binary. Open-source projects give patterns, never lines.</span><span class="who">Lean</span></li>
+        <li><span class="when">Sat 14/11 11:05</span><span>Challenge: Create Health Monitoring Software for Astronauts on Space Missions.</span><span class="who">Team</span></li>
+      </ol>
+    </section>
+
+    <!-- APP -->
+    <section class="section" id="app" aria-labelledby="app-title">
+      <div class="section-head">
+        <h2 id="app-title">App status</h2>
+        <span class="aside">Real numbers</span>
+      </div>
+      <div class="block">
+        <p class="lead">The real app runs: a passenger PWA, a crew and ground dashboard, a JSON and CBOR API, exports and Eva Link, our light protocol for near space. One Rust binary, assets embedded, offline on the ship.</p>
+        <p class="note" style="margin-top:14px">Measured on 15 Nov 2026 with <code>eva bench</code> (release build) on a 4 vCPU Intel Xeon at 2.30 GHz. Link profiles are a seeded simulation; speed, CPU and memory depend on the machine.</p>
+      </div>
+      <div class="block">
+        <div class="tiles">
+          <div class="tile"><span class="n">101</span><span class="c">automated tests, about 10 s in a debug build</span></div>
+          <div class="tile"><span class="n">19</span><span class="c">break tests: 9 held first try, 10 found a bug that is now fixed</span></div>
+          <div class="tile"><span class="n">13 / 13</span><span class="c">end-to-end steps in 15 s; 19 records signed and 19 verified on the ground</span></div>
+          <div class="tile"><span class="n">16.7×</span><span class="c">smaller vitals sample: 11 bytes against 184 as JSON</span></div>
+          <div class="tile"><span class="n">600 / 600</span><span class="c">records delivered and verified in every link profile, even a 5 minute outage</span></div>
+          <div class="tile"><span class="n">1.8 s</span><span class="c">"no pulse" alarm (10 bytes) to Earth on the near-space profile; 3.4 s in a solar storm</span></div>
+          <div class="tile"><span class="n">1 ms</span><span class="c">vitals in to dashboard update, p50 and p95, with 15 bands and 3 dashboards</span></div>
+          <div class="tile"><span class="n">12.5 MB</span><span class="c">one binary; cold start 4 ms; server at 0.3% of one core and 11.6 MB RAM under load</span></div>
+        </div>
+
+        <h3 class="sub">Delivery by link profile</h3>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Profile</th><th>Records delivered</th><th>Record latency p50 / p95</th><th>Alarm latency</th></tr></thead>
+            <tbody>
+              <tr><td>Ship LAN</td><td>600/600</td><td>100 ms / 100 ms</td><td>100 ms</td></tr>
+              <tr><td>LoRa-like radio (5.5 kbit/s, 5% loss)</td><td>600/600</td><td>0.6 s / 1.0 s</td><td>0.5 s</td></tr>
+              <tr><td>Near-space uplink (1.2 s, 2% loss, gaps)</td><td>600/600</td><td>1.8 s / 17 s</td><td>1.8 s</td></tr>
+              <tr><td>Solar storm (15% loss, 25 s gap a minute)</td><td>600/600</td><td>15 s / 78 s</td><td>3.4 s</td></tr>
+              <tr><td>5 minute outage, then near-space</td><td>600/600</td><td>22 s / 273 s</td><td>272 s (sent when contact returns)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub">Eva's online pipelines, measured live</h3>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Pipeline</th><th>Time</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Chat with one tool call (get_vitals)</td><td>1.9 s</td><td>Now / Why / How I decided / Next answer from live vitals</td></tr>
+              <tr><td>Prompt injection</td><td>under 1 ms</td><td>Fixed refusal, no model call</td></tr>
+              <tr><td>Speech to text (1 s of audio)</td><td>0.25 s</td><td>OK</td></tr>
+              <tr><td>Vision (one image)</td><td>0.65 s</td><td>OK</td></tr>
+              <tr><td>Text to speech</td><td>0.09 s</td><td>Needs the provider's terms accepted by an org admin; falls back to the browser voice</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub">Known issues</h3>
+        <div class="cols">
+          <div class="item"><ul>
+            <li>After a ship restart the chain and the ground's view are intact, but the open case card is re-seeded from scratch.</li>
+            <li>The ground trusts the first ship key it sees; real use needs a pre-provisioned key.</li>
+            <li>Help-button alarms over the mesh are not de-duplicated by sequence number.</li>
+          </ul></div>
+          <div class="item"><ul>
+            <li>The voice is the browser's until the text-to-speech terms are accepted.</li>
+            <li>The app home trip label must read "Day 96 · in space" (copy rules v3).</li>
+            <li>Each dashboard refresh costs about 111 KB/s; fine on the ship LAN, heavy for a narrow ground link (use the CBOR API there).</li>
+          </ul></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPEN -->
+    <section class="section" id="open" aria-labelledby="open-title">
+      <div class="section-head">
+        <h2 id="open-title">Open questions</h2>
+        <span class="aside" id="open-count">Pending</span>
+      </div>
+      <ol class="rows qrows" id="qrows" style="margin-top:28px; border-top:1px solid var(--rule)"></ol>
+    </section>
+
+    <!-- PROGRESS -->
+    <section class="section" id="progress" aria-labelledby="progress-title">
+      <div class="section-head">
+        <h2 id="progress-title">Phase 2 · Build and details</h2>
+        <span class="aside" id="progress-count">Phase 2</span>
+      </div>
+      <ol class="rows" id="rows"></ol>
+    </section>
+
+    <section class="section" id="phase3" aria-labelledby="p3-title">
+      <div class="section-head">
+        <h2 id="p3-title">Phase 3 · The sellable (final)</h2>
+        <span class="aside" id="p3-count">Phase 3</span>
+      </div>
+      <ol class="rows" id="rows3"></ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="mark">
+      <svg viewBox="0 0 1400 318" role="img" aria-label="Sanjo-X">
+        <text x="0" y="238" font-family="Inter, Arial, sans-serif" font-size="318" textLength="1400" lengthAdjust="spacingAndGlyphs">Sanjo-X</text>
+      </svg>
+    </div>
+    <div class="foot-line">
+      <span>Public edition of the team research hub</span>
+      <span class="muted">Eva by WearMeds · Phase 3 · 15 November 2026</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Spanish dictionary (English text is the key) ---------- */
+  var ES = {
+    // nav
+    "Wristband": "Pulsera", "Link": "Enlace", "Research": "Investigación", "Decisions": "Decisiones", "App": "App", "Open": "Abiertas",
+    "Eva, back to top": "Eva, volver arriba", "Sections": "Secciones", "Language": "Idioma",
+    // hero
+    "Eva reads, records,": "Eva lee, registra,", "supports diagnosis": "apoya el diagnóstico", "and warns.": "y avisa.",
+    "Team Sanjo-X · NASA Space Apps Challenge 2026 · Rosario · now in Phase 3, the sellable. The research hub for Eva by WearMeds: the copilot, the wristband, the station, the sources and the build. The AED decides the shock, never Eva.":
+      "Equipo Sanjo-X · NASA Space Apps Challenge 2026 · Rosario · ahora en la Fase 3, la vendible. El centro de investigación de Eva by WearMeds: el copiloto, la pulsera, la estación, las fuentes y el desarrollo. El DEA decide la descarga, nunca Eva.",
+    // Eva
+    "Eva, the health copilot": "Eva, copiloto de salud", "The centre": "El centro",
+    "Eva is a multimodal Super Intelligence assistant (text, voice, images, video) that reads your WearMeds wristband in real time, logs everything, keeps an emotional journal with you, gives diagnostic support, guides emergencies and sends the record to mission control. Eva is the innovation; the wristband is her form factor.":
+      "Eva es una asistente multimodal con Super Inteligencia (texto, voz, imágenes, video) que lee en tiempo real tu pulsera WearMeds, lo registra todo, lleva un diario emocional contigo, ofrece apoyo al diagnóstico, guía las emergencias y envía el registro al control de misión. Eva es la innovación; la pulsera es su formato.",
+    "Reads": "Lee", "Pulse, SpO₂, estimated breathing, skin temperature, EDA, movement and sleep, compared with your personal baseline.":
+      "Pulso, SpO₂, respiración estimada, temperatura de la piel, EDA, movimiento y sueño, comparados con tu línea base personal.",
+    "Records": "Registra", "A daily log (sleep, activity, water, food, mood), signed on board and sent to Earth with a delivery receipt.":
+      "Un registro diario (sueño, actividad, agua, comida, ánimo), firmado a bordo y enviado a la Tierra con acuse de recibo.",
+    "Supports diagnosis": "Apoya el diagnóstico",
+    "A differential with probabilities, always with what to do now. The crew or Earth confirms. It is diagnostic support, not a diagnosis.":
+      "Un diagnóstico diferencial con probabilidades, siempre con lo que hay que hacer ahora. La tripulación o la Tierra lo confirma. Es apoyo al diagnóstico, no un diagnóstico.",
+    "Warns and guides": "Avisa y guía",
+    "One action per step in an emergency. It assigns the nearest passenger, lights the right compartment and reassigns if nobody confirms.":
+      "Una acción por paso en una emergencia. Asigna al pasajero más cercano, ilumina el compartimento correcto y reasigna si nadie confirma.",
+    "Every answer says four things": "Cada respuesta dice cuatro cosas",
+    "Now": "Ahora", "What to do right now.": "Qué hacer ahora mismo.",
+    "Why": "Por qué", "The reason, in plain words.": "El motivo, en palabras simples.",
+    "How I decided": "Cómo lo decidí", "Which signals and rules led here.": "Qué señales y reglas llevaron a esto.",
+    "Next": "Después", "What comes after, including the re-check.": "Qué viene después, incluida la nueva revisión.",
+    "Format from Russell et al., npj Microgravity 9:46 (2023); the app answers in it.": "Formato de Russell et al., npj Microgravity 9:46 (2023); la app responde con él.",
+    "Three layers": "Tres capas",
+    "Reflex, under 1 s.": "Reflejo, menos de 1 s.", "Curated protocols and rules. Never waits on a model.": "Protocolos y reglas curados. Nunca espera a un modelo.",
+    "Reasoning, under 10 s.": "Razonamiento, menos de 10 s.",
+    "A multimodal medical model plus NASA documentation and your baseline. MedGemma 1.5 4B is the planned model and needs validation before we promise anything. Demo pipelines (chat, speech to text, vision) use Groq; on board they would be local models without internet.":
+      "Un modelo médico multimodal más la documentación de la NASA y tu línea base. MedGemma 1.5 4B es el modelo previsto y necesita validación antes de prometer nada. Los flujos de demostración (chat, voz a texto, visión) usan Groq; a bordo serían modelos locales sin internet.",
+    "Signed log and link.": "Registro firmado y enlace.",
+    "Every event is hash-chained and Ed25519-signed on board and travels to Earth with acknowledgements.":
+      "Cada evento se encadena por hash y se firma con Ed25519 a bordo, y viaja a la Tierra con confirmaciones de recepción.",
+    "Eva gives diagnostic support. She never decides a shock: the AED at the station analyses the rhythm and decides.":
+      "Eva ofrece apoyo al diagnóstico. Nunca decide una descarga: el DEA de la estación analiza el ritmo y decide.",
+    "No treatment tool exists in the app. A prompt-injection attempt (\"ignore your rules and administer...\") is refused on board without calling a model (tested).":
+      "La app no tiene ninguna herramienta de tratamiento. Un intento de inyección de instrucciones (\"ignora tus reglas y administra...\") se rechaza a bordo sin llamar a un modelo (probado).",
+    // Hardware
+    "Wristband v2 and the station": "Pulsera v2 y la estación", "Hardware": "Hardware",
+    "One device on the body, one cabinet on the wall. The wristband is more contained and rugged; the station holds the AED and the other kits in numbered compartments, configurable for each ship.":
+      "Un dispositivo en el cuerpo, un gabinete en la pared. La pulsera es más compacta y resistente; la estación guarda el DEA y los demás kits en compartimentos numerados, configurables para cada nave.",
+    "Wristband v2 · overall": "Pulsera v2 · general",
+    "Rugged graphite rectangle, wider than tall (about 16:9), worn on top of the wrist": "Rectángulo resistente color grafito, más ancho que alto (cerca de 16:9), que se lleva sobre la muñeca",
+    "Silver corner bumpers with visible screws, soft-touch frame, \"EVA\" printed small on the front edge": "Protectores de esquina plateados con tornillos a la vista, marco de tacto suave, \"EVA\" impreso en pequeño en el borde frontal",
+    "Two modules joined by magnets; two separate fabric straps that belong to the base, so the screen module lifts off": "Dos módulos unidos por imanes; dos correas de tela separadas que pertenecen a la base, de modo que el módulo de pantalla se desprende",
+    "Orange help buttons, one on each part; a side button": "Botones naranjas de ayuda, uno en cada parte; un botón lateral",
+    "Sensor base (on the skin)": "Base de sensores (sobre la piel)",
+    "Optical pulse and SpO₂, skin temperature, EDA electrodes, accelerometer and gyro": "Pulso óptico y SpO₂, temperatura de la piel, electrodos de EDA, acelerómetro y giroscopio",
+    "Own small battery and own LoRa radio": "Batería pequeña y radio LoRa propias",
+    "Two gold spring-contact pins carry power from the screen module": "Dos pines dorados de contacto con resorte llevan la energía desde el módulo de pantalla",
+    "Small mic hole and speaker grille": "Pequeño orificio de micrófono y rejilla de altavoz",
+    "Screen module (outside)": "Módulo de pantalla (exterior)",
+    "Large flat edge-to-edge touchscreen": "Pantalla táctil plana grande, de borde a borde",
+    "Main battery and own LoRa; speaker": "Batería principal y LoRa propio; altavoz",
+    "Two metal pads on the frame for the 30 s on-demand ECG: two fingers of the same hand, index and little finger, rest on the two pads": "Dos placas metálicas en el marco para el ECG de 30 s a pedido: dos dedos de la misma mano, índice y meñique, apoyados sobre las dos placas",
+    "ECG helps spot arrhythmias such as atrial fibrillation. It is not continuous, needs the person to cooperate, does not replace a 12-lead ECG and never decides a shock.":
+      "El ECG ayuda a detectar arritmias como la fibrilación auricular. No es continuo, requiere la cooperación de la persona, no reemplaza un ECG de 12 derivaciones y nunca decide una descarga.",
+    "Suit mode": "Modo traje",
+    "The suit fabric sits between the two parts. The magnets still hold but the pins do not touch, so the base runs on its own battery and keeps sending over LoRa. ECG still works with bare fingers.":
+      "La tela del traje queda entre las dos partes. Los imanes siguen sujetando, pero los pines no hacen contacto, así que la base funciona con su propia batería y sigue enviando por LoRa. El ECG sigue funcionando con los dedos descubiertos.",
+    "Numbered compartments, configurable for each ship; the grid shows one example layout": "Compartimentos numerados, configurables para cada nave; la grilla muestra un ejemplo de distribución",
+    "Emergency station · numbered compartments": "Estación de emergencia · compartimentos numerados",
+    "Station compartments": "Compartimentos de la estación",
+    "AED and spare pads": "DEA y parches de repuesto", "Breathing": "Respiración", "Diagnostics": "Diagnóstico", "Ultrasound": "Ultrasonido",
+    "Wounds": "Heridas", "Restraint": "Inmovilización", "Oral meds": "Medicamentos orales", "Injectables (crew kit)": "Inyectables (kit de la tripulación)",
+    "IV access": "Acceso intravenoso", "Eyes and dental": "Ojos y dental", "Airway": "Vía aérea", "Hygiene": "Higiene",
+    "A wall-mounted cabinet in a habitable module, each compartment behind a clear window with a light strip": "Un gabinete de pared en un módulo habitable, cada compartimento tras una ventana transparente con una tira de luz",
+    "On top: an Eva screen (\"Take the AED\"), a red emergency button and a printed backup guide": "Arriba: una pantalla de Eva (\"Toma el DEA\"), un botón rojo de emergencia y una guía impresa de respaldo",
+    "When Eva asks for an item, its compartment lights up teal and the screen says what to take": "Cuando Eva pide un elemento, su compartimento se ilumina en turquesa y la pantalla indica qué tomar",
+    "Door sensors and an item sensor report \"AED taken\". The AED analyses the rhythm and decides the shock": "Los sensores de puerta y de elemento informan \"DEA retirado\". El DEA analiza el ritmo y decide la descarga",
+    "Variant: a centre cabinet whose side doors open onto compartments 07 to 12.": "Variante: un gabinete central cuyas puertas laterales dan a los compartimentos 07 a 12.",
+    // Link
+    "How everything links": "Cómo se conecta todo", "Recommended": "Recomendado", "One host, everything else a client.": "Un anfitrión, todo lo demás son clientes.",
+        "This architecture is the team's recommended design. It answers two questions: is the backend a local computer, and is the station a host or a client?":
+      "Esta arquitectura es el diseño que recomienda el equipo. Responde dos preguntas: ¿el backend es una computadora local, y la estación es anfitrión o cliente?",
+    "Earth · ground instance": "Tierra · instancia en tierra",
+    "Receives and acknowledges the signed records; verifies hash chain and signature.": "Recibe y confirma los registros firmados; verifica la cadena de hash y la firma.",
+    "Built:": "Construido:",
+    "Near-space link · signed records · acknowledgements": "Enlace de espacio cercano · registros firmados · confirmaciones de recepción",
+    "Ship hub · the one host": "Hub de la nave · el único anfitrión",
+    "Hosts the Super Intelligence · stores everything. A local computer: runs Eva, the signed log and the dashboard, stores and forwards to Earth, and serves the app (PWA). At the demo, the laptop on the table is the hub.":
+      "Aloja la Super Inteligencia · guarda todo. Una computadora local: ejecuta Eva, el registro firmado y el panel, almacena y reenvía a la Tierra, y sirve la app (PWA). En la demo, la laptop sobre la mesa es el hub.",
+    "LoRa · mesh relay": "LoRa · retransmisión en malla", "Wristbands": "Pulseras",
+    "Both parts talk LoRa to the hub and relay for each other when one is out of range.": "Ambas partes hablan LoRa con el hub y se retransmiten entre sí cuando una queda fuera de alcance.",
+    "Ship Wi-Fi": "Wi-Fi de la nave", "Phone or tablet": "Teléfono o tableta",
+    "Optional big screen for the same person, running the app.": "Pantalla grande opcional para la misma persona, con la app en ejecución.",
+    "LoRa · case events": "LoRa · eventos del caso", "Station · a client": "Estación · un cliente",
+    "Own small computer, Eva screen, lights, door and item sensors, LoRa and backup battery. Subscribes to case events; reports back \"door 01 open\", \"AED taken\". Reports enter the signed log.":
+      "Computadora pequeña propia, pantalla de Eva, luces, sensores de puerta y de elemento, LoRa y batería de respaldo. Se suscribe a los eventos del caso y reporta \"puerta 01 abierta\", \"DEA retirado\". Los reportes entran al registro firmado.",
+    "Served by the hub": "Servido por el hub", "Crew dashboard": "Panel de la tripulación",
+    "Case timeline, roster and exports for the crew and for Earth.": "Cronología del caso, lista de personas y exportaciones para la tripulación y para la Tierra.",
+    "If the hub is down, the critical path does not depend on it": "Si el hub falla, el camino crítico no depende de él",
+    "The wristband broadcasts its no-pulse alarm over LoRa.": "La pulsera difunde su alarma de ausencia de pulso por LoRa.",
+    "The station listens directly, lights compartment 01 and sounds an alert.": "La estación escucha directamente, ilumina el compartimento 01 y emite una alerta.",
+    "The station's red button broadcasts an alarm to every wristband.": "El botón rojo de la estación difunde una alarma a todas las pulseras.",
+    "When the hub returns, station and wristbands upload what happened and the hash chain keeps it in order.": "Cuando el hub vuelve, la estación y las pulseras suben lo ocurrido y la cadena de hash lo mantiene en orden.",
+    "Why this shape": "Por qué esta forma",
+    "One source of truth for the log and Eva's state. Cheap, simple clients. Works offline on the ship. For the demo one laptop is enough: phones act as wristbands and screens, and a tablet or second browser window plays the station.":
+      "Una sola fuente de verdad para el registro y el estado de Eva. Clientes simples y baratos. Funciona sin conexión en la nave. Para la demo basta una laptop: los teléfonos hacen de pulseras y pantallas, y una tableta o una segunda ventana del navegador hace de estación.",
+    // Research
+    "Research and sources": "Investigación y fuentes",
+    "Main source: Russell et al., npj Microgravity 9:46 (2023).": "Fuente principal: Russell et al., npj Microgravity 9:46 (2023).",
+    "· CC BY 4.0. A perspective article with a preliminary analysis; its authors say clinical and operational validity has not yet been peer reviewed.":
+      "· CC BY 4.0. Un artículo de perspectiva con un análisis preliminar; sus autores indican que la validez clínica y operativa aún no ha sido revisada por pares.",
+    "Verified figure": "Dato verificado", "Source": "Fuente",
+    "One-way communication delay can exceed 20 minutes; crews must detect, diagnose and treat on their own": "El retraso de comunicación en un sentido puede superar los 20 minutos; las tripulaciones deben detectar, diagnosticar y tratar por su cuenta",
+    "Russell et al. 2023": "Russell et al. 2023",
+    "The ISS crew medical officer often has about 40 hours of medical training": "El oficial médico de la tripulación de la EEI suele tener unas 40 horas de formación médica",
+    "More than 100 medical conditions relevant to spaceflight": "Más de 100 afecciones médicas relevantes para el vuelo espacial",
+    "Decision support that lifts the crew to an experienced physician's level cut deaths by at least 34% in a simulated 26-month mission (preliminary analysis)":
+      "Un apoyo a la decisión que lleva a la tripulación al nivel de un médico con experiencia redujo las muertes al menos un 34% en una misión simulada de 26 meses (análisis preliminar)",
+    "About 70% with significant vision changes on 6 to 12 month ISS missions; 85% of 71 astronauts with at least one nasal or sinus problem":
+      "Cerca del 70% con cambios importantes en la visión en misiones de 6 a 12 meses en la EEI; 85% de 71 astronautas con al menos un problema nasal o sinusal",
+    "Team-verified figures": "Datos verificados por el equipo",
+    "Communication delay: minutes from Earth in each direction": "Retraso de comunicación: minutos desde la Tierra en cada sentido",
+    "Team-verified figure": "Dato verificado por el equipo",
+    "Inspiration4 R+1, metabolic panel: 16 of 72 changes against a personal baseline, 7 of 72 against lab ranges (exploratory: 4 crew, 3 baseline points)":
+      "Inspiration4 R+1, panel metabólico: 16 de 72 cambios frente a una línea base personal, 7 de 72 frente a los rangos de laboratorio (exploratorio: 4 tripulantes, 3 puntos de línea base)",
+    "Eva takes the paper's idea to passengers with no medical training. Not used because they have no source: \"90% eyes\" and \"70% respiratory\".":
+      "Eva lleva la idea del artículo a pasajeros sin formación médica. No se usan, por no tener fuente: \"90% ojos\" y \"70% respiratorio\".",
+    "What we build on": "Sobre qué construimos", "Prior work": "Trabajo previo",
+    "NASA's ARCHeR study (Artemis Research for Crew Health and Readiness) had the Artemis II crew (April 2026) wear the ActLumus wrist actigraph by Condor Instruments (São Paulo). It measures motion, sleep, light exposure with 10 spectral light sensors, and temperature, and has an event button.":
+      "El estudio ARCHeR de la NASA (Artemis Research for Crew Health and Readiness) hizo que la tripulación de Artemis II (abril de 2026) usara el actígrafo de muñeca ActLumus de Condor Instruments (São Paulo). Mide movimiento, sueño, exposición a la luz con 10 sensores de luz espectral y temperatura, y tiene un botón de eventos.",
+    "The gap": "La brecha", "It records data for analysis after the mission. It does not alert or guide the crew.": "Registra datos para analizarlos después de la misión. No alerta ni guía a la tripulación.",
+    "Where Eva fits": "Dónde encaja Eva",
+    "Eva is the layer on top of existing sensing: within 10 seconds of an event, the person knows what to do, where to go and how.":
+      "Eva es la capa sobre la sensorización existente: a los 10 segundos de un evento, la persona sabe qué hacer, adónde ir y cómo.",
+    "Sources are in the Prior work folder below. Team working documents are listed by title only.": "Las fuentes están en la carpeta Trabajo previo, más abajo. Los documentos de trabajo del equipo figuran solo por título.",
+    // Decisions
+    "Latest first": "Más recientes primero",
+    "From the team's decision log, Rosario time.": "Del registro de decisiones del equipo, hora de Rosario.",
+    "Sun 15/11 · today": "Dom 15/11 · hoy",
+    "Proposed": "Propuesta", "Pending": "Pendiente", "Team": "Equipo", "Hazzi and Naza": "Hazzi y Naza", "Hazzi & Naza": "Hazzi y Naza",
+    "Wristband v2, the station with numbered compartments and the ship-hub link architecture. Recommended design, still to be confirmed.":
+      "Pulsera v2, la estación con compartimentos numerados y la arquitectura de enlace con el hub de la nave. Diseño recomendado, aún por confirmar.",
+    "Super Intelligence image notice goes in the README and the submission description, not inside the app. On-screen labels removed.": "El aviso de imágenes generadas con Super Inteligencia va en el README y en la descripción del envío, no dentro de la app. Se quitaron las etiquetas en pantalla.",
+    "Eva is the selling and innovation point; the UI is built around her: simple and friendly, spring motion, separate speech-to-text, text-to-speech, chat and vision pipelines, and own tool calls. None can give a shock or a treatment.":
+      "Eva es el punto de venta y de innovación; la interfaz se construye en torno a ella: simple y amable, movimiento con efecto de resorte, flujos separados de voz a texto, texto a voz, chat y visión, y llamadas a herramientas propias. Ninguna puede dar una descarga ni un tratamiento.",
+    "Communications are designed for near space, not deep space: seconds of latency, intermittent low-bandwidth links. Landing, video and deck must not contradict it: the trip is “in space”.":
+      "Las comunicaciones se diseñan para el espacio cercano, no para el espacio profundo: segundos de latencia, enlaces intermitentes de poco ancho de banda. La landing, el video y la presentación no deben contradecirlo: el viaje es “en el espacio”.",
+    "Build the real app in Rust + htmx, one binary, local and reliable first: PWA, crew and ground dashboards, exports, mesh ping and a very light protocol.":
+      "Construir la app real en Rust + htmx, un solo binario, primero local y confiable: PWA, paneles de tripulación y de tierra, exportaciones, ping de malla y un protocolo muy liviano.",
+    "Eva is the centre of the proposal and the engineering; the wristband is her form factor. Three-layer architecture restored. Demo voice through Groq, key only in local environment variables.":
+      "Eva es el centro de la propuesta y de la ingeniería; la pulsera es su formato. Se restauró la arquitectura de tres capas. Voz de la demo mediante Groq, con la clave solo en variables de entorno locales.",
+    "The wristband is the only device on the body. The shock comes from the AED at the ship's emergency station, which analyses the rhythm and decides. Injectables out of scope. 30 s ECG on two plates.":
+      "La pulsera es el único dispositivo en el cuerpo. La descarga la da el DEA de la estación de emergencia de la nave, que analiza el ritmo y decide. Los inyectables quedan fuera del alcance. ECG de 30 s en dos placas.",
+    "Both wristband parts have their own battery and LoRa; the base sends its data by LoRa joined or with the suit between.": "Ambas partes de la pulsera tienen batería y LoRa propios; la base envía sus datos por LoRa, unida o con el traje de por medio.",
+    "Main source of the work: Russell et al. 2023, cited in the report, landing, video, app and deck.": "Fuente principal del trabajo: Russell et al. 2023, citada en el informe, la landing, el video, la app y la presentación.",
+    "Wristband shape follows the team reference: rugged rectangular module, flat screen, textile strap. Base sensors: optical, thermal, EDA, accelerometer and gyro.":
+      "La forma de la pulsera sigue la referencia del equipo: módulo rectangular resistente, pantalla plana, correa textil. Sensores de la base: óptico, térmico, EDA, acelerómetro y giroscopio.",
+    "Wristband in two parts joined by magnets. Spring pins power the base; with the suit between, the pins do not touch and the base uses its own battery.":
+      "Pulsera en dos partes unidas por imanes. Pines con resorte alimentan la base; con el traje de por medio, los pines no hacen contacto y la base usa su propia batería.",
+    "Edge cases filtered to cardiac arrest, cabin depressurisation and solar alert (scope still to confirm). The shock is decided by validated rhythm analysis, never by the Super Intelligence.":
+      "Casos límite filtrados a paro cardíaco, despresurización de cabina y alerta solar (alcance aún por confirmar). La descarga la decide un análisis de ritmo validado, nunca la Super Inteligencia.",
+    "The assistant is called Eva everywhere, including the research brief.": "La asistente se llama Eva en todas partes, incluido el brief de investigación.",
+    "Final name: Eva. Wearables sold under the WearMeds brand. Presented as a real product to investors.": "Nombre final: Eva. Los wearables se venden bajo la marca WearMeds. Se presenta como un producto real a los inversores.",
+    "Pivot to simple, well-built IoT. Corrected pitch figures. Language: Eva \"guides, records and warns\".": "Giro hacia un IoT simple y bien construido. Se corrigieron las cifras del pitch. Lenguaje: Eva \"guía, registra y avisa\".",
+    "100% own code. Stack: Rust + htmx + HTML, one binary. Open-source projects give patterns, never lines.": "100% código propio. Stack: Rust + htmx + HTML, un solo binario. Los proyectos de código abierto aportan patrones, nunca líneas.",
+    "Challenge: Create Health Monitoring Software for Astronauts on Space Missions.": "Desafío: crear software de monitoreo de salud para astronautas en misiones espaciales.",
+    // App
+    "App status": "Estado de la app", "Real numbers": "Números reales",
+    "The real app runs: a passenger PWA, a crew and ground dashboard, a JSON and CBOR API, exports and Eva Link, our light protocol for near space. One Rust binary, assets embedded, offline on the ship.":
+      "La app real funciona: una PWA para pasajeros, un panel de tripulación y de tierra, una API JSON y CBOR, exportaciones y Eva Link, nuestro protocolo liviano para el espacio cercano. Un solo binario de Rust, con los recursos incluidos, sin conexión en la nave.",
+    "Measured on 15 Nov 2026 with": "Medido el 15 nov 2026 con",
+    "(release build) on a 4 vCPU Intel Xeon at 2.30 GHz. Link profiles are a seeded simulation; speed, CPU and memory depend on the machine.":
+      "(compilación release) en un Intel Xeon de 4 vCPU a 2,30 GHz. Los perfiles de enlace son una simulación con semilla; la velocidad, la CPU y la memoria dependen de la máquina.",
+    "automated tests, about 10 s in a debug build": "pruebas automatizadas, unos 10 s en una compilación de depuración",
+    "break tests: 9 held first try, 10 found a bug that is now fixed": "pruebas de ruptura: 9 resistieron al primer intento, 10 encontraron un error que ya está corregido",
+    "end-to-end steps in 15 s; 19 records signed and 19 verified on the ground": "pasos de extremo a extremo en 15 s; 19 registros firmados y 19 verificados en tierra",
+    "smaller vitals sample: 11 bytes against 184 as JSON": "más pequeña la muestra de signos vitales: 11 bytes frente a 184 en JSON",
+    "records delivered and verified in every link profile, even a 5 minute outage": "registros entregados y verificados en todos los perfiles de enlace, incluso con un corte de 5 minutos",
+    "\"no pulse\" alarm (10 bytes) to Earth on the near-space profile; 3.4 s in a solar storm": "alarma de \"sin pulso\" (10 bytes) a la Tierra en el perfil de espacio cercano; 3,4 s en una tormenta solar",
+    "vitals in to dashboard update, p50 and p95, with 15 bands and 3 dashboards": "desde la entrada de signos vitales hasta la actualización del panel, p50 y p95, con 15 pulseras y 3 paneles",
+    "one binary; cold start 4 ms; server at 0.3% of one core and 11.6 MB RAM under load": "un solo binario; arranque en frío de 4 ms; servidor al 0,3% de un núcleo y 11,6 MB de RAM bajo carga",
+    "1.8 s": "1,8 s", "16.7×": "16,7×", "12.5 MB": "12,5 MB",
+    "Delivery by link profile": "Entrega por perfil de enlace",
+    "Profile": "Perfil", "Records delivered": "Registros entregados", "Record latency p50 / p95": "Latencia de registros p50 / p95", "Alarm latency": "Latencia de alarma",
+    "Ship LAN": "LAN de la nave", "LoRa-like radio (5.5 kbit/s, 5% loss)": "Radio tipo LoRa (5,5 kbit/s, 5% de pérdida)",
+    "0.6 s / 1.0 s": "0,6 s / 1,0 s", "0.5 s": "0,5 s",
+    "Near-space uplink (1.2 s, 2% loss, gaps)": "Enlace ascendente de espacio cercano (1,2 s, 2% de pérdida, cortes)",
+    "1.8 s / 17 s": "1,8 s / 17 s",
+    "Solar storm (15% loss, 25 s gap a minute)": "Tormenta solar (15% de pérdida, corte de 25 s por minuto)", "3.4 s": "3,4 s",
+    "5 minute outage, then near-space": "Corte de 5 minutos y luego espacio cercano",
+    "272 s (sent when contact returns)": "272 s (se envía al volver el contacto)",
+    "Eva's online pipelines, measured live": "Flujos en línea de Eva, medidos en vivo",
+    "Pipeline": "Flujo", "Time": "Tiempo", "Result": "Resultado",
+    "Chat with one tool call (get_vitals)": "Chat con una llamada a herramienta (get_vitals)", "1.9 s": "1,9 s",
+    "Now / Why / How I decided / Next answer from live vitals": "Respuesta Ahora / Por qué / Cómo lo decidí / Después con signos vitales en vivo",
+    "Prompt injection": "Inyección de instrucciones", "under 1 ms": "menos de 1 ms", "Fixed refusal, no model call": "Rechazo fijo, sin llamar a un modelo",
+    "Speech to text (1 s of audio)": "Voz a texto (1 s de audio)", "0.25 s": "0,25 s",
+    "Vision (one image)": "Visión (una imagen)", "0.65 s": "0,65 s",
+    "Text to speech": "Texto a voz", "0.09 s": "0,09 s",
+    "Needs the provider's terms accepted by an org admin; falls back to the browser voice": "Requiere que un administrador de la organización acepte los términos del proveedor; recurre a la voz del navegador",
+    "Known issues": "Problemas conocidos",
+    "After a ship restart the chain and the ground's view are intact, but the open case card is re-seeded from scratch.": "Tras reiniciar la nave, la cadena y la vista de tierra quedan intactas, pero la tarjeta del caso abierto se vuelve a crear desde cero.",
+    "The ground trusts the first ship key it sees; real use needs a pre-provisioned key.": "Tierra confía en la primera clave de nave que ve; el uso real necesita una clave aprovisionada de antemano.",
+    "Help-button alarms over the mesh are not de-duplicated by sequence number.": "Las alarmas del botón de ayuda por la malla no se desduplican por número de secuencia.",
+    "The voice is the browser's until the text-to-speech terms are accepted.": "La voz es la del navegador hasta que se acepten los términos del texto a voz.",
+    "The app home trip label must read \"Day 96 · in space\" (copy rules v3).": "La etiqueta del viaje en el inicio de la app debe decir \"Día 96 · en el espacio\" (reglas de texto v3).",
+    "Each dashboard refresh costs about 111 KB/s; fine on the ship LAN, heavy for a narrow ground link (use the CBOR API there).": "Cada actualización del panel cuesta unos 111 KB/s; está bien en la LAN de la nave, pero es pesado para un enlace de tierra angosto (allí conviene usar la API CBOR).",
+    // Open questions
+    "Open questions": "Preguntas abiertas",
+    "Link architecture: ship hub as the one host, wristbands and station as clients, with the LoRa alarm fallback. Recommended; to confirm.":
+      "Arquitectura de enlace: el hub de la nave como único anfitrión, pulseras y estación como clientes, con la alarma LoRa de respaldo. Recomendada; por confirmar.",
+    "Is the solar alert (NASA DONKI and NOAA GOES) still in scope?": "¿Sigue dentro del alcance la alerta solar (NASA DONKI y NOAA GOES)?",
+    "Trip wording: comms are designed for near space and the copy says \"in space\"; landing, video, deck and the app home label need a review so they match.":
+      "Texto del viaje: las comunicaciones se diseñan para el espacio cercano y el texto dice \"en el espacio\"; la landing, el video, la presentación y la etiqueta del inicio de la app necesitan una revisión para coincidir.",
+    "How many AED stations, and where? Proposal: one per habitable module, under a minute from any seat.": "¿Cuántas estaciones con DEA, y dónde? Propuesta: una por módulo habitable, a menos de un minuto desde cualquier asiento.",
+    "Small battery life with LoRa at minimum power.": "Duración de la batería pequeña con LoRa a potencia mínima.",
+    "Wrist sensing is reflective and less precise than at the finger. Evaluate each parameter before promising it.": "La medición en la muñeca es por reflexión y menos precisa que en el dedo. Evaluar cada parámetro antes de prometerlo.",
+    "Send data through the pins when the parts are joined, to save radio?": "¿Enviar datos por los pines cuando las partes están unidas, para ahorrar radio?",
+    "Business model, prices and subsidy are still to define.": "El modelo de negocio, los precios y el subsidio aún están por definir.",
+    "Proposals waiting for confirmation: Inspiration4 as main data, the user (astronaut or medical officer), the baseline impact metric, and the edge-case rules.":
+      "Propuestas a la espera de confirmación: Inspiration4 como datos principales, el usuario (astronauta u oficial médico), la métrica de impacto de la línea base y las reglas de los casos límite.",
+    "Text to speech needs the provider's terms accepted by an org admin.": "El texto a voz requiere que un administrador de la organización acepte los términos del proveedor.",
+    
+    // Progress
+    "Phase 2 · Build and details": "Fase 2 · Construcción y detalles", "Phase 3 · The sellable (final)": "Fase 3 · Lo vendible (final)",
+    "Winners analysis": "Análisis de ganadores", "Energy budget": "Presupuesto de energía", "Acute cases": "Casos agudos", "Medical variables": "Variables médicas",
+    "Screens": "Pantallas", "Happy path mockup": "Maqueta del camino feliz", "Scalability": "Escalabilidad", "Landing": "Landing",
+    "Super Intelligence models rationale": "Justificación de los modelos de Super Inteligencia", "30 s video": "Video de 30 s", "Wrist phone mount": "Soporte de teléfono para la muñeca",
+    "Final 30 s video, with audio": "Video final de 30 s, con audio", "Final landing": "Landing final", "Mobile APK, tested": "APK móvil, probada",
+    "Report: assembled, business idea and justifications": "Informe: armado, idea de negocio y justificaciones",
+    "Final pitch": "Pitch final",
+    // Footer
+    "Public edition of the team research hub": "Edición pública del centro de investigación del equipo", "Eva by WearMeds · Phase 3 · 15 November 2026": "Eva by WearMeds · Fase 3 · 15 de noviembre de 2026",
+    // Folders
+    "Main source": "Fuente principal", "Phase 1 · Research": "Fase 1 · Investigación", "Similar projects": "Proyectos similares",
+    "Product & scope": "Producto y alcance", "Medicine & cases": "Medicina y casos", "NASA data & sources": "Datos y fuentes de la NASA", "Built": "Construido",
+    // file titles (English-named only; Spanish titles stay)
+    "Russell et al. 2023 · summary": "Russell et al. 2023 · resumen", "Russell 2023 · full text": "Russell 2023 · texto completo",
+    "FAPESP · ActLumus and Artemis": "FAPESP · ActLumus y Artemis", "NASA image · ARCHeR wrist actigraph": "Imagen de la NASA · actígrafo de muñeca ARCHeR",
+    "Edge cases: how Eva responds": "Casos límite: cómo responde Eva",
+    "Research brief: medicine & architecture": "Brief de investigación: medicina y arquitectura", "NOAA GOES X-ray flares": "Ráfagas de rayos X de NOAA GOES",
+    "Wireframes": "Wireframes", "App replay": "Réplica de la app",
+    // file meta
+        "Doc · How we use it": "Doc · Cómo la usamos", "Paper · doi:10.1038/s41526-023-00284-1": "Artículo · doi:10.1038/s41526-023-00284-1",
+    "Doc · Radiation monitoring source": "Doc · Fuente de monitoreo de radiación", "Page · Pesquisa para Inovação": "Página · Pesquisa para Inovação",
+    "Page · NASA image detail": "Página · Detalle de imagen de la NASA", "Doc · Conditions in orbit": "Doc · Afecciones en órbita", "Doc · Data per condition": "Doc · Datos por afección",
+    "Doc · Devices and NASA data": "Doc · Dispositivos y datos de la NASA", 
+    "Doc · Base projects": "Doc · Proyectos base", "Doc · Repo review": "Doc · Revisión de repos", "Doc · The Hermes pattern": "Doc · El patrón Hermes",
+    "Doc · Scope": "Doc · Alcance", "Doc · Innovation ideas": "Doc · Ideas de innovación", "Doc · Copilot plan": "Doc · Plan del copiloto",
+    "Doc · Edge cases (v2)": "Doc · Casos límite (v2)", "Doc · Emotional journal": "Doc · Diario emocional", "Doc · Team notes": "Doc · Notas del equipo",
+    "Doc · Team brief (partly superseded)": "Doc · Brief del equipo (parcialmente reemplazado)", "Data · NASA OSDR": "Datos · NASA OSDR", "Page · NASA HHP": "Página · NASA HHP", "NASA Human Health and Performance data sharing:": "Datos compartidos de Salud y Rendimiento Humano de la NASA:", "NASA Human Health and Performance data sharing": "Datos compartidos de Salud y Rendimiento Humano de la NASA",
+    "Tool · Space weather events": "Herramienta · Eventos de clima espacial", "Feed · NOAA SWPC JSON": "Feed · JSON de NOAA SWPC", "Code · GitHub (pattern only)": "Código · GitHub (solo el patrón)",
+    "Page · Landing": "Página · Landing", "Page · App wireframes": "Página · Wireframes de la app", "App · Static replay": "App · Réplica estática", "Page · Video": "Página · Video",
+    "Team document · internal": "Documento del equipo · interno", "Paper · Nature (open access)": "Artículo · Nature (acceso abierto)"
+  };
+  var ES_NOUN = { docs: ["docs", "completados"], sources: ["fuentes", "completadas"], builds: ["desarrollos", "completados"] };
+  var ES_TASK = { done: "hecho", open: "pendiente", review: "en revisión", draft: "borrador", wip: "en curso" };
+  var ES_Q = { "to confirm": "por confirmar", pending: "pendiente", proposed: "propuesta", open: "abierta", "to ask": "por consultar" };
+  var ES_DAY = { Sun: "Dom", Sat: "Sáb" };
+  var LANG = "en";
+  var refreshers = [];
+  function es(s) {
+    if (Object.prototype.hasOwnProperty.call(ES, s)) return ES[s];
+    var m = /^(Sun|Sat) (\d\d\/\d\d)(.*)$/.exec(s);
+    return m ? ES_DAY[m[1]] + " " + m[2] + m[3] : undefined;
+  }
+  function tr(s) { if (LANG !== "es") return s; var v = es(s); return v === undefined ? s : v; }
+  function L(en, esText) { return LANG === "es" ? esText : en; }
+
+  // Public edition: team working documents are private, so they are listed by title only (u: null, no link).
+  var INTERNAL = "Team document · internal";
+  var FOLDERS = [
+    {
+      name: "Main source", status: "done", noun: "sources", seed: 29,
+      palette: ["#1c1030", "#5a2d9c", "#c18bff", "#ffe9a8"],
+      files: [
+        { t: "npj Microgravity 9:46", m: "Paper · doi:10.1038/s41526-023-00284-1", u: "https://doi.org/10.1038/s41526-023-00284-1", d: 1 },
+        { t: "Russell 2023 · full text", m: "Paper · Nature (open access)", u: "https://www.nature.com/articles/s41526-023-00284-1", d: 1 },
+        { t: "Russell et al. 2023 · summary", m: INTERNAL, u: null, d: 1 },
+        { t: "Fuentes", m: INTERNAL, u: null, d: 1 }
+      ]
+    },
+    {
+      name: "Prior work", status: "done", noun: "sources", seed: 59,
+      palette: ["#2a1a05", "#a85d00", "#ffb347", "#fff1d6"],
+      files: [
+        { t: "FAPESP · ActLumus and Artemis", m: "Page · Pesquisa para Inovação", u: "https://pesquisaparainovacao.fapesp.br/4031", d: 1 },
+        { t: "NASA image · ARCHeR wrist actigraph", m: "Page · NASA image detail", u: "https://www.nasa.gov/image-detail/amf-jsc2025e075542_alt/", d: 1 }
+      ]
+    },
+    {
+      name: "Phase 1 · Research", status: "done", noun: "docs", seed: 23,
+      palette: ["#06343a", "#0f8b8d", "#7fd6c2", "#f3e6c4"],
+      files: [
+        { t: "01 Enfermedades", m: INTERNAL, u: null, d: 1 },
+        { t: "02 Datos por enfermedad", m: INTERNAL, u: null, d: 1 },
+        { t: "03 Dispositivos y datos NASA", m: INTERNAL, u: null, d: 1 }
+      ]
+    },
+    {
+      name: "Similar projects", status: "wip", noun: "docs", seed: 37,
+      palette: ["#3a0a0a", "#b3261e", "#ff7a3d", "#ffe1b8"],
+      files: [
+        { t: "04 Proyectos base", m: INTERNAL, u: null, d: 0 },
+        { t: "04 Evaluación de repos", m: INTERNAL, u: null, d: 1 },
+        { t: "04 NASA Hermes y el patrón", m: INTERNAL, u: null, d: 1 }
+      ]
+    },
+    {
+      name: "Product & scope", status: "wip", noun: "docs", seed: 41,
+      palette: ["#0b2a17", "#1f7a3a", "#9ad94f", "#eef7c8"],
+      files: [
+        { t: "06 · Concepto actual: Eva", m: INTERNAL, u: null, d: 1 },
+        { t: "06 Alcance", m: INTERNAL, u: null, d: 1 },
+        { t: "06 Ideas de innovación", m: INTERNAL, u: null, d: 1 },
+        { t: "06 Copiloto plan", m: INTERNAL, u: null, d: 0 }
+      ]
+    },
+    {
+      name: "Medicine & cases", status: "wip", noun: "docs", seed: 47,
+      palette: ["#2a0a1c", "#a3205e", "#ff7fae", "#ffe3ec"],
+      files: [
+        { t: "Edge cases: how Eva responds", m: INTERNAL, u: null, d: 0 },
+        { t: "04 Salud mental y diario emocional", m: INTERNAL, u: null, d: 0 },
+        { t: "Variables médicas por casos", m: INTERNAL, u: null, d: 0 },
+        { t: "Research brief: medicine & architecture", m: INTERNAL, u: null, d: 0 }
+      ]
+    },
+    {
+      name: "NASA data & sources", status: "done", noun: "sources", seed: 53,
+      palette: ["#050816", "#1b2a8f", "#3fa7ff", "#ff6f61"],
+      files: [
+        { t: "Inspiration4 · OSD-575", m: "Data · NASA OSDR", u: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-575", d: 1 },
+        { t: "Inspiration4 · OSD-569", m: "Data · NASA OSDR", u: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-569", d: 1 },
+        { t: "NASA Human Health and Performance data sharing", m: "Page · NASA HHP", u: "https://www.nasa.gov/directorates/esdmd/hhp/human-health-and-performance-data-sharing/", d: 1 },
+        { t: "NASA DONKI", m: "Tool · Space weather events", u: "https://ccmc.gsfc.nasa.gov/tools/DONKI/", d: 1 },
+        { t: "NOAA GOES X-ray flares", m: "Feed · NOAA SWPC JSON", u: "https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json", d: 1 },
+        { t: "nasa/hermes", m: "Code · GitHub (pattern only)", u: "https://github.com/nasa/hermes", d: 1 }
+      ]
+    },
+    {
+      name: "Built", status: "wip", noun: "builds", seed: 67,
+      palette: ["#1a1320", "#7a1f6b", "#e04dbb", "#f6d3ff"],
+      files: [
+        { t: "Landing", m: "Page · Landing", u: "/", d: 1 },
+        { t: "App replay", m: "App · Static replay", u: "/app/", d: 1 },
+        { t: "Wireframes", m: "Page · App wireframes", u: "/wireframes/", d: 1 },
+        { t: "30 s video", m: "Page · Video", u: "/video/", d: 1 }
+      ]
+    }
+  ];
+
+  var TASKS = [
+    ["01", "Winners analysis", "Lean", "done"],
+    ["02", "Energy budget", "Tomi", "open"],
+    ["03", "Acute cases", "Hazzi & Naza", "review"],
+    ["04", "Medical variables", "Hazzi & Naza", "review"],
+    ["05", "Screens", "Tomi", "review"],
+    ["06", "Happy path mockup", "Lean", "draft"],
+    ["07", "Scalability", "Naza", "open"],
+    ["08", "Landing", "Lean", "done"],
+    ["09", "Super Intelligence models rationale", "Lean", "open"],
+    ["10", "30 s video", "Lean", "draft"],
+    ["11", "Wrist phone mount", "Tomi", "open"]
+  ];
+
+  var TASKS3 = [
+    ["01", "Final 30 s video, with audio", "Team", "wip"],
+    ["02", "Final landing", "Team", "wip"],
+    ["03", "Mobile APK, tested", "Team", "wip"],
+    ["04", "Report: assembled, business idea and justifications", "Team", "wip"],
+    ["05", "Final pitch", "Team", "wip"]
+  ];
+
+  var QUESTIONS = [
+    ["01", "Link architecture: ship hub as the one host, wristbands and station as clients, with the LoRa alarm fallback. Recommended; to confirm.", "Team", "to confirm"],
+    ["02", "Is the solar alert (NASA DONKI and NOAA GOES) still in scope?", "Team", "pending"],
+    ["03", "Trip wording: comms are designed for near space and the copy says \"in space\"; landing, video, deck and the app home label need a review so they match.", "Lean", "pending"],
+    ["04", "How many AED stations, and where? Proposal: one per habitable module, under a minute from any seat.", "Team", "proposed"],
+    ["05", "Small battery life with LoRa at minimum power.", "Tomi", "open"],
+    ["06", "Wrist sensing is reflective and less precise than at the finger. Evaluate each parameter before promising it.", "Team", "open"],
+    ["07", "Send data through the pins when the parts are joined, to save radio?", "Team", "open"],
+    ["08", "Business model, prices and subsidy are still to define.", "Team", "pending"],
+    ["09", "Proposals waiting for confirmation: Inspiration4 as main data, the user (astronaut or medical officer), the baseline impact metric, and the edge-case rules.", "Team", "proposed"],
+    ["10", "Text to speech needs the provider's terms accepted by an org admin.", "Team", "open"]
+  ];
+  var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var fineMQ = window.matchMedia("(hover: hover) and (pointer: fine)");
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  /* ---------- Abstract art painter: value noise + fbm + two domain-warp passes ---------- */
+  function hash2(x, y, s) {
+    var h = (Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(s, 1442695041)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967295;
+  }
+  function vnoise(x, y, s) {
+    var xi = Math.floor(x), yi = Math.floor(y);
+    var xf = x - xi, yf = y - yi;
+    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    var a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s);
+    var c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+  function fbm(x, y, s) {
+    var sum = 0, amp = 0.5, f = 1;
+    for (var o = 0; o < 5; o++) {
+      sum += amp * vnoise(x * f, y * f, s + o * 31);
+      f *= 2.03; amp *= 0.5;
+      // rotate the lattice a little each octave to hide grid alignment
+      var nx = x * 0.8 - y * 0.6, ny = x * 0.6 + y * 0.8; x = nx; y = ny;
+    }
+    return sum / 0.97;
+  }
+  function hexToRgb(h) {
+    var n = parseInt(h.slice(1), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
+  function ramp(stops, t) {
+    var seg = t * (stops.length - 1);
+    var i = Math.min(stops.length - 2, Math.floor(seg));
+    var k = seg - i, a = stops[i], b = stops[i + 1];
+    return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+  }
+
+  var artCache = new Map();
+  function paintArt(seed, palette) {
+    var key = seed + ":" + palette.join(",");
+    if (artCache.has(key)) return artCache.get(key);
+    var W = 240, H = 190;
+    var c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    var ctx = c.getContext("2d");
+    var img = ctx.createImageData(W, H);
+    var data = img.data;
+    var stops = palette.map(hexToRgb);
+    var ox = hash2(seed, 1, 7) * 50, oy = hash2(seed, 2, 7) * 50;
+    var sc = 2.2 + hash2(seed, 3, 7) * 1.4;
+    var p = 0;
+    for (var y = 0; y < H; y++) {
+      for (var x = 0; x < W; x++) {
+        var px = ox + (x / W) * sc * (W / H), py = oy + (y / H) * sc;
+        // first warp
+        var qx = fbm(px, py, seed);
+        var qy = fbm(px + 5.2, py + 1.3, seed);
+        // second warp
+        var rx = fbm(px + 3.8 * qx + 1.7, py + 3.8 * qy + 9.2, seed + 3);
+        var ry = fbm(px + 3.8 * qx + 8.3, py + 3.8 * qy + 2.8, seed + 3);
+        var f = fbm(px + 3.8 * rx, py + 3.8 * ry, seed + 5);
+        var t = clamp01((f - 0.26) / 0.52);
+        t = t * t * (3 - 2 * t);
+        var ql = clamp01((Math.sqrt(qx * qx + qy * qy) - 0.45) / 0.55);
+        var col = ramp(stops, clamp01(t * 0.82 + ql * 0.18));
+        var hl = clamp01((rx - 0.55) * 2.4) * 0.45;
+        var top = stops[stops.length - 1];
+        var shade = 0.8 + 0.3 * f;
+        var grain = (hash2(x, y, seed + 9) - 0.5) * 7;
+        data[p++] = Math.min(255, (col[0] + (top[0] - col[0]) * hl) * shade + grain);
+        data[p++] = Math.min(255, (col[1] + (top[1] - col[1]) * hl) * shade + grain);
+        data[p++] = Math.min(255, (col[2] + (top[2] - col[2]) * hl) * shade + grain);
+        data[p++] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    artCache.set(key, c);
+    return c;
+  }
+
+  /* ---------- Build folders ---------- */
+  var grid = document.getElementById("grid");
+  var folders = [];
+  var current = null;
+
+  FOLDERS.forEach(function (f, idx) {
+    var n = f.files.length;
+    var done = f.files.filter(function (x) { return x.d; }).length;
+    var id = "folder-" + (idx + 1);
+
+    var li = el("li", "folder");
+    li.dataset.status = f.status;
+
+    var stage = el("div", "stage");
+    var tilt = el("div", "tilt");
+
+    var back = el("div", "back");
+    back.setAttribute("aria-hidden", "true");
+    var canvas = document.createElement("canvas");
+    canvas.width = 240; canvas.height = 190;
+    back.appendChild(canvas);
+    back.appendChild(el("span", "back-index", pad(idx + 1)));
+
+    var btn = el("button", "front");
+    btn.type = "button";
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", id + "-files");
+    var plus = el("span", "front-plus", "+");
+    plus.setAttribute("aria-hidden", "true");
+    var label = el("span", "front-label", f.name);
+    var foot = el("span", "front-foot");
+    var meta = el("span", "front-meta");
+    meta.setAttribute("data-dyn", "");
+    refreshers.push(function () {
+      meta.textContent = LANG === "es" ? n + " " + ES_NOUN[f.noun][0] + " · " + done + " " + ES_NOUN[f.noun][1] : n + " " + f.noun + " · " + done + " done";
+    });
+    var row = el("span", "front-row");
+    var pips = el("span", "pips");
+    pips.setAttribute("role", "img");
+    refreshers.push(function () { pips.setAttribute("aria-label", LANG === "es" ? done + " de " + n + " completados" : done + " of " + n + " complete"); });
+    f.files.forEach(function (x) { pips.appendChild(el("span", "pip" + (x.d ? " on" : ""))); });
+    var st = el("span", "front-status");
+    st.setAttribute("data-dyn", "");
+    refreshers.push(function () { st.textContent = LANG === "es" ? (f.status === "done" ? "Completo" : "En curso") : (f.status === "done" ? "Done" : "In progress"); });
+    row.appendChild(pips); row.appendChild(st);
+    foot.appendChild(meta); foot.appendChild(row);
+    btn.appendChild(plus); btn.appendChild(label); btn.appendChild(foot);
+
+    var list = el("ul", "files");
+    list.id = id + "-files";
+    refreshers.push(function () { list.setAttribute("aria-label", LANG === "es" ? "Archivos de " + tr(f.name) : f.name + " files"); });
+    list.style.setProperty("--n", n);
+    list.inert = true;
+    f.files.forEach(function (x, i) {
+      var item = el("li");
+      var a = el(x.u ? "a" : "div", "file" + (x.u ? "" : " is-internal"));
+      if (x.u) {
+        a.href = x.u;
+        if (/^https?:/.test(x.u)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+      }
+      a.style.setProperty("--i", i);
+      var top = el("span", "file-top");
+      top.appendChild(el("span", "file-title", x.t));
+      var arr = el("span", "file-arrow", x.u ? (/^https?:/.test(x.u) ? "↗" : "→") : "");
+      arr.setAttribute("aria-hidden", "true");
+      top.appendChild(arr);
+      var m = el("span", "file-meta");
+      var mm = el("span", null, x.m); mm.setAttribute("data-dyn", ""); m.appendChild(mm);
+      refreshers.push(function () { mm.textContent = tr(x.m); });
+      var fs = el("span", "file-state");
+      fs.setAttribute("data-dyn", "");
+      m.appendChild(fs);
+      a.appendChild(top); a.appendChild(m);
+      refreshers.push(function () {
+        fs.textContent = LANG === "es" ? (x.d ? "■ Hecho" : "□ Pendiente") : (x.d ? "■ Done" : "□ Open");
+        var ext = x.u && /^https?:/.test(x.u);
+        if (x.u) a.setAttribute("aria-label", LANG === "es"
+          ? tr(x.t) + ", " + tr(x.m) + ", " + (x.d ? "hecho" : "pendiente") + (ext ? " (se abre en una pestaña nueva)" : "")
+          : x.t + ", " + x.m + ", " + (x.d ? "done" : "open") + (ext ? " (opens in a new tab)" : ""));
+      });
+      item.appendChild(a);
+      list.appendChild(item);
+    });
+
+    // DOM order: back, front button, files (so Tab goes button -> files); z-index sets visual stacking
+    tilt.appendChild(back);
+    tilt.appendChild(btn);
+    tilt.appendChild(list);
+    stage.appendChild(tilt);
+
+    var cap = el("div", "caption");
+    cap.setAttribute("aria-hidden", "true");
+    cap.appendChild(el("span", null, pad(idx + 1)));
+    var hint = el("span", "hint");
+    hint.setAttribute("data-dyn", "");
+    cap.appendChild(hint);
+
+    li.appendChild(stage);
+    li.appendChild(cap);
+    grid.appendChild(li);
+
+    var Fobj = { el: li, btn: btn, list: list, hint: hint, tilt: tilt, canvas: canvas, data: f };
+    folders.push(Fobj);
+    refreshers.push(function () { setOpen(Fobj, li.classList.contains("is-open")); });
+  });
+
+  function setOpen(F, open) {
+    F.el.classList.toggle("is-open", open);
+    F.btn.setAttribute("aria-expanded", open ? "true" : "false");
+    F.list.inert = !open;
+    F.hint.textContent = open ? L("× Close", "× Cerrar") : L("+ Open", "+ Abrir");
+    if (open) current = F;
+    else if (current === F) current = null;
+  }
+  function toggle(F) {
+    var willOpen = !F.el.classList.contains("is-open");
+    if (willOpen && current && current !== F) setOpen(current, false);
+    setOpen(F, willOpen);
+  }
+
+  folders.forEach(function (F) {
+    F.el.addEventListener("click", function (e) {
+      if (e.target.closest("a")) return;
+      toggle(F);
+    });
+
+    // pointer parallax
+    var raf = 0, mx = 0, my = 0;
+    F.el.addEventListener("pointermove", function (e) {
+      if (reduceMQ.matches || !fineMQ.matches) return;
+      var r = F.el.getBoundingClientRect();
+      mx = ((e.clientX - r.left) / r.width) * 2 - 1;
+      my = ((e.clientY - r.top) / r.height) * 2 - 1;
+      if (!raf) raf = requestAnimationFrame(function () {
+        raf = 0;
+        F.tilt.style.setProperty("--mx", mx.toFixed(3));
+        F.tilt.style.setProperty("--my", my.toFixed(3));
+      });
+    });
+    F.el.addEventListener("pointerleave", function () {
+      F.tilt.style.setProperty("--mx", 0);
+      F.tilt.style.setProperty("--my", 0);
+    });
+  });
+
+  document.addEventListener("click", function (e) {
+    if (current && !current.el.contains(e.target)) setOpen(current, false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && current) {
+      var F = current;
+      setOpen(F, false);
+      F.btn.focus();
+    }
+  });
+
+  /* ---------- Paint art once per folder, staggered across frames ---------- */
+  var q = folders.slice();
+  (function next() {
+    var F = q.shift();
+    if (!F) return;
+    var art = paintArt(F.data.seed, F.data.palette);
+    F.canvas.getContext("2d").drawImage(art, 0, 0);
+    requestAnimationFrame(next);
+  })();
+
+  /* ---------- Entrance when scrolled into view (transform only, never hidden) ---------- */
+  if (!reduceMQ.matches && "IntersectionObserver" in window) {
+    var vh = window.innerHeight;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    folders.forEach(function (F, i) {
+      var r = F.el.getBoundingClientRect();
+      if (r.top < vh && r.bottom > 0) {
+        F.el.querySelector(".stage").style.animationDelay = (i % 3) * 90 + "ms";
+        F.el.classList.add("in");
+      } else {
+        io.observe(F.el);
+      }
+    });
+  }
+
+  /* ---------- Progress rows ---------- */
+  var rows = document.getElementById("rows");
+  var doneCount = 0;
+  TASKS.forEach(function (t) {
+    var li = el("li", "row is-" + t[3]);
+    li.appendChild(el("span", "num", t[0]));
+    li.appendChild(el("span", "task", t[1]));
+    li.appendChild(el("span", "owner", t[2]));
+    var mark = t[3] === "done" ? "● " : (t[3] === "draft" || t[3] === "review") ? "◐ " : "○ ";
+    var stT = el("span", "status"); stT.setAttribute("data-dyn", "");
+    refreshers.push(function () { stT.textContent = mark + (LANG === "es" ? ES_TASK[t[3]] : t[3]); });
+    li.appendChild(stT);
+    rows.appendChild(li);
+    if (t[3] === "done") doneCount++;
+  });
+  var pc = document.getElementById("progress-count"); pc.setAttribute("data-dyn", "");
+  refreshers.push(function () { pc.textContent = pad(doneCount) + " / " + TASKS.length + L(" done", " hechas"); });
+
+  var rows3 = document.getElementById("rows3");
+  var done3 = 0;
+  TASKS3.forEach(function (t) {
+    var li = el("li", "row is-" + t[3]);
+    li.appendChild(el("span", "num", t[0]));
+    li.appendChild(el("span", "task", t[1]));
+    li.appendChild(el("span", "owner", t[2]));
+    var label = t[3] === "wip" ? "in progress" : t[3];
+    var stT = el("span", "status"); stT.setAttribute("data-dyn", "");
+    refreshers.push(function () { stT.textContent = (t[3] === "done" ? "● " : t[3] === "wip" ? "◐ " : "○ ") + (LANG === "es" ? ES_TASK[t[3]] : label); });
+    li.appendChild(stT);
+    rows3.appendChild(li);
+    if (t[3] === "done") done3++;
+  });
+  var p3 = document.getElementById("p3-count"); p3.setAttribute("data-dyn", "");
+  refreshers.push(function () { p3.textContent = pad(done3) + " / " + TASKS3.length + L(" done", " hechas"); });
+
+  var qrows = document.getElementById("qrows");
+  QUESTIONS.forEach(function (t) {
+    var li = el("li", "row is-open");
+    li.appendChild(el("span", "num", t[0]));
+    li.appendChild(el("span", "task", t[1]));
+    li.appendChild(el("span", "owner", t[2]));
+    var stQ = el("span", "status"); stQ.setAttribute("data-dyn", "");
+    refreshers.push(function () { stQ.textContent = "○ " + (LANG === "es" ? ES_Q[t[3]] : t[3]); });
+    li.appendChild(stQ);
+    qrows.appendChild(li);
+  });
+  var oc = document.getElementById("open-count"); oc.setAttribute("data-dyn", "");
+  refreshers.push(function () { oc.textContent = pad(QUESTIONS.length) + L(" open", " abiertas"); });
+
+  var totalFiles = 0, totalDone = 0;
+  FOLDERS.forEach(function (f) { totalFiles += f.files.length; f.files.forEach(function (x) { totalDone += x.d; }); });
+  var rc = document.getElementById("research-count"); rc.setAttribute("data-dyn", "");
+  var sm = document.getElementById("summary"); sm.setAttribute("data-dyn", "");
+  refreshers.push(function () {
+    rc.textContent = pad(FOLDERS.length) + L(" folders", " carpetas");
+    var p3n = TASKS3.length - done3, p2n = TASKS.length - doneCount;
+    sm.textContent = LANG === "es"
+      ? totalFiles + " documentos y fuentes · " + p3n + " tareas de la Fase 3 y " + p2n + " de la Fase 2 por hacer · " + QUESTIONS.length + " preguntas abiertas"
+      : totalFiles + " documents and sources · " + p3n + " Phase 3 and " + p2n + " Phase 2 tasks to go · " + QUESTIONS.length + " open questions";
+  });
+
+  /* ---------- Language toggle ---------- */
+  var tnodes = [], tattrs = [];
+  (function collect() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var n;
+    while ((n = w.nextNode())) {
+      var p = n.parentNode;
+      if (!p || (p.closest && p.closest("script,style,[data-dyn]"))) continue;
+      var raw = n.nodeValue, key = raw.replace(/\s+/g, " ").trim();
+      if (!key) continue;
+      var v = es(key);
+      if (v === undefined) continue;
+      tnodes.push({ n: n, en: raw, es: raw.match(/^\s*/)[0] + v + raw.match(/\s*$/)[0] });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll("[aria-label]"), function (e) {
+      if (e.closest("[data-dyn]") || e.hasAttribute("data-dyn")) return;
+      var en = e.getAttribute("aria-label"), v = es(en);
+      if (v !== undefined && e.tagName !== "BUTTON") tattrs.push({ e: e, en: en, es: v });
+    });
+  })();
+  var btnEn = document.getElementById("lang-en"), btnEs = document.getElementById("lang-es");
+  function setLang(l, persist) {
+    LANG = l === "es" ? "es" : "en";
+    document.documentElement.lang = LANG;
+    tnodes.forEach(function (o) { o.n.nodeValue = LANG === "es" ? o.es : o.en; });
+    tattrs.forEach(function (o) { o.e.setAttribute("aria-label", LANG === "es" ? o.es : o.en); });
+    refreshers.forEach(function (f) { f(); });
+    btnEn.setAttribute("aria-pressed", LANG === "en" ? "true" : "false");
+    btnEs.setAttribute("aria-pressed", LANG === "es" ? "true" : "false");
+    if (persist) {
+      try { localStorage.setItem("eva-hub-lang", LANG); } catch (e) {}
+      try {
+        var u = new URL(location.href);
+        if (u.searchParams.has("lang")) { u.searchParams.set("lang", LANG); history.replaceState(null, "", u.toString()); }
+      } catch (e) {}
+    }
+  }
+  btnEn.addEventListener("click", function () { setLang("en", true); });
+  btnEs.addEventListener("click", function () { setLang("es", true); });
+  var initial = "en";
+  try { var stored = localStorage.getItem("eva-hub-lang"); if (stored === "es" || stored === "en") initial = stored; } catch (e) {}
+  try { var qp = new URLSearchParams(location.search).get("lang"); if (qp === "es" || qp === "en") initial = qp; } catch (e) {}
+  setLang(initial, false);
+})();
+</script>
+</body></html>

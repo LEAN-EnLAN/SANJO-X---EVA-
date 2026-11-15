@@ -1,0 +1,1251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eva Final Pitch</title>
+<meta name="description" content="Eva by WearMeds: a six-slide pitch for a space-health Super Intelligence on a rugged wristband and a ship emergency station, built to scale to every traveller.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Tokens follow the landing (eva-wearmeds.vercel.app): black space, off-white ink, hairlines, teal = Eva, orange = accents, red = alarms only.
+   The deck is always dark, in both colour schemes. */
+:root{
+  --bg:#000;--ink:#f4f3f0;--mut:#9b9996;--rule:#2a2a2a;--teal:#1FE5C4;--orange:#F28A1A;--red:#ff4433;
+  --font:"Inter","PP Neue Montreal",Arial,sans-serif;
+  --ease:cubic-bezier(.645,.045,.355,1);--out:cubic-bezier(.16,1,.3,1);--slow:cubic-bezier(.33,0,.15,1);
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--ink:#f4f3f0;--mut:#9b9996;--rule:#2a2a2a}}
+:root[data-theme="dark"]{--bg:#000;--ink:#f4f3f0;--mut:#9b9996;--rule:#2a2a2a}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);overflow:hidden}
+body{font:300 20px/1.2 var(--font);-webkit-font-smoothing:antialiased;touch-action:pan-y}
+h1,h2,h3,p{margin:0;font-weight:300}
+img{display:block;user-select:none;-webkit-user-drag:none}
+a{color:inherit}
+button{font:inherit;color:inherit}
+
+/* 16:9 stage, designed at 1920 × 1080 and scaled to fit (letterboxed on other ratios) */
+#view{position:fixed;inset:0;background:#000;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden;background:#000}
+.slide{position:absolute;inset:0;overflow:hidden;opacity:0;visibility:hidden;transition:opacity .9s var(--ease),visibility 0s .9s}
+.slide.on{opacity:1;visibility:visible;transition:opacity .9s var(--ease),visibility 0s}
+.cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.noanim,.noanim *{transition:none!important;animation:none!important}
+
+/* chrome */
+.chrome{position:absolute;inset:0;pointer-events:none;z-index:50}
+.brand{position:absolute;left:64px;top:44px;font-size:24px;font-weight:400;letter-spacing:-.01em}
+.brand span{color:var(--mut)}
+.sec{position:absolute;right:190px;top:46px;font-size:20px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase;transition:opacity .5s}
+.sec b{color:var(--ink);font-weight:400;margin-right:14px}
+.lang{position:absolute;right:64px;top:38px;display:flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden;pointer-events:auto;background:rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+.lang button{background:none;border:0;padding:7px 14px;font-size:16px;letter-spacing:.06em;color:var(--mut);cursor:pointer}
+.lang button[aria-pressed="true"]{color:#000;background:var(--ink)}
+.pager{position:absolute;left:64px;bottom:40px;display:flex;gap:10px;align-items:center;font-size:18px;color:var(--mut);font-variant-numeric:tabular-nums}
+.pager i{display:block;width:34px;height:2px;background:var(--rule);transition:background .5s}
+.pager i.on{background:var(--ink)}
+.pager span{margin-right:10px}
+.foot{position:absolute;right:440px;bottom:38px;max-width:1000px;text-align:right;font-size:16px;line-height:1.35;color:var(--mut);pointer-events:auto;opacity:0;transition:opacity .6s}
+.foot.on{opacity:1}
+.foot a{text-decoration:none;border-bottom:1px solid #444}
+.foot a:hover{color:var(--ink);border-color:var(--ink)}
+.hint{position:absolute;left:50%;top:48px;transform:translateX(-50%);font-size:16px;color:var(--mut);letter-spacing:.04em;opacity:0;transition:opacity 1s}
+.hint.on{opacity:.8}
+#tbar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--teal);transform-origin:0 50%;transform:scaleX(0);opacity:0;z-index:60}
+#tclock{position:absolute;right:64px;bottom:84px;font:400 18px var(--font);color:var(--mut);font-variant-numeric:tabular-nums;opacity:0;z-index:60}
+body.timer #tbar,body.timer #tclock{opacity:1}
+/* motion controls: pause everything, or reduce motion (stills, no auto-advance) */
+.ctl{position:absolute;z-index:55;right:64px;bottom:32px;display:flex;align-items:stretch;border:1px solid var(--rule);border-radius:999px;overflow:hidden;pointer-events:auto;background:rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+.ctl button{display:flex;align-items:center;gap:9px;background:none;border:0;padding:8px 15px;font-size:15px;letter-spacing:.04em;color:var(--mut);cursor:pointer;white-space:nowrap;transition:color .3s}
+.ctl button+button{border-left:1px solid var(--rule)}
+.ctl button:hover{color:var(--ink)}
+.ctl svg{width:11px;height:11px;fill:currentColor;flex:none}
+.ctl .i-play{display:none}
+.ctl kbd{font:inherit;font-size:12px;color:#5d5c5a;border:1px solid #333;border-radius:4px;padding:0 5px;line-height:17px}
+.ctl .sw{position:relative;width:24px;height:14px;border:1px solid #4a4a4a;border-radius:999px;flex:none;transition:border-color .3s}
+.ctl .sw::after{content:"";position:absolute;left:2px;top:2px;width:8px;height:8px;border-radius:50%;background:#6a6a6a;transition:transform .3s var(--out),background .3s}
+html.paused .ctl [data-act="pause"]{color:var(--teal)}
+html.paused .ctl .i-pause{display:none}html.paused .ctl .i-play{display:block}
+.ctl [data-act="motion"][aria-pressed="true"]{color:var(--ink)}
+.ctl [data-act="motion"][aria-pressed="true"] .sw{border-color:var(--teal)}
+.ctl [data-act="motion"][aria-pressed="true"] .sw::after{transform:translateX(10px);background:var(--teal)}
+
+/* looping clips (muted, GIF-like): hairline frame, poster still underneath, video fades in once playing */
+.clip{position:absolute;overflow:hidden;border-radius:14px;border:1px solid var(--rule);background:#000}
+.clip>img,.clip>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.clip>video{opacity:0;transition:opacity .5s var(--ease)}
+.clip>video.ready{opacity:1}
+html.rm .clip>video{display:none}
+
+/* ============ SLIDE 1 · THE PROBLEM ============ */
+.s1 .space{position:absolute;inset:0;transition:opacity 1.6s var(--ease)}
+.s1 .stars{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;transform:scale(1.5);transition:transform 3.2s var(--slow)}
+.s1.k-zoom .stars{transform:scale(1.04)}
+@keyframes drift{to{transform:translate(-30px,-12px) scale(1.03)}}
+.s1 .shipw{position:absolute;left:0;top:0;width:560px;height:373px;transform:translate(680px,354px) scale(3.2);transition:transform 2.8s var(--slow)}
+.s1.k-zoom .shipw{transform:translate(680px,354px) scale(1)}
+.s1 .shipw img{position:absolute;inset:0;width:100%;height:100%}
+.s1 .shipw .glowr{display:none}
+
+.s1 .beacon{position:absolute;left:58%;top:46%;width:0;height:0}
+.s1 .beacon i{position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;border:3px solid var(--red);opacity:0}
+.s1.k-alert .beacon i{animation:ping 2.2s var(--out) infinite}
+.s1.k-alert .beacon i:nth-child(2){animation-delay:.7s}.s1.k-alert .beacon i:nth-child(3){animation-delay:1.4s}
+@keyframes ping{0%{transform:scale(.3);opacity:.95}100%{transform:scale(3.2);opacity:0}}
+.s1 .earth{position:absolute;left:190px;top:460px;width:280px;height:280px;opacity:0;transform:scale(.6);transition:opacity 2s var(--ease),transform 2.6s var(--slow)}
+.s1 .earth img{position:absolute;inset:0;width:100%;height:100%}
+.s1 .earth .atm{inset:-9%;width:118%;height:118%;opacity:.9}
+.s1 .link{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.s1 .link line{stroke-linecap:round}
+.s1 .link .track{stroke:#3a3a3a;stroke-width:2;stroke-dasharray:3 12;opacity:0;transition:opacity 1.2s}
+.s1 .link .out{stroke:var(--orange);stroke-width:3;filter:drop-shadow(0 0 8px rgba(242,138,26,.8))}
+.s1 .link .back{stroke:var(--ink);stroke-width:3;filter:drop-shadow(0 0 8px rgba(244,243,240,.7))}
+.s1 .link .pk{fill:#fff;filter:drop-shadow(0 0 10px #fff);opacity:0}
+.s1 .tag{position:absolute;font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);opacity:0;transition:opacity 1s var(--ease);white-space:nowrap}
+.s1 .tag-earth{left:330px;top:770px;transform:translateX(-50%);text-align:center}
+.s1 .tag-ship{left:1580px;top:770px;transform:translateX(-50%);text-align:center}
+.s1 .tag b{display:block;font-weight:400;color:var(--ink);font-size:24px;letter-spacing:.04em;margin-bottom:6px}
+.s1 .tag-ship b{color:var(--red)}
+.s1 .dist{position:absolute;left:960px;top:625px;transform:translateX(-50%);font-size:22px;color:var(--mut);letter-spacing:.04em;opacity:0;transition:opacity 1s;white-space:nowrap}
+.s1 .rcv{position:absolute;font-size:20px;color:var(--ink);letter-spacing:.04em;opacity:0;transition:opacity .6s;white-space:nowrap;transform:translateX(-50%)}
+.s1 .rcv-e{left:330px;top:420px}.s1 .rcv-s{left:1580px;top:420px}
+.s1 .cabin{position:absolute;inset:0;transform-origin:960px 540px;transition:transform 2.8s var(--slow),opacity 1.4s var(--ease) 1.2s,border-radius 2.8s var(--slow);overflow:hidden;border-radius:0}
+.s1 .cabin .clip{inset:0;border:0;border-radius:0}
+.s1 .cabin .c-alone{transform:scale(1.07);transition:transform 7s var(--slow)}
+.s1.k-in .cabin .c-alone{transform:scale(1)}
+.s1 .cabin .c-alert{opacity:0;transform:scale(1.04);transition:opacity .7s var(--ease),transform 4s var(--slow)}
+.s1.k-alert .cabin .c-alert{opacity:1;transform:none}
+.s1 .red{position:absolute;inset:0;opacity:0;background:radial-gradient(120% 90% at 50% 50%,transparent 35%,rgba(255,40,20,.55) 100%);mix-blend-mode:screen}
+.s1.k-alert .red{animation:redpulse 1.6s ease-in-out infinite}
+@keyframes redpulse{0%,100%{opacity:.25}50%{opacity:1}}
+.s1 .alert{position:absolute;left:50%;top:150px;transform:translate(-50%,-10px);display:flex;flex-direction:column;align-items:center;gap:14px;opacity:0;transition:opacity .8s var(--ease),transform .8s var(--out)}
+.s1 .alert .pill{display:flex;align-items:center;gap:18px;padding:16px 30px;border:1px solid rgba(255,68,51,.75);background:rgba(0,0,0,.55);backdrop-filter:blur(6px);border-radius:999px;font-size:34px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+.s1 .alert .pill i{width:18px;height:18px;border-radius:50%;background:var(--red);box-shadow:0 0 18px var(--red);animation:blink 1s steps(2,start) infinite}
+@keyframes blink{to{visibility:hidden}}
+.s1 .alert small{font-size:24px;color:#e8d6d2;letter-spacing:.04em}
+.s1.k-alert .alert{opacity:1;transform:translate(-50%,0)}
+.s1.k-zoom .alert{opacity:0;transition-delay:0s}
+.s1.k-zoom .cabin{transform:scale(.035);opacity:0;border-radius:50%}
+.s1.k-wide .shipw{transform:translate(1300px,414px) scale(.52)}
+.s1.k-wide .earth{opacity:1;transform:scale(1)}
+.s1.k-wide .tag,.s1.k-wide .link .track,.s1.k-wide .dist{opacity:1}
+.s1 .counter{position:absolute;left:50%;top:170px;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity 1s var(--ease)}
+.s1 .counter .lab{font-size:24px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);height:30px}
+.s1 .counter .num{font-size:168px;line-height:1;font-weight:300;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:10px}
+.s1 .counter .num u{text-decoration:none;font-size:.32em;color:var(--mut);margin-left:12px;letter-spacing:0}
+.s1 .counter .legs{display:flex;gap:44px;justify-content:center;margin-top:14px;font-size:22px;color:var(--mut);letter-spacing:.04em}
+.s1 .counter .legs span{opacity:0;transition:opacity .6s}
+.s1 .counter .legs span.on{opacity:1}
+.s1 .counter .legs b{font-weight:400;color:var(--ink)}
+.s1.k-count .counter{opacity:1}
+.s1 .moon{position:absolute;left:330px;top:880px;transform:translateX(-50%);font-size:18px;color:var(--mut);opacity:0;transition:opacity 1s;white-space:nowrap}
+.s1.k-moon .moon{opacity:.9}
+.s1 .end{position:absolute;left:0;right:0;top:800px;text-align:center;opacity:0;transform:translateY(24px);transition:opacity 1.4s var(--ease),transform 1.6s var(--out)}
+.s1 .end h2{font-size:96px;letter-spacing:-.02em;line-height:1}
+.s1 .end h2 em{font-style:normal;color:var(--red)}
+.s1 .end p{margin-top:24px;font-size:30px;color:var(--ink);opacity:.86}
+.s1 .end sup{font-size:.55em;color:var(--mut)}
+.s1.k-end .end{opacity:1;transform:none}
+.s1.k-end .space{opacity:.5}
+.s1.k-end .tag,.s1.k-end .moon,.s1.k-end .dist,.s1.k-end .rcv{opacity:0!important}
+
+/* ============ SLIDE 2 · THE SOLUTION ============ */
+.s2 .stars{opacity:.7}
+.s2 .limb{position:absolute;left:-520px;top:820px;width:1700px;height:1700px;opacity:0;transform:translateY(120px);transition:opacity 2.4s var(--ease),transform 4s var(--slow)}
+.s2 .limb img{width:100%;height:100%}
+.s2.k-in .limb{opacity:.75;transform:none}
+.s2 .eva{position:absolute;left:150px;top:330px;width:480px;height:480px;opacity:0;transform:translateY(60px) scale(.6) rotate(-8deg);transition:opacity 1s var(--ease),transform 1.6s cubic-bezier(.34,1.56,.64,1)}
+.s2 .eva .glow{display:none}
+@keyframes breathe{50%{transform:scale(1.08);opacity:.8}}
+.s2 .eva .bob{position:absolute;inset:0;animation:bob 5.5s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-16px) rotate(1.5deg)}}
+.s2 .eva img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .35s;filter:drop-shadow(0 24px 28px rgba(0,0,0,.55))}
+.s2 .eva img.on{opacity:1}
+.s2.k-eva .eva{opacity:1;transform:none}
+.s2 .name{position:absolute;left:390px;top:840px;transform:translate(-50%,16px);display:flex;align-items:center;gap:16px;padding:12px 28px 12px 22px;border:1px solid var(--rule);border-radius:999px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);opacity:0;transition:opacity .8s var(--ease),transform .9s var(--out);white-space:nowrap}
+.s2 .name i{width:12px;height:12px;border-radius:50%;background:var(--teal)}
+.s2 .name b{font-size:44px;font-weight:400;letter-spacing:-.01em}
+.s2 .name span{font-size:20px;color:var(--mut);letter-spacing:.04em;padding-left:16px;border-left:1px solid var(--rule)}
+.s2.k-name .name{opacity:1;transform:translate(-50%,0)}
+.s2 .bubble{position:absolute;left:590px;top:140px;width:650px;min-height:200px;padding:34px 40px 40px;border-radius:28px;background:rgba(8,8,8,.78);backdrop-filter:blur(10px);border:1px solid #3a3a3a;color:var(--ink);opacity:0;transform-origin:8% 100%;transform:scale(.9) translateY(20px);transition:opacity .6s var(--ease),transform .9s var(--out)}
+.s2 .bubble::after{content:"";position:absolute;left:54px;bottom:-15px;width:28px;height:28px;background:#080808;border-right:1px solid #3a3a3a;border-bottom:1px solid #3a3a3a;transform:rotate(45deg) skew(8deg,8deg)}
+.s2 .bubble p{font-size:46px;line-height:1.14;letter-spacing:-.015em;font-weight:300;min-height:3.42em}
+.s2 .bubble p em{font-style:normal;color:var(--teal)}
+.s2 .caret{display:inline-block;width:3px;height:.95em;background:var(--ink);vertical-align:-.12em;margin-left:3px;animation:blink 1s steps(2,start) infinite}
+.s2 .dots{position:absolute;left:40px;bottom:16px;display:flex;gap:8px}
+.s2 .dots i{width:7px;height:7px;border-radius:50%;background:#333;transition:background .3s}
+.s2 .dots i.on{background:var(--teal)}
+.s2.k-bubble .bubble{opacity:1;transform:none}
+.s2 .band{position:absolute;left:1290px;top:330px;width:600px;opacity:0;transform:translate(60px,40px) rotate(6deg) scale(.86);transform-origin:50% 50%;transition:opacity 1.2s var(--ease),transform 1.8s var(--out),left 1.6s var(--slow),top 1.6s var(--slow),width 1.6s var(--slow)}
+.s2 .band img{width:100%;height:auto;filter:drop-shadow(0 40px 50px rgba(0,0,0,.7))}
+.s2 .band .halo{display:none}
+.s2.k-band .band{opacity:1;transform:none}
+.s2 .station{position:absolute;left:1272px;top:300px;width:584px;height:438px;border-radius:14px;overflow:hidden;border:1px solid var(--rule);opacity:0;transform:translateX(80px) scale(.96);transition:opacity 1.4s var(--ease),transform 1.8s var(--out);box-shadow:0 40px 90px rgba(0,0,0,.7)}
+.s2 .station img{width:100%;height:100%;object-fit:cover;filter:brightness(.82) saturate(.9);transition:filter 1.2s}
+.s2 .station .hl{position:absolute;left:21.4%;top:16.9%;width:19.6%;height:21.2%;border:2px solid var(--teal);border-radius:8px;opacity:0;transition:opacity .8s}
+.s2 .station .hl span{position:absolute;left:-2px;top:-44px;background:rgba(0,0,0,.8);border:1px solid var(--teal);color:var(--teal);font-size:20px;font-weight:400;letter-spacing:.06em;padding:5px 12px;border-radius:6px;white-space:nowrap}
+.s2 .scap{position:absolute;left:1272px;width:584px;top:758px;text-align:right;font-size:20px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity 1s var(--ease) .6s}
+.s2.k-station .scap{opacity:1}
+.s2.k-station .station{opacity:1;transform:none}
+.s2.k-hl .station .hl{opacity:1;animation:hl 1.6s ease-in-out infinite}
+.s2.k-hl .station img{filter:brightness(.6) saturate(.8)}
+@keyframes hl{50%{border-color:rgba(31,229,196,.35)}}
+.s2.k-station .band{left:950px;top:600px;width:410px}
+.s2 .jclip{left:1286px;top:400px;width:584px;height:328px;opacity:0;transform:translateY(24px);transition:opacity 1s var(--ease),transform 1.3s var(--out)}
+.s2.k-journal .jclip{opacity:1;transform:none}
+.s2.k-journal:not(.k-station) .band{opacity:0;transform:translate(-20px,-10px) scale(.94);transition:opacity .6s var(--ease),transform 1s var(--out)}
+.s2.k-station .jclip{opacity:0;transform:translateY(-16px)}
+.s2 .jcap{position:absolute;left:1286px;width:584px;top:746px;text-align:right;font-size:20px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .8s var(--ease)}
+.s2.k-journal:not(.k-station) .jcap{opacity:1;transition-delay:.6s}
+.s2 .station .cclip{inset:0;border:0;border-radius:0;opacity:0;transition:opacity 1.1s var(--ease)}
+.s2.k-cpr .station .cclip{opacity:1}
+.s2.k-cpr .station .hl{opacity:0!important;animation:none}
+.s2 .scap span{transition:opacity .6s var(--ease)}
+.s2 .scap .sc2{position:absolute;right:0;top:0;opacity:0;white-space:nowrap}
+.s2.k-cpr .scap .sc1{opacity:0}.s2.k-cpr .scap .sc2{opacity:1}
+
+/* ============ SLIDE 3 · HOW IT WORKS ============ */
+.s3 .bgplate{position:absolute;inset:0;background:#000}
+.s3 .stars{opacity:.35}
+.s3 .copy{position:absolute;left:120px;top:250px;width:640px;height:560px}
+.s3 .bc{position:absolute;inset:0;opacity:0;transform:translateY(30px);transition:opacity .7s var(--ease),transform 1s var(--out);pointer-events:none}
+.s3 .bc.on{opacity:1;transform:none;transition-delay:.25s}
+.s3 .bc .n{font-size:26px;color:var(--teal);letter-spacing:.12em;font-weight:400}
+.s3 .bc h2{font-size:76px;line-height:1.02;letter-spacing:-.025em;margin-top:22px}
+.s3 .bc p{font-size:32px;line-height:1.3;color:var(--mut);margin-top:30px;max-width:600px}
+.s3 .bc p b{color:var(--ink);font-weight:400}
+.s3 .bc .note{display:inline-block;margin-top:34px;font-size:22px;color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:10px 20px;letter-spacing:.02em}
+.s3 .bc:nth-child(4) p{max-width:540px}
+.s3 .bc .bclip{left:0;top:392px;width:480px;height:270px;opacity:0;transform:translateY(16px);transition:opacity .8s var(--ease) .5s,transform 1.1s var(--out) .5s}
+.s3 .bc.on .bclip{opacity:1;transform:none}
+.s3 .bc .note i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--orange);margin-right:12px;vertical-align:1px}
+.s3 .rail{position:absolute;left:120px;right:120px;top:930px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;pointer-events:auto}
+.s3 .rail button{all:unset;cursor:pointer;display:block;padding-top:16px;position:relative;font-size:19px;color:var(--mut);letter-spacing:.04em;transition:color .4s}
+.s3 .rail button::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--rule)}
+.s3 .rail button i{position:absolute;left:0;top:0;height:2px;width:100%;background:var(--teal);transform-origin:0 50%;transform:scaleX(0)}
+.s3 .rail button.done i{transform:scaleX(1)}
+.s3 .rail button.on{color:var(--ink)}
+.s3 .rail button span{color:var(--teal);margin-right:10px}
+.s3 .vis{position:absolute;left:800px;top:120px;width:1040px;height:780px;opacity:0;visibility:hidden;transform:scale(.97);transition:opacity .9s var(--ease),transform 1.4s var(--out),visibility 0s .9s}
+.s3 .vis.on{opacity:1;visibility:visible;transform:none;transition:opacity .9s var(--ease) .15s,transform 1.4s var(--out) .15s,visibility 0s}
+/* b1 everyone */
+.s3 .v1 .photo{position:absolute;left:20px;top:40px;width:1000px;height:667px;border-radius:14px;overflow:hidden;border:1px solid var(--rule)}
+.s3 .v1 .photo img{width:100%;height:100%;object-fit:cover;transform:scale(1.12);transition:transform 10s var(--slow)}
+.s3 .v1.on .photo img{transform:scale(1.0)}
+.s3 .v1 .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.92))}
+.s3 .v1 .people{position:absolute;left:60px;right:60px;top:520px;display:flex;justify-content:space-between;align-items:flex-end}
+.s3 .v1 .p{width:72px;text-align:center;opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .8s var(--out)}
+.s3 .v1 .p svg{width:58px;height:110px;display:block;margin:0 auto}
+.s3 .v1 .p svg path{fill:#d9d7d2}
+.s3 .v1 .p svg circle.w{fill:var(--teal);opacity:0;transition:opacity .4s}
+.s3 .v1 .p.lit svg circle.w{opacity:1;filter:drop-shadow(0 0 6px var(--teal))}
+.s3 .v1.on .p{opacity:1;transform:none}
+.s3 .v1 .grp{position:absolute;top:690px;font-size:20px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.s3 .v1 .grp b{color:var(--ink);font-weight:400}
+/* screen-module UIs (b2, b3) */
+.s3 .dev{position:absolute;left:20px;top:110px;width:1000px;height:528px}
+.s3 .dev>img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 40px 60px rgba(0,0,0,.8))}
+.s3 .scr{position:absolute;left:84px;top:52px;width:838px;height:424px;border-radius:30px;overflow:hidden;background:#020403;font-family:var(--font);color:var(--ink)}
+.s3 .scr .bar{position:absolute;left:0;right:0;top:0;height:54px;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font-size:19px;color:var(--mut);letter-spacing:.06em}
+.s3 .scr .bar b{color:var(--teal);font-weight:500;letter-spacing:.14em}
+.s3 .vit{position:absolute;left:24px;right:24px;top:62px;bottom:24px;display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:14px}
+.s3 .vit .t{border:1px solid #222;border-radius:18px;padding:16px 20px;position:relative;overflow:hidden;background:#030303}
+.s3 .vit .t small{display:block;font-size:17px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+.s3 .vit .t b{display:block;font-size:52px;font-weight:300;margin-top:8px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.s3 .vit .t b u{text-decoration:none;font-size:.42em;color:var(--mut);margin-left:6px;letter-spacing:0}
+.s3 .vit .hr{grid-row:1/3}
+.s3 .vit .hr b{font-size:110px;color:var(--teal);margin-top:16px}
+.s3 .vit .hr svg{position:absolute;left:0;right:0;bottom:22px;width:100%;height:90px}
+.s3 .vit .hr svg path{fill:none;stroke:var(--teal);stroke-width:3;stroke-linejoin:round}
+.s3 .vit .t{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .8s var(--out)}
+.s3 .v2.on .vit .t{opacity:1;transform:none}
+.s3 .vit .t .lvl{position:absolute;left:20px;right:20px;bottom:18px;height:6px;border-radius:3px;background:#17201e}
+.s3 .vit .t .lvl i{display:block;height:100%;border-radius:3px;background:var(--teal);width:var(--w,30%);transition:width 1.4s var(--ease)}
+.s3 .chips{position:absolute;left:20px;right:20px;top:680px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.s3 .chips span{font-size:20px;color:var(--mut);border:1px solid var(--rule);border-radius:999px;padding:9px 18px;letter-spacing:.02em}
+/* b3 radiation storm */
+.s3 .v3 .storm{position:absolute;left:-60px;top:-20px;width:1200px;height:820px;object-fit:cover;opacity:.55;-webkit-mask-image:radial-gradient(70% 70% at 40% 45%,#000 40%,transparent 80%);mask-image:radial-gradient(70% 70% at 40% 45%,#000 40%,transparent 80%)}
+.s3 .nav .hd{position:absolute;left:0;right:0;top:0;height:74px;background:#030303;border-bottom:1px solid rgba(255,68,51,.6);color:var(--red)!important;display:flex;align-items:center;gap:16px;padding:0 30px;font-size:24px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#fff}
+.s3 .nav .hd i{width:14px;height:14px;border-radius:50%;background:var(--red);box-shadow:0 0 12px var(--red);animation:blink 1s steps(2,start) infinite}
+.s3 .nav .hd span{margin-left:auto;font-weight:300;letter-spacing:.04em;text-transform:none;color:var(--ink)}
+.s3 .nav .arrow{position:absolute;left:40px;top:104px;width:260px;height:260px;border-radius:26px;background:#030303;border:1px solid #222;display:grid;place-items:center}
+.s3 .nav .arrow svg{width:190px;height:190px;transition:transform 1s var(--out)}
+.s3 .nav .arrow svg path{fill:var(--teal)}
+.s3 .nav .ins{position:absolute;left:330px;top:110px;right:30px}
+.s3 .nav .ins b{display:block;font-size:56px;font-weight:300;letter-spacing:-.02em;line-height:1.05;transition:opacity .3s}
+.s3 .nav .ins small{display:block;font-size:24px;color:var(--mut);margin-top:12px;transition:opacity .3s}
+.s3 .nav .ins small.warn{color:var(--orange)}
+.s3 .nav .cd{position:absolute;left:330px;right:30px;bottom:30px}
+.s3 .nav .cd div{display:flex;justify-content:space-between;align-items:baseline;font-size:20px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+.s3 .nav .cd div b{font-size:46px;color:var(--ink);font-weight:300;letter-spacing:0;font-variant-numeric:tabular-nums}
+.s3 .nav .cd .prog{margin-top:12px;height:8px;border-radius:4px;background:#1a1414;overflow:hidden}
+.s3 .nav .cd .prog i{display:block;height:100%;width:100%;background:var(--orange);transform-origin:0 50%}
+/* b4 suit mode */
+.s3 .v4 .rig{position:absolute;left:-170px;top:60px;width:1060px;height:707px}
+.s3 .v4 .rig img{position:absolute;inset:0;width:100%;height:100%}
+.s3 .v4 .base{filter:drop-shadow(0 30px 40px rgba(0,0,0,.7))}
+.s3 .v4 .scrl{transform:translateY(16.5%);transition:transform 1.3s var(--out);filter:drop-shadow(0 30px 40px rgba(0,0,0,.7))}
+.s3 .v4 .sleeve{opacity:0;transform:translate(-40%,3.3%);transition:transform 1.3s var(--out),opacity .6s var(--ease)}
+.s3 .v4.lift .scrl{transform:translateY(-3%)}
+.s3 .v4.fabric .sleeve{opacity:1;transform:translate(0,3.3%)}
+.s3 .v4.snap .scrl{transform:translateY(var(--snap,9%));transition:transform .7s cubic-bezier(.5,0,.75,0)}
+.s3 .v4 .mag{position:absolute;left:44%;top:43%;width:12%;height:10%;border-radius:50%;border:1.5px solid var(--teal);opacity:0}
+.s3 .v4.snapped .mag{animation:magp 1.4s var(--out) 2}
+@keyframes magp{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(1.8)}}
+.s3 .v4 .lab{position:absolute;display:flex;align-items:center;gap:12px;font-size:22px;color:var(--ink);opacity:0;transform:translateX(-10px);transition:opacity .6s var(--ease),transform .8s var(--out);white-space:nowrap}
+.s3 .v4 .lab i{display:block;width:44px;height:1px;background:var(--mut)}
+.s3 .v4 .lab small{display:block;color:var(--mut);font-size:19px;margin-top:4px}
+.s3 .v4 .l-scr{left:700px;top:170px}.s3 .v4 .l-fab{left:730px;top:345px}.s3 .v4 .l-base{left:720px;top:540px}
+.s3 .v4.lift .l-scr,.s3 .v4.fabric .l-fab,.s3 .v4.batt .l-base{opacity:1;transform:none}
+.s3 .v4 .lora{position:absolute;left:150px;top:380px;width:90px;height:90px;opacity:0;transition:opacity .6s}
+.s3 .v4 .lora path{fill:none;stroke:var(--teal);stroke-width:4;stroke-linecap:round}
+.s3 .v4.batt .lora{opacity:1}
+.s3 .v4.batt .lora path{animation:wave 1.8s ease-out infinite}
+.s3 .v4 .lora path:nth-child(2){animation-delay:.25s}.s3 .v4 .lora path:nth-child(3){animation-delay:.5s}
+@keyframes wave{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+/* b5 mesh */
+.s3 .v5 canvas{position:absolute;inset:0;width:100%;height:100%}
+.s3 .v5 .hub{position:absolute;left:520px;top:390px;transform:translate(-50%,-50%);width:150px;height:150px;border-radius:50%;border:1px solid var(--teal);background:#000;opacity:0;transition:opacity 1s var(--ease) .6s}
+.s3 .v5 .hub b{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;font-weight:400;letter-spacing:.02em}
+.s3 .v5.on .hub{opacity:1}
+.s3 .v5 .hl{position:absolute;text-align:center;font-size:22px;color:var(--ink);transform:translateX(-50%);white-space:nowrap;opacity:0;transition:opacity .8s var(--ease) 1.2s}
+.s3 .v5 .hl small{display:block;font-size:19px;color:var(--teal);margin-top:6px;letter-spacing:.02em}
+.s3 .v5.on .hl{opacity:1}
+.s3 .v5 .hl-hub{left:520px;top:492px;background:rgba(0,0,0,.82);padding:8px 16px;border-radius:10px}
+.s3 .v5 .hl-mesh{left:180px;top:70px;color:var(--mut);font-size:20px;letter-spacing:.1em;text-transform:uppercase}
+.s3 .v5 .hl-st{left:900px;top:640px}
+/* b6 super intelligence */
+.s3 .v6 .scene{position:absolute;left:0;top:0;width:1040px;height:780px;perspective:1600px}
+.s3 .v6 .plates{position:absolute;left:380px;top:330px;width:560px;height:330px;transform-style:preserve-3d;transform:rotateX(62deg) rotateZ(-30deg)}
+.s3 .v6 .pl{position:absolute;inset:0;border-radius:28px;display:flex;flex-direction:column;justify-content:flex-end;padding:30px 36px;transition:transform 1.4s var(--out),opacity .8s var(--ease)}
+.s3 .v6 .p1{background:transparent;border:1px solid #5a5e5e;transform:translateZ(0);opacity:0}
+.s3 .v6 .p2{background:transparent;border:1.5px solid var(--teal);transform:translateZ(260px);opacity:0}
+.s3 .v6.on .p1{opacity:1;transform:translateZ(0)}
+.s3 .v6.on .p2{opacity:1;transform:translateZ(130px);transition-delay:.9s}
+.s3 .v6 .orb{position:absolute;left:560px;top:60px;width:200px;height:200px;opacity:0;transform:translateY(30px) scale(.8);transition:opacity 1s var(--ease) 1.8s,transform 1.6s var(--out) 1.8s}
+.s3 .v6 .orb img{width:100%;height:100%;border-radius:50%;animation:breathe 4s ease-in-out infinite}
+.s3 .v6 .orb::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:150px;background:linear-gradient(var(--teal),transparent)}
+.s3 .v6.on .orb{opacity:1;transform:none}
+.s3 .v6 .outs{position:absolute;left:30px;top:70px;display:grid;gap:16px}
+.s3 .v6 .outs span{font-size:24px;border:1px solid rgba(31,229,196,.45);border-radius:999px;padding:12px 22px;color:var(--ink);opacity:0;transform:translateX(-14px);transition:opacity .6s var(--ease),transform .8s var(--out);white-space:nowrap}
+.s3 .v6 .outs span i{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--teal);margin-right:12px;vertical-align:2px}
+.s3 .v6.on .outs span{opacity:1;transform:none}
+.s3 .v6 .plab{position:absolute;left:30px;width:360px;opacity:0;transform:translateX(-12px);transition:opacity .8s var(--ease),transform 1s var(--out)}
+.s3 .v6 .plab b{display:block;font-size:30px;font-weight:400;letter-spacing:-.01em}
+.s3 .v6 .plab small{display:block;font-size:20px;color:var(--mut);margin-top:6px;line-height:1.3}
+.s3 .v6 .plab::after{content:"";position:absolute;left:100%;top:18px;width:90px;height:1px;background:var(--mut);opacity:.6}
+.s3 .v6 .l2{top:380px}.s3 .v6 .l2 b{color:var(--teal)}.s3 .v6 .l2::after{background:var(--teal)}
+.s3 .v6 .l1{top:560px}
+.s3 .v6.on .l1{opacity:1;transform:none;transition-delay:.6s}.s3 .v6.on .l2{opacity:1;transform:none;transition-delay:1.4s}
+.s3 .v6.on .outs span:nth-child(1){transition-delay:2.6s}.s3 .v6.on .outs span:nth-child(2){transition-delay:3s}.s3 .v6.on .outs span:nth-child(3){transition-delay:3.4s}
+
+/* ============ SLIDE 4 · SCALABILITY: MORE PEOPLE, FURTHER OUT ============ */
+.sl .ph{position:absolute;inset:0;overflow:hidden}
+.sl .ph img{width:100%;height:100%;object-fit:cover;transform:scale(1.02);transform-origin:64% 58%}
+.sl .stars{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:.75;-webkit-mask-image:radial-gradient(62% 52% at 22% 14%,#000 45%,transparent 100%);mask-image:radial-gradient(62% 52% at 22% 14%,#000 45%,transparent 100%)}
+.sl .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 70%,rgba(0,0,0,.72) 88%,rgba(0,0,0,.92) 100%)}
+@keyframes push{from{transform:scale(1.02)}to{transform:scale(1.09) translate(-1.1%,-.7%)}}
+@keyframes pushs{from{transform:none}to{transform:scale(1.03) translate(-.4%,-.25%)}}
+.sl.k-in .ph img{animation:push 28s var(--slow) forwards}
+.sl.k-in .orbit{animation:pushs 28s var(--slow) forwards}
+.sl.k-in .stars{animation:pushs 28s linear forwards}
+.sl .orbit{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sl .orbit .ol{fill:none;stroke:var(--teal);stroke-width:1.6;stroke-linecap:round;opacity:.9;stroke-dasharray:var(--L,4000);stroke-dashoffset:var(--L,4000);transition:stroke-dashoffset 2.8s var(--ease)}
+.sl.k-orbit .orbit .ol{stroke-dashoffset:0}
+.sl .orbit .od{fill:var(--teal);opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.2);transition:opacity .5s var(--ease),transform .7s cubic-bezier(.34,1.56,.64,1)}
+.sl.k-dots .orbit .od{opacity:1;transform:none}
+.sl.k-dots .orbit .od:nth-of-type(2){transition-delay:.25s}.sl.k-dots .orbit .od:nth-of-type(3){transition-delay:.5s}
+.sl .orbit .tr{fill:#fff;opacity:0}
+.sl .head{position:absolute;left:64px;top:104px;width:1100px}
+.sl .head h2{font-size:106px;line-height:1;letter-spacing:-.03em;opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1.3s var(--out)}
+.sl .head h2 em{display:block;font-style:normal;color:var(--teal);opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease) .55s,transform 1.3s var(--out) .55s}
+.sl.k-head .head h2,.sl.k-head .head h2 em{opacity:1;transform:none}
+.sl .head p{font-size:36px;line-height:1.2;margin-top:20px;color:var(--ink);opacity:0;transform:translateY(14px);transition:opacity 1s var(--ease),transform 1.2s var(--out)}
+.sl.k-sub .head p{opacity:.92;transform:none}
+.sl .pts{position:absolute;left:150px;right:150px;top:936px;display:flex;align-items:center;margin:0;padding:0;list-style:none}
+.sl .pts li{flex:none;display:flex;align-items:center;gap:22px;font-size:36px;line-height:1.1;color:var(--ink);white-space:nowrap;opacity:0;transform:translateY(14px);transition:opacity .8s var(--ease),transform 1s var(--out)}
+.sl .pts li i{width:10px;height:10px;border-radius:50%;background:var(--teal);flex:none}
+.sl .pts .cn{flex:1;min-width:60px;height:1px;margin:0 44px;background:rgba(31,229,196,.5);transform:scaleX(0);transform-origin:0 50%;transition:transform 1.1s var(--ease)}
+.sl .pts li.on{opacity:1;transform:none}.sl .pts .cn.on{transform:none}
+
+/* ============ SLIDE 6 · CLOSING QR ============ */
+.sq .stars{opacity:.8}
+.sq .ell{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sq .ell ellipse{fill:none;stroke:url(#qrg);stroke-width:1.6;stroke-dasharray:var(--L,6000);stroke-dashoffset:var(--L,6000);transition:stroke-dashoffset 3.2s var(--ease)}
+.sq.k-orbit .ell ellipse{stroke-dashoffset:0}
+.sq .ell circle{fill:var(--teal);opacity:0;transition:opacity .8s var(--ease)}
+.sq.k-dots .ell circle{opacity:1}
+.sq h2{position:absolute;left:0;right:0;top:112px;text-align:center;font-size:110px;line-height:1;letter-spacing:-.025em;opacity:0;transform:translateY(22px);transition:opacity 1.2s var(--ease),transform 1.4s var(--out)}
+.sq h2 em{font-style:normal;color:var(--teal)}
+.sq.k-in h2{opacity:1;transform:none}
+.sq .qrbox{position:absolute;left:50%;top:286px;width:590px;height:590px;margin-left:-295px;background:#fff;border-radius:4px;overflow:hidden;opacity:0;transform:scale(.96);transition:opacity 1s var(--ease),transform 1.3s var(--out)}
+.sq .qrbox svg{display:block;width:100%;height:100%}
+.sq.k-qr .qrbox{opacity:1;transform:none}
+.sq .url{position:absolute;left:50%;top:906px;transform:translateX(-50%);font-size:26px;color:var(--mut);letter-spacing:.02em;text-decoration:none;pointer-events:auto;opacity:0;transition:opacity 1s var(--ease) .6s;white-space:nowrap}
+.sq .url:hover{color:var(--ink)}
+.sq.k-qr .url{opacity:1}
+
+/* ============ SLIDE 5 · SCALABILITY: ONE PLATFORM (modules) ============ */
+.s4 .stars{opacity:.45}
+.s4 .glow{display:none}
+.s4 .hubd{position:absolute;left:60px;top:150px;width:900px;height:780px}
+.s4 .hubd svg.sp{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.s4 .hubd svg.sp line{stroke:#3d3d3d;stroke-width:1.5;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1.2s var(--ease)}
+.s4 .hubd svg.sp line.on{stroke-dashoffset:0}
+.s4 .hubd svg.sp circle.orbit{fill:none;stroke:#1d1d1d;stroke-width:1;stroke-dasharray:2 8}
+.s4 .core{position:absolute;left:450px;top:390px;width:270px;height:270px;margin:-135px 0 0 -135px;border-radius:50%;background:#000;border:1px solid var(--teal);display:grid;place-items:center;opacity:0;transform:scale(.6);transition:opacity 1s var(--ease),transform 1.4s var(--out)}
+.s4 .core img{position:absolute;left:50%;top:22px;width:130px;height:130px;margin-left:-65px}
+.s4 .core b{position:absolute;top:150px;left:0;right:0;text-align:center;font-size:32px;font-weight:400}
+.s4 .core small{position:absolute;top:194px;left:0;right:0;text-align:center;font-size:15px;line-height:1.3;color:var(--teal);letter-spacing:.08em;text-transform:uppercase}
+.s4 .core-cap{position:absolute;left:450px;top:540px;transform:translateX(-50%);text-align:center;font-size:20px;color:var(--teal);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;opacity:0;transition:opacity 1s .6s}
+.s4.k-core .core{opacity:1;transform:none}
+.s4 .mod{position:absolute;width:150px;margin-left:-75px;text-align:center;opacity:0;transform:scale(.7);transition:opacity .7s var(--ease),transform 1s cubic-bezier(.34,1.56,.64,1)}
+.s4 .mod .ic{width:118px;height:118px;margin:0 auto;border-radius:50%;border:1px solid #3d3d3d;background:#070707;display:grid;place-items:center;transition:border-color .6s,box-shadow .6s}
+.s4 .mod svg{width:54px;height:54px;fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.s4 .mod b{display:block;font-size:24px;font-weight:400;margin-top:14px}
+.s4 .mod small{display:block;font-size:18px;color:var(--mut);margin-top:4px;line-height:1.25}
+.s4 .mod.on{opacity:1;transform:none}
+.s4 .mod.on .ic{border-color:rgba(31,229,196,.6)}
+.s4 .mod.plus .ic{border-style:dashed;background:transparent}
+.s4 .mod.plus svg{stroke:var(--mut)}
+.s4 .pkt{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--teal);opacity:0}
+.s4 .right{position:absolute;left:1040px;top:190px;width:800px}
+.s4 .right h2{font-size:84px;letter-spacing:-.025em;line-height:1;opacity:0;transform:translateY(20px);transition:opacity 1s var(--ease),transform 1.2s var(--out)}
+.s4 .right h2 em{font-style:normal;color:var(--teal)}
+.s4 .right .sub{font-size:28px;color:var(--mut);margin-top:22px;line-height:1.3;opacity:0;transition:opacity 1s var(--ease) .4s}
+.s4.k-head .right h2{opacity:1;transform:none}.s4.k-head .right .sub{opacity:1}
+.s4 .stat{position:absolute;left:1040px;top:590px;width:800px;display:flex;align-items:flex-end;gap:30px;opacity:0;transition:opacity 1s var(--ease)}
+.s4 .stat .big{font-size:150px;line-height:.8;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.s4 .stat .txt{font-size:28px;line-height:1.25;color:var(--ink);padding-bottom:4px}
+.s4 .stat .txt small{display:block;color:var(--mut);font-size:22px;margin-top:6px}
+.s4 .stat .txt em{font-style:normal;color:var(--teal)}
+.s4 .stat sup{font-size:.5em;color:var(--mut)}
+.s4.k-stat .stat{opacity:1}
+.s4 .rails{position:absolute;left:1040px;top:780px;width:800px;display:grid;gap:22px;opacity:0;transition:opacity 1s var(--ease)}
+.s4.k-rails .rails{opacity:1}
+.s4 .rl{display:grid;grid-template-columns:170px 1fr;align-items:center;gap:18px}
+.s4 .rl>b{font-size:22px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.s4 .track{position:relative;height:56px}
+.s4 .track::before{content:"";position:absolute;left:8px;right:8px;top:12px;height:1px;background:#3d3d3d;transform-origin:0 50%;transform:scaleX(0);transition:transform 1.6s var(--ease)}
+.s4.k-rails .track::before{transform:scaleX(1)}
+.s4 .track span{position:absolute;top:0;font-size:20px;color:var(--ink);padding-top:26px;white-space:nowrap;opacity:0;transition:opacity .6s var(--ease)}
+.s4 .track span::before{content:"";position:absolute;left:0;top:6px;width:13px;height:13px;border-radius:50%;background:#000;border:1px solid var(--ink)}
+.s4 .track span.r{right:0;text-align:right}
+.s4 .track span.r::before{left:auto;right:0;background:var(--ink)}
+.s4 .track span.you::before{background:var(--teal);border-color:var(--teal);box-shadow:0 0 12px var(--teal)}
+.s4 .track span.you{color:var(--teal)}
+.s4 .track sup{font-size:.6em;color:var(--mut)}
+.s4.k-rails .track span{opacity:1}
+.s4.k-rails .track span.r{transition-delay:1.3s}
+.s4 .foot-s4{}
+
+/* overlays (outside the scaled stage, sized for reading) */
+.ov{position:fixed;z-index:100;opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility 0s .35s}
+.ov.on{opacity:1;visibility:visible;transition:opacity .35s var(--ease),visibility 0s}
+#notes{left:0;right:0;bottom:0;max-height:52vh;overflow:auto;background:rgba(8,8,8,.94);border-top:1px solid var(--rule);backdrop-filter:blur(10px);padding:22px clamp(16px,4vw,64px) 26px}
+#notes h3{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:500;margin:0 0 10px}
+#notes h3 span{color:var(--mut);font-weight:400;margin-left:12px;letter-spacing:.06em}
+#notes .script{font-size:clamp(17px,1.5vw,24px);line-height:1.5;max-width:1200px;white-space:pre-line}
+#sources{inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(8px);display:grid;place-items:center;padding:16px}
+#sources .box{width:min(980px,100%);max-height:90vh;overflow:auto;border:1px solid var(--rule);border-radius:14px;padding:clamp(18px,3vw,40px);background:#050505}
+#sources h3{font-size:clamp(20px,2vw,30px);font-weight:300;margin:0 0 18px}
+#sources ol{margin:0;padding-left:1.4em;display:grid;gap:12px;font-size:clamp(14px,1.2vw,18px);line-height:1.4;color:var(--mut)}
+#sources ol b{color:var(--ink);font-weight:400}
+#sources ol a{color:var(--teal);word-break:break-all}
+#sources .x{margin-top:18px;font-size:14px;color:var(--mut)}
+#help{left:50%;top:50%;transform:translate(-50%,-50%);background:#060606;border:1px solid var(--rule);border-radius:14px;padding:26px 32px;font-size:16px;line-height:1.9;color:var(--mut);width:min(420px,calc(100% - 32px))}
+#help b{display:inline-block;min-width:92px;color:var(--ink);font-weight:400}
+#rot{position:fixed;inset:auto 0 0 0;padding:14px 16px;text-align:center;font-size:14px;color:var(--mut);display:none;z-index:90}
+@media (orientation:portrait) and (max-width:700px){#rot{display:block}}
+
+html.rm *,html.rm *::before,html.rm *::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important;transition-delay:0s!important}
+</style>
+</head>
+<body>
+<div id="view">
+<div id="stage" aria-live="polite">
+
+<!-- ================= 1 · THE PROBLEM ================= -->
+<section class="slide s1" data-sec="The problem" aria-label="The problem">
+  <div class="space">
+    <img class="stars" src="assets/stars.jpg" alt="">
+    <div class="earth"><img class="atm" src="assets/earth-atm.webp" alt=""><img src="assets/earth.webp" alt="Earth"></div>
+    <svg class="link" viewBox="0 0 1920 1080" aria-hidden="true">
+      <line class="track" x1="480" y1="600" x2="1430" y2="600"/>
+      <line class="out" x1="1430" y1="600" x2="1430" y2="600"/>
+      <line class="back" x1="480" y1="600" x2="480" y2="600"/>
+      <circle class="pk" r="8" cx="1430" cy="600"/>
+    </svg>
+    <div class="shipw"><div class="glowr"></div><img src="assets/ship.webp" alt="A passenger ship in deep space"><div class="beacon"><i></i><i></i><i></i></div></div>
+    <div class="tag tag-earth"><b>Earth</b>Help is here</div>
+    <div class="tag tag-ship"><b>Medical emergency</b>Ship in deep space</div>
+    <div class="dist">400 million km</div>
+    <div class="rcv rcv-e">Message arrives</div>
+    <div class="rcv rcv-s">Reply arrives</div>
+    <div class="moon">For scale, the Moon is 1.3 s away.</div>
+  </div>
+  <div class="cabin">
+    <div class="clip c-alone"><img src="assets/clips/alone.jpg" alt="A passenger alone at a porthole, Earth small and far away"><video data-src="assets/clips/alone.mp4" muted loop playsinline preload="auto" aria-hidden="true"></video></div>
+    <div class="clip c-alert"><img src="assets/clips/alert.jpg" alt="The Eva wristband flashes a red cardiac alert"><video data-src="assets/clips/alert.mp4" muted loop playsinline preload="auto" aria-hidden="true"></video></div>
+    <div class="red"></div>
+  </div>
+  <div class="alert"><div class="pill"><i></i><span>Medical emergency</span></div><small>Passenger collapsed · no doctor on board</small></div>
+  <div class="counter">
+    <div class="lab" data-js="s1lab">Message to Earth</div>
+    <div class="num"><span data-js="s1num">00:00</span><u>min</u></div>
+    <div class="legs"><span class="lg1">Out <b>22:14</b></span><span class="lg2">Back <b>22:14</b></span></div>
+  </div>
+  <div class="end">
+    <h2 data-i18n>Help is <em>44 minutes</em> away.</h2>
+    <p data-i18n>Every minute without CPR or defibrillation cuts survival by 7–10%.<sup>1</sup></p>
+  </div>
+</section>
+
+<!-- ================= 2 · THE SOLUTION ================= -->
+<section class="slide s2" data-sec="The solution" aria-label="The solution">
+  <img class="cover stars" src="assets/stars.jpg" alt="">
+  <div class="limb"><img src="assets/earth.webp" alt=""></div>
+  <div class="eva"><div class="glow"></div><div class="bob">
+    <img class="m-hello" src="assets/eva-hello.webp" alt="Eva, the plush mascot, waving">
+    <img class="m-speaking" src="assets/eva-speaking.webp" alt="">
+    <img class="m-happy" src="assets/eva-happy.webp" alt="">
+  </div></div>
+  <div class="name"><i></i><b>Eva</b><span>Super Intelligence · space health</span></div>
+  <div class="bubble"><p><span data-js="s2txt"></span><span class="caret"></span></p><div class="dots"><i></i><i></i><i></i><i></i><i></i></div></div>
+  <div class="station"><img src="assets/station-front.webp" alt="The ship's emergency station: a wall cabinet of numbered compartments with the AED, oxygen, injectables and more"><div class="hl"><span>01 · AED</span></div><div class="clip cclip"><img src="assets/clips/cpr.jpg" alt="A passenger gives CPR, then holds the patient's hand as she comes round"><video data-src="assets/clips/cpr.mp4" muted loop playsinline preload="auto" aria-hidden="true"></video></div></div>
+  <div class="scap"><span class="sc1">Emergency station</span><span class="sc2">Help in the first minute</span></div>
+  <div class="clip jclip"><img src="assets/clips/journal.jpg" alt="Eva on the wristband glass: I'm here with you"><video data-src="assets/clips/journal.mp4" muted loop playsinline preload="auto" aria-hidden="true"></video></div>
+  <div class="jcap">Just talk to her</div>
+  <div class="band"><div class="halo"></div><img src="assets/band-hero.webp" alt="The Eva wristband: a rugged graphite screen module on a sensor base, with orange buttons and fabric straps"></div>
+</section>
+
+<!-- ================= 3 · HOW IT WORKS ================= -->
+<section class="slide s3" data-sec="How it works" aria-label="How it works">
+  <div class="bgplate"></div>
+  <img class="cover stars" src="assets/stars.jpg" alt="">
+  <div class="copy">
+    <div class="bc"><div class="n">01</div><h2>Everyone aboard wears one.</h2><p>Crew and passengers alike. <b>Intuitive enough for anyone.</b></p></div>
+    <div class="bc"><div class="n">02</div><h2>It monitors.</h2><p>Live vitals on the wrist, <b>day and night.</b></p></div>
+    <div class="bc"><div class="n">03</div><h2>It guides you in an emergency.</h2><p>Radiation storm: <b>turn-by-turn to the shelter,</b> re-routing and a countdown.</p><div class="clip bclip"><img src="assets/clips/storm.jpg" alt="Point of view in a corridor: the wristband shows an arrow to the shelter"><video data-src="assets/clips/storm.mp4" muted loop playsinline preload="auto" aria-hidden="true"></video></div></div>
+    <div class="bc"><div class="n">04</div><h2>Suit mode.</h2><p>Lift the screen off with one hand. The base stays on the skin. <b>The screen snaps back on with magnets, through the suit.</b></p><div class="clip bclip"><img src="assets/clips/detach.jpg" alt="One hand lifts the screen module off the sensor base"><video data-src="assets/clips/detach.mp4" muted loop playsinline preload="auto" aria-hidden="true"></video></div></div>
+    <div class="bc"><div class="n">05</div><h2>Connected.</h2><p>Every wristband talks <b>LoRa</b>. Together they form a mesh to the ship hub.</p></div>
+    <div class="bc"><div class="n">06</div><h2>The Super Intelligence.</h2><p>Built on <b>MedGemma</b>, Google's open medical model, plus our own space-medicine layer.</p><div class="note"><i></i>Diagnostic support only · the AED decides the shock</div></div>
+  </div>
+
+  <div class="vis v1">
+    <div class="photo"><img src="assets/band-cabin.webp" alt="A passenger holds a handrail in the ship, wearing the Eva wristband"></div>
+    <div class="people" aria-hidden="true"></div>
+    <div class="grp" style="left:80px"><b>Crew</b></div>
+    <div class="grp" style="left:520px"><b>Passengers</b></div>
+  </div>
+
+  <div class="vis v2">
+    <div class="dev"><img src="assets/screen-top.webp" alt="">
+      <div class="scr">
+        <div class="bar"><b>EVA</b><span>Day 96 · in space</span></div>
+        <div class="vit">
+          <div class="t hr"><small>Heart rate</small><b><span data-js="hr">72</span><u>bpm</u></b><svg viewBox="0 0 300 90" preserveAspectRatio="none"><path data-js="hrw" d=""/></svg></div>
+          <div class="t"><small>SpO₂</small><b><span data-js="spo">98</span><u>%</u></b><div class="lvl"><i style="--w:96%"></i></div></div>
+          <div class="t"><small>Skin temp</small><b>36.6<u>°C</u></b><div class="lvl"><i style="--w:55%"></i></div></div>
+          <div class="t"><small>Stress · EDA</small><b>Low</b><div class="lvl"><i style="--w:22%"></i></div></div>
+          <div class="t"><small>Movement</small><b>Active</b><div class="lvl"><i style="--w:68%"></i></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="chips"><span>Optical pulse</span><span>SpO₂</span><span>Skin temperature</span><span>EDA</span><span>Accelerometer + gyro</span></div>
+  </div>
+
+  <div class="vis v3">
+    <img class="storm" src="assets/storm.jpg" alt="A solar storm reaching the ship">
+    <div class="dev"><img src="assets/screen-top.webp" alt="">
+      <div class="scr nav">
+        <div class="hd"><i></i>Radiation storm<span>Go to the shelter</span></div>
+        <div class="arrow"><svg viewBox="0 0 100 100" data-js="arr"><path d="M50 6 L86 46 H62 V94 H38 V46 H14 Z"/></svg></div>
+        <div class="ins"><b data-js="navb">Straight ahead</b><small data-js="navs">Corridor A · 20 m</small></div>
+        <div class="cd"><div>Shelter in<b data-js="navt">04:00</b></div><div class="prog"><i data-js="navp"></i></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vis v4">
+    <div class="rig">
+      <img class="base" src="assets/suit-base.webp" alt="The sensor base with straps, worn on the skin">
+      <img class="sleeve" src="assets/suit-sleeve.webp" alt="">
+      <img class="scrl" src="assets/suit-screen.webp" alt="The screen module above the base">
+      <div class="mag"></div>
+      <svg class="lora" viewBox="0 0 90 90" aria-hidden="true"><path d="M30 60 a22 22 0 0 1 0-30"/><path d="M20 70 a36 36 0 0 1 0-50"/><path d="M10 80 a50 50 0 0 1 0-70"/></svg>
+    </div>
+    <div class="lab l-scr"><i></i><div>Screen module<small>Held by magnets</small></div></div>
+    <div class="lab l-fab"><i></i><div>Suit fabric<small>Between the two</small></div></div>
+    <div class="lab l-base"><i></i><div>Sensor base · on the skin<small>Own battery · keeps sending</small></div></div>
+  </div>
+
+  <div class="vis v5">
+    <canvas width="2080" height="1560"></canvas>
+    <div class="hub"><b>Eva</b></div>
+    <div class="hl hl-hub">Ship hub<small>Hosts the Super Intelligence · stores everything</small></div>
+    <div class="hl hl-mesh">LoRa mesh</div>
+    <div class="hl hl-st">Emergency station</div>
+  </div>
+
+  <div class="vis v6">
+    <div class="scene">
+      <div class="plates"><div class="pl p1"></div><div class="pl p2"></div></div>
+      <div class="orb"><img src="assets/ic-eva-orb.webp" alt=""></div>
+      <div class="plab l2"><b>Eva space-medicine layer</b><small>Our own: space health, the ship, the station</small></div>
+      <div class="plab l1"><b>MedGemma</b><small>Google's open model for medical text and images</small></div>
+      <div class="outs"><span><i></i>Guides you on its own</span><span><i></i>Fast · on board</span><span><i></i>Accurate · saves time</span></div>
+    </div>
+  </div>
+
+  <div class="rail" aria-label="Steps">
+    <button data-b="0"><i></i><span>01</span>Everyone</button>
+    <button data-b="1"><i></i><span>02</span>Monitors</button>
+    <button data-b="2"><i></i><span>03</span>Guides</button>
+    <button data-b="3"><i></i><span>04</span>Suit mode</button>
+    <button data-b="4"><i></i><span>05</span>Connected</button>
+    <button data-b="5"><i></i><span>06</span>Super Intelligence</button>
+  </div>
+</section>
+
+<!-- ================= 4 · SCALABILITY: MORE PEOPLE, FURTHER OUT ================= -->
+<section class="slide sl" data-sec="Scalability" aria-label="Scalability: more people, further out">
+  <div class="ph"><img src="assets/scale-lounge.webp" alt="A space lounge full of passengers, every one of them wearing an Eva wristband"></div>
+  <img class="stars" src="assets/stars.jpg" alt="">
+  <div class="shade"></div>
+  <svg class="orbit" viewBox="0 0 1920 1080" aria-hidden="true"><path class="ol" d="M-48 665.6 L-29 643.6 L-10 623.3 L10 604.6 L29 587.4 L48 571.7 L67 557.3 L86 544.1 L106 532.0 L125 521.0 L144 511.0 L163 501.9 L182 493.6 L202 486.1 L221 479.3 L240 473.1 L259 467.4 L278 462.3 L298 457.6 L317 453.3 L336 449.4 L355 445.7 L374 442.4 L394 439.2 L413 436.2 L432 433.4 L451 430.6 L470 427.9 L490 425.3 L509 422.6 L528 420.0 L547 417.3 L566 414.6 L586 411.7 L605 408.8 L624 405.8 L643 402.6 L662 399.3 L682 395.8 L701 392.2 L720 388.4 L739 384.5 L758 380.4 L778 376.0 L797 371.6 L816 366.9 L835 362.0 L854 357.0 L874 351.8 L893 346.5 L912 340.9 L931 335.2 L950 329.4 L970 323.4 L989 317.3 L1008 311.1 L1027 304.7 L1046 298.3 L1066 291.8 L1085 285.2 L1104 278.5 L1123 271.8 L1142 265.0 L1162 258.2 L1181 251.4 L1200 244.6 L1219 237.9 L1238 231.1 L1258 224.5 L1277 217.8 L1296 211.3 L1315 204.8 L1334 198.5 L1354 192.2 L1373 186.1 L1392 180.2 L1411 174.4 L1430 168.7 L1450 163.2 L1469 158.0 L1488 152.9 L1507 148.0 L1526 143.3 L1546 138.9 L1565 134.7 L1584 130.7 L1603 127.0 L1622 123.5 L1642 120.2 L1661 117.2 L1680 114.4 L1699 111.9 L1718 109.6 L1738 107.6 L1757 105.7 L1776 104.1 L1795 102.7 L1814 101.5 L1834 100.5 L1853 99.7 L1872 99.0 L1891 98.5 L1910 98.1 L1930 97.8 L1949 97.5 L1968 97.3"/><circle class="od" r="5.5" cx="288" cy="459.9"/><circle class="od" r="5.5" cx="1068" cy="290.9"/><circle class="od" r="5.5" cx="1560" cy="135.7"/><circle class="tr" r="3.5" cx="0" cy="0"/></svg>
+  <div class="head"><h2 data-i18n>More people. <em>Further out.</em></h2><p>One platform to look after them all.</p></div>
+  <ul class="pts"><li><i></i>Space tourism</li><span class="cn"></span><li><i></i>Commercial stations</li><span class="cn"></span><li><i></i>Future deep-space bases</li></ul>
+</section>
+
+<!-- ================= 5 · SCALABILITY: ONE PLATFORM ================= -->
+<section class="slide s4" data-sec="Scalability" aria-label="Scalability: one platform, many modules">
+  <img class="cover stars" src="assets/stars.jpg" alt="">
+  <div class="glow"></div>
+  <div class="hubd">
+    <svg class="sp" viewBox="0 0 900 780" aria-hidden="true"><circle class="orbit" cx="450" cy="390" r="300"/></svg>
+    <div class="core"><img src="assets/eva-face.webp" alt=""><b>Eva</b><small>Control interface<br>+ assistant</small></div>
+  </div>
+  <div class="right">
+    <h2 data-i18n>The <em>computer</em> of space.</h2>
+    <p class="sub">One interface, many modules, from tourist flights to deep-space bases. The standard tool for years to come, not just the next mission.</p>
+  </div>
+  <div class="stat"><div class="big" data-js="s4n">0</div><div class="txt" data-i18n>people flew to space in 2024.<sup>2</sup><small>Soon, <em>you or me</em>.</small></div></div>
+  <div class="rails">
+    <div class="rl"><b>Submarines</b><div class="track"><span>Navies + science</span><span class="r" data-i18n>Tourists since 1986<sup>3</sup></span></div></div>
+    <div class="rl"><b>Space</b><div class="track"><span>Astronauts</span><span class="r you">Everyone, next</span></div></div>
+  </div>
+</section>
+
+<!-- ================= 6 · CLOSING QR ================= -->
+<section class="slide sq" data-sec="Know more" aria-label="Know more about Eva">
+  <img class="cover stars" src="assets/stars.jpg" alt="">
+  <svg class="ell" viewBox="0 0 1920 1080" aria-hidden="true">
+    <defs><linearGradient id="qrg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1920" y2="0"><stop offset="0" stop-color="#1FE5C4" stop-opacity=".9"/><stop offset=".3" stop-color="#1FE5C4" stop-opacity=".28"/><stop offset=".55" stop-color="#1FE5C4" stop-opacity=".12"/><stop offset=".8" stop-color="#1FE5C4" stop-opacity=".6"/><stop offset="1" stop-color="#1FE5C4" stop-opacity=".95"/></linearGradient></defs>
+    <ellipse cx="960" cy="640" rx="968" ry="250" transform="rotate(-17 960 640)"/>
+    <circle class="d1" r="5.5" cx="0" cy="0"/><circle class="d2" r="5.5" cx="0" cy="0"/>
+  </svg>
+  <h2 data-i18n>Know more about <em>EVA</em></h2>
+  <div class="qrbox" data-js="qr"></div>
+  <a class="url" data-js="qrurl" href="#" target="_blank" rel="noopener"></a>
+</section>
+
+<!-- chrome -->
+<div class="chrome">
+  <div class="brand">Eva <span>by WearMeds</span></div>
+  <div class="sec" data-js="sec"></div>
+  <div class="lang" translate="no" role="group" aria-label="Language"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div>
+  <div class="pager"><span data-js="pg">1 / 6</span><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="hint" id="hint">← → slides · P pause · M reduce motion · N notes · L language · ? keys</div>
+  <div class="foot" data-foot="0" data-i18n>¹ <a href="https://olis.oregonlegislature.gov/liz/2013R1/Downloads/CommitteeMeetingDocument/4759" target="_blank" rel="noopener">American Heart Association, Sudden Cardiac Arrest fact sheet</a> · Light-time = distance ÷ <a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" target="_blank" rel="noopener">c (NIST)</a> · <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" target="_blank" rel="noopener">Moon distance (NASA)</a></div>
+  <div class="foot" data-foot="1"></div>
+  <div class="foot" data-foot="2" data-i18n><a href="https://developers.google.com/health-ai-developer-foundations/medgemma" target="_blank" rel="noopener">MedGemma · Google for Developers</a></div>
+  <div class="foot" data-foot="4" data-i18n>² <a href="https://en.wikipedia.org/wiki/2024_in_spaceflight" target="_blank" rel="noopener">2024 in spaceflight: 58 travellers, orbital + suborbital</a> · ³ <a href="https://www.atlantissubmarines.com/our-history" target="_blank" rel="noopener">Atlantis Submarines, our history</a></div>
+</div>
+<div class="ctl" translate="no" role="group" aria-label="Motion"><button data-act="pause" aria-pressed="false" data-js="pb"><svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"/></svg><svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5l7.5 4.5L3 10.5z"/></svg><span data-js="pl">Pause</span><kbd>P</kbd></button><button data-act="motion" aria-pressed="false" data-js="mb"><span class="sw" aria-hidden="true"></span><span data-js="ml">Reduce motion</span><kbd>M</kbd></button></div>
+<div id="tbar"></div><div id="tclock">0:00</div>
+</div>
+</div>
+
+<!-- overlays -->
+<div id="notes" class="ov" aria-live="polite"><h3><span data-js="nt"></span></h3><div class="script" data-js="ns"></div></div>
+<div id="sources" class="ov" role="dialog" aria-label="Sources"><div class="box">
+  <h3>Sources</h3>
+  <ol>
+    <li><b>Survival drops 7–10% for every minute without CPR and defibrillation.</b> American Heart Association, “Sudden Cardiac Arrest” fact sheet (AHA Advocacy Department; citing Heart Disease and Stroke Statistics 2011). <a href="https://olis.oregonlegislature.gov/liz/2013R1/Downloads/CommitteeMeetingDocument/4759" target="_blank" rel="noopener">olis.oregonlegislature.gov/…/4759</a></li>
+    <li><b>Speed of light, 299 792 458 m/s.</b> At 400 million km a message takes 22 min 14 s one way and 44 min 28 s for the round trip. NIST CODATA. <a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" target="_blank" rel="noopener">physics.nist.gov/cgi-bin/cuu/Value?c</a></li>
+    <li><b>Moon: 384 400 km away, so 1.3 s at light speed.</b> NASA NSSDCA Moon Fact Sheet. <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" target="_blank" rel="noopener">nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html</a></li>
+    <li><b>58 travellers flew to space in 2024</b> (28 orbital, 30 suborbital). Wikipedia, “2024 in spaceflight”. <a href="https://en.wikipedia.org/wiki/2024_in_spaceflight" target="_blank" rel="noopener">en.wikipedia.org/wiki/2024_in_spaceflight</a></li>
+    <li><b>Tourist submarines: Atlantis, founded in 1985, carried its first passengers in the Cayman Islands in 1986.</b> Atlantis Submarines, “Our history”. <a href="https://www.atlantissubmarines.com/our-history" target="_blank" rel="noopener">atlantissubmarines.com/our-history</a></li>
+    <li><b>MedGemma: Google's open models for medical text and image comprehension.</b> Google for Developers. <a href="https://developers.google.com/health-ai-developer-foundations/medgemma" target="_blank" rel="noopener">developers.google.com/…/medgemma</a></li>
+  </ol>
+  <p class="x"><a href="https://eva-wearmeds.vercel.app/#imgs" target="_blank" rel="noopener">Images generated with Super Intelligence</a> · Press S or Esc to close.</p>
+</div></div>
+<div id="help" class="ov" role="dialog" aria-label="Keys">
+  <div><b>→ Space</b>Next slide</div><div><b>←</b>Previous slide</div><div><b>↓ ↑</b>Step 3's beats</div><div><b>R</b>Replay the animation</div><div><b>N</b>Speaker notes</div><div><b>L</b>English / Español</div><div><b>S</b>Sources</div><div><b>T</b>60 s timer</div><div><b>F</b>Fullscreen</div><div><b>P · K</b>Pause / resume all motion</div><div><b>M</b>Reduce motion (stills, no auto-advance)</div><div><b>1–6</b>Jump to a slide</div>
+</div>
+<div id="rot">Turn your phone sideways for the full deck.</div>
+
+<script src="assets/qr.js"></script>
+<script>
+/* The URL the closing QR code points to (slide 6). Change it here and the code regenerates. */
+const QR_URL = "https://eva-wearmeds.vercel.app/";
+
+/* ---------- Spanish, keyed by the English text (whitespace collapsed), like the landing ---------- */
+const ES = {
+"Eva Final Pitch":"Eva · Pitch final",
+"The problem":"El problema","The solution":"La solución","How it works":"Cómo funciona","What's next":"Lo que viene","Scalability":"Escalabilidad","Know more":"Conocé más",
+"More people. <em>Further out.</em>":"Más personas. <em>Más lejos.</em>","One platform to look after them all.":"Una misma plataforma para acompañarlas.",
+"Space tourism":"Turismo espacial","Commercial stations":"Estaciones comerciales","Future deep-space bases":"Futuras bases en el espacio profundo",
+"Know more about <em>EVA</em>":"Conocé más de <em>EVA</em>",
+"Help in the first minute":"Ayuda en el primer minuto","Just talk to her":"Solo hablale",
+"Pause":"Pausa","Paused · resume":"En pausa · seguir","Reduce motion":"Reducir movimiento","Motion":"Movimiento",
+"Pause or resume all motion (P or K)":"Pausar o reanudar todo el movimiento (P o K)","Reduce motion: stills, no auto-advance (M)":"Reducir movimiento: imágenes fijas, sin avance automático (M)",
+"Pause / resume all motion":"Pausar / reanudar todo el movimiento","Reduce motion (stills, no auto-advance)":"Reducir movimiento (imágenes fijas, sin avance automático)","Jump to a slide":"Ir a una diapositiva",
+"← → slides · P pause · M reduce motion · N notes · L language · ? keys":"← → diapositivas · P pausa · M reducir movimiento · N notas · L idioma · ? teclas",
+"A passenger alone at a porthole, Earth small and far away":"Un pasajero solo frente a un ojo de buey, con la Tierra pequeña y lejana",
+"The Eva wristband flashes a red cardiac alert":"La pulsera Eva muestra una alerta cardíaca en rojo",
+"Eva on the wristband glass: I'm here with you":"Eva en el vidrio de la pulsera: estoy acá con vos",
+"A passenger gives CPR, then holds the patient's hand as she comes round":"Un pasajero hace RCP y después sostiene la mano de la paciente cuando vuelve en sí",
+"Point of view in a corridor: the wristband shows an arrow to the shelter":"Vista en primera persona en un pasillo: la pulsera muestra una flecha al refugio",
+"One hand lifts the screen module off the sensor base":"Una mano levanta el módulo de pantalla de la base de sensores",
+"Lift the screen off with one hand. The base stays on the skin.":"Sacás la pantalla con una mano. La base queda sobre la piel.",
+"A space lounge full of passengers, every one of them wearing an Eva wristband":"Un salón espacial lleno de pasajeros, cada uno con su pulsera Eva",
+"Scalability: more people, further out":"Escalabilidad: más personas, más lejos","Scalability: one platform, many modules":"Escalabilidad: una plataforma, muchos módulos",
+"Know more about Eva":"Conocé más de Eva",
+"Speaker notes · ~60 s · first speaker":"Notas del orador · ~60 s · primer bloque","Speaker notes · ~60 s · second speaker":"Notas del orador · ~60 s · segundo bloque","Speaker notes · ~60 s · third speaker":"Notas del orador · ~60 s · tercer bloque",
+"Scalability block · presented by the scalability lead · part 1 of 2 · ~25 s":"Bloque de escalabilidad · lo presenta quien cubre escalabilidad · parte 1 de 2 · ~25 s",
+"Scalability block · presented by the scalability lead · part 2 of 2 · ~35 s":"Bloque de escalabilidad · lo presenta quien cubre escalabilidad · parte 2 de 2 · ~35 s",
+"Closing · ~10 s":"Cierre · ~10 s",
+"by WearMeds":"de WearMeds",
+"Earth":"Tierra","Help is here":"Acá está la ayuda","Medical emergency":"Emergencia médica","Ship in deep space":"Nave en el espacio profundo",
+"400 million km":"400 millones de km","Message arrives":"Llega el mensaje","Reply arrives":"Llega la respuesta",
+"For scale, the Moon is 1.3 s away.":"Para comparar: la Luna está a 1,3 s.",
+"Passenger collapsed · no doctor on board":"Un pasajero se desplomó · no hay médico a bordo",
+"Message to Earth":"Mensaje a la Tierra","Reply from Earth":"Respuesta de la Tierra","Waiting for help":"Esperando ayuda","min":"min",
+"Out":"Ida","Back":"Vuelta",
+"Help is <em>44 minutes</em> away.":"La ayuda está a <em>44 minutos</em>.",
+"Every minute without CPR or defibrillation cuts survival by 7–10%.<sup>1</sup>":"Cada minuto sin RCP ni desfibrilación reduce la supervivencia entre 7 y 10 %.<sup>1</sup>",
+"Super Intelligence · space health":"Super Inteligencia · salud espacial",
+"Emergency station":"Estación de emergencia",
+"Everyone aboard wears one.":"Todos a bordo llevan una.",
+"Crew and passengers alike.":"Tripulación y pasajeros por igual.","Intuitive enough for anyone.":"Tan intuitiva que cualquiera la usa.",
+"It monitors.":"Monitorea.","Live vitals on the wrist,":"Signos vitales en vivo en la muñeca,","day and night.":"de día y de noche.",
+"It guides you in an emergency.":"Te guía en una emergencia.",
+"Radiation storm:":"Tormenta de radiación:","turn-by-turn to the shelter,":"giro a giro hasta el refugio,","re-routing and a countdown.":"con desvíos y cuenta regresiva.",
+"Suit mode.":"Modo traje.",
+"Lift the screen off. The base stays on the skin.":"Sacás la pantalla. La base queda sobre la piel.",
+"The screen snaps back on with magnets, through the suit.":"La pantalla vuelve a su lugar con imanes, a través del traje.",
+"Connected.":"Conectada.","Every wristband talks":"Cada pulsera habla","Together they form a mesh to the ship hub.":"Juntas forman una malla hasta el hub de la nave.",
+"The Super Intelligence.":"La Super Inteligencia.","Built on":"Construida sobre",", Google's open medical model, plus our own space-medicine layer.":", el modelo médico abierto de Google, más nuestra propia capa de medicina espacial.",
+"Diagnostic support only · the AED decides the shock":"Solo apoyo diagnóstico · el DEA decide la descarga",
+"Crew":"Tripulación","Passengers":"Pasajeros",
+"Day 96 · in space":"Día 96 · en el espacio","Heart rate":"Frecuencia cardíaca","Skin temp":"Temp. de piel","Stress · EDA":"Estrés · EDA","Low":"Bajo","Movement":"Movimiento","Active":"Activo",
+"Optical pulse":"Pulso óptico","Skin temperature":"Temperatura de piel","Accelerometer + gyro":"Acelerómetro + giroscopio",
+"Radiation storm":"Tormenta de radiación","Go to the shelter":"Andá al refugio",
+"Straight ahead":"Seguí derecho","Corridor A · 20 m":"Pasillo A · 20 m","Turn left":"Doblá a la izquierda","Corridor B · 12 m":"Pasillo B · 12 m",
+"Re-routing":"Recalculando","Corridor B is blocked · take C":"El pasillo B está bloqueado · tomá el C","Turn right":"Doblá a la derecha","Corridor C · 8 m":"Pasillo C · 8 m",
+"Shelter ahead":"Refugio adelante","4 m · you are almost there":"4 m · ya casi llegás","Shelter in":"Refugio en",
+"Screen module":"Módulo de pantalla","Held by magnets":"Sujeto con imanes","Suit fabric":"Tela del traje","Between the two":"Entre los dos",
+"Sensor base · on the skin":"Base de sensores · sobre la piel","Own battery · keeps sending":"Batería propia · sigue transmitiendo",
+"Ship hub":"Hub de la nave","Hosts the Super Intelligence · stores everything":"Aloja la Super Inteligencia · guarda todo","LoRa mesh":"Malla LoRa",
+"Google's open model for medical text and images":"El modelo abierto de Google para texto e imágenes médicas",
+"Eva space-medicine layer":"Capa de medicina espacial de Eva","Our own: space health, the ship, the station":"Propia: salud espacial, la nave, la estación",
+"Guides you on its own":"Te guía por sí sola","Fast · on board":"Rápida · a bordo","Accurate · saves time":"Precisa · gana tiempo",
+"Everyone":"Todos","Monitors":"Monitorea","Guides":"Guía","Suit mode":"Modo traje","Connected":"Conectada","Super Intelligence":"Super Inteligencia",
+"Control interface + assistant":"Interfaz de control + asistente",
+"The <em>computer</em> of space.":"La <em>computadora</em> del espacio.",
+"One interface, many modules, from tourist flights to deep-space bases. The standard tool for years to come, not just the next mission.":"Una interfaz, muchos módulos, desde vuelos turísticos hasta bases en el espacio profundo. La herramienta estándar por muchos años, no solo para la próxima misión.",
+"people flew to space in 2024.<sup>2</sup><small>Soon, <em>you or me</em>.</small>":"personas viajaron al espacio en 2024.<sup>2</sup><small>Pronto, <em>vos o yo</em>.</small>",
+"Submarines":"Submarinos","Navies + science":"Armadas + ciencia","Tourists since 1986<sup>3</sup>":"Turistas desde 1986<sup>3</sup>",
+"Space":"Espacio","Astronauts":"Astronautas","Everyone, next":"Todos, lo próximo",
+"Know what's coming":"Conocé lo que se viene",
+"Health":"Salud","Devices + sensors":"Dispositivos + sensores","Emergency":"Emergencias","Disaster response":"Respuesta a catástrofes",
+"Information":"Información","Ship + mission":"Nave + misión","Entertainment":"Entretenimiento","For long trips":"Para viajes largos",
+"Learning":"Aprendizaje","Learn anything":"Aprendé lo que quieras","Next module":"Próximo módulo","Plug in":"Se conecta",
+"← → slides · R replay · N notes · L language · S sources · ? keys":"← → diapositivas · R repetir · N notas · L idioma · S fuentes · ? teclas",
+"¹ <a href=\"https://olis.oregonlegislature.gov/liz/2013R1/Downloads/CommitteeMeetingDocument/4759\" target=\"_blank\" rel=\"noopener\">American Heart Association, Sudden Cardiac Arrest fact sheet</a> · Light-time = distance ÷ <a href=\"https://physics.nist.gov/cgi-bin/cuu/Value?c\" target=\"_blank\" rel=\"noopener\">c (NIST)</a> · <a href=\"https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html\" target=\"_blank\" rel=\"noopener\">Moon distance (NASA)</a>":
+"¹ <a href=\"https://olis.oregonlegislature.gov/liz/2013R1/Downloads/CommitteeMeetingDocument/4759\" target=\"_blank\" rel=\"noopener\">American Heart Association, hoja informativa sobre paro cardíaco súbito</a> · Tiempo-luz = distancia ÷ <a href=\"https://physics.nist.gov/cgi-bin/cuu/Value?c\" target=\"_blank\" rel=\"noopener\">c (NIST)</a> · <a href=\"https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html\" target=\"_blank\" rel=\"noopener\">Distancia a la Luna (NASA)</a>",
+"<a href=\"https://developers.google.com/health-ai-developer-foundations/medgemma\" target=\"_blank\" rel=\"noopener\">MedGemma · Google for Developers</a>":"<a href=\"https://developers.google.com/health-ai-developer-foundations/medgemma\" target=\"_blank\" rel=\"noopener\">MedGemma · Google for Developers</a>",
+"² <a href=\"https://en.wikipedia.org/wiki/2024_in_spaceflight\" target=\"_blank\" rel=\"noopener\">2024 in spaceflight: 58 travellers, orbital + suborbital</a> · ³ <a href=\"https://www.atlantissubmarines.com/our-history\" target=\"_blank\" rel=\"noopener\">Atlantis Submarines, our history</a>":
+"² <a href=\"https://en.wikipedia.org/wiki/2024_in_spaceflight\" target=\"_blank\" rel=\"noopener\">2024 en vuelos espaciales: 58 viajeros, orbitales + suborbitales</a> · ³ <a href=\"https://www.atlantissubmarines.com/our-history\" target=\"_blank\" rel=\"noopener\">Atlantis Submarines, su historia</a>",
+"Sources":"Fuentes","Images generated with Super Intelligence":"Imágenes generadas con Super Inteligencia","· Press S or Esc to close.":"· Apretá S o Esc para cerrar.",
+". Together they form a mesh to the ship hub.":". Juntas forman una malla hasta el hub de la nave.",
+"Control interface":"Interfaz de control","+ assistant":"+ asistente","01 · AED":"01 · DEA",
+"American Heart Association, “Sudden Cardiac Arrest” fact sheet (AHA Advocacy Department; citing Heart Disease and Stroke Statistics 2011).":"American Heart Association, hoja informativa “Sudden Cardiac Arrest” (Departamento de Advocacy de la AHA; cita Heart Disease and Stroke Statistics 2011).",
+"At 400 million km a message takes 22 min 14 s one way and 44 min 28 s for the round trip. NIST CODATA.":"A 400 millones de km un mensaje tarda 22 min 14 s en ir y 44 min 28 s ida y vuelta. NIST CODATA.",
+"NASA NSSDCA Moon Fact Sheet.":"NASA NSSDCA, ficha de datos de la Luna.",
+"(28 orbital, 30 suborbital). Wikipedia, “2024 in spaceflight”.":"(28 orbitales, 30 suborbitales). Wikipedia, “2024 in spaceflight”.",
+"Atlantis Submarines, “Our history”.":"Atlantis Submarines, “Our history” (su historia).",
+"Google for Developers.":"Google for Developers.","Press S or Esc to close.":"Apretá S o Esc para cerrar.",
+"Survival drops 7–10% for every minute without CPR and defibrillation.":"La supervivencia cae entre 7 y 10 % por cada minuto sin RCP ni desfibrilación.",
+"Speed of light, 299 792 458 m/s.":"Velocidad de la luz, 299 792 458 m/s.",
+"Moon: 384 400 km away, so 1.3 s at light speed.":"Luna: a 384 400 km, o sea 1,3 s a la velocidad de la luz.",
+"58 travellers flew to space in 2024":"58 viajeros fueron al espacio en 2024",
+"Tourist submarines: Atlantis, founded in 1985, carried its first passengers in the Cayman Islands in 1986.":"Submarinos turísticos: Atlantis, fundada en 1985, llevó a sus primeros pasajeros en las Islas Caimán en 1986.",
+"MedGemma: Google's open models for medical text and image comprehension.":"MedGemma: los modelos abiertos de Google para comprender texto e imágenes médicas.",
+"Next slide":"Siguiente diapositiva","Previous slide":"Diapositiva anterior","Step 3's beats":"Pasos de la diapositiva 3","Replay the animation":"Repetir la animación","Speaker notes":"Notas del orador","English / Español":"English / Español","60 s timer":"Temporizador de 60 s","Fullscreen":"Pantalla completa",
+"Turn your phone sideways for the full deck.":"Girá el teléfono para ver la presentación completa.",
+"Speaker notes · ~60 s":"Notas del orador · ~60 s",
+/* bubble beats */
+"Hi, I'm <em>Eva</em>.":"Hola, soy <em>Eva</em>.",
+"Your <em>Super Intelligence</em>, specialised in space health.":"Tu <em>Super Inteligencia</em>, especializada en salud espacial.",
+"I live in your wristband. Just talk to me.":"Vivo en tu pulsera. Solo hablame.",
+"I monitor you, look after you, and guide you to help yourself or others.":"Te monitoreo, te cuido y te guío para ayudarte a vos o a otros.",
+"I also know the emergency station. I light up exactly what you need.":"También conozco la estación de emergencia. Ilumino justo lo que necesitás."
+};
+
+/* ---------- speaker notes (~60 s each) ---------- */
+const NOTES = [
+`Picture this. A passenger ship in deep space, a few dozen people on board. Earth is a small blue dot out of the window. Then someone collapses. No pulse. And there is no doctor on board.
+
+So we do what every mission does today: we call Earth.
+
+Watch the message. Nothing is faster than light, and still, at four hundred million kilometres, the call takes twenty-two minutes to arrive. The answer takes another twenty-two to come back. For scale, the Moon is just over one second away.
+
+Forty-four minutes. And the American Heart Association tells us that every minute without CPR or defibrillation cuts the chance of survival by seven to ten percent.
+
+Space travel is turning commercial. Tourists are already flying. Yet health in space still depends on this slow, ineffective tool: a call to Earth.
+
+Help is forty-four minutes away. That is the problem we set out to solve.`,
+`So we built Eva.
+
+Eva is a Super Intelligence specialised in space health. She doesn't live on Earth. She lives on board, with you.
+
+You talk to her from your wristband. Everyone on the ship wears one. Eva monitors your body day and night, looks after you, and when something goes wrong, she tells you exactly what to do, whether it's to help yourself or the person next to you.
+
+And Eva knows the ship's emergency station. In a crisis, she lights up the exact compartment you need, like the AED, and talks you through every step of CPR, push by push. Eva guides; the AED decides.
+
+No waiting for Earth. Anyone can follow her. It's help that is already here, in the first minute, when it matters most.
+
+Now let me show you how it works.`,
+`One: everyone on board wears one, crew and passengers alike. It's intuitive, so anyone can use it.
+
+Two: it monitors. Heart rate, blood oxygen, skin temperature, stress through the skin's response, and movement, live on the wrist.
+
+Three: it guides. Say a radiation storm hits. The wristband shows the way to the shelter, turn by turn, re-routes when a corridor is blocked, and counts down the time left.
+
+Four: suit mode. Lift the screen off with one hand, the sensor base stays on your skin under the suit, and the screen snaps back on with magnets, right through the fabric. The base runs on its own battery.
+
+Five: everything is connected. The wristbands talk LoRa and form a mesh to the ship hub, which hosts the Super Intelligence and stores everything.
+
+Six: the brain. Eva is built on MedGemma, Google's open medical model, plus our own space-medicine layer. It guides you on its own, fast and accurately. And it supports the diagnosis: the AED always decides the shock.`,
+`Everything you've just seen works on one ship. Eva is built to scale.
+
+More people, travelling further out, and one platform to look after them all: space tourism today, commercial stations next, and, in the future, deep-space bases.
+
+Every new passenger adds a wristband, not a new system.`,
+`That's because what we're really building is the interface: the control layer and the assistant. Modules plug in on top: health, with new devices and sensors; emergency and disaster response; information; entertainment; and learning.
+
+That makes Eva the computer of space: the standard tool for years to come, not just for the next mission.
+
+And the people are coming. In 2024, fifty-eight people flew to space. Soon it could be you, or me. We've seen this before: submarines were for navies and scientists, and tourist submarines have carried passengers since 1986. Space is going the same way.`,
+`Scan the code to know more about Eva.
+
+Thank you.`
+];
+const NOTES_ES = [
+`Imaginen esto. Una nave de pasajeros en el espacio profundo, con unas decenas de personas a bordo. Por la ventana, la Tierra es un puntito azul. Entonces alguien se desploma. No tiene pulso. Y no hay ningún médico a bordo.
+
+Entonces hacemos lo que hace hoy cada misión: llamamos a la Tierra.
+
+Miren el mensaje. No hay nada más rápido que la luz, y aun así, a cuatrocientos millones de kilómetros, la llamada tarda veintidós minutos en llegar. La respuesta tarda otros veintidós en volver. Para comparar, la Luna está a poco más de un segundo.
+
+Cuarenta y cuatro minutos. Y la Asociación Americana del Corazón dice que cada minuto sin RCP ni desfibrilación reduce la probabilidad de sobrevivir entre un siete y un diez por ciento.
+
+Los viajes espaciales se están volviendo comerciales. Ya vuelan turistas. Pero la salud en el espacio sigue dependiendo de esta herramienta lenta e ineficaz: una llamada a la Tierra.
+
+La ayuda está a cuarenta y cuatro minutos. Ese es el problema que vinimos a resolver.`,
+`Por eso creamos a Eva.
+
+Eva es una Super Inteligencia especializada en salud espacial. No vive en la Tierra. Vive a bordo, con vos.
+
+Le hablás desde tu pulsera. Todos en la nave llevan una. Eva monitorea tu cuerpo de día y de noche, te cuida, y cuando algo sale mal te dice exactamente qué hacer, ya sea para ayudarte a vos o a la persona que tenés al lado.
+
+Y Eva conoce la estación de emergencia de la nave. En una crisis, ilumina justo el compartimento que necesitás, como el del DEA, y te guía en cada paso de la RCP, compresión por compresión. Eva guía; el DEA decide.
+
+Sin esperar a la Tierra. Cualquiera puede seguirla. Es ayuda que ya está acá, en el primer minuto, cuando más importa.
+
+Ahora les muestro cómo funciona.`,
+`Uno: todos a bordo llevan una, tripulación y pasajeros por igual. Es intuitiva, así que cualquiera la puede usar.
+
+Dos: monitorea. Frecuencia cardíaca, oxígeno en sangre, temperatura de la piel, estrés a través de la respuesta de la piel, y movimiento, en vivo en la muñeca.
+
+Tres: guía. Supongamos que llega una tormenta de radiación. La pulsera te muestra el camino al refugio, giro a giro, recalcula si un pasillo está bloqueado y te marca el tiempo que queda.
+
+Cuatro: modo traje. Sacás la pantalla con una mano, la base de sensores queda sobre tu piel debajo del traje, y la pantalla vuelve a su lugar con imanes, a través de la tela. La base funciona con su propia batería.
+
+Cinco: todo está conectado. Las pulseras hablan LoRa y forman una malla hasta el hub de la nave, que aloja la Super Inteligencia y guarda todo.
+
+Seis: el cerebro. Eva está construida sobre MedGemma, el modelo médico abierto de Google, más nuestra propia capa de medicina espacial. Te guía por sí sola, rápido y con precisión. Y da apoyo al diagnóstico: el DEA siempre decide la descarga.`,
+`Todo lo que acaban de ver funciona en una nave. Eva está pensada para escalar.
+
+Más personas, viajando más lejos, y una misma plataforma para acompañarlas: hoy el turismo espacial, después las estaciones comerciales y, en el futuro, las bases en el espacio profundo.
+
+Cada pasajero nuevo suma una pulsera, no un sistema nuevo.`,
+`Porque lo que realmente construimos es la interfaz: la capa de control y el asistente. Encima se conectan módulos: salud, con nuevos dispositivos y sensores; respuesta a emergencias y catástrofes; información; entretenimiento; y aprendizaje.
+
+Eso convierte a Eva en la computadora del espacio: la herramienta estándar por muchos años, no solo para la próxima misión.
+
+Y las personas ya están llegando. En 2024, cincuenta y ocho personas viajaron al espacio. Pronto podrías ser vos, o yo. Ya lo vimos antes: los submarinos eran para armadas y científicos, y los submarinos turísticos llevan pasajeros desde 1986. El espacio va por el mismo camino.`,
+`Escaneen el código para conocer más de Eva.
+
+Gracias.`
+];
+const NOTE_TAG=['Speaker notes · ~60 s · first speaker','Speaker notes · ~60 s · second speaker','Speaker notes · ~60 s · third speaker',
+  'Scalability block · presented by the scalability lead · part 1 of 2 · ~25 s','Scalability block · presented by the scalability lead · part 2 of 2 · ~35 s','Closing · ~10 s'];
+
+/* ---------- i18n engine ---------- */
+const root=document.documentElement, norm=s=>String(s).replace(/\s+/g,' ').trim();
+let lang='en';
+try{const q=new URLSearchParams(location.search).get('lang');if(q==='es'||q==='en')lang=q;else{const s=localStorage.getItem('wm-lang');if(s==='es'||s==='en')lang=s}}catch(e){}
+const tr=s=>{if(lang!=='es'||s==null)return s;const v=ES[norm(s)];return v==null?s:v};
+const keep=en=>{const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(en);return m[1]+tr(m[2])+m[3]};
+const SKIP='script,style,[data-i18n],[data-js],[translate="no"]';
+const blocks=[...document.querySelectorAll('[data-i18n]')].map(el=>({el,en:el.innerHTML}));
+const texts=[];{const tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);for(let n;(n=tw.nextNode());){if(!n.nodeValue.trim()||n.parentElement.closest(SKIP))continue;texts.push({n,en:n.nodeValue})}}
+const attrs=[];document.querySelectorAll('[alt],[aria-label]').forEach(el=>{['alt','aria-label'].forEach(a=>{const v=el.getAttribute(a);if(v&&v.trim())attrs.push({el,a,en:v})})});
+const titleEn=document.title, subs=[];
+function applyLang(){root.lang=lang;
+  blocks.forEach(b=>{const v=lang==='es'?ES[norm(b.en)]:null;b.el.innerHTML=v==null?b.en:v});
+  texts.forEach(t=>{t.n.nodeValue=keep(t.en)});
+  attrs.forEach(t=>t.el.setAttribute(t.a,keep(t.en)));
+  document.title=tr(titleEn);
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===lang)));
+  subs.forEach(f=>f())}
+function setLang(l){if(l===lang)return;lang=l;try{localStorage.setItem('wm-lang',l)}catch(e){}applyLang()}
+/* copy rules v3: Super Intelligence wording, no destination planet, no qualification wording */
+
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)], J=k=>$(`[data-js="${k}"]`);
+/* Reduced motion = the system setting, unless the presenter chose otherwise with M (remembered in this browser). */
+const MQ=matchMedia('(prefers-reduced-motion: reduce)');
+let motionPref=null;try{const v=localStorage.getItem('eva-pitch-motion');if(v==='reduced'||v==='full')motionPref=v}catch(e){}
+let RM=motionPref?motionPref==='reduced':MQ.matches;
+root.classList.toggle('rm',RM);
+const stage=$('#stage'), slides=$$('.slide');
+let cur=0;
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1),10);if(n>=1&&n<=slides.length&&n-1!==cur)show(n-1)});
+
+/* Pausable clock: every timer, tween and loop runs on virtual time, so P freezes all of it at once. */
+let paused=false,pauseT0=0,pausedMs=0,gen=0,tasks=[];const jobs=new Set();
+const vnow=()=>(paused?pauseT0:performance.now())-pausedMs;
+const at=(ms,fn)=>{tasks.push({due:vnow()+ms,fn,g:gen})};
+function tween(ms,fn,done){const t0=vnow(),g=gen;const j=t=>{const k=Math.min(1,(t-t0)/ms);fn(k);if(k>=1){jobs.delete(j);if(g===gen&&done)done()}};jobs.add(j);fn(0)}
+function loop(fn){if(RM){fn(vnow());return}jobs.add(t=>fn(t))}
+function stopAll(){gen++;tasks=[];jobs.clear()}
+/* CSS transitions and animations inside the slides are frozen with the Web Animations API while paused */
+const exempt=a=>{const t=a.effect&&a.effect.target;if(!t||!t.closest)return true;const sl=t.closest('.slide');return !sl||sl===t};
+function freeze(){for(const a of document.getAnimations())if(a.playState==='running'&&!exempt(a))a.pause()}
+function frame(){
+  if(!paused){const t=vnow();
+    if(tasks.length){const due=tasks.filter(k=>k.due<=t);if(due.length){tasks=tasks.filter(k=>k.due>t);due.sort((x,y)=>x.due-y.due).forEach(k=>{if(k.g===gen)k.fn()})}}
+    jobs.forEach(j=>j(t))}
+  else freeze();
+  requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const mmss=s=>{s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+function resetClasses(el){[...el.classList].filter(c=>c.startsWith('k-')).forEach(c=>el.classList.remove(c))}
+function hard(el,fn){el.classList.add('noanim');fn();void el.offsetWidth;el.classList.remove('noanim')}
+
+/* ---------- looping clips: muted, playsinline, started and stopped by the slide timelines ---------- */
+const VIDS=$$('video[data-src]'), wanted=new Set();
+const playV=v=>{const p=v.play();if(p&&p.catch)p.catch(()=>{})};
+function want(v,on=true){if(!v)return;
+  if(on){if(!wanted.has(v)){wanted.add(v);try{v.currentTime=0}catch(e){}}if(!paused&&!RM)playV(v)}
+  else{wanted.delete(v);v.pause()}}
+function unwantAll(){wanted.forEach(v=>v.pause());wanted.clear()}
+/* the single-file export inlines clips as data: URIs; turn them into blob: URLs, which every browser can seek and loop */
+function srcOf(u){if(!u||u.slice(0,5)!=='data:')return u;try{const c=u.indexOf(','),mime=u.slice(5,u.indexOf(';')),bin=atob(u.slice(c+1)),a=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return URL.createObjectURL(new Blob([a],{type:mime}))}catch(e){return u}}
+function loadClips(){VIDS.forEach(v=>{v.muted=true;v.defaultMuted=true;v.setAttribute('muted','');
+  v.addEventListener('playing',()=>v.classList.add('ready'));
+  if(!v.getAttribute('src')){v.src=srcOf(v.dataset.src);v.removeAttribute('data-src')}})}
+
+/* ---------- SLIDE 1 ---------- */
+const S1={el:slides[0],
+  set(t){/* t: seconds of compressed time on the line, 0..2668 */ J('s1num').textContent=mmss(t)},
+  reset(){const el=this.el;hard(el,()=>{resetClasses(el);this.line(0,0,0);$('.pk',el).style.opacity=0;$$('.legs span',el).forEach(s=>s.classList.remove('on'));$$('.rcv',el).forEach(r=>r.style.opacity=0);J('s1lab').textContent=tr('Message to Earth');this.set(0)})},
+  line(out,back,pk){const el=this.el,o=$('.out',el),b=$('.back',el),p=$('.pk',el);
+    const xs=1430,xe=480;o.setAttribute('x2',xs+(xe-xs)*out);b.setAttribute('x2',xe+(xs-xe)*back);
+    if(pk!=null){const x=back>0?xe+(xs-xe)*back:xs+(xe-xs)*out;p.setAttribute('cx',x)}},
+  final(){const el=this.el;hard(el,()=>{el.classList.add('k-in','k-alert','k-zoom','k-wide','k-count','k-moon','k-end');this.line(1,1);this.set(2668);J('s1lab').textContent=tr('Waiting for help');$$('.legs span',el).forEach(s=>s.classList.add('on'))})},
+  play(){const el=this.el;this.reset();
+    if(RM){this.final();return}
+    const vA=$('.c-alone video',el),vB=$('.c-alert video',el);
+    at(50,()=>{el.classList.add('k-in');want(vA)});
+    at(3400,()=>{el.classList.add('k-alert');want(vB)});
+    at(4400,()=>want(vA,false));
+    at(6600,()=>el.classList.add('k-zoom'));
+    at(9300,()=>{el.classList.add('k-wide');want(vB,false)});
+    at(11200,()=>el.classList.add('k-count'));
+    const OUT=1334.26, D=5200, M0=11900;
+    at(M0,()=>{const p=$('.pk',el);p.style.opacity=1;J('s1lab').textContent=tr('Message to Earth');
+      tween(D,t=>{this.line(t,0,1);this.set(OUT*t)},()=>{this.set(OUT);$('.lg1',el).classList.add('on');$('.rcv-e',el).style.opacity=1;el.classList.add('k-moon')})});
+    at(M0+D+700,()=>{J('s1lab').textContent=tr('Reply from Earth');$('.rcv-e',el).style.opacity=0;
+      tween(D,t=>{this.line(1,t,1);this.set(OUT+OUT*t)},()=>{this.set(2668);$('.lg2',el).classList.add('on');$('.pk',el).style.opacity=0;$('.rcv-s',el).style.opacity=1;J('s1lab').textContent=tr('Waiting for help')})});
+    at(M0+2*D+700+1600,()=>el.classList.add('k-end'));
+  }};
+
+/* ---------- SLIDE 2 ---------- */
+const BEATS=["Hi, I'm <em>Eva</em>.","Your <em>Super Intelligence</em>, specialised in space health.","I live in your wristband. Just talk to me.","I monitor you, look after you, and guide you to help yourself or others.","I also know the emergency station. I light up exactly what you need."];
+const S2={el:slides[1],beat:-1,
+  mood(m){$$('.eva img',this.el).forEach(i=>i.classList.toggle('on',i.classList.contains('m-'+m)))},
+  dots(n){$$('.dots i',this.el).forEach((d,i)=>d.classList.toggle('on',i<=n))},
+  show(n,full){this.beat=n;this.dots(n);const html=tr(BEATS[n]),out=J('s2txt');
+    if(full||RM){out.innerHTML=html;return Promise.resolve()}
+    /* type the plain characters, keeping inline <em> markup */
+    const tmp=document.createElement('div');tmp.innerHTML=html;const parts=[];tmp.childNodes.forEach(nd=>parts.push({em:nd.nodeType===1,t:nd.textContent}));
+    const total=parts.reduce((a,p)=>a+p.t.length,0);let shown=0;
+    return new Promise(res=>{const tick=()=>{shown++;let left=shown,h='';for(const p of parts){const s=p.t.slice(0,Math.max(0,left));left-=p.t.length;if(!s)break;h+=p.em?`<em>${s}</em>`:s}
+      out.innerHTML=h;if(shown<total)at(34+Math.random()*26,tick);else res()};tick()})},
+  reset(){const el=this.el;hard(el,()=>{resetClasses(el);J('s2txt').innerHTML='';this.dots(-1);this.mood('hello')})},
+  final(){const el=this.el;hard(el,()=>{el.classList.add('k-in','k-eva','k-name','k-bubble','k-band','k-station','k-hl');this.mood('happy');this.show(4,true)})},
+  play(){const el=this.el;this.reset();if(RM){this.final();return}
+    at(50,()=>el.classList.add('k-in'));
+    at(500,()=>el.classList.add('k-eva'));
+    at(1700,()=>el.classList.add('k-name'));
+    at(2300,()=>{el.classList.add('k-bubble');this.mood('speaking');this.show(0)});
+    at(4300,()=>this.show(1));
+    at(8300,()=>{this.show(2);at(900,()=>el.classList.add('k-band'))});
+    at(13300,()=>this.show(3));
+    const vJ=$('.jclip video',el),vC=$('.cclip video',el);
+    at(13900,()=>{el.classList.add('k-journal');want(vJ)});
+    at(19300,()=>{this.show(4);at(700,()=>el.classList.add('k-station'));at(2000,()=>want(vJ,false));at(2600,()=>el.classList.add('k-hl'))});
+    at(25500,()=>this.mood('happy'));
+    at(27600,()=>{el.classList.add('k-cpr');want(vC)});
+  }};
+
+/* ---------- SLIDE 3 ---------- */
+const BEAT_MS=9000;
+const S3={el:slides[2],b:0,auto:true,
+  init(){const ppl=$('.v1 .people',this.el);const fig=`<svg viewBox="0 0 58 110"><path d="M29 4a11 11 0 1 1 0 22a11 11 0 1 1 0-22zM14 32h30a8 8 0 0 1 8 8v30a4 4 0 0 1-8 0V46h-2v58a5 5 0 0 1-10 0V72h-6v32a5 5 0 0 1-10 0V46h-2v24a4 4 0 0 1-8 0V40a8 8 0 0 1 8-8z"/><circle class="w" cx="10" cy="68" r="5"/></svg>`;
+    ppl.innerHTML=Array.from({length:11},()=>`<div class="p">${fig}</div>`).join('');
+    $$('.rail button',this.el).forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();this.go(+b.dataset.b,true)}))},
+  reset(){const el=this.el;hard(el,()=>{$$('.vis,.bc',el).forEach(v=>v.classList.remove('on','lift','fabric','snap','snapped','batt'));$$('.rail button',el).forEach(b=>{b.classList.remove('on','done');$('i',b).style.transform=''});$$('.v1 .p',el).forEach(p=>p.classList.remove('lit'))})},
+  go(n,manual){if(n<0||n>5)return;stopAll();this.b=n;const el=this.el;
+    $$('.bc',el).forEach((c,i)=>c.classList.toggle('on',i===n));
+    $$('.vis',el).forEach((v,i)=>{if(i!==n)v.classList.remove('on','lift','fabric','snap','snapped','batt')});
+    const v=$$('.vis',el)[n];v.classList.add('on');
+    $$('.bc video',el).forEach(x=>want(x,false));want($$('.bc',el)[n].querySelector('video'));
+    $$('.rail button',el).forEach((b,i)=>{b.classList.toggle('on',i===n);b.classList.toggle('done',i<n);$('i',b).style.transform=i<n?'scaleX(1)':'scaleX(0)'});
+    this['b'+n]&&this['b'+n](v);
+    const bar=$$('.rail button i',el)[n];
+    if(RM){bar.style.transform='scaleX(1)';return}
+    tween(BEAT_MS,t=>bar.style.transform=`scaleX(${t})`,()=>{if(this.auto&&n<5)this.go(n+1)});
+  },
+  b0(v){$$('.p',v).forEach((p,i)=>{p.style.transitionDelay=(.25+i*.07)+'s';p.classList.remove('lit');at(1400+i*260,()=>p.classList.add('lit'))})},
+  b1(v){const path=J('hrw');let hr=72;
+    loop(now=>{const W=300,H=90,per=900,ph=(now%per)/per;let d='';for(let x=0;x<=W;x+=3){const u=((x/W*2.2)+ph*1)%1;let y=H*.62;
+        if(u>.18&&u<.24)y-= (u-.18)/.06*H*.5; else if(u>=.24&&u<.3)y-=(1-(u-.24)/.06)*H*.5; else if(u>=.3&&u<.36)y+=Math.sin((u-.3)/.06*Math.PI)*H*.14; else if(u>.5&&u<.66)y-=Math.sin((u-.5)/.16*Math.PI)*H*.12;
+        d+=(x?'L':'M')+x+' '+y.toFixed(1)}path.setAttribute('d',d)});
+    const tick=()=>{hr=Math.max(68,Math.min(77,hr+(Math.random()-.5)*3));J('hr').textContent=Math.round(hr);J('spo').textContent=Math.random()<.8?98:97;at(1100,tick)};tick()},
+  b2(v){const arr=J('arr'),b=J('navb'),s=J('navs'),T=J('navt'),P=J('navp');
+    const steps=[[0,'Straight ahead','Corridor A · 20 m',false],[-90,'Turn left','Corridor B · 12 m',false],[-90,'Re-routing','Corridor B is blocked · take C',true],[90,'Turn right','Corridor C · 8 m',false],[0,'Shelter ahead','4 m · you are almost there',false]];
+    const setS=i=>{const [r,bb,ss,w]=steps[i];arr.style.transform=`rotate(${r}deg)`;b.textContent=tr(bb);s.textContent=tr(ss);s.classList.toggle('warn',w)};
+    arr.style.transition='none';setS(0);void arr.offsetWidth;arr.style.transition='';
+    [1500,3300,4900,6700].forEach((ms,i)=>at(ms,()=>setS(i+1)));
+    tween(BEAT_MS,t=>{const left=240-t*60;T.textContent=mmss(left).replace(/^0/,'0');P.style.transform=`scaleX(${left/240})`})},
+  b3(v){hard(v,()=>v.classList.remove('lift','fabric','snap','snapped','batt'));
+    at(900,()=>v.classList.add('lift'));at(2500,()=>v.classList.add('fabric'));at(4100,()=>v.classList.add('snap'));at(4800,()=>v.classList.add('snapped'));at(5600,()=>v.classList.add('batt'))},
+  b4(v){Mesh.start(v)},
+  b5(v){},
+  reset2(){},
+  final(){this.go(this.b||0)},
+  play(){this.reset();this.auto=!RM;this.go(0)}};
+S3.init();
+
+/* LoRa mesh: nodes inside a hairline ship outline, packets hop wristband → wristband → hub */
+const Mesh={start(v){const cv=$('canvas',v),c=cv.getContext('2d'),W=cv.width,H=cv.height,k=2;
+    const hub={x:520,y:390},st={x:900,y:600};
+    const pts=[[140,250],[250,170],[300,330],[180,470],[330,560],[420,240],[640,200],[720,330],[800,190],[880,330],[690,520],[560,610],[880,470],[420,450]].map(([x,y])=>({x,y}));
+    const all=[...pts,st];const near=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+    const edges=[];all.forEach((a,i)=>all.forEach((b,j)=>{if(j>i&&near(a,b)<210)edges.push([a,b])}));
+    pts.concat([st]).forEach(p=>{if(near(p,hub)<260)edges.push([p,hub])});
+    /* routes to the hub: greedy by distance */
+    const route=p=>{const r=[p];let q=p,guard=0;while(near(q,hub)>=260&&guard++<8){let best=null,bd=1e9;edges.forEach(([a,b])=>{const o=a===q?b:b===q?a:null;if(o&&o!==hub&&near(o,hub)<bd&&near(o,hub)<near(q,hub)){bd=near(o,hub);best=o}});if(!best)break;r.push(best);q=best}r.push(hub);return r};
+    const packets=[];let last=0;const t0=vnow()-(RM?3000:0);
+    loop(now=>{const age=(now-t0)/1000;c.setTransform(k,0,0,k,0,0);c.clearRect(0,0,W,H);
+      /* ship outline */
+      c.strokeStyle='rgba(155,153,150,.22)';c.lineWidth=1;c.beginPath();c.moveTo(70,150);c.lineTo(820,110);c.quadraticCurveTo(1010,390,820,690);c.lineTo(70,650);c.quadraticCurveTo(30,400,70,150);c.stroke();
+      const reveal=Math.min(1,age/1.2);
+      edges.forEach(([a,b],i)=>{c.strokeStyle=`rgba(31,229,196,${.16*reveal})`;c.lineWidth=1.2;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke()});
+      all.forEach((p,i)=>{const pop=Math.min(1,Math.max(0,(age-i*.05)/.4));if(!pop)return;const isSt=p===st;
+        c.fillStyle=isSt?'#F28A1A':'#f4f3f0';c.beginPath();c.arc(p.x,p.y,(isSt?11:7)*pop,0,7);c.fill();
+        c.strokeStyle=isSt?'rgba(242,138,26,.5)':'rgba(31,229,196,.55)';c.lineWidth=1.5;c.beginPath();c.arc(p.x,p.y,(isSt?20:15)*pop,0,7);c.stroke()});
+      if(age>1.4&&now-last>420){last=now;const src=all[Math.floor(Math.random()*all.length)];packets.push({r:route(src),seg:0,t:0})}
+      for(let i=packets.length-1;i>=0;i--){const p=packets[i];p.t+=0.045;if(p.t>=1){p.t=0;p.seg++;if(p.seg>=p.r.length-1){packets.splice(i,1);continue}}
+        const a=p.r[p.seg],b=p.r[p.seg+1],x=a.x+(b.x-a.x)*p.t,y=a.y+(b.y-a.y)*p.t;
+        c.strokeStyle='rgba(31,229,196,.9)';c.lineWidth=2.5;c.beginPath();c.moveTo(a.x+(b.x-a.x)*Math.max(0,p.t-.25),a.y+(b.y-a.y)*Math.max(0,p.t-.25));c.lineTo(x,y);c.stroke();
+        c.fillStyle='#1FE5C4';c.shadowColor='#1FE5C4';c.shadowBlur=14;c.beginPath();c.arc(x,y,4.5,0,7);c.fill();c.shadowBlur=0}
+      /* hub halo */
+      const pul=(now/1000)%2/2;c.strokeStyle=`rgba(31,229,196,${.5*(1-pul)})`;c.lineWidth=2;c.beginPath();c.arc(hub.x,hub.y,90+pul*60,0,7);c.stroke();
+    })}};
+
+/* ---------- SLIDE 4 ---------- */
+const ICONS={
+ health:'<svg viewBox="0 0 48 48"><path d="M24 40S6 29 6 17a9 9 0 0 1 18-3a9 9 0 0 1 18 3c0 12-18 23-18 23z"/><path d="M10 24h8l3-6 5 12 3-6h9"/></svg>',
+ emerg:'<svg viewBox="0 0 48 48"><path d="M24 5l17 6v12c0 10-7 17-17 20C14 40 7 33 7 23V11z"/><path d="M24 15v12M24 32v1"/></svg>',
+ info:'<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M24 22v11M24 15v1"/></svg>',
+ ent:'<svg viewBox="0 0 48 48"><rect x="6" y="10" width="36" height="24" rx="3"/><path d="M21 17l8 5-8 5z"/><path d="M16 40h16"/></svg>',
+ learn:'<svg viewBox="0 0 48 48"><path d="M4 18l20-9 20 9-20 9z"/><path d="M12 22v10c4 4 20 4 24 0V22"/><path d="M44 18v11"/></svg>',
+ plus:'<svg viewBox="0 0 48 48"><path d="M24 14v20M14 24h20"/></svg>'};
+const MODS=[['health','Health','Devices + sensors'],['emerg','Emergency','Disaster response'],['info','Information','Ship + mission'],['ent','Entertainment','For long trips'],['learn','Learning','Learn anything'],['plus','Next module','Plug in']];
+const S4={el:slides[4],
+  init(){const hd=$('.hubd',this.el),svg=$('svg.sp',hd),cx=450,cy=390,R=300;
+    MODS.forEach(([ic,t,s],i)=>{const a=(-90+i*60)*Math.PI/180,x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+      const ln=document.createElementNS('http://www.w3.org/2000/svg','line');const x1=cx+128*Math.cos(a),y1=cy+128*Math.sin(a),x2=cx+(R-62)*Math.cos(a),y2=cy+(R-62)*Math.sin(a);
+      ln.setAttribute('x1',x1);ln.setAttribute('y1',y1);ln.setAttribute('x2',x2);ln.setAttribute('y2',y2);ln.style.setProperty('--len',Math.hypot(x2-x1,y2-y1));svg.appendChild(ln);
+      const m=document.createElement('div');m.className='mod'+(ic==='plus'?' plus':'');m.style.left=x+'px';m.style.top=(y-59)+'px';
+      m.innerHTML=`<div class="ic">${ICONS[ic]}</div><b>${t}</b><small>${s}</small>`;hd.appendChild(m);
+      const pk=document.createElement('div');pk.className='pkt';hd.appendChild(pk);m._pk=pk;m._a=[x1,y1,x2,y2]});
+    /* translate module labels created by script */
+    subs.push(()=>$$('.mod',hd).forEach((m,i)=>{$('b',m).textContent=tr(MODS[i][1]);$('small',m).textContent=tr(MODS[i][2])}))},
+  reset(){const el=this.el;hard(el,()=>{resetClasses(el);$$('.mod',el).forEach(m=>{m.classList.remove('on');m._pk.style.opacity=0});$$('svg.sp line',el).forEach(l=>l.classList.remove('on'));J('s4n').textContent='0'})},
+  pulse(){const mods=$$('.mod',this.el).filter(m=>!m.classList.contains('plus'));
+    loop(now=>{mods.forEach((m,i)=>{const [x1,y1,x2,y2]=m._a,ph=((now/1800)+i/mods.length)%1;m._pk.style.opacity=ph<.9?Math.sin(ph/.9*Math.PI)*.95:0;
+      m._pk.style.left=(x2+(x1-x2)*ph)+'px';m._pk.style.top=(y2+(y1-y2)*ph)+'px'})})},
+  final(){const el=this.el;hard(el,()=>{el.classList.add('k-core','k-head','k-stat','k-rails');$$('.mod',el).forEach(m=>m.classList.add('on'));$$('svg.sp line',el).forEach(l=>l.classList.add('on'));J('s4n').textContent='58'})},
+  play(){const el=this.el;this.reset();if(RM){this.final();return}
+    at(200,()=>el.classList.add('k-core'));
+    const lines=$$('svg.sp line',el),mods=$$('.mod',el);
+    mods.forEach((m,i)=>{at(900+i*420,()=>lines[i].classList.add('on'));at(1500+i*420,()=>m.classList.add('on'))});
+    at(4300,()=>this.pulse());
+    at(1800,()=>el.classList.add('k-head'));
+    at(7000,()=>{el.classList.add('k-stat');tween(1800,t=>J('s4n').textContent=Math.round(58*ease(t)))});
+    at(10500,()=>el.classList.add('k-rails'));
+  }};
+S4.init();
+
+/* ---------- SLIDE 4 · SCALABILITY: more people, further out ---------- */
+const SX={el:slides[3],
+  init(){const p=$('.orbit .ol',this.el);this.len=p.getTotalLength();p.style.setProperty('--L',this.len.toFixed(1));this.path=p},
+  reset(){const el=this.el;hard(el,()=>{resetClasses(el);$$('.pts li,.pts .cn',el).forEach(x=>x.classList.remove('on'));$('.orbit .tr',el).style.opacity=0})},
+  final(){const el=this.el;hard(el,()=>{el.classList.add('k-in','k-head','k-sub','k-orbit','k-dots');$$('.pts li,.pts .cn',el).forEach(x=>x.classList.add('on'))})},
+  travel(){/* one small light rides the orbit, slowly */const tr=$('.orbit .tr',this.el),L=this.len,p=this.path,t0=vnow();
+    loop(t=>{const u=((t-t0)/16000)%1,pt=p.getPointAtLength(u*L);tr.setAttribute('cx',pt.x.toFixed(1));tr.setAttribute('cy',pt.y.toFixed(1));tr.style.opacity=(Math.min(1,u/.08,(1-u)/.08)*.9).toFixed(2)})},
+  play(){const el=this.el;this.reset();if(RM){this.final();return}
+    at(50,()=>el.classList.add('k-in'));
+    at(400,()=>el.classList.add('k-head'));
+    at(1300,()=>el.classList.add('k-orbit'));
+    at(1700,()=>el.classList.add('k-sub'));
+    at(3500,()=>el.classList.add('k-dots'));
+    $$('.pts li,.pts .cn',el).forEach((x,i)=>at(3300+i*480,()=>x.classList.add('on')));
+    at(4300,()=>this.travel());
+  }};
+SX.init();
+
+/* ---------- SLIDE 6 · closing QR ---------- */
+const SQ={el:slides[5],
+  init(){const el=this.el;J('qr').innerHTML=QR.svg(QR_URL,{ecl:'M',quiet:4,bg:'#fff',label:'QR code to '+QR_URL});
+    const a=J('qrurl');a.href=QR_URL;a.textContent=QR_URL.replace(/^https?:\/\//,'').replace(/\/$/,'');
+    const e=$('.ell ellipse',el);e.style.setProperty('--L',e.getTotalLength().toFixed(1));
+    /* parametric point on the tilted ellipse (same numbers as the SVG) */
+    const cx=960,cy=640,rx=968,ry=250,ph=-17*Math.PI/180;this.pt=th=>[cx+rx*Math.cos(th)*Math.cos(ph)-ry*Math.sin(th)*Math.sin(ph),cy+rx*Math.cos(th)*Math.sin(ph)+ry*Math.sin(th)*Math.cos(ph)];
+    this.dots=$$('.ell circle',el);this.place(0)},
+  place(t){[-.32,1.95].forEach((th0,i)=>{const [x,y]=this.pt(th0+t*2*Math.PI/90000);this.dots[i].setAttribute('cx',x.toFixed(1));this.dots[i].setAttribute('cy',y.toFixed(1))})},
+  reset(){const el=this.el;hard(el,()=>{resetClasses(el);this.place(0)})},
+  final(){const el=this.el;hard(el,()=>el.classList.add('k-in','k-orbit','k-dots','k-qr'))},
+  play(){const el=this.el;this.reset();if(RM){this.final();return}
+    at(50,()=>el.classList.add('k-in'));
+    at(500,()=>el.classList.add('k-orbit'));
+    at(900,()=>el.classList.add('k-qr'));
+    at(2600,()=>{el.classList.add('k-dots');const t0=vnow();loop(t=>this.place(t-t0))});
+  }};
+SQ.init();
+
+
+/* ---------- deck ---------- */
+const SL=[S1,S2,S3,SX,S4,SQ], N=SL.length;
+const foots=$$('.foot');
+let t0=performance.now();
+function secLabel(n){const sec=J('sec');sec.innerHTML=`<b>0${n+1}</b>${tr(slides[n].dataset.sec)}`;sec.style.opacity=n===N-1?0:''}
+function show(n,force){if(n<0||n>=N)return;if(n===cur&&!force)return;stopAll();unwantAll();
+  slides.forEach((s,i)=>s.classList.toggle('on',i===n));cur=n;
+  $$('.pager i').forEach((p,i)=>p.classList.toggle('on',i===n));J('pg').textContent=`${n+1} / ${N}`;
+  secLabel(n);
+  foots.forEach(f=>f.classList.toggle('on',+f.dataset.foot===n&&f.innerHTML.trim()!==''));
+  try{history.replaceState(null,'','#'+(n+1))}catch(e){}
+  t0=performance.now();renderNotes();
+  /* while paused, a slide arrives complete and still; it carries on from there on resume */
+  if(paused)SL[n].final();else SL[n].play()}
+function replay(){if(paused)setPaused(false);stopAll();unwantAll();t0=performance.now();SL[cur].play()}
+subs.push(()=>{secLabel(cur);renderNotes();ctlLabels();
+  /* re-type the current bubble / nav labels in the new language without restarting */
+  if(cur===1&&S2.beat>=0)J('s2txt').innerHTML=tr(BEATS[S2.beat]);
+  if(cur===0){const l=J('s1lab');const map={'Message to Earth':1,'Reply from Earth':1,'Waiting for help':1};for(const k in map){if(l.textContent===k||l.textContent===ES[k])l.textContent=tr(k)}}
+  if(cur===2&&S3.b===2){const b=J('navb'),s=J('navs');[b,s].forEach(e=>{const en=Object.keys(ES).find(k=>ES[k]===e.textContent)||e.textContent;e.textContent=tr(en)})}});
+
+/* ---------- pause + reduce motion ---------- */
+function setPaused(v){v=!!v;if(v===paused)return;
+  if(v){pauseT0=performance.now();paused=true;freeze();wanted.forEach(x=>x.pause())}
+  else{pausedMs+=performance.now()-pauseT0;paused=false;
+    document.getAnimations().forEach(a=>{if(a.playState==='paused'&&!exempt(a))a.play()});
+    if(!RM)wanted.forEach(playV)}
+  root.classList.toggle('paused',paused);ctlLabels()}
+function setRM(v){v=!!v;RM=v;motionPref=v?'reduced':'full';try{localStorage.setItem('eva-pitch-motion',motionPref)}catch(e){}
+  root.classList.toggle('rm',RM);if(RM)wanted.forEach(x=>x.pause());
+  ctlLabels();show(cur,true)}
+function ctlLabels(){const pb=J('pb'),mb=J('mb');
+  J('pl').textContent=tr(paused?'Paused · resume':'Pause');pb.setAttribute('aria-pressed',String(paused));pb.title=tr('Pause or resume all motion (P or K)');
+  J('ml').textContent=tr('Reduce motion');mb.setAttribute('aria-pressed',String(RM));mb.title=tr('Reduce motion: stills, no auto-advance (M)');
+  $('.ctl').setAttribute('aria-label',tr('Motion'))}
+if(MQ.addEventListener)MQ.addEventListener('change',e=>{if(!motionPref){RM=e.matches;root.classList.toggle('rm',RM);ctlLabels();show(cur,true)}});
+
+/* notes / sources / help / timer */
+const ov=id=>$('#'+id);
+function renderNotes(){J('nt').textContent=`${String(cur+1).padStart(2,'0')} · ${tr(slides[cur].dataset.sec)} · ${tr(NOTE_TAG[cur])}`;J('ns').textContent=(lang==='es'?NOTES_ES:NOTES)[cur]}
+function toggle(id,force){const o=ov(id);o.classList.toggle('on',force);}
+let timerOn=false;
+function timerTick(){if(timerOn){const s=(performance.now()-t0)/1000;$('#tbar').style.transform=`scaleX(${Math.min(1,s/60)})`;$('#tbar').style.background=s>60?'#ff4433':'';$('#tclock').textContent=`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`}requestAnimationFrame(timerTick)}
+requestAnimationFrame(timerTick);
+
+/* with auto-advance off (reduced motion, or after ↓/↑), → and ← also step through slide 3's beats */
+function next(){if(cur===2&&(RM||!S3.auto)&&S3.b<5){S3.go(S3.b+1,true);return}if(cur<N-1)show(cur+1)}
+function prev(){if(cur===2&&(RM||!S3.auto)&&S3.b>0){S3.go(S3.b-1,true);return}if(cur>0)show(cur-1)}
+addEventListener('keydown',e=>{if(e.metaKey||e.ctrlKey||e.altKey)return;const k=e.key;
+  if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();next()}
+  else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();prev()}
+  else if(k==='ArrowDown'){if(cur===2){e.preventDefault();S3.auto=false;S3.go(S3.b+1,true)}}
+  else if(k==='ArrowUp'){if(cur===2){e.preventDefault();S3.auto=false;S3.go(S3.b-1,true)}}
+  else if(k==='Home'){show(0)}else if(k==='End'){show(N-1)}
+  else if(k==='p'||k==='P'||k==='k'||k==='K'){e.preventDefault();setPaused(!paused)}
+  else if(k==='m'||k==='M'){setRM(!RM)}
+  else if(k==='r'||k==='R'){replay()}
+  else if(k==='n'||k==='N'){toggle('notes')}
+  else if(k==='l'||k==='L'){setLang(lang==='en'?'es':'en')}
+  else if(k==='s'||k==='S'){toggle('sources')}
+  else if(k==='t'||k==='T'){timerOn=!timerOn;document.body.classList.toggle('timer',timerOn);t0=performance.now()}
+  else if(k==='f'||k==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>{});else document.exitFullscreen?.()}
+  else if(k==='?'||k==='h'||k==='H'){toggle('help')}
+  else if(k==='Escape'){['notes','sources','help'].forEach(i=>toggle(i,false))}
+  else if(/^[1-9]$/.test(k)&&+k<=N){show(+k-1)}
+});
+$$('.lang button').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();setLang(b.dataset.l)}));
+J('pb').addEventListener('click',e=>{e.stopPropagation();setPaused(!paused);e.currentTarget.blur()});
+J('mb').addEventListener('click',e=>{e.stopPropagation();setRM(!RM);e.currentTarget.blur()});
+$('#view').addEventListener('click',e=>{if(e.target.closest('a,button,.rail,.ctl'))return;next()});
+$('#sources').addEventListener('click',e=>{if(e.target.id==='sources')toggle('sources',false)});
+$('#help').addEventListener('click',()=>toggle('help',false));
+let tx=null,ty=null;addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3){dx<0?next():prev()}},{passive:true});
+
+/* expose a tiny API for screenshots / remote control */
+window.deck={show:n=>show(n,true),replay,beat:n=>{S3.auto=false;S3.go(n,true)},lang:setLang,pause:v=>setPaused(v==null?!paused:v),motion:v=>setRM(v==null?!RM:v),
+  get cur(){return cur},get paused(){return paused},get reduced(){return RM},get beatIndex(){return S3.b},qrUrl:QR_URL};
+
+/* boot */
+loadClips();ctlLabels();
+if(lang==='es')applyLang();else document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===lang)));
+const h=parseInt((location.hash||'').slice(1),10);
+show(h>=1&&h<=N?h-1:0,true);
+$('#hint').classList.add('on');setTimeout(()=>$('#hint').classList.remove('on'),6000);
+</script>
+</body>
+</html>

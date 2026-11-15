@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Install Eva on Android</title>
+<meta name="description" content="Download the Eva demo for Android: scan, install, try it.">
+<link rel="icon" href="/app/static/icons/icon-192.png">
+<style>
+@font-face{font-family:Inter;src:url(/app/static/fonts/inter-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{--bg:#000;--ink:#f4f3f0;--mu:#9b9996;--rule:#2a2a2a;--eva:#1fe5c4;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.45 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+main{max-width:880px;margin:0 auto;padding:max(24px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom))}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:15px;letter-spacing:.02em;text-decoration:none}
+.brand span{color:var(--mu)}
+.lang{display:flex;border:1px solid var(--rule)}
+.lang button{padding:6px 12px;font-size:13px;letter-spacing:.06em;color:var(--mu)}
+.lang button+button{border-left:1px solid var(--rule)}
+.lang button[aria-pressed=true]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--eva)}
+h1{font-weight:400;font-size:clamp(36px,7.5vw,72px);line-height:1.02;letter-spacing:-.02em;margin:44px 0 12px}
+.sub{color:var(--mu);font-size:16px;max-width:52ch}
+.grid{display:grid;grid-template-columns:1fr;gap:28px;margin-top:36px;border-top:1px solid var(--rule);padding-top:28px}
+@media (min-width:760px){.grid{grid-template-columns:minmax(0,1fr) 300px;gap:48px}}
+.dl{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:64px;padding:0 24px;background:var(--ink);color:#0c0c0c;text-decoration:none;font-size:20px;letter-spacing:-.01em}
+.dl svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+.dl:focus-visible{outline:2px solid var(--eva);outline-offset:3px}
+.meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;color:var(--mu);font-size:14px;font-variant-numeric:tabular-nums}
+.lab{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);margin:34px 0 4px}
+ol{list-style:none;padding:0;border-top:1px solid var(--rule)}
+ol li{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule)}
+ol li .n{flex:none;width:28px;color:var(--eva);font-variant-numeric:tabular-nums}
+ol li b{display:block;font-weight:400;font-size:18px}
+ol li span{display:block;color:var(--mu);font-size:14px;margin-top:2px}
+.qr{border:1px solid var(--rule);padding:16px;align-self:start}
+.qr svg{display:block;width:100%;height:auto}
+.qr p{color:var(--mu);font-size:13px;margin-top:12px}
+.qr code{color:var(--ink);font:13px ui-monospace,Menlo,monospace;word-break:break-all}
+.note{color:var(--mu);font-size:13px;margin-top:28px;max-width:62ch}
+.foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--rule);color:var(--mu);font-size:13px;display:flex;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <a class="brand" href="/">Eva <span>by WearMeds</span></a>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></div>
+  </div>
+
+  <h1 data-t="h1">Install Eva on Android</h1>
+  <p class="sub" data-t="sub">Scan, install, try it. The demo runs on its own: no ship hub, no account.</p>
+
+  <div class="grid">
+    <div>
+      <a class="dl" href="/download/eva.apk" download="eva-v0.3.5.apk" type="application/vnd.android.package-archive">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-t="btn">Download APK</span>
+      </a>
+      <div class="meta"><span>Eva 0.3.5</span><span>2.3 MB</span><span data-t="req">Android 8.0 or newer</span></div>
+
+      <p class="lab" data-t="steps">Three steps</p>
+      <ol>
+        <li><span class="n">01</span><div><b data-t="s1">Allow this install</b><span data-t="s1d">When Android asks, allow installs from your browser (or Files) for this download, then tap Install.</span></div></li>
+        <li><span class="n">02</span><div><b data-t="s2">Open Eva</b><span data-t="s2d">Find it in your apps. Play Protect may say the developer is unknown: choose Install anyway.</span></div></li>
+        <li><span class="n">03</span><div><b data-t="s3">Choose "Try the demo"</b><span data-t="s3d">The guided demo with live Eva: voice, photo and chat. No network? Pick Offline demo.</span></div></li>
+      </ol>
+      <p class="note" data-t="note">A demo for NASA Space Apps Challenge 2026 by team Sanjo-X. Eva gives diagnostic support; the crew lead confirms and the ship's AED decides the shock.</p>
+    </div>
+
+    <figure class="qr">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="QR code: eva-wearmeds.vercel.app/download"><rect width="37" height="37" fill="#f4f3f0"/><path d="M4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM7,4h1v1h-1zM8,4h1v1h-1zM9,4h1v1h-1zM10,4h1v1h-1zM13,4h1v1h-1zM14,4h1v1h-1zM15,4h1v1h-1zM16,4h1v1h-1zM17,4h1v1h-1zM20,4h1v1h-1zM22,4h1v1h-1zM23,4h1v1h-1zM24,4h1v1h-1zM26,4h1v1h-1zM27,4h1v1h-1zM28,4h1v1h-1zM29,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM4,5h1v1h-1zM10,5h1v1h-1zM13,5h1v1h-1zM14,5h1v1h-1zM18,5h1v1h-1zM19,5h1v1h-1zM26,5h1v1h-1zM32,5h1v1h-1zM4,6h1v1h-1zM6,6h1v1h-1zM7,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM12,6h1v1h-1zM13,6h1v1h-1zM14,6h1v1h-1zM20,6h1v1h-1zM23,6h1v1h-1zM24,6h1v1h-1zM26,6h1v1h-1zM28,6h1v1h-1zM29,6h1v1h-1zM30,6h1v1h-1zM32,6h1v1h-1zM4,7h1v1h-1zM6,7h1v1h-1zM7,7h1v1h-1zM8,7h1v1h-1zM10,7h1v1h-1zM12,7h1v1h-1zM14,7h1v1h-1zM15,7h1v1h-1zM17,7h1v1h-1zM18,7h1v1h-1zM21,7h1v1h-1zM24,7h1v1h-1zM26,7h1v1h-1zM28,7h1v1h-1zM29,7h1v1h-1zM30,7h1v1h-1zM32,7h1v1h-1zM4,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM17,8h1v1h-1zM20,8h1v1h-1zM23,8h1v1h-1zM24,8h1v1h-1zM26,8h1v1h-1zM28,8h1v1h-1zM29,8h1v1h-1zM30,8h1v1h-1zM32,8h1v1h-1zM4,9h1v1h-1zM10,9h1v1h-1zM12,9h1v1h-1zM14,9h1v1h-1zM17,9h1v1h-1zM18,9h1v1h-1zM19,9h1v1h-1zM20,9h1v1h-1zM21,9h1v1h-1zM22,9h1v1h-1zM26,9h1v1h-1zM32,9h1v1h-1zM4,10h1v1h-1zM5,10h1v1h-1zM6,10h1v1h-1zM7,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM14,10h1v1h-1zM16,10h1v1h-1zM18,10h1v1h-1zM20,10h1v1h-1zM22,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM27,10h1v1h-1zM28,10h1v1h-1zM29,10h1v1h-1zM30,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM12,11h1v1h-1zM13,11h1v1h-1zM14,11h1v1h-1zM15,11h1v1h-1zM18,11h1v1h-1zM20,11h1v1h-1zM22,11h1v1h-1zM23,11h1v1h-1zM24,11h1v1h-1zM4,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM8,12h1v1h-1zM9,12h1v1h-1zM10,12h1v1h-1zM15,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM18,12h1v1h-1zM19,12h1v1h-1zM20,12h1v1h-1zM21,12h1v1h-1zM23,12h1v1h-1zM26,12h1v1h-1zM27,12h1v1h-1zM28,12h1v1h-1zM29,12h1v1h-1zM30,12h1v1h-1zM4,13h1v1h-1zM5,13h1v1h-1zM6,13h1v1h-1zM9,13h1v1h-1zM11,13h1v1h-1zM12,13h1v1h-1zM14,13h1v1h-1zM16,13h1v1h-1zM20,13h1v1h-1zM22,13h1v1h-1zM23,13h1v1h-1zM26,13h1v1h-1zM27,13h1v1h-1zM28,13h1v1h-1zM32,13h1v1h-1zM4,14h1v1h-1zM5,14h1v1h-1zM10,14h1v1h-1zM11,14h1v1h-1zM12,14h1v1h-1zM13,14h1v1h-1zM16,14h1v1h-1zM19,14h1v1h-1zM20,14h1v1h-1zM21,14h1v1h-1zM22,14h1v1h-1zM24,14h1v1h-1zM27,14h1v1h-1zM28,14h1v1h-1zM5,15h1v1h-1zM7,15h1v1h-1zM8,15h1v1h-1zM9,15h1v1h-1zM12,15h1v1h-1zM14,15h1v1h-1zM15,15h1v1h-1zM18,15h1v1h-1zM20,15h1v1h-1zM23,15h1v1h-1zM26,15h1v1h-1zM27,15h1v1h-1zM29,15h1v1h-1zM31,15h1v1h-1zM5,16h1v1h-1zM7,16h1v1h-1zM8,16h1v1h-1zM9,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM15,16h1v1h-1zM17,16h1v1h-1zM18,16h1v1h-1zM21,16h1v1h-1zM24,16h1v1h-1zM29,16h1v1h-1zM30,16h1v1h-1zM4,17h1v1h-1zM6,17h1v1h-1zM7,17h1v1h-1zM8,17h1v1h-1zM9,17h1v1h-1zM11,17h1v1h-1zM14,17h1v1h-1zM15,17h1v1h-1zM20,17h1v1h-1zM22,17h1v1h-1zM23,17h1v1h-1zM24,17h1v1h-1zM25,17h1v1h-1zM26,17h1v1h-1zM28,17h1v1h-1zM32,17h1v1h-1zM4,18h1v1h-1zM6,18h1v1h-1zM7,18h1v1h-1zM10,18h1v1h-1zM13,18h1v1h-1zM14,18h1v1h-1zM15,18h1v1h-1zM18,18h1v1h-1zM19,18h1v1h-1zM27,18h1v1h-1zM28,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM6,19h1v1h-1zM7,19h1v1h-1zM8,19h1v1h-1zM11,19h1v1h-1zM13,19h1v1h-1zM14,19h1v1h-1zM16,19h1v1h-1zM19,19h1v1h-1zM20,19h1v1h-1zM24,19h1v1h-1zM28,19h1v1h-1zM31,19h1v1h-1zM5,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM10,20h1v1h-1zM11,20h1v1h-1zM12,20h1v1h-1zM13,20h1v1h-1zM15,20h1v1h-1zM16,20h1v1h-1zM17,20h1v1h-1zM19,20h1v1h-1zM21,20h1v1h-1zM29,20h1v1h-1zM30,20h1v1h-1zM4,21h1v1h-1zM6,21h1v1h-1zM7,21h1v1h-1zM9,21h1v1h-1zM11,21h1v1h-1zM12,21h1v1h-1zM14,21h1v1h-1zM16,21h1v1h-1zM17,21h1v1h-1zM20,21h1v1h-1zM21,21h1v1h-1zM22,21h1v1h-1zM23,21h1v1h-1zM24,21h1v1h-1zM25,21h1v1h-1zM26,21h1v1h-1zM27,21h1v1h-1zM28,21h1v1h-1zM30,21h1v1h-1zM32,21h1v1h-1zM4,22h1v1h-1zM8,22h1v1h-1zM9,22h1v1h-1zM10,22h1v1h-1zM11,22h1v1h-1zM12,22h1v1h-1zM13,22h1v1h-1zM16,22h1v1h-1zM17,22h1v1h-1zM18,22h1v1h-1zM19,22h1v1h-1zM20,22h1v1h-1zM24,22h1v1h-1zM25,22h1v1h-1zM30,22h1v1h-1zM4,23h1v1h-1zM8,23h1v1h-1zM9,23h1v1h-1zM11,23h1v1h-1zM14,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM18,23h1v1h-1zM20,23h1v1h-1zM22,23h1v1h-1zM24,23h1v1h-1zM27,23h1v1h-1zM28,23h1v1h-1zM31,23h1v1h-1zM4,24h1v1h-1zM7,24h1v1h-1zM10,24h1v1h-1zM11,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM15,24h1v1h-1zM21,24h1v1h-1zM22,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM26,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM30,24h1v1h-1zM31,24h1v1h-1zM32,24h1v1h-1zM12,25h1v1h-1zM14,25h1v1h-1zM16,25h1v1h-1zM17,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM24,25h1v1h-1zM28,25h1v1h-1zM29,25h1v1h-1zM30,25h1v1h-1zM31,25h1v1h-1zM32,25h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM9,26h1v1h-1zM10,26h1v1h-1zM17,26h1v1h-1zM18,26h1v1h-1zM19,26h1v1h-1zM21,26h1v1h-1zM23,26h1v1h-1zM24,26h1v1h-1zM26,26h1v1h-1zM28,26h1v1h-1zM29,26h1v1h-1zM30,26h1v1h-1zM4,27h1v1h-1zM10,27h1v1h-1zM12,27h1v1h-1zM13,27h1v1h-1zM15,27h1v1h-1zM17,27h1v1h-1zM19,27h1v1h-1zM22,27h1v1h-1zM23,27h1v1h-1zM24,27h1v1h-1zM28,27h1v1h-1zM4,28h1v1h-1zM6,28h1v1h-1zM7,28h1v1h-1zM8,28h1v1h-1zM10,28h1v1h-1zM12,28h1v1h-1zM13,28h1v1h-1zM14,28h1v1h-1zM15,28h1v1h-1zM16,28h1v1h-1zM18,28h1v1h-1zM19,28h1v1h-1zM20,28h1v1h-1zM21,28h1v1h-1zM24,28h1v1h-1zM25,28h1v1h-1zM26,28h1v1h-1zM27,28h1v1h-1zM28,28h1v1h-1zM30,28h1v1h-1zM31,28h1v1h-1zM32,28h1v1h-1zM4,29h1v1h-1zM6,29h1v1h-1zM7,29h1v1h-1zM8,29h1v1h-1zM10,29h1v1h-1zM12,29h1v1h-1zM13,29h1v1h-1zM20,29h1v1h-1zM22,29h1v1h-1zM23,29h1v1h-1zM27,29h1v1h-1zM29,29h1v1h-1zM30,29h1v1h-1zM31,29h1v1h-1zM32,29h1v1h-1zM4,30h1v1h-1zM6,30h1v1h-1zM7,30h1v1h-1zM8,30h1v1h-1zM10,30h1v1h-1zM12,30h1v1h-1zM13,30h1v1h-1zM14,30h1v1h-1zM15,30h1v1h-1zM17,30h1v1h-1zM18,30h1v1h-1zM19,30h1v1h-1zM22,30h1v1h-1zM23,30h1v1h-1zM24,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM29,30h1v1h-1zM30,30h1v1h-1zM31,30h1v1h-1zM4,31h1v1h-1zM10,31h1v1h-1zM15,31h1v1h-1zM16,31h1v1h-1zM19,31h1v1h-1zM24,31h1v1h-1zM25,31h1v1h-1zM27,31h1v1h-1zM28,31h1v1h-1zM29,31h1v1h-1zM31,31h1v1h-1zM4,32h1v1h-1zM5,32h1v1h-1zM6,32h1v1h-1zM7,32h1v1h-1zM8,32h1v1h-1zM9,32h1v1h-1zM10,32h1v1h-1zM12,32h1v1h-1zM14,32h1v1h-1zM15,32h1v1h-1zM17,32h1v1h-1zM18,32h1v1h-1zM19,32h1v1h-1zM20,32h1v1h-1zM21,32h1v1h-1zM23,32h1v1h-1zM25,32h1v1h-1zM26,32h1v1h-1zM27,32h1v1h-1zM28,32h1v1h-1zM30,32h1v1h-1z" fill="#000"/></svg>
+      <p data-t="scan">Scan with the phone's camera to open this page there.</p>
+      <p><code>eva-wearmeds.vercel.app/download</code></p>
+    </figure>
+  </div>
+
+  <div class="foot">
+    <a href="/app/" data-t="web">Try it in the browser</a>
+    <a href="/" data-t="site">Back to the site</a>
+  </div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var T = {
+    en: { h1: "Install Eva on Android", sub: "Scan, install, try it. The demo runs on its own: no ship hub, no account.", btn: "Download APK", req: "Android 8.0 or newer",
+      steps: "Three steps", s1: "Allow this install", s1d: "When Android asks, allow installs from your browser (or Files) for this download, then tap Install.",
+      s2: "Open Eva", s2d: "Find it in your apps. Play Protect may say the developer is unknown: choose Install anyway.",
+      s3: "Choose “Try the demo”", s3d: "The guided demo with live Eva: voice, photo and chat. No network? Pick Offline demo.",
+      note: "A demo for NASA Space Apps Challenge 2026 by team Sanjo-X. Eva gives diagnostic support; the crew lead confirms and the ship's AED decides the shock.",
+      scan: "Scan with the phone's camera to open this page there.", web: "Try it in the browser", site: "Back to the site" },
+    es: { h1: "Instalá Eva en Android", sub: "Escaneá, instalá y probala. La demo funciona sola: sin hub de la nave y sin cuenta.", btn: "Descargar APK", req: "Android 8.0 o más nuevo",
+      steps: "Tres pasos", s1: "Permití la instalación", s1d: "Cuando Android lo pida, permití instalar desde el navegador (o Archivos) para esta descarga y tocá Instalar.",
+      s2: "Abrí Eva", s2d: "Está en tus apps. Play Protect puede decir que el desarrollador es desconocido: elegí Instalar de todas formas.",
+      s3: "Elegí “Try the demo”", s3d: "La demo guiada con Eva en vivo: voz, foto y chat. ¿Sin red? Elegí Offline demo.",
+      note: "Una demo para NASA Space Apps Challenge 2026 del equipo Sanjo-X. Eva da apoyo al diagnóstico; la jefa de tripulación confirma y el DEA de la nave decide la descarga.",
+      scan: "Escaneá con la cámara del teléfono para abrir esta página ahí.", web: "Probala en el navegador", site: "Volver al sitio" }
+  };
+  // a saved choice first, then ?lang=, then the phone's language
+  var lang = /^es/i.test(navigator.language || "") ? "es" : "en";
+  try { var saved = localStorage.getItem("eva-replay-lang"); if (saved === "es" || saved === "en") lang = saved; } catch (e) {}
+  var q = new URLSearchParams(location.search).get("lang");
+  if (q === "es" || q === "en") lang = q;
+  function render() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-t]").forEach(function (e) { e.textContent = T[lang][e.getAttribute("data-t")]; });
+    document.querySelectorAll(".lang [data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
+  }
+  document.querySelectorAll(".lang [data-lang]").forEach(function (b) {
+    b.addEventListener("click", function () { lang = b.getAttribute("data-lang"); try { localStorage.setItem("eva-replay-lang", lang); } catch (e) {} render(); });
+  });
+  render();
+})();
+</script>
+</body>
+</html>
