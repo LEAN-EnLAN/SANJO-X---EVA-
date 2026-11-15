@@ -42,7 +42,7 @@ One short section per step. Each says what changed and why, so the reasoning liv
 
 **What.** The service worker cache is now `eva-shell-v3` (bumped whenever CSS or JS change, because static files are served cache-first). It precaches every app screen twice: once as a full page, for a cold start offline, and once as the htmx fragment, for tab navigation offline. It also precaches the hero photos and meal images. Fragment requests are cached separately, so offline navigation can never nest a whole page inside `#screen`. The manifest gained shortcuts (Plan, 30 s ECG) and a fuller description. Icons stay 192 / 512 / 512 maskable, with the mascot inside the maskable safe zone.
 
-**Why.** On the ship there is no store and the hub can drop out. Before this step, offline navigation fell back to the full `/app` page and swapped it into the screen area. Lighthouse 11.7.1 (the last version with the PWA category), headless Chromium, `/app`: **PWA 1.0, accessibility 1.0, best practices 1.0**. `/app/food` and `/app/ecg` score 1.0 on accessibility. `/dash` scores 1.0 after Step 8.
+**Why.** On the ship there is no store and the hub can drop out. Before this step, offline navigation fell back to the full `/app` page and swapped it into the screen area. Lighthouse 11.7.1 (the last version with the PWA category), headless Chromium, `/app`: **PWA 1.0, accessibility 1.0, best practices 1.0**. After Step 8, `/app`, `/app/plan`, `/app/food`, `/app/ecg` and `/app/band` all score 1.0 on PWA, accessibility and best practices, and `/dash` scores 1.0 on accessibility and best practices with the desktop preset. Card titles are `h2` under each screen's `h1`.
 
 ## Step 8 · Contrast and short copy
 

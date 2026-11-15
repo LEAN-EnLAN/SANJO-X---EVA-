@@ -27,7 +27,7 @@
 </section>
 
 <section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5 py-4">
-  <header class="flex items-center justify-between gap-3"><h3 class="text-base text-ink">Suit mode</h3><span class="text-xs {% if suit %}text-info{% else %}text-muted{% endif %}">{% if suit %}On now{% else %}Off · parts joined{% endif %}</span></header>
+  <header class="flex items-center justify-between gap-3"><h2 class="text-base text-ink">Suit mode</h2><span class="text-xs {% if suit %}text-info{% else %}text-muted{% endif %}">{% if suit %}On now{% else %}Off · parts joined{% endif %}</span></header>
   <div class="flex flex-col gap-1">
     <div class="flex items-center gap-4"><img src="/static/img/wrist/band-interface.webp" alt="" class="h-10 w-24 shrink-0 rounded-sm object-cover" loading="lazy"><p class="text-sm text-ink">Screen part<span class="block text-xs text-muted">ECG pads · LoRa</span></p></div>
     <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 flex-col items-center gap-1"><span class="flex w-16 justify-between"><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span></span><span class="h-5 w-full rounded-sm {% if suit %}bg-hatch-info{% else %}bg-hatch{% endif %}"></span></span><p class="text-sm {% if suit %}text-info{% else %}text-ink{% endif %}">Suit fabric<span class="block text-xs text-muted">Magnets hold · pins don't</span></p></div>
@@ -40,7 +40,7 @@
 </section>
 
 <section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5 py-4">
-  <header class="flex items-center justify-between gap-3"><h3 class="text-base text-ink">Signal</h3><span class="text-xs text-muted">Last reading {{ age }}</span></header>
+  <header class="flex items-center justify-between gap-3"><h2 class="text-base text-ink">Signal</h2><span class="text-xs text-muted">Last reading {{ age }}</span></header>
   <div class="flex items-center gap-4">
     <span class="flex h-8 items-end gap-1" aria-hidden="true">{% for on in signal_bars %}<span class="w-2 rounded-sm {% if *on %}bg-ink{% else %}bg-line{% endif %}" style="height: {{ (loop.index * 25) }}%"></span>{% endfor %}</span>
     <span class="flex flex-col"><span class="text-2xl tracking-tight text-ink tabular-nums">{{ p.vitals.quality }}<span class="ml-0.5 text-sm text-muted">%</span></span><span class="text-xs text-muted">{{ signal_word }}</span></span>
