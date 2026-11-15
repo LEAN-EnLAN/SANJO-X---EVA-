@@ -1,5 +1,7 @@
 # Eva — Encargo de investigación médica y arquitectura para una misión a Marte
 
+> **Documento histórico (sáb 14/11), superado.** Lo vigente está en `CLAUDE.md` (incluidas las "Reglas de texto v3" del dom 15/11): el viaje es "en el espacio" (sin Marte), Super Inteligencia en lugar de IA, pulsera WearMeds de dos módulos más la estación de emergencia con compartimentos numerados (sin arnés ni inyectable vestible), y el DEA decide la descarga. No copiar textos de este encargo a ningún entregable.
+
 ## 0. Cómo usar este archivo
 
 Este archivo es un encargo autocontenido. Podés recibirlo en un chat sin contexto previo. Leelo completo antes de investigar. Las decisiones actuales de este documento prevalecen sobre imágenes, ideas o conversaciones anteriores del proyecto.

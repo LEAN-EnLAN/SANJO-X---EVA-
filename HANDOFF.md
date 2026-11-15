@@ -3,6 +3,8 @@
 Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedido de Lean.
 **La fuente de verdad es el Drive** (carpeta `1NCFN_22gxWjRGJdxKjX11KcOk5v7bic7`). Si algo de este archivo choca con el Registro de decisiones, manda el Registro.
 
+> **Actualización dom 15/11 · reglas de texto v3:** mandan las "Reglas de texto v3" de `CLAUDE.md` (Super Intelligence / Super Inteligencia en lugar de IA; viaje "in space", sin Marte; compartimentos numerados sin cantidad; "el pasajero más cercano"; ECG con dos dedos de la misma mano; el hub aloja la Super Inteligencia y guarda todo, la Tierra recibe y confirma los registros firmados; Naza: Escalabilidad; "Hermes" fue el nombre viejo: siempre "Eva"). Las referencias a Marte de abajo quedan superadas.
+
 > **Actualización sáb 22:15:** el encargo de investigación del equipo (`docs/encargo-investigacion.md`, anexo en el Drive) eliminó la estación compartida. Quedan brazalete, arnés (con desfibrilación vestible e inyectable) y el hub de la nave. Donde este archivo hable de la estación, manda "06 · Concepto actual: Eva".
 
 ## Evento
@@ -14,35 +16,37 @@ Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedi
 ## Producto
 - **Eva**: nombre propio del asistente (no sigla; así no se confunde con EVA, "caminata espacial", de NASA). Nombres anteriores (Vela, Hermes) solo en el historial del Registro y la Bitácora.
 - **WearMeds**: marca de los wearables. "Power Mats" queda por confirmar.
-- **Concepto IoT** para un viaje comercial a Marte:
+- **Concepto IoT** para un viaje comercial en el espacio:
   - Banda torácica (ECG, respiración) y pulsera con pantalla grande (pulso, movimiento, instrucciones paso a paso).
   - Estación compartida por cabina (presión, SpO₂, temperatura) que **ilumina la bandeja** que hay que usar.
   - **Caso 01**: la persona no responde o no puede actuar → Eva avisa al pasajero más cercano y lo guía; los demás reciben un aviso informativo.
   - **Caso 02**: puede actuar y moverse → Eva lo lleva a la estación, ilumina el elemento y muestra cómo usarlo.
   - **Alerta solar** con NASA DONKI (`https://ccmc.gsfc.nasa.gov/DONKI-API/get/FLR`) y NOAA GOES (`services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json`, `integral-protons-1-day.json`). Los rayos X llegan con la luz; el margen de aviso es hasta que llegan las partículas.
-  - Registro encadenado de cada paso que viaja a la Tierra con confirmación de recepción (demora de 3 a 22 min por tramo).
+  - Registro encadenado de cada paso que viaja a la Tierra con confirmación de recepción (a minutos de la Tierra).
 - **Enfoque de producto para inversores**: simulación de un producto real vendido a inversores reales. Hace falta negocio, producto y prototipo. Modelo propuesto: kit por pasajero, estación por cabina, licencia de Eva por misión; plataforma personalizable con varias líneas (órbita, bases lunares, trabajo remoto en la Tierra). Sin precios hasta que el documento de negocio los defina.
 - **Lenguaje**: "Eva **guides, records and warns**". Nunca "diagnostica", "trata" ni "totalmente autónomo".
-- Arquitectura de IA en 3 capas: protocolo (menos de 1 s) → razonamiento con MedGemma 1.5 4B + MedASR a bordo (menos de 10 s; términos HAI-DEF, no open source) → registro y enlace. En el prototipo, la capa 2 usa Claude como reemplazo hasta descargar MedGemma: declararlo.
+- Arquitectura de Super Inteligencia en 3 capas: protocolo (menos de 1 s) → razonamiento con MedGemma 1.5 4B + MedASR a bordo (menos de 10 s; términos HAI-DEF, no open source) → registro y enlace. En el prototipo, la capa 2 usa Claude como reemplazo hasta descargar MedGemma: declararlo.
 
 ## Cifras verificadas (usar solo estas)
 - ~70% de los astronautas en misiones de 6 a 12 meses en la ISS con cambios de visión significativos; 81% con al menos un signo de SANS.
 - 85% de 71 astronautas con al menos un problema nasal o de senos paranasales.
-- Demora a Marte: 3 a 22 min por tramo.
+- Demora de comunicación: minutos desde la Tierra por tramo (genérico; Russell et al. 2023, doi:10.1038/s41526-023-00284-1).
+- Supervivencia en paro: cada minuto sin desfibrilación la baja ~7–10 % (Szabó et al., Front Pharmacol 10:1640 (2020), doi:10.3389/fphar.2019.01640).
+- Fuente de datos de NASA: Human Health and Performance data sharing, https://www.nasa.gov/directorates/esdmd/hhp/human-health-and-performance-data-sharing/
 - Inspiration4 (NASA OSDR OSD-575 panel metabólico, OSD-569 hemograma): con línea basal personal, R+1 muestra 16 de 72 cambios contra 7 con rangos de laboratorio.
 - **No usar** "90% ojos" ni "70% respiratorio": no tienen fuente.
 
 ## Diseño
 - **Vigente: design system twocreate** (`twocreate.com-DESIGN.md`): lienzo #f9f7f4, tinta #0c0c0c, reglas #e3e1dd; tipografía grotesca peso 400 (PP Neue Montreal, sustituto Inter) en 111 / 66.6 / 44.4 / 33.3 / 22.2 px; sin botones rellenos, sin esquinas redondeadas, sin sombras; dípticos imagen ancha + detalle; wordmark final "Eva by WearMeds".
 - **Descartados**: NASA Horizon modernizado, AuthKit "circuito luminoso", kit HELIO X y el kit visual de Tomás.
-- Assets: 21 imágenes de Codex (S1–S5 escenas, L1–L13 capas, F1–F3 estación) + preview de motion. Todas llevan "AI-generated".
-- **Sin logos de NASA** (insignia, logotipo, banderas, parches) en nada nuestro ni en imágenes de IA. Sacar el logo de NASA de las láminas del equipo.
+- Assets: 21 imágenes de Codex (S1–S5 escenas, L1–L13 capas, F1–F3 estación) + preview de motion. Se declaran como generadas con Super Inteligencia en el README (sin marca en pantalla).
+- **Sin logos de NASA** (insignia, logotipo, banderas, parches) en nada nuestro ni en imágenes generadas. Sacar el logo de NASA de las láminas del equipo.
 
 ## Código
 - Stack: **Rust + htmx + HTML**, un solo binario. Nadie del equipo tiene experiencia en Rust: Claude escribe, el equipo revisa.
 - **Código 100% propio**: de los proyectos open source (HealthLog, OpenNutriTracker, nasa/hermes, Human Atlas, hds-core) se toman patrones e ingeniería inversa, nunca código. HealthLog es PolyForm Noncommercial; OpenNutriTracker GPL-3.
 - Patrón de NASA Hermes (JPL, Apache-2.0): "el diccionario es el contrato" (XTCE).
-- Requisitos NASA: inglés, ≤7 slides o video ≤30 s, links sin login, datos NASA en el centro, uso de IA declarado, marca de agua en imágenes de IA.
+- Requisitos NASA: inglés, ≤7 slides o video ≤30 s, links sin login, datos NASA en el centro, uso de Super Inteligencia declarado, imágenes generadas declaradas.
 
 ## Artifacts (privados: compartir desde Share)
 - Landing: https://claude.ai/artifact/Ja6v2YathtvXUeaS7EcdRo
@@ -60,7 +64,7 @@ Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedi
 | 06 | Mockup happy path | Lean |
 | 07 | Escalabilidad | Naza |
 | 08 | Landing page | Lean (landing y wireframe hechos) |
-| 09 | Justificación de modelos de IA médicos | Lean |
+| 09 | Justificación de modelos de Super Inteligencia médicos | Lean |
 | 10 | Maqueta del video de 30 s | Lean |
 | 11 | Soporte de celular en muñeca | Tomi |
 
@@ -112,6 +116,6 @@ Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedi
 ## Reglas de trabajo
 1. Leer primero LEEME, Registro, Bitácora y Concepto actual.
 2. Toda decisión va al Registro con hora y responsable, **agregando abajo**, nunca editando lo de otros.
-3. Todo uso de IA va a su sección del Registro.
+3. Todo uso de herramientas generativas va a su sección del Registro.
 4. Nada de copiar código open source.
 5. Documentos de Claude terminan en "(Claude)"; los del equipo, con el nombre de quien escribe. No duplicar archivos.
