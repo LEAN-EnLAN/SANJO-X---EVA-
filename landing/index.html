@@ -64,7 +64,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hero .copy p{font-size:var(--t-sec);line-height:1.05;letter-spacing:-.01em;color:var(--space-muted)}
 .hero .copy p b{font-weight:400;color:var(--space-ink)}
 .hero .clock{position:absolute;z-index:3;right:20px;bottom:18px;font-size:var(--t-util);color:var(--space-muted);opacity:var(--s,0);font-variant-numeric:tabular-nums}
-.chip{position:absolute;z-index:1;width:clamp(84px,11vw,170px);aspect-ratio:1;transform:translate(calc(var(--fx,0px)*var(--k,0)),calc(var(--fy,0px)*var(--k,0))) rotate(calc(var(--turn,0deg)*var(--k,0))) scale(calc(1 - .18*var(--k,0)));overflow:hidden}
+.chip{position:absolute;z-index:1;width:clamp(84px,11vw,170px);aspect-ratio:1;transform:translate(calc(var(--fx,0px)*var(--k,0) + var(--ax,0px)),calc(var(--fy,0px)*var(--k,0) + var(--ay,0px))) rotate(calc(var(--turn,0deg)*var(--k,0) + var(--ar,0deg))) scale(calc(1 - .18*var(--k,0)));overflow:hidden}
 .chip{perspective:640px}
 .chip img{width:100%;height:100%;object-fit:cover;transform:scale(1.14);will-change:transform}
 .hint{position:absolute;z-index:4;left:20px;bottom:18px;font-size:var(--t-util);color:var(--muted);opacity:calc(1 - var(--s,0)*3)}
@@ -149,6 +149,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .solar .stage{background:#000}
 .solar #solarCv{position:absolute;inset:0;width:100%;height:100%}
 .solar #sunGL{position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:pan-y}
+.solar #asciiCv{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;display:none}
+.solar.ascii #asciiCv{display:block}.solar.ascii #solarCv,.solar.ascii #sunGL{opacity:0}
+.solar .ascii-t{position:absolute;z-index:6;right:20px;top:24px;background:none;border:0;padding:0;color:var(--space-ink);font:400 var(--t-util) var(--font);text-transform:uppercase;cursor:pointer;background-image:linear-gradient(currentColor,currentColor);background-size:0 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .45s var(--ease)}
+.solar .ascii-t:hover,.solar .ascii-t[aria-pressed="true"]{background-size:100% 1px}
 .solar #sunGL.grab{cursor:grab}.solar #sunGL.grabbing{cursor:grabbing}
 .solar .drag{position:absolute;z-index:5;font-size:13px;color:var(--space-muted);pointer-events:none;opacity:0;transition:opacity .4s;transform:translate(-50%,0)}
 .solar .stage::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,0) 48%)}
@@ -350,7 +354,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   <section class="pinsec solar" id="solar" aria-labelledby="sa">
     <div class="stage">
       <canvas id="solarCv" role="img" aria-label="The Sun releases a flare; a stream of particles travels toward a passenger spacecraft."></canvas>
-      <canvas id="sunGL" aria-label="3D model of the Sun from NASA. Drag to rotate."></canvas>
+      <canvas id="sunGL" aria-label="3D models of the Sun and a Saturn V rocket from NASA. Drag the Sun to rotate it."></canvas>
+      <canvas id="asciiCv" aria-hidden="true"></canvas>
+      <button class="ascii-t" id="asciiBtn" type="button" aria-pressed="false">+ ASCII</button>
       <p class="drag" id="sunHint">Drag the Sun</p>
       <div class="txt"><p class="label" id="sa">Solar alert</p><h2 class="prop">Minutes of warning before the particles arrive</h2><p class="note">Eva reads NASA DONKI flare reports and NOAA GOES proton data. X-rays arrive with the light; the particles that follow leave time to reach the shelter.</p></div>
       <div class="meter" id="meter">Proton flux · 2 pfu</div>
@@ -447,12 +453,13 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 </main>
 
 <footer class="foot g" id="foot">
-  <p class="notice" id="ai">All images are AI-generated concept art made with an OpenAI image model through Codex, from prompts by team Sanjo-X written with Claude. They contain no NASA insignia or branding. The 3D Sun is NASA's free model from NASA 3D Resources. Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device.</p>
+  <p class="notice" id="ai">All images are AI-generated concept art made with an OpenAI image model through Codex, from prompts by team Sanjo-X written with Claude. They contain no NASA insignia or branding. The 3D Sun and the Saturn V rocket are NASA's free models from NASA 3D Resources; the rocket's flag and lettering textures are removed. Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device.</p>
   <div class="mark"><svg viewBox="0 0 1400 120" role="img" aria-label="Eva by WearMeds"><text x="0" y="104" textLength="1400" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="PP Neue Montreal, Inter, Arial, sans-serif" font-size="132">Eva by WearMeds</text></svg></div>
   <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><ul><li><a class="u" href="#ai">AI notice</a></li><li><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/">Data sources</a></li></ul></div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="team-rail.js"></script>
 <script>
 (()=>{
@@ -484,17 +491,24 @@ add(y=>{const p=pinP(hero,y), s=reduce?1:io2(clamp((p-.02)/.45)), k=reduce?1:cla
   const sw=H.sw; copy.style.setProperty('--cl',(il+(sw<700?20:40)*(1-s)+20*s)+'px');copy.style.width=Math.min(560,Math.max(220,sw-2*il-(sw<700?40:80)))+'px';
   chips.forEach(c=>c.style.setProperty('--k',k.toFixed(3)))});
 
-/* hero chips: each floats on its own — two-axis tilt for depth, small positional shake around its centre, pointer parallax by depth */
-const amb=chips.map((c,i)=>{const r=n=>((Math.sin((i+1)*12.9898+n*78.233)*43758.5453)%1+1)%1; return {img:c.querySelector('img.tl'),img2:c.querySelector('img.td'),
-  ph:[r(1)*6.28,r(2)*6.28,r(3)*6.28,r(4)*6.28], f:[.31+r(5)*.22,.27+r(6)*.2,.53+r(7)*.4,.47+r(8)*.38], depth:.4+r(9)*.9}});
-let mx=0,my=0,heroOn=true,ambRun=false;
-addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;mx=e.clientX/innerWidth*2-1;my=e.clientY/innerHeight*2-1},{passive:true});
-function ambTick(now){const t=now/1000;
-  amb.forEach(a=>{const rx=Math.sin(t*a.f[0]+a.ph[0])*7*a.depth - my*5*a.depth, ry=Math.sin(t*a.f[1]+a.ph[1])*9*a.depth + mx*6*a.depth;
-    const dx=(Math.sin(t*a.f[2]+a.ph[2])+.4*Math.sin(t*a.f[2]*2.3+a.ph[3]))*1.6*a.depth, dy=(Math.cos(t*a.f[3]+a.ph[3])+.4*Math.sin(t*a.f[3]*1.9+a.ph[0]))*1.6*a.depth;
-    const tr=`rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translate(${dx.toFixed(2)}%,${dy.toFixed(2)}%) scale(1.14)`;
-    if(a.img)a.img.style.transform=tr; if(a.img2)a.img2.style.transform=tr});
-  if(heroOn)requestAnimationFrame(ambTick);else ambRun=false}
+/* hero chips: zero-g drift — each chip is a free body with its own mass, spring to its anchor, slow spin,
+   random air-current nudges at its own rhythm, and a push away from the cursor; the image tilts in 3D with its velocity */
+const bodies=chips.map((c,i)=>{const r=n=>((Math.sin((i+1)*12.9898+n*78.233)*43758.5453)%1+1)%1;
+  return {el:c,imgs:[...c.querySelectorAll('img')],x:0,y:0,a:0,vx:(r(1)-.5)*30,vy:(r(2)-.5)*30,va:(r(3)-.5)*8,m:.7+r(4)*.9,
+    next:r(5)*2,every:2.2+r(6)*3.2,range:22+r(7)*26,spin:(r(8)-.5)*3}});
+let mx=0,my=0,cxp=-9999,cyp=-9999,heroOn=true,ambRun=false,ambLast=0;
+addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;mx=e.clientX/innerWidth*2-1;my=e.clientY/innerHeight*2-1;cxp=e.clientX;cyp=e.clientY},{passive:true});
+function ambTick(now){const t=now/1000, dt=ambLast?Math.min(.05,t-ambLast):.016; ambLast=t;
+  bodies.forEach(b=>{
+    if(t>b.next){const ang=Math.random()*6.283, f=(18+Math.random()*30)/b.m; b.vx+=Math.cos(ang)*f; b.vy+=Math.sin(ang)*f; b.va+=(Math.random()-.5)*14/b.m; b.next=t+b.every*(.6+Math.random()*.8)}
+    const r=b.el.getBoundingClientRect(), dx=r.left+r.width/2-cxp, dy=r.top+r.height/2-cyp, d=Math.hypot(dx,dy);
+    if(d<220&&d>1){const push=(220-d)/220*900/b.m*dt; b.vx+=dx/d*push; b.vy+=dy/d*push; b.va+=(dx>0?1:-1)*push*.08}
+    const k=1.2/b.m; b.vx+=(-k*b.x - .55*b.vx)*dt; b.vy+=(-k*b.y - .55*b.vy)*dt; b.va+=(-.6*(b.a-b.spin*Math.sin(t*.15)) - .5*b.va)*dt;
+    b.x+=b.vx*dt; b.y+=b.vy*dt; b.a+=b.va*dt;
+    const lim=b.range; b.x=Math.max(-lim*2,Math.min(lim*2,b.x)); b.y=Math.max(-lim*2,Math.min(lim*2,b.y));
+    b.el.style.setProperty('--ax',b.x.toFixed(2)+'px'); b.el.style.setProperty('--ay',b.y.toFixed(2)+'px'); b.el.style.setProperty('--ar',b.a.toFixed(2)+'deg');
+    const tilt=`rotateX(${(-b.vy*.35).toFixed(2)}deg) rotateY(${(b.vx*.35).toFixed(2)}deg) scale(1.14)`; b.imgs.forEach(im=>im.style.transform=tilt)});
+  if(heroOn)requestAnimationFrame(ambTick);else{ambRun=false;ambLast=0}}
 add(y=>{heroOn=pinP(hero,y)<.75; if(heroOn&&!ambRun&&!reduce){ambRun=true;requestAnimationFrame(ambTick)}});
 
 /* pointer → smoothed --pmx/--pmy on :root (stars and cabin layers read them by depth) */
@@ -587,7 +601,7 @@ function solarMeasure(){const r=Math.min(2,devicePixelRatio||1);sc.width=sst.cli
   const R=narrow?Math.min(w*.3,h*.18):Math.min(h*.27,w*.2), cx=narrow?w*.62:w*.73, cy=narrow?h*.42:h*.38;
   const th=196*Math.PI/180, P={x:cx+Math.cos(th)*R,y:cy+Math.sin(th)*R};
   const ss=narrow?w*.34:Math.min(w*.2,320), S={x:narrow?w*.08:w*.1,y:narrow?h*.62:h*.72,s:ss};
-  const T={x:S.x+ss*.98,y:S.y+ss*.02}; const d=Math.hypot(T.x-P.x,T.y-P.y); const C={x:(P.x+T.x)/2,y:Math.min(P.y,T.y)-d*.2};
+  const T={x:S.x+ss*1.2,y:S.y-ss*.16}; const d=Math.hypot(T.x-P.x,T.y-P.y); const C={x:(P.x+T.x)/2,y:Math.min(P.y,T.y)-d*.2};
   SG={w,h,R,cx,cy,th,P,S,T,C};
   if(!sStars.length)for(let i=0;i<260;i++)sStars.push({x:srand(),y:srand(),z:.2+srand()*.8,t:srand()*6.28});
   if(!sunTex)sunTex=makeSunTex(384)}
@@ -644,8 +658,14 @@ function solarFrame(now){const t=now/1000, Gm=SG; if(!Gm){sRun=false;return}
     const xx=u*u*Pp.x+2*u*tt*C.x+tt*tt*T.x, yy=u*u*Pp.y+2*u*tt*C.y+tt*tt*T.y+spread;g.fillStyle=`rgba(255,${180+Math.round(50*tt)},${120+Math.round(80*tt)},${.9*(1-tt*.6)})`;g.fillRect(xx,yy,q.s,q.s)}
   g.globalCompositeOperation='source-over'; g.globalAlpha=1;
   // spacecraft
-  const bob=Math.sin(t*1.1)*4; drawShip({x:S.x-px*10,y:S.y+bob-py*7,s:S.s},t,SD);
+  const bob=Math.sin(t*1.1)*4; SG.ship={x:S.x-px*10,y:S.y+bob-py*7,s:S.s,hit:SD};
+  if(SG.tail){const {x:tx,y:ty,dx:ux,dy:uy}=SG.tail; g.globalCompositeOperation='lighter';
+    for(let k=0;k<3;k++){const len=S.s*(.55+.25*k)*(.85+.15*Math.sin(t*19+k)), ex=tx-ux*len*.5, ey=ty-uy*len*.5;
+      const pg=g.createRadialGradient(tx,ty,0,ex,ey,len*.6);pg.addColorStop(0,`rgba(${k?140:230},${k?190:240},255,${.55-k*.15})`);pg.addColorStop(.4,`rgba(80,150,255,${.25-k*.06})`);pg.addColorStop(1,'rgba(30,60,255,0)');
+      g.fillStyle=pg;g.beginPath();g.ellipse(ex,ey,len*.6,S.s*(.06+.03*k),Math.atan2(uy,ux),0,6.29);g.fill()}
+    g.globalCompositeOperation='source-over'}
   if(window.sun3d)sun3d.render(t);
+  if(window.asciiOn)asciiDraw();
   if(sParts.length||(SP>0&&SP<1))requestAnimationFrame(solarFrame); else sRun=false}
 add(y=>{const p=pinP(so,y); SP=p; SA=ic3(clamp(p/.24)); SB=io2(clamp((p-.2)/.2)); SC=clamp((p-.38)/.36); SD=oc3(clamp((p-.7)/.25));
   sst.style.setProperty('--d',SD);
@@ -655,8 +675,17 @@ add(y=>{const p=pinP(so,y); SP=p; SA=ic3(clamp(p/.24)); SB=io2(clamp((p-.2)/.2))
 /* NASA Sun model (NASA 3D Resources, Sun_1_1391000.usdz): spherified cube with a 4x3 cube-cross texture.
    We rebuild it as a sphere sampling the six faces by direction, so the NASA texture wraps without stretching. */
 (function(){if(!window.THREE)return; const cv=document.getElementById('sunGL'), hint=document.getElementById('sunHint');
-  let renderer; try{renderer=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,premultipliedAlpha:false})}catch(e){return}
-  const scene=new THREE.Scene(), cam=new THREE.OrthographicCamera(0,1,0,-1,-2000,2000);
+  let renderer; try{renderer=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,premultipliedAlpha:false,preserveDrawingBuffer:true})}catch(e){return}
+  renderer.outputEncoding=THREE.sRGBEncoding; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
+  const scene=new THREE.Scene(), cam=new THREE.OrthographicCamera(0,1,0,-1,-4000,4000);
+  scene.add(new THREE.HemisphereLight(0x8fa8ff,0x120804,.3)); const sunLight=new THREE.DirectionalLight(0xffc48a,2.9); sunLight.position.set(1,.75,.45); scene.add(sunLight); const rim=new THREE.DirectionalLight(0x6f8cff,1.1); rim.position.set(-1,-.4,-.6); scene.add(rim);
+  const hitLight=new THREE.PointLight(0xff5a28,0,0,2); scene.add(hitLight);
+  const pivot=new THREE.Group(), roller=new THREE.Group(); pivot.add(roller); scene.add(pivot); let rocketLen=1, rocketReady=false;
+  if(THREE.GLTFLoader){fetch('a/rocket.json').then(r=>r.json()).then(j=>{const bin=Uint8Array.from(atob(j.glb),c=>c.charCodeAt(0)).buffer; new THREE.GLTFLoader().parse(bin,'',gl=>{const m=gl.scene;
+    m.traverse(o=>{if(o.isMesh){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(mt=>{if(mt.map){mt.map=null;mt.color&&mt.color.set(0xf2f1ee)} if('metalness' in mt){mt.metalness=Math.min(mt.metalness,.35);mt.roughness=Math.max(.35,mt.roughness||.5)} mt.needsUpdate=true})}});
+    const box=new THREE.Box3().setFromObject(m), size=new THREE.Vector3(), ctr=new THREE.Vector3(); box.getSize(size); box.getCenter(ctr); m.position.sub(ctr);
+    rocketLen=Math.max(size.x,size.y,size.z); const up=new THREE.Group(); up.add(m); if(size.y<rocketLen){if(size.x===rocketLen)up.rotation.z=Math.PI/2;else up.rotation.x=-Math.PI/2}
+    roller.add(up); window.rocketDims=[size.x,size.y,size.z].map(v=>+v.toFixed(2)); rocketReady=true},()=>{})}).catch(()=>{})}
   const uniforms={map:{value:null},uAlpha:{value:0},uTime:{value:0}};
   const mat=new THREE.ShaderMaterial({uniforms,transparent:true,
     vertexShader:'varying vec3 vObj;varying vec3 vN;void main(){vObj=position;vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
@@ -678,10 +707,25 @@ add(y=>{const p=pinP(so,y); SP=p; SA=ic3(clamp(p/.24)); SB=io2(clamp((p-.2)/.2))
       const dt=lastT?Math.min(.05,t-lastT):.016; lastT=t;
       if(!drag){vY+=(.0012-vY)*Math.min(1,dt*1.5);vX*=Math.pow(.05,dt);rotY+=reduce?0:vY;rotX=Math.max(-1.1,Math.min(1.1,rotX+vX))}
       mesh.rotation.set(rotX,rotY,0); mesh.position.set(s.X,-s.Y,0); mesh.scale.setScalar(s.sR); uniforms.uAlpha.value=.1+.9*s.k; uniforms.uTime.value=t;
+      const sh=SG.ship; if(rocketReady&&sh){const L=sh.s*1.25, sc=L/rocketLen; roller.scale.setScalar(sc); const tilt=.13+Math.sin(t*.4)*.03;
+        pivot.position.set(sh.x+L*.5,-sh.y,0); pivot.rotation.set(0,0,-Math.PI/2+tilt); roller.rotation.y=t*.35;
+        const ax=Math.cos(tilt), ay=Math.sin(tilt); SG.tail={x:sh.x+L*.5-ax*L*.5,y:sh.y+ay*L*.5,dx:ax,dy:-ay};
+        hitLight.position.set(sh.x+L*.9,-sh.y+L*.05,L*.4); hitLight.intensity=sh.hit*3.2; hitLight.distance=L*1.4}
       renderer.render(scene,cam);
       if(!shown&&s.k>.95){shown=true;hint.style.left=s.X+'px';hint.style.top=(s.Y+s.sR+18)+'px';hint.style.opacity=1;setTimeout(()=>hint.style.opacity=0,4000)}}};
   addEventListener('resize',size);
 })();
+
+/* ASCII view of the solar scene (toggle): samples the composed frame into cells and draws coloured glyphs */
+window.asciiOn=false; const asciiCv=document.getElementById('asciiCv'), ag=asciiCv.getContext('2d'), asciiBtn=document.getElementById('asciiBtn'), off=document.createElement('canvas'), og=off.getContext('2d',{willReadFrequently:true});
+const RAMP=' .,:;-=+*#%@';
+asciiBtn.addEventListener('click',()=>{window.asciiOn=!window.asciiOn;asciiBtn.setAttribute('aria-pressed',String(asciiOn));asciiBtn.textContent=asciiOn?'× ASCII':'+ ASCII';so.classList.toggle('ascii',asciiOn);if(!sRun){sRun=true;requestAnimationFrame(solarFrame)}});
+function asciiDraw(){const w=sst.clientWidth,h=sst.clientHeight,cw=w<760?6:8,ch=Math.round(cw*1.6),cols=Math.ceil(w/cw),rows=Math.ceil(h/ch);
+  if(asciiCv.width!==w*2){asciiCv.width=w*2;asciiCv.height=h*2;ag.setTransform(2,0,0,2,0,0)}
+  off.width=cols;off.height=rows;og.drawImage(sc,0,0,cols,rows);og.drawImage(document.getElementById('sunGL'),0,0,cols,rows);
+  const d=og.getImageData(0,0,cols,rows).data; ag.fillStyle='#000';ag.fillRect(0,0,w,h);ag.font=`${ch}px ui-monospace,Menlo,monospace`;ag.textBaseline='top';
+  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){const i=(y*cols+x)*4,r=d[i],gg=d[i+1],b=d[i+2],l=(.3*r+.59*gg+.11*b)/255;if(l<.04)continue;
+    ag.fillStyle=`rgb(${Math.min(255,r*1.25)|0},${Math.min(255,gg*1.25)|0},${Math.min(255,b*1.25)|0})`;ag.fillText(RAMP[Math.min(RAMP.length-1,(l*RAMP.length)|0)],x*cw,y*ch)}}
 
 /* 8 · Earth link */
 const ls=document.getElementById('linkSec'), lst=ls.querySelector('.stage'), track=document.getElementById('track'), lt=document.getElementById('lt');
