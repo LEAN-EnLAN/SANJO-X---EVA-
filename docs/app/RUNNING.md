@@ -6,7 +6,7 @@ Needs only a Rust toolchain (1.85+; tested with cargo 1.97). On a busy machine a
 
 ```bash
 cd app
-cargo build --release          # → target/release/eva (single binary, assets embedded)
+cargo build --release          # → target/release/eva: one 11.8 MB binary (stripped, thin LTO), all assets embedded
 cargo test                     # 46 tests: protocol, chain, rules, tools, HTTP flows
 ```
 
