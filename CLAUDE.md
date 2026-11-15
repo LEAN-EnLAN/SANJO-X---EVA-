@@ -21,7 +21,7 @@ El Drive del equipo manda: carpeta `1NCFN_22gxWjRGJdxKjX11KcOk5v7bic7`. Este rep
 ## Código
 - Stack: **Rust + htmx + HTML**, un solo binario. Código **100% propio**.
 - **Nada de copiar código open source.** De HealthLog, OpenNutriTracker, nasa/hermes, Human Atlas o hds-core se toman patrones e ingeniería inversa, nunca líneas de código. Ojo con las licencias: HealthLog es PolyForm Noncommercial; OpenNutriTracker, GPL-3.
-- Sin logos de NASA (insignia, logotipo, banderas, parches) en nada nuestro ni en imágenes de IA. Toda imagen de IA lleva "AI-generated" visible.
+- Sin logos de NASA (insignia, logotipo, banderas, parches) en nada nuestro ni en imágenes de IA. Las imágenes de IA se declaran en el README y en la descripción de la entrega (no hace falta la marca visible dentro de la app).
 
 ## Producto y lenguaje
 - El asistente se llama **Eva** (nombre propio, no sigla). Los wearables son **WearMeds**.
