@@ -146,20 +146,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* Solar */
 .solar{height:320svh}
-.solar .stage{background:var(--space)}
-.solar .sun{position:absolute;right:max(20px,4vw);top:9%;width:min(64vh,42vw);aspect-ratio:1;transform:translate(calc(26% - 26%*var(--a,0)),calc(10% - 10%*var(--a,0))) scale(calc(.78 + .22*var(--a,0)));opacity:calc(.1 + .9*var(--a,0))}
-.solar .sun .cor,.solar .sun .disk{position:absolute;inset:0;width:100%;height:100%}
-.solar .sun .cor{animation:breathe 6s ease-in-out infinite alternate}
-@keyframes breathe{from{opacity:.75}to{opacity:1}}
-.solar .sun .fl1{position:absolute;left:var(--fx,0);top:var(--fy,0);width:var(--fw,30%);height:auto;transform-origin:48.7% 100%;transform:rotate(var(--fr,0deg)) scale(calc(.05 + .95*var(--b,0)));opacity:calc(var(--b,0)*1.4)}
-.solar .fl2{position:absolute;left:var(--ex,0);top:var(--ey,0);width:var(--ew,400px);height:auto;transform-origin:88% 48%;transform:rotate(var(--er,0deg)) translateX(calc(var(--et,0px)*-1*var(--c,0))) scale(calc(.35 + .65*var(--c,0)));opacity:calc(min(1, var(--c,0)*3)*(1 - var(--c,0)*.75));z-index:1;mix-blend-mode:screen}
-.solar canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
-.solar .ship{position:absolute;left:max(20px,7vw);bottom:12%;width:min(25vw,360px);aspect-ratio:3/2;z-index:3;animation:bob 6s ease-in-out infinite alternate}
-@keyframes bob{to{transform:translateY(-8px)}}
-.solar .ship img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.solar .ship .hull{filter:drop-shadow(14px -2px 14px rgba(255,110,50,calc(.85*var(--d,0))))}
-.solar .ship .eg{animation:flick 1.6s ease-in-out infinite alternate}
-@keyframes flick{to{opacity:.55}}
+.solar .stage{background:#000}
+.solar #solarCv{position:absolute;inset:0;width:100%;height:100%}
+.solar #sunGL{position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:pan-y}
+.solar #sunGL.grab{cursor:grab}.solar #sunGL.grabbing{cursor:grabbing}
+.solar .drag{position:absolute;z-index:5;font-size:13px;color:var(--space-muted);pointer-events:none;opacity:0;transition:opacity .4s;transform:translate(-50%,0)}
 .solar .stage::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,0) 48%)}
 .solar .txt{position:absolute;z-index:5;left:20px;top:28px;max-width:min(560px,80vw);display:grid;gap:12px;color:var(--space-ink)}
 .solar .txt .note{color:var(--space-muted);max-width:30em}
@@ -168,7 +159,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .solar .alert b{font-weight:400;font-size:var(--t-sec);line-height:1}
 .solar .alert span{font-size:15px;color:var(--space-muted)}
 .solar .meter{position:absolute;z-index:5;right:380px;bottom:24px;font-size:var(--t-util);color:var(--space-muted);font-variant-numeric:tabular-nums}
-@media (max-width:760px){.solar .meter{right:auto;left:20px;bottom:190px}.solar .ship{width:46vw;bottom:30%}.solar .sun{width:70vw;top:30%}}
+@media (max-width:760px){.solar .meter{right:auto;left:20px;bottom:190px}}
 
 /* Earth link */
 .link-sec .stage{background:var(--space);color:var(--space-ink)}
@@ -249,7 +240,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .stars{animation:none;transform:none}
   .pinsec{height:auto!important}.pinsec .stage{position:relative;height:90svh}
   .hero .ground{clip-path:none}.chip,.hint{display:none}
-  .solar .sun .cor,.solar .ship,.solar .ship .eg{animation:none}
+  
   [data-reveal].pre{opacity:1;transform:none}
   .slab{position:relative;top:auto;transform:none;filter:none}
 }
@@ -355,14 +346,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     </div>
   </section>
 
-  <!-- 7 · Solar alert (composed from layers by measured geometry) -->
+  <!-- 7 · Solar alert (fully procedural: canvas, no images) -->
   <section class="pinsec solar" id="solar" aria-labelledby="sa">
     <div class="stage">
-      <img class="stars" src="a/st1.jpg" alt="" aria-hidden="true">
-      <div class="sun" id="sun"><img class="cor" src="a/ps-sun-corona.webp" alt=""><img class="disk" src="a/ps-sun.webp" alt="The Sun."><img class="fl1" id="fl1" src="a/fl1.webp" alt="" aria-hidden="true"></div>
-      <img class="fl2" id="fl2" src="a/fl2.webp" alt="" aria-hidden="true">
-      <canvas id="particles" aria-hidden="true"></canvas>
-      <div class="ship" id="ship"><img class="hull" src="a/sc1.webp" alt="Passenger spacecraft in transit."><img class="eg" src="a/sc2.webp" alt=""></div>
+      <canvas id="solarCv" role="img" aria-label="The Sun releases a flare; a stream of particles travels toward a passenger spacecraft."></canvas>
+      <canvas id="sunGL" aria-label="3D model of the Sun from NASA. Drag to rotate."></canvas>
+      <p class="drag" id="sunHint">Drag the Sun</p>
       <div class="txt"><p class="label" id="sa">Solar alert</p><h2 class="prop">Minutes of warning before the particles arrive</h2><p class="note">Eva reads NASA DONKI flare reports and NOAA GOES proton data. X-rays arrive with the light; the particles that follow leave time to reach the shelter.</p></div>
       <div class="meter" id="meter">Proton flux · 2 pfu</div>
       <div class="alert" role="status"><small>SOLAR ALERT</small><b>Go to the shelter</b><span>Particles arrive in about 18 min. Your wristband shows the way.</span></div>
@@ -458,11 +447,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 </main>
 
 <footer class="foot g" id="foot">
-  <p class="notice" id="ai">All images are AI-generated concept art made with an OpenAI image model through Codex, from prompts by team Sanjo-X written with Claude. They contain no NASA insignia or branding. Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device.</p>
+  <p class="notice" id="ai">All images are AI-generated concept art made with an OpenAI image model through Codex, from prompts by team Sanjo-X written with Claude. They contain no NASA insignia or branding. The 3D Sun is NASA's free model from NASA 3D Resources. Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device.</p>
   <div class="mark"><svg viewBox="0 0 1400 120" role="img" aria-label="Eva by WearMeds"><text x="0" y="104" textLength="1400" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="PP Neue Montreal, Inter, Arial, sans-serif" font-size="132">Eva by WearMeds</text></svg></div>
   <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><ul><li><a class="u" href="#ai">AI notice</a></li><li><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/">Data sources</a></li></ul></div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="team-rail.js"></script>
 <script>
 (()=>{
@@ -579,35 +569,119 @@ add(y=>{const p=pinP(hs,y); const z=reduce?1:io2(clamp((p-.06)/.18)); hstg.style
   hstep.textContent=p<.24?'Close-up':NAMES[k+1];
 });
 
-/* 7 · Solar: geometry measured from the layers (disk centre .4935/.4894, radius .2985; prominence base at 48.7%/100%; ejection anchor 88%/48%; hull nose at 95%/52%) */
-const so=document.getElementById('solar'), sst=so.querySelector('.stage'), sunEl=document.getElementById('sun'), fl1=document.getElementById('fl1'), fl2=document.getElementById('fl2'), ship=document.getElementById('ship'), meter=document.getElementById('meter'), cv=document.getElementById('particles'), cx=cv.getContext('2d');
-let solarP=0, parts=[], running=false, G=null;
-onMeasure(()=>{const r=devicePixelRatio>1?2:1;cv.width=sst.clientWidth*r;cv.height=sst.clientHeight*r;cx.setTransform(r,0,0,r,0,0);
-  const sw=sunEl.offsetWidth, sl=sunEl.offsetLeft, stp=sunEl.offsetTop; const scx=.4935*sw, scy=.4894*sw, R=.2985*sw;
-  const th=(196)*Math.PI/180;                                 // limb point, facing the ship (left, slightly up)
-  const px=scx+Math.cos(th)*R*.97, py=scy+Math.sin(th)*R*.97; // local to the sun box, a touch inside the limb
-  const fw=R*1.55, fh=fw*1067/1600;
-  fl1.style.setProperty('--fw',fw+'px'); fl1.style.setProperty('--fx',(px-.487*fw)+'px'); fl1.style.setProperty('--fy',(py-fh)+'px'); fl1.style.setProperty('--fr',(th*180/Math.PI+90)+'deg');
-  const P={x:sl+px,y:stp+py};                                 // limb point in stage coords (sun fully arrived)
-  const shw=ship.offsetWidth, T={x:ship.offsetLeft+.93*shw, y:ship.offsetTop+.5*ship.offsetHeight};
-  const dx=T.x-P.x, dy=T.y-P.y, dist=Math.hypot(dx,dy);
-  const Cx=(P.x+T.x)/2, Cy=Math.min(P.y,T.y)-dist*.18, phi=Math.atan2(Cy-P.y,Cx-P.x); // initial tangent of the particle arc
-  const ew=dist*.42, eh=ew*1600/2400;
-  fl2.style.setProperty('--ew',ew+'px'); fl2.style.setProperty('--ex',(P.x-.88*ew)+'px'); fl2.style.setProperty('--ey',(P.y-.48*eh)+'px');
-  fl2.style.setProperty('--er',(phi*180/Math.PI-180)+'deg'); fl2.style.setProperty('--et',(dist*.22)+'px');
-  G={P,T,C:{x:Cx,y:Cy}};
-});
-add(y=>{const p=pinP(so,y); solarP=p;
-  sst.style.setProperty('--a',ic3(clamp(p/.24)));sst.style.setProperty('--b',io2(clamp((p-.2)/.2)));sst.style.setProperty('--c',clamp((p-.38)/.36));sst.style.setProperty('--d',oc3(clamp((p-.7)/.25)));
+/* 7 · Solar alert — procedural canvas scene (stars, Sun, corona, prominence, ejection, particles, spacecraft) */
+const so=document.getElementById('solar'), sst=so.querySelector('.stage'), meter=document.getElementById('meter'), sc=document.getElementById('solarCv'), g=sc.getContext('2d');
+let SP=0, SA=0, SB=0, SC=0, SD=0, sRun=false, SG=null, sParts=[], sunTex=null, sStars=[];
+const srand=(()=>{let a=1234567;return()=>{a=(a*1664525+1013904223)>>>0;return a/4294967296}})();
+function makeSunTex(n){const c=document.createElement('canvas');c.width=c.height=n;const x=c.getContext('2d'),im=x.createImageData(n,n);
+  const G=128,grid=new Float32Array(G*G).map(()=>srand());
+  const v=(u,w)=>{const i=Math.floor(u),j=Math.floor(w),fu=u-i,fw=w-j,I=((i%G)+G)%G,J=((j%G)+G)%G,I1=(I+1)%G,J1=(J+1)%G,a=grid[J*G+I],b=grid[J*G+I1],c2=grid[J1*G+I],d=grid[J1*G+I1],su=fu*fu*(3-2*fu),sw=fw*fw*(3-2*fw);return a+(b-a)*su+(c2-a)*sw+(a-b-c2+d)*su*sw};
+  for(let yy=0;yy<n;yy++)for(let xx=0;xx<n;xx++){const u=xx/n, w=yy/n; let f=0,amp=.55,fr=18;
+    for(let o=0;o<6;o++){f+=amp*v(u*fr,w*fr);amp*=.52;fr*=2.05}
+    // cell edges: ridged noise gives dark intergranular lanes
+    const r=1-Math.abs(2*v(u*44+7.3,w*44+2.1)-1); let t=Math.min(1,Math.max(0,(f-.3)/.55))*.75+r*r*.35; t=Math.min(1,t);
+    const k=(yy*n+xx)*4; im.data[k]=Math.min(255,200+70*t); im.data[k+1]=55+175*t; im.data[k+2]=10+110*t*t*t; im.data[k+3]=255}
+  x.putImageData(im,0,0);return c}
+function solarMeasure(){const r=Math.min(2,devicePixelRatio||1);sc.width=sst.clientWidth*r;sc.height=sst.clientHeight*r;g.setTransform(r,0,0,r,0,0);
+  const w=sst.clientWidth,h=sst.clientHeight,narrow=w<760;
+  const R=narrow?Math.min(w*.3,h*.18):Math.min(h*.27,w*.2), cx=narrow?w*.62:w*.73, cy=narrow?h*.42:h*.38;
+  const th=196*Math.PI/180, P={x:cx+Math.cos(th)*R,y:cy+Math.sin(th)*R};
+  const ss=narrow?w*.34:Math.min(w*.2,320), S={x:narrow?w*.08:w*.1,y:narrow?h*.62:h*.72,s:ss};
+  const T={x:S.x+ss*.98,y:S.y+ss*.02}; const d=Math.hypot(T.x-P.x,T.y-P.y); const C={x:(P.x+T.x)/2,y:Math.min(P.y,T.y)-d*.2};
+  SG={w,h,R,cx,cy,th,P,S,T,C};
+  if(!sStars.length)for(let i=0;i<260;i++)sStars.push({x:srand(),y:srand(),z:.2+srand()*.8,t:srand()*6.28});
+  if(!sunTex)sunTex=makeSunTex(384)}
+onMeasure(solarMeasure);
+function drawShip(S,t,hit){const {x,y,s}=S;g.save();g.translate(x,y);const L=s, H=s*.2;
+  // engine glow
+  for(let k=0;k<2;k++){const ey=(k?.07:-.07)*s, fl=.75+.25*Math.sin(t*22+k*2);const eg=g.createRadialGradient(-L*.02,ey,0,-L*.02,ey,L*.16*fl);eg.addColorStop(0,'rgba(200,235,255,.95)');eg.addColorStop(.35,'rgba(90,170,255,.5)');eg.addColorStop(1,'rgba(40,90,255,0)');g.fillStyle=eg;g.beginPath();g.ellipse(-L*.05,ey,L*.2*fl,H*.32,0,0,6.29);g.fill()}
+  // nozzles
+  g.fillStyle='#8d9198';for(let k=0;k<2;k++){const ey=(k?.07:-.07)*s;g.beginPath();g.roundRect(-L*.02,ey-H*.16,L*.12,H*.32,H*.08);g.fill()}
+  // tail fin
+  g.fillStyle='#d9dcdf';g.beginPath();g.moveTo(L*.12,-H*.35);g.lineTo(L*.2,-H*1.15);g.lineTo(L*.3,-H*1.15);g.lineTo(L*.34,-H*.4);g.closePath();g.fill();
+  // hull
+  const hg=g.createLinearGradient(0,-H*.6,0,H*.6);hg.addColorStop(0,'#fbfbfa');hg.addColorStop(.55,'#e2e3e2');hg.addColorStop(1,'#9fa3a7');g.fillStyle=hg;
+  const hull=()=>{g.beginPath();g.moveTo(L*.08,-H*.5);g.lineTo(L*.78,-H*.5);g.bezierCurveTo(L*.95,-H*.5,L*1.02,-H*.12,L*1.02,0);g.bezierCurveTo(L*1.02,H*.2,L*.92,H*.5,L*.76,H*.5);g.lineTo(L*.08,H*.5);g.quadraticCurveTo(L*.04,0,L*.08,-H*.5)};
+  hull();g.fill(); g.strokeStyle='rgba(0,0,0,.18)';g.lineWidth=1;g.beginPath();g.moveTo(L*.12,H*.18);g.lineTo(L*.86,H*.18);g.stroke();
+  // wing
+  g.fillStyle='#c9ccd0';g.beginPath();g.moveTo(L*.36,H*.3);g.lineTo(L*.6,H*.3);g.lineTo(L*.42,H*1.05);g.lineTo(L*.3,H*1.05);g.closePath();g.fill();
+  // cockpit + windows
+  g.fillStyle='#14171b';g.beginPath();g.moveTo(L*.84,-H*.42);g.bezierCurveTo(L*.95,-H*.38,L*.99,-H*.15,L*.99,-H*.05);g.lineTo(L*.84,-H*.05);g.closePath();g.fill();
+  for(let k=0;k<8;k++){g.fillStyle='#e7a24a';g.beginPath();g.roundRect(L*(.3+k*.058),-H*.22,L*.034,H*.3,L*.012);g.fill()}
+  // sun-side rim light when particles hit
+  if(hit>0){g.save();hull();g.clip();g.globalCompositeOperation='source-atop';const rg=g.createLinearGradient(L*1.02,-H*.5,L*.45,H*.5);rg.addColorStop(0,`rgba(255,120,55,${.7*hit})`);rg.addColorStop(1,'rgba(255,90,40,0)');g.fillStyle=rg;g.fillRect(0,-H,L*1.1,H*2);g.restore()}
+  g.restore()}
+function solarFrame(now){const t=now/1000, Gm=SG; if(!Gm){sRun=false;return}
+  const {w,h,R,cx,cy,th,P,S,T,C}=Gm; g.globalCompositeOperation='source-over'; g.fillStyle='#000'; g.fillRect(0,0,w,h);
+  const px=+(getComputedStyle(document.documentElement).getPropertyValue('--pmx')||0), py=+(getComputedStyle(document.documentElement).getPropertyValue('--pmy')||0);
+  // stars with pointer parallax
+  for(const st of sStars){const a=.35+.65*(.5+.5*Math.sin(t*1.3*st.z+st.t));g.fillStyle=`rgba(255,255,255,${(a*st.z*.9).toFixed(3)})`;g.fillRect(st.x*w-px*24*st.z,st.y*h-py*18*st.z,st.z>.8?1.6:1,st.z>.8?1.6:1)}
+  // sun entrance
+  const k=SA, ox=(1-k)*R*1.2, oy=(1-k)*R*.4, sR=R*(.78+.22*k), X=cx+ox-px*6, Y=cy+oy-py*4; g.globalAlpha=.1+.9*k;
+  // corona glow + rays
+  g.globalCompositeOperation='lighter';
+  const cg=g.createRadialGradient(X,Y,sR*.9,X,Y,sR*2.4);cg.addColorStop(0,'rgba(255,190,110,.55)');cg.addColorStop(.25,'rgba(255,140,60,.22)');cg.addColorStop(1,'rgba(255,90,30,0)');g.fillStyle=cg;g.beginPath();g.arc(X,Y,sR*2.4,0,6.29);g.fill();
+  for(let i=0;i<90;i++){const a=i/90*6.283+Math.sin(t*.2+i)*.02, len=sR*(.25+.35*(.5+.5*Math.sin(t*.7+i*1.7))*(.6+.4*Math.sin(i*3.1)));
+    g.strokeStyle=`rgba(255,${170+((i*37)%60)},120,${.10+.06*Math.sin(t+i)})`;g.lineWidth=1.2;g.beginPath();g.moveTo(X+Math.cos(a)*sR*.98,Y+Math.sin(a)*sR*.98);g.lineTo(X+Math.cos(a)*(sR+len),Y+Math.sin(a)*(sR+len));g.stroke()}
+  SG.sun={X,Y,sR,k};
+  // prominence: arches of plasma rooted on the limb (each foot pushes out along its own radial normal)
+  const pb=SB; if(pb>0){g.globalCompositeOperation='lighter';
+    const arch=(spread,hgt,lw,alpha,jit)=>{const a1=th-spread,a2=th+spread;
+      const f1={x:X+Math.cos(a1)*sR*.985,y:Y+Math.sin(a1)*sR*.985}, f2={x:X+Math.cos(a2)*sR*.985,y:Y+Math.sin(a2)*sR*.985};
+      const c1={x:f1.x+Math.cos(a1-.25)*hgt*1.35+jit,y:f1.y+Math.sin(a1-.25)*hgt*1.35}, c2={x:f2.x+Math.cos(a2+.25)*hgt*1.35-jit,y:f2.y+Math.sin(a2+.25)*hgt*1.35};
+      const gr=g.createLinearGradient(f1.x,f1.y,(c1.x+c2.x)/2,(c1.y+c2.y)/2);gr.addColorStop(0,`rgba(255,235,170,${alpha})`);gr.addColorStop(1,`rgba(255,90,30,${alpha*.9})`);
+      g.strokeStyle=gr;g.lineWidth=lw;g.beginPath();g.moveTo(f1.x,f1.y);g.bezierCurveTo(c1.x,c1.y,c2.x,c2.y,f2.x,f2.y);g.stroke()};
+    g.shadowColor='rgba(255,110,40,.95)';g.shadowBlur=18*(sR/220);
+    for(let l=0;l<3;l++){const sp=.16+l*.07,ht=sR*(.42+.14*l)*pb;arch(sp,ht,(7-l*1.6)*(sR/220),(.5-l*.1)*pb,0)}
+    g.shadowBlur=4;
+    for(let l=0;l<14;l++){const sp=.14+(l%7)*.03+Math.sin(t*.8+l)*.01, ht=sR*(.38+.05*(l%5))*pb*(1+.05*Math.sin(t*2.2+l*1.3));arch(sp,ht,(1.1+.5*(l%3))*(sR/220),.35*pb,Math.sin(t*1.7+l)*sR*.02)}
+    g.shadowBlur=0}
+  // ejection + particle stream from the limb point to the ship nose
+  const live=SC>0&&SC<1&&SP<.98; const Pp={x:X+Math.cos(th)*sR,y:Y+Math.sin(th)*sR};
+  if(live){for(let n=0;n<Math.round(10*SC+2);n++)sParts.push({t:0,v:.004+srand()*.007,o:srand()-.5,s:1+srand()*1.8})}
+  sParts=sParts.filter(q=>q.t<1); g.globalCompositeOperation='lighter';
+  for(const q of sParts){q.t+=q.v;const tt=q.t,u=1-tt,spread=(1-Math.abs(.5-tt)*2)*R*.32*q.o;
+    const xx=u*u*Pp.x+2*u*tt*C.x+tt*tt*T.x, yy=u*u*Pp.y+2*u*tt*C.y+tt*tt*T.y+spread;g.fillStyle=`rgba(255,${180+Math.round(50*tt)},${120+Math.round(80*tt)},${.9*(1-tt*.6)})`;g.fillRect(xx,yy,q.s,q.s)}
+  g.globalCompositeOperation='source-over'; g.globalAlpha=1;
+  // spacecraft
+  const bob=Math.sin(t*1.1)*4; drawShip({x:S.x-px*10,y:S.y+bob-py*7,s:S.s},t,SD);
+  if(window.sun3d)sun3d.render(t);
+  if(sParts.length||(SP>0&&SP<1))requestAnimationFrame(solarFrame); else sRun=false}
+add(y=>{const p=pinP(so,y); SP=p; SA=ic3(clamp(p/.24)); SB=io2(clamp((p-.2)/.2)); SC=clamp((p-.38)/.36); SD=oc3(clamp((p-.7)/.25));
+  sst.style.setProperty('--d',SD);
   meter.textContent='Proton flux · '+Math.round(2+38*clamp((p-.42)/.45))+' pfu'+(p>.62?' · above S1':'');
-  if(!running&&p>.38&&p<1&&!reduce&&G){running=true;requestAnimationFrame(tick)}});
-function tick(){const w=sst.clientWidth,h=sst.clientHeight;cx.clearRect(0,0,w,h);const c=clamp((solarP-.38)/.36),live=solarP>.38&&solarP<.98;
-  if(live)for(let n=0;n<Math.round(9*c+2);n++)parts.push({t:0,v:.005+Math.random()*.007,o:(Math.random()-.5),s:1+Math.random()*1.6});
-  parts=parts.filter(q=>q.t<1); const {P,T,C}=G;
-  for(const q of parts){q.t+=q.v;const t=q.t,u=1-t,spread=(1-Math.abs(.5-t)*2)*46*q.o;
-    const x=u*u*P.x+2*u*t*C.x+t*t*T.x, yy=u*u*P.y+2*u*t*C.y+t*t*T.y+spread;
-    cx.fillStyle=`rgba(255,${170+Math.round(60*t)},${110+Math.round(90*t)},${.9*(1-t*.7)})`;cx.fillRect(x,yy,q.s,q.s)}
-  if(parts.length||live)requestAnimationFrame(tick);else running=false}
+  const vis=y+innerHeight>so._top && y<so._top+so.offsetHeight; if(vis&&!sRun){sRun=true;requestAnimationFrame(solarFrame)}});
+
+/* NASA Sun model (NASA 3D Resources, Sun_1_1391000.usdz): spherified cube with a 4x3 cube-cross texture.
+   We rebuild it as a sphere sampling the six faces by direction, so the NASA texture wraps without stretching. */
+(function(){if(!window.THREE)return; const cv=document.getElementById('sunGL'), hint=document.getElementById('sunHint');
+  let renderer; try{renderer=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,premultipliedAlpha:false})}catch(e){return}
+  const scene=new THREE.Scene(), cam=new THREE.OrthographicCamera(0,1,0,-1,-2000,2000);
+  const uniforms={map:{value:null},uAlpha:{value:0},uTime:{value:0}};
+  const mat=new THREE.ShaderMaterial({uniforms,transparent:true,
+    vertexShader:'varying vec3 vObj;varying vec3 vN;void main(){vObj=position;vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+    fragmentShader:'uniform samplerCube map;uniform float uAlpha;uniform float uTime;varying vec3 vObj;varying vec3 vN;void main(){vec3 c=textureCube(map,normalize(vObj)).rgb;float mu=clamp(vN.z,0.0,1.0);c*=0.38+0.62*pow(mu,0.55);c+=vec3(1.0,0.5,0.15)*pow(1.0-mu,2.6)*0.55;c*=1.0+0.04*sin(uTime*1.7);gl_FragColor=vec4(c,uAlpha);}'});
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(1,96,64),mat); scene.add(mesh); mesh.rotation.x=.25;
+  const img=new Image(); img.onload=()=>{const f=img.width/4, faces=[[2,1],[0,1],[0,0],[0,2],[1,1],[3,1]]; // +X -X +Y -Y +Z -Z  (cross: row1 = -X? +Z +X -Z ; top at col2; bottom at col0)
+    const order=[[2,1],[0,1],[2,0],[0,2],[1,1],[3,1]];
+    const cvs=order.map(([cx,cy])=>{const c=document.createElement('canvas');c.width=c.height=f;c.getContext('2d').drawImage(img,cx*f,cy*f,f,f,0,0,f,f);return c});
+    const tex=new THREE.CubeTexture(cvs); tex.needsUpdate=true; uniforms.map.value=tex; ready=true};
+  img.src='a/sun-nasa.jpg'; let ready=false;
+  let W=0,H=0, rotY=0, rotX=.25, vY=.0012, vX=0, drag=null, hover=false, lastT=0, shown=false;
+  function size(){W=cv.clientWidth;H=cv.clientHeight;renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));renderer.setSize(W,H,false);cam.left=0;cam.right=W;cam.top=0;cam.bottom=-H;cam.updateProjectionMatrix()}
+  function inSun(e){const s=SG&&SG.sun;if(!s)return false;const r=cv.getBoundingClientRect();return Math.hypot(e.clientX-r.left-s.X,e.clientY-r.top-s.Y)<s.sR}
+  cv.addEventListener('pointermove',e=>{if(drag){const dx=e.clientX-drag.x, dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;vY=dx*.006;vX=dy*.004;rotY+=vY;rotX=Math.max(-1.1,Math.min(1.1,rotX+vX));return}
+    hover=inSun(e);cv.classList.toggle('grab',hover)});
+  cv.addEventListener('pointerdown',e=>{if(!inSun(e))return;drag={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);cv.classList.add('grabbing');hint.style.opacity=0});
+  const end=e=>{if(!drag)return;drag=null;cv.classList.remove('grabbing')}; cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  window.sun3d={render(t){if(!ready)return; if(cv.clientWidth!==W||cv.clientHeight!==H)size(); const s=SG.sun; if(!s)return;
+      const dt=lastT?Math.min(.05,t-lastT):.016; lastT=t;
+      if(!drag){vY+=(.0012-vY)*Math.min(1,dt*1.5);vX*=Math.pow(.05,dt);rotY+=reduce?0:vY;rotX=Math.max(-1.1,Math.min(1.1,rotX+vX))}
+      mesh.rotation.set(rotX,rotY,0); mesh.position.set(s.X,-s.Y,0); mesh.scale.setScalar(s.sR); uniforms.uAlpha.value=.1+.9*s.k; uniforms.uTime.value=t;
+      renderer.render(scene,cam);
+      if(!shown&&s.k>.95){shown=true;hint.style.left=s.X+'px';hint.style.top=(s.Y+s.sR+18)+'px';hint.style.opacity=1;setTimeout(()=>hint.style.opacity=0,4000)}}};
+  addEventListener('resize',size);
+})();
 
 /* 8 · Earth link */
 const ls=document.getElementById('linkSec'), lst=ls.querySelector('.stage'), track=document.getElementById('track'), lt=document.getElementById('lt');
