@@ -1,0 +1,68 @@
+[
+ {
+  "id": "01_ship",
+  "en": "Fifteen people are flying to Mars. The trip takes seven months, and there is no doctor on board.",
+  "es": "Quince personas viajan a Marte. El viaje dura siete meses, y no hay ningún médico a bordo."
+ },
+ {
+  "id": "02_earth",
+  "en": "Earth is so far away that a message takes up to twenty minutes to get there. And the answer takes just as long to come back.",
+  "es": "La Tierra está tan lejos, que un mensaje tarda hasta veinte minutos en llegar. Y la respuesta tarda lo mismo en volver."
+ },
+ {
+  "id": "03_collapse",
+  "en": "If someone's heart stops, there is no time to wait for an answer from Earth.",
+  "es": "Si a alguien se le para el corazón, no hay tiempo para esperar una respuesta de la Tierra."
+ },
+ {
+  "id": "03b_source",
+  "en": "NASA researchers say that crews far from Earth will need a system on board that tells them what to do now, why, and what comes next.",
+  "es": "Investigadores de la NASA dicen que, lejos de la Tierra, hace falta un sistema a bordo que diga qué hacer ahora, por qué, y qué sigue."
+ },
+ {
+  "id": "04_meet",
+  "en": "That is why every passenger wears Eva: one wristband that looks after them all the time.",
+  "es": "Por eso, cada pasajero usa a Eva: un brazalete que lo cuida todo el tiempo."
+ },
+ {
+  "id": "05_band",
+  "en": "The wristband has two parts. The inner part touches the skin and measures the body with light. The outer part has the big screen and the battery. Magnets hold them together, even over the suit.",
+  "es": "El brazalete tiene dos partes. La de adentro toca la piel, y mide el cuerpo con luz. La de afuera tiene la pantalla grande y la batería. Los imanes las mantienen unidas, incluso sobre el traje."
+ },
+ {
+  "id": "06_helper",
+  "en": "When someone's pulse stops, Eva calls the closest person who knows how to help, and sends another to bring the defibrillator.",
+  "es": "Cuando a alguien se le para el pulso, Eva llama a la persona más cercana que sabe ayudar, y manda a otra a buscar el desfibrilador."
+ },
+ {
+  "id": "07_cpr",
+  "en": "The wristband shows each step of the rescue, one at a time. The defibrillator checks the heart, and gives a shock only if it is needed.",
+  "es": "El brazalete muestra cada paso de la reanimación, de a uno. El desfibrilador revisa el corazón, y da la descarga solo si hace falta."
+ },
+ {
+  "id": "08_sun",
+  "en": "Sometimes, the Sun throws out dangerous radiation.",
+  "es": "A veces, el Sol lanza radiación peligrosa."
+ },
+ {
+  "id": "09_shelter",
+  "en": "Eva warns everyone in time to get to the shelter, before the radiation arrives.",
+  "es": "Eva avisa a todos a tiempo para ir al refugio, antes de que llegue la radiación."
+ },
+ {
+  "id": "10_records",
+  "en": "Everything is recorded, and sent to doctors on Earth as soon as there is signal.",
+  "es": "Todo queda registrado, y se envía a los médicos en la Tierra apenas hay señal."
+ },
+ {
+  "id": "11_mars",
+  "en": "So that everyone gets to Mars safe and sound.",
+  "es": "Para que todos lleguen sanos a Marte."
+ },
+ {
+  "id": "12_close",
+  "en": "Eva guides, records and warns. Eva, by WearMeds.",
+  "es": "Eva guía, registra y avisa. Eva, de WearMeds.",
+  "es_tts": "Eva guía, registra y avisa. Eva, de Uer Meds."
+ }
+]
