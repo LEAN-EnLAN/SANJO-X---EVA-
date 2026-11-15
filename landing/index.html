@@ -5,14 +5,14 @@
 try{var q=new URLSearchParams(location.search).get("lang");if(q==="es"||q==="en")l=q;else{var s=localStorage.getItem("wm-lang");if(s==="es"||s==="en")l=s}}catch(e){}
 d.lang=l;if(l==="es"){d.setAttribute("data-i18n-wait","");setTimeout(function(){d.removeAttribute("data-i18n-wait")},2500)}})()</script>
 <title>Eva by WearMeds</title>
-<meta name="description" content="Eva is the AI copilot that guides, records and warns passengers on the way to Mars: a wristband, an emergency station and a ship hub that work with no doctor on board and no link to Earth.">
+<meta name="description" content="Eva is the Super Intelligence copilot that guides, records and warns passengers in space: a wristband, an emergency station and a ship hub that work with no doctor on board and no link to Earth.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="team-rail.css">
 <style>
-/* Layout: Two Create type on pure white / pure black, with theme-matched asset families. Our own scroll engine scrubs: cabin parallax hero, sensors-record vs Eva-acts, Eva functions grid, wristband v2 studio steps, Case A/B scrollytelling, 12-compartment emergency station, how-it-links diagram, layered solar alert, horizontal Earth→Mars link, Mars halftone arrival, product slabs, dealt parts grid, team rail, rising wordmark. */
+/* Layout: Two Create type on pure white / pure black, with theme-matched asset families. Our own scroll engine scrubs: cabin parallax hero, sensors-record vs Eva-acts, Eva functions grid, wristband v2 studio steps, Case A/B scrollytelling, numbered-compartment emergency station, how-it-links diagram, layered solar alert, horizontal ship→Earth link, halftone arrival, product slabs, team rail, rising wordmark. */
 :root{
   --canvas:#ffffff; --ink:#0c0c0c; --rule:#e3e1dd; --muted:rgba(12,12,12,.58);
   --space:#000000; --space-ink:#f4f3f0; --space-muted:rgba(244,243,240,.62); --space-rule:#2a2a2a;
@@ -147,7 +147,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .esec .head .prop{font-size:23px}.esec .stage{gap:10px}.esec .lbl{padding:5px 0;font-size:13px}
 }
 
-/* station legend: the twelve compartments in English */
+/* station legend: the compartments in English */
 .kit2{padding-block:72px 120px}
 /* station: number + name + one example in two columns (01–06, 07–12), each paired with a numbered dot on the photo */
 .kgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px 40px;margin-top:28px;align-items:start}
@@ -206,7 +206,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .caseB .bdev{position:absolute;right:max(20px,3vw);top:50%;transform:translateY(-50%);width:min(58vw,1000px)}
 .bdev .w{position:relative;aspect-ratio:3/2}
 .bdev .w img{width:100%;height:100%;object-fit:contain}
-.bdev .scr{position:absolute;left:31.4%;top:31.2%;width:32.9%;height:23.4%;border-radius:3%/7%;background:radial-gradient(120% 140% at 50% 0%,#0b1420,#04070b 70%);box-shadow:inset 0 0 0 1px rgba(127,212,255,.12);display:flex;align-items:center;gap:6%;padding:0 6%;color:#fff;overflow:hidden;font-size:clamp(8px,1vw,15px);--ac:#7fd4ff}
+.bdev .scr{position:absolute;left:29.3%;top:30.3%;width:41.4%;height:20%;border-radius:2%/6%;background:radial-gradient(120% 140% at 50% 0%,#0b1420,#04070b 70%);box-shadow:inset 0 0 0 1px rgba(127,212,255,.12);display:flex;align-items:center;gap:6%;padding:0 6%;color:#fff;overflow:hidden;font-size:clamp(8px,1vw,15px);--ac:#7fd4ff}
 .bdev .scr[data-s="2"]{--ac:#5ee39a}.bdev .scr[data-s="3"]{--ac:#ff6a3d}
 .bdev .scr .ring{flex:none;width:21%;aspect-ratio:1;border-radius:50%;border:2px solid var(--ac);display:grid;place-items:center;font-size:1.3em;line-height:1;color:var(--ac);transition:color .4s,border-color .4s}
 .bdev .scr[data-s="1"] .ring{animation:beat 1s ease-in-out infinite}
@@ -222,8 +222,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .bdev .scr[data-s="2"] path{stroke-dashoffset:0}
 @keyframes trace{to{stroke-dashoffset:0}}
 .bdev .scr .tx{font-size:1.05em;line-height:1.15;transition:opacity .3s}
-.bdev .pad{opacity:0;transition:opacity .4s}
-.bdev[data-s="0"] .pad{opacity:1}
 @media (prefers-reduced-motion:reduce){.bdev .scr[data-s="1"] path{animation:none;stroke-dashoffset:0}.bdev .scr .ring{animation:none!important}}
 @media (max-width:760px){
   .caseA .scn{width:100%;bottom:auto;height:58%}
@@ -356,7 +354,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .vgo:hover{transform:translateY(-1px)}
 .vgo:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 .spin .src{margin-top:6px;font-size:14px;line-height:1.4;color:var(--muted);max-width:60em}
-.spin .src a{text-decoration:underline;text-underline-offset:2px}
+.spin .src a,.ed .src a{text-decoration:underline;text-underline-offset:2px}
+.ed .body .src{font-size:14px;line-height:1.4;color:var(--muted)}
 .vnote{margin-top:14px;font-size:14px;line-height:1.4;color:var(--muted)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 @media (max-width:760px){.vs{grid-template-columns:1fr;gap:28px}.vdev{width:min(200px,56%)}}
@@ -386,6 +385,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .dg text{fill:var(--ink)}
 .dg .t1{font-size:24px}
 .dg .t2{font-size:19px;fill:var(--muted)}
+.dg .t2.sm{font-size:16px}
 .dg .t3{font-size:13px;fill:var(--canvas);letter-spacing:.08em;text-transform:uppercase}
 .dg .tal{fill:var(--alarm);font-size:19px}
 .dg .tnet{fill:var(--net);font-size:17px}
@@ -504,7 +504,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .link-sec .playhead{position:absolute;left:50%;top:22%;bottom:12%;width:2px;background:var(--link);z-index:3}
 .link-sec .playhead::after{content:"now";position:absolute;top:-24px;left:8px;font-size:13px;color:var(--link)}
 
-/* Mars arrival (halftone resolve) */
+/* arrival (halftone resolve) */
 .arrive{position:relative;height:120svh}
 .arrive .stage{position:sticky;top:72px;height:calc(100svh - 72px);overflow:hidden;background:#000}
 .arrive img{width:100%;height:100%;object-fit:cover;transform:scale(calc(1.2 - .2*var(--r,1)))}
@@ -528,6 +528,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .slab .pic{position:relative;max-height:76svh;justify-self:center;width:100%;display:grid;place-items:center}
 .slab .pic img{max-height:72svh;width:auto;max-width:100%;object-fit:contain}
 .slab .pic .shd{position:absolute;inset:auto 0 0 0;margin:auto;opacity:.9}
+.slab.solo{grid-template-columns:minmax(0,1fr);align-content:center}
+.slab.solo>div{width:min(100%,880px)}
 /* wristband turntable (8 renders): turns as the slab scrolls past, or by drag / arrow keys */
 .tt{position:relative;width:min(100%,64svh);aspect-ratio:1;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .tt:active{cursor:grabbing}
@@ -536,15 +538,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .tt-hint{margin-top:8px;font-size:13px;color:var(--muted)}
 @media (max-width:900px){.slab{position:relative;top:auto;grid-template-columns:1fr;padding-block:48px;transform:none;filter:none}}
 
-/* Dealt parts grid */
-.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding-block:40px 140px}
-.part-card{display:grid;gap:10px;transform:translate(calc(var(--x0,0)*(1 - var(--k,1))),calc(var(--y0,0)*(1 - var(--k,1)))) rotate(calc(var(--r0,0deg)*(1 - var(--k,1))))}
-.part-card .im{aspect-ratio:1;background:var(--canvas);border-top:1px solid var(--rule);position:relative}
-.part-card img{width:100%;height:100%;object-fit:contain}
 .edimg{width:100%;aspect-ratio:3/2;object-fit:cover}
-.part-card b{font-weight:400;font-size:var(--t-util)}
-.part-card span{font-size:14px;color:var(--muted)}
-@media (max-width:900px){.parts{grid-template-columns:repeat(2,1fr)}}
 
 .team-sec{padding-block:20px 120px}
 .close{padding-block:0 140px;display:grid;gap:36px}
@@ -555,6 +549,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .close a svg{width:.9em;height:.9em;flex:none;margin-top:.08em}
 .foot{padding-bottom:20px;overflow:hidden}
 .notice{font-size:var(--t-util);line-height:1.3;color:var(--muted);max-width:52em;padding-block:0 40px}
+#refs li+li{margin-top:6px}#refs a,.disc a{text-decoration:underline;text-underline-offset:2px}
+.disc{margin-top:-24px}.disc summary{cursor:pointer;width:max-content;max-width:100%;text-decoration:underline;text-underline-offset:3px;color:var(--ink)}
+.disc summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.disc-b{margin-top:14px;padding:16px 18px;border:1px solid var(--rule);font-size:15px;line-height:1.45;display:grid;gap:10px}
+.disc-b ul{padding-left:1.1em;display:grid;gap:8px}
 .mark{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding-block:20px;overflow:hidden}
 .mark svg{display:block;width:100%;height:auto;transform-origin:0 100%;transform:translateY(calc(35% - 35%*var(--w,1))) scale(calc(1.08 - .08*var(--w,1)))}
 .util{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-top:14px}
@@ -603,20 +602,20 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <div class="chip" style="right:30%;bottom:-4%"><img class="tl" src="a/ic-crew.webp" alt=""><img class="td" src="a/ic-crew.webp" alt=""></div>
       </div>
       <div class="ground" id="ground">
-        <div class="cab"><img class="bg" src="a/cab-bg-b.jpg" alt="Calm spacecraft cabin with Mars in the window."><img class="mid" src="a/cab-mid-b.webp" alt=""><img class="fg" src="a/cab-fg-b.webp" alt=""></div>
+        <div class="cab"><img class="bg" src="a/cab-bg-b.jpg" alt="Calm spacecraft cabin with a planet in the window."><img class="mid" src="a/cab-mid-b.webp" alt=""><img class="fg" src="a/cab-fg-b.webp" alt=""></div>
         <div class="shade"></div>
       </div>
-      <div class="copy" id="heroCopy"><h1>Eva</h1><p data-i18n>The AI copilot that <b>guides</b>, <b>records</b> and <b>warns</b> on the way to Mars.</p></div>
+      <div class="copy" id="heroCopy"><h1>Eva</h1><p data-i18n>The Super Intelligence copilot that <b>guides</b>, <b>records</b> and <b>warns</b> in space.</p></div>
     </div>
   </section>
 
   <!-- 2 · Statement -->
   <section class="space statement g" aria-labelledby="st">
     <img class="stars" src="a/st2.jpg" alt="" aria-hidden="true">
-    <p class="big" id="st" data-reveal data-i18n>Fifteen passengers. <span class="mk">No doctor</span> on board. Earth up to <span class="mk">22 minutes</span> away.</p>
+    <p class="big" id="st" data-reveal data-i18n>Fifteen passengers. <span class="mk">No doctor</span> on board. Earth <span class="mk">minutes</span> away.</p>
     <div class="row">
       <p data-reveal>Wristband<small>The only thing anyone wears: two magnetic modules, a sensor base on the skin and a screen on top with voice, the help button and ECG on demand.</small></p>
-      <p data-reveal>Emergency station<small>Twelve lit compartments with the AED in 01, a short float from every seat. The AED decides the shock.</small></p>
+      <p data-reveal>Emergency station<small>Numbered, lit compartments, configurable per ship, with the AED in 01 a short float from every seat. The AED decides the shock.</small></p>
       <p data-reveal>Ship hub<small>The one host: runs Eva offline and keeps the signed log. No internet, no Earth needed.</small></p>
     </div>
   </section>
@@ -681,7 +680,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
         </div>
                 <div class="bscr" id="bscr" aria-hidden="true">
           <div class="ui on" data-u="home"><div class="k"><span>EVA</span><span>08:42</span></div><div class="big">All good</div><div class="sub">Pulse 72 · SpO₂ 98% · 36.4 °C</div></div>
-          <div class="ui" data-u="ecg"><div class="k"><span>EVA · ECG</span><span>24 s</span></div><svg viewBox="0 0 240 40" preserveAspectRatio="none"><path d="M0 24H18l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H72l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H126l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H180l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H240"/></svg><div class="sub">Keep still · one finger on each pad</div></div>
+          <div class="ui" data-u="ecg"><div class="k"><span>EVA · ECG</span><span>24 s</span></div><svg viewBox="0 0 240 40" preserveAspectRatio="none"><path d="M0 24H18l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H72l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H126l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H180l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H240"/></svg><div class="sub">Keep still · index and little finger on the pads</div></div>
         </div>
         <div class="hs on" data-k="0"><i class="hot" style="left:45.5%;top:22.4%"><span>Help button</span></i><i class="hot" style="left:57%;top:61.9%"><span>Base button</span></i><i class="hot" style="left:19.6%;top:48%"><span>Side button</span></i><i class="hot" style="left:66.2%;top:53.8%"><span>Speaker</span></i></div>
         <div class="hs" data-k="1"><i class="hot" style="left:50%;top:13%"><span>Screen module</span></i><i class="hot" style="left:54.7%;top:34.8%"><span>Spring contacts</span></i><i class="hot l" style="left:65%;top:54.8%"><span>Magnet seat</span></i><i class="hot" style="left:28%;top:62%"><span>Sensor base</span></i></div>
@@ -695,7 +694,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
           <div class="st" data-v="1"><span class="n">02 / 05</span><h3>The screen module on top</h3><p>The main battery, the help button, voice, vibration, its own LoRa radio and the two ECG pads. Spring contacts link it to the base.</p></div>
           <div class="st" data-v="2"><span class="n">03 / 05</span><h3>The sensor base on the skin</h3><p>Pulse and SpO₂, skin temperature, EDA, motion, with its own battery and LoRa. Both straps belong to the base, so the screen lifts off.</p></div>
           <div class="st" data-v="3"><span class="n">04 / 05</span><h3>Suit mode</h3><p>The sleeve goes between the modules. The magnets hold, the contacts part, and the base runs on its own battery and keeps sending by LoRa.</p></div>
-          <div class="st" data-v="0" data-u="ecg"><span class="n">05 / 05</span><h3>ECG on demand: two fingers, 30 seconds</h3><p>One finger of each hand on the two metal pads. A strip for diagnostic support, never continuous, and it never decides a shock.</p></div>
+          <div class="st" data-v="0" data-u="ecg"><span class="n">05 / 05</span><h3>ECG on demand: two fingers of one hand, about 30 s</h3><p>Rest two fingers of the same hand on the two metal pads, the index and the little finger lifted, for about 30 s. A strip for diagnostic support, never continuous, and it never decides a shock.</p></div>
         </div>
         <div class="bar"><i></i></div>
       </div>
@@ -717,7 +716,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <p class="label" id="ca">Case A · Cannot act</p>
         <div class="sts">
           <div class="st" data-pt="37,43" data-tag="Passenger 07 · no pulse"><span class="n">01 / 05</span><h3>No pulse, no movement, no answer</h3><p>The wristband cross-checks independent signals before Eva calls anyone. Stillness alone is not an emergency.</p></div>
-          <div class="st" data-pt="38,45" data-tag="Helper 1 · go to seat 07"><span class="n">02 / 05</span><h3>The nearest trained passenger starts CPR</h3><p>Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.</p></div>
+          <div class="st" data-pt="38,45" data-tag="Helper 1 · go to seat 07"><span class="n">02 / 05</span><h3>The nearest passenger starts CPR</h3><p>Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.</p></div>
           <div class="st" data-pt="31,28" data-tag="Compartment 01 · lit"><span class="n">03 / 05</span><h3>A second passenger brings the AED</h3><p>The station lights compartment 01 teal and its screen says Take the AED, so the runner finds it at a glance.</p></div>
           <div class="st" data-pt="38,31" data-tag="Push · 110 per minute"><span class="n">04 / 05</span><h3>CPR, one step at a time</h3><p>Eva paces every compression on the helper's wrist with a ring, voice and vibration.</p></div>
           <div class="st" data-pt="47,37" data-tag="AED · its own analysis"><span class="n">05 / 05</span><h3>The AED decides the shock</h3><p>It reads the rhythm through its own pads. Eva never does. Every step goes into the log for the ship and for Earth.</p></div>
@@ -734,21 +733,20 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <p class="label" id="cb">Case B · Can act</p>
         <div class="sts">
           <div class="st"><span class="n">01 / 04</span><h3>Eva offers a quick ECG check</h3><p>A pulse that looks irregular, or you say you feel unwell. You are awake and able, so Eva guides you through it yourself.</p></div>
-          <div class="st"><span class="n">02 / 04</span><h3>One finger of each hand, 30 seconds</h3><p>Rest them on the two metal pads and keep still. It works over the suit if your hands are bare.</p></div>
+          <div class="st"><span class="n">02 / 04</span><h3>Two fingers of the same hand, about 30 s</h3><p>Rest the index and the little finger, lifted, on the two metal pads and keep still for about 30 s. It works over the suit if your hand is bare.</p></div>
           <div class="st"><span class="n">03 / 04</span><h3>Regular rhythm · saved and sent to the hub</h3><p>The strip goes into your log and to the ship hub, ready for Earth. A check on demand, never continuous, never a shock decision.</p></div>
           <div class="st"><span class="n">04 / 04</span><h3>If something looks wrong, a passenger comes</h3><p>Eva calls the nearest helper and switches to Case A if you stop responding.</p></div>
         </div>
         <div class="bar"><i></i></div>
       </div>
       <div class="bdev" id="bdev" data-s="0">
-        <div class="w"><img src="a/wrist-ecg.webp" alt="One finger of each hand rests on the metal pads at both ends of the wristband during an ECG check.">
-          <i class="hot pad" style="left:31%;top:41.6%"></i><i class="hot pad" style="left:67.3%;top:41.6%"></i>
+        <div class="w"><img src="a/band2-ecg-front.webp" alt="The Eva wristband seen from the front, with no hands in view; its screen runs the guided ECG check.">
           <div class="scr" id="scr" data-s="0" aria-live="polite">
             <div class="ring" id="uiP" data-i18n-js aria-hidden="true">♥︎</div>
             <div class="col">
               <div class="top"><small id="uiK" data-i18n-js>ECG check · 1 of 3</small><b id="uiS" data-i18n-js></b></div>
               <svg viewBox="0 0 240 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M0 24H18l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H72l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H126l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H180l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H240"/></svg>
-              <span class="tx" id="uiT" data-i18n-js>Touch both metal pads, one finger of each hand</span>
+              <span class="tx" id="uiT" data-i18n-js>Index and little finger of one hand on both pads</span>
             </div>
           </div>
         </div>
@@ -756,13 +754,13 @@ html.lswap main,html.lswap .foot{opacity:.15}
     </div>
   </section>
 
-  <!-- 8 · Emergency station: 12 compartments; Eva lights 01 and the sensors report back (interim visuals: station-*.webp; images carry Spanish labels, English is overlaid) -->
+  <!-- 8 · Emergency station: numbered compartments, configurable per ship; Eva lights 01 and the sensors report back (interim visuals: station-*.webp; images carry Spanish labels, English is overlaid) -->
   <section class="pinsec xsec esec" id="esec" data-s="0" aria-labelledby="eh">
     <div class="stage">
       <img class="stars" src="a/st1.jpg" alt="" aria-hidden="true">
       <div class="head" id="ehead"><p class="label" id="eh">Emergency station</p><h2 class="prop">Eva shows what to take. <span class="mk">The AED decides the shock.</span></h2></div>
       <div class="sfig" id="sfig">
-        <img src="a/station-wide.webp" alt="The ship's emergency station: a wall cabinet of 12 numbered compartments behind clear windows, an Eva screen and a red emergency button on top. Compartment 01 holds the AED.">
+        <img src="a/station-wide.webp" alt="The ship's emergency station: a wall cabinet of numbered compartments behind clear windows, configurable per ship, with an Eva screen and a red emergency button on top. Compartment 01 holds the AED.">
         <div class="tag" style="left:14.1%;top:27.2%"><b>01</b>AED</div><div class="tag" style="left:33.9%;top:27.2%"><b>02</b>Breathing</div><div class="tag" style="left:53.2%;top:27.2%"><b>03</b>Diagnostics</div><div class="tag" style="left:72.5%;top:27.2%"><b>04</b>Ultrasound</div>
         <div class="tag" style="left:14.1%;top:48.8%"><b>05</b>Wounds</div><div class="tag" style="left:33.9%;top:48.8%"><b>06</b>Restraint</div><div class="tag" style="left:53.2%;top:48.8%"><b>07</b>Oral meds</div><div class="tag" style="left:72.5%;top:48.8%"><b>08</b>Injectables</div>
         <div class="tag" style="left:14.1%;top:69.5%"><b>09</b>IV access</div><div class="tag" style="left:33.9%;top:69.5%"><b>10</b>Eyes and dental</div><div class="tag" style="left:53.2%;top:69.5%"><b>11</b>Airway</div><div class="tag" style="left:72.5%;top:69.5%"><b>12</b>Hygiene</div>
@@ -774,7 +772,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <div class="taken">AED taken · 00:47</div>
       </div>
       <div class="ledger" id="eledger">
-        <div class="lbl" data-at=".1">12 compartments<small>Numbered, labelled, each behind a clear window with a light strip</small></div>
+        <div class="lbl" data-at=".1">Numbered compartments<small>Configurable per ship, labelled, each behind a clear window with a light strip</small></div>
         <div class="lbl" data-at=".24">Eva screen: Take the AED<small>Eva says what to take, in words</small></div>
         <div class="lbl" data-at=".38">Compartment 01 lights teal<small>The AED and spare pads, found at a glance</small></div>
         <div class="lbl" data-at=".52">Door 01 open · 00:41<small>The door sensor reports to the hub</small></div>
@@ -787,7 +785,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
   <section class="g kit2" id="stationKit" aria-labelledby="kh">
     <div class="sh"><h2 id="kh">Inside the station</h2></div>
     <div class="kgrid">
-      <figure class="kfig" id="kfig"><div class="kpic"><img src="a/station-front.webp" loading="lazy" alt="Front view of the station as a 4 by 3 wall panel, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide."></div><figcaption>Wall panel, four rows of three. On top: the Eva screen, the red button and a printed AED retrieval guide.</figcaption></figure>
+      <figure class="kfig" id="kfig"><div class="kpic"><img src="a/station-front.webp" loading="lazy" alt="Front view of the station as a wall panel of numbered compartments, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide."></div><figcaption>Wall panel of numbered compartments, configurable per ship. On top: the Eva screen, the red button and a printed AED retrieval guide.</figcaption></figure>
       <ol class="clist" id="clist">
       <li class="on" data-c="0" tabindex="0"><b>01</b><span>AED</span><small>defibrillator + spare pads</small></li>
       <li data-c="1" tabindex="0"><b>02</b><span>Breathing</span><small>oxygen, mask</small></li>
@@ -804,7 +802,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
       </ol>
     </div>
     <div class="variants">
-      <figure><img src="a/station-doors-open.webp" loading="lazy" alt="Variant of the station: a centre cabinet whose side doors open to reveal compartments 07 to 12."><figcaption>Variant: a centre cabinet whose side doors open to compartments 07 to 12. Concept images carry Spanish labels; the legend above is the product text.</figcaption></figure>
+      <figure><img src="a/station-doors-open.webp" loading="lazy" alt="Variant of the station: a centre cabinet whose side doors open to reveal more compartments."><figcaption>Variant: a centre cabinet whose side doors open to more compartments. Concept images carry Spanish labels; the legend above is the product text.</figcaption></figure>
     </div>
   </section>
 
@@ -814,21 +812,21 @@ html.lswap main,html.lswap .foot{opacity:.15}
     <div class="lgrid">
       <svg class="dg" viewBox="0 0 560 420" role="img" aria-labelledby="dgT dgD">
         <title id="dgT">How Eva's parts link</title>
-        <desc id="dgD">The ship hub is the only host. Wristbands reach it over a LoRa mesh, phones over Wi-Fi, and the station over LoRa. The hub stores signed records and forwards them to Earth. If the hub is down, a wristband's alarm goes straight to the station.</desc>
+        <desc id="dgD">The ship hub is the only host: it hosts the Super Intelligence and stores everything. Wristbands reach it over a LoRa mesh, phones over Wi-Fi, and the station over LoRa. The hub stores the signed records and forwards them; Earth receives and acknowledges them. If the hub is down, a wristband's alarm goes straight to the station.</desc>
         <defs><marker id="aN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-net" d="M0 0 10 5 0 10Z"/></marker><marker id="aA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-al" d="M0 0 10 5 0 10Z"/></marker></defs>
-        <path class="wifi" d="M280 84V158"/>
-        <path class="lora" d="M280 268V316" marker-start="url(#aN)" marker-end="url(#aN)"/>
+        <path class="wifi" d="M280 84V148"/>
+        <path class="lora" d="M280 276V316" marker-start="url(#aN)" marker-end="url(#aN)"/>
         <path class="lora" d="M90 190H184" marker-start="url(#aN)" marker-end="url(#aN)"/>
         <path class="nsl" d="M378 210H438"/>
         <path class="mesh" d="M56 152V173M56 207V228"/>
         <path class="alarm" d="M40 262C40 342 120 352 206 352" marker-end="url(#aA)"/>
-        <rect class="hub" x="186" y="158" width="192" height="110"/><rect class="tagf" x="186" y="158" width="58" height="22"/><text class="t3" x="194" y="174">Host</text>
-        <text class="t1" x="200" y="210">Ship hub</text><text class="t2" x="200" y="235">Runs Eva</text><text class="t2" x="200" y="257">Signed log</text>
+        <rect class="hub" x="186" y="148" width="192" height="128"/><rect class="tagf" x="186" y="148" width="58" height="22"/><text class="t3" x="194" y="164">Host</text>
+        <text class="t1" x="200" y="198">Ship hub</text><text class="t2 sm" x="200" y="222">Hosts the Super</text><text class="t2 sm" x="200" y="243">Intelligence</text><text class="t2 sm" x="200" y="264">Stores everything</text>
         <rect class="box" x="210" y="20" width="140" height="64"/><text class="t1" x="224" y="50">Phones</text><text class="t2" x="224" y="74">Wi-Fi</text>
         <rect class="box" x="210" y="316" width="140" height="66"/><rect class="teal" x="326" y="328" width="12" height="12"/><text class="t1" x="224" y="346">Station</text><text class="t2" x="224" y="371">LoRa</text>
         <rect class="band" x="24" y="122" width="64" height="30" rx="7"/><rect class="band" x="24" y="175" width="64" height="30" rx="7"/><rect class="band" x="24" y="230" width="64" height="30" rx="7"/>
         <text class="t1" x="8" y="104">Wristbands</text><text class="tnet" x="137" y="214" text-anchor="middle">LoRa mesh</text>
-        <circle class="earth" cx="478" cy="210" r="36"/><text class="t1" x="478" y="276" text-anchor="middle">Earth</text><text class="t2" x="552" y="300" text-anchor="end">Store and forward</text>
+        <circle class="earth" cx="478" cy="210" r="36"/><text class="t1" x="478" y="276" text-anchor="middle">Earth</text><text class="t2 sm" x="552" y="298" text-anchor="end">Receives and acknowledges</text><text class="t2 sm" x="552" y="318" text-anchor="end">the signed records</text>
         <text class="tal" x="8" y="408">Hub down? The alarm goes direct.</text>
       </svg>
       <ul class="why3">
@@ -873,7 +871,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
       <div class="playhead" aria-hidden="true"></div>
       <div class="track" id="track">
         <div class="tline" id="tline"><i></i><b></b></div>
-        <div class="planet"><img src="a/pm-mars.webp" alt="Mars, where the ship is."><img class="atm" src="a/pm-mars-atmosphere.webp" alt=""></div>
+        <div class="planet"><img src="a/pm-mars.webp" alt="The ship, far out in space."><img class="atm" src="a/pm-mars-atmosphere.webp" alt=""></div>
         <div class="packet"><b>12:01:04</b><span>No pulse · passenger 07</span></div>
         <div class="packet"><b>12:01:05</b><span>CPR helper · passenger 03</span></div>
         <div class="packet"><b>12:01:06</b><span>AED runner · passenger 11</span></div>
@@ -884,9 +882,9 @@ html.lswap main,html.lswap .foot{opacity:.15}
     </div>
   </section>
 
-  <!-- 9 · Mars arrival -->
+  <!-- 9 · Arrival -->
   <section class="arrive" id="arrive" aria-label="Arrival">
-    <div class="stage"><img src="a/ms1.jpg" alt="The surface of Mars at dawn."><div class="dots"></div><p class="cap prop">Arrive with every step on record.</p></div>
+    <div class="stage"><img src="a/ms1.jpg" alt="A rocky planet surface at dawn."><div class="dots"></div><p class="cap prop">Arrive with every step on record.</p></div>
   </section>
 
   <!-- 10 · Why -->
@@ -895,10 +893,11 @@ html.lswap main,html.lswap .foot{opacity:.15}
     <div class="ed" data-reveal>
       <p class="prop">Care that does not wait for a doctor</p>
       <div class="body">
-        <p>Far from Earth, a crew has to detect, diagnose and treat on its own: one-way radio delays can pass twenty minutes, and on the ISS the crew medical officer often has about 40 hours of medical training. NASA researchers argue for an on-board clinical decision support system that says what to do now, why, how it decided and what comes next. In their preliminary analysis of a 26-month mission, raising the crew's skill this way cut deaths by at least 34%.<sup><a class="u" href="#refs">1</a></sup> Eva brings that idea to passengers with no training at all.</p>
-        <p>Around 70% of astronauts on six-to-twelve-month missions aboard the ISS show significant vision changes, and 85% of 71 astronauts reported at least one nasal or sinus problem. On a commercial flight to Mars most passengers will not be clinicians, and Earth may be twenty minutes away by radio.</p>
-        <p>We built Eva on NASA's open Inspiration4 data (OSDR OSD-575 and OSD-569). Against each crew member's own baseline, the metabolic panel the day after landing showed 16 of 72 changes, against 7 with standard laboratory ranges.</p>
+        <p data-i18n>Far from Earth, a crew has to detect, diagnose and treat on its own: one-way radio delays can pass twenty minutes, and on the ISS the crew medical officer often has about 40 hours of medical training. NASA researchers argue for an on-board clinical decision support system that says what to do now, why, how it decided and what comes next. In their preliminary analysis of a 26-month mission, raising the crew's skill this way cut deaths by at least 34%.<sup><a class="u" href="#ref-1">1</a></sup> Eva brings that idea to passengers with no training at all.</p>
+        <p data-i18n>About 70% of long-duration ISS crew members, on missions of about six to twelve months, show signs of spaceflight-associated neuro-ocular syndrome, from mild to severe.<sup><a class="u" href="#ref-2">2</a></sup> In a study of NASA health records from 71 ISS astronauts, 85% reported at least one nasal or sinus problem.<sup><a class="u" href="#ref-3">3</a></sup> On a commercial flight in space most passengers will not be clinicians, and Earth may be minutes away by radio.</p>
+        <p data-i18n>We built Eva on NASA's open Inspiration4 data: the metabolic panel (OSDR OSD-575) and the blood count (OSDR OSD-569).<sup><a class="u" href="#ref-4">4</a></sup><sup><a class="u" href="#ref-5">5</a></sup> In our analysis, against each crew member's own baseline, the metabolic panel the day after landing showed 16 of 72 changes, against 7 with standard laboratory ranges. NASA's Human Health and Performance data-sharing policy sets how astronaut medical and research data can be requested, reviewed and released.<sup><a class="u" href="#ref-6">6</a></sup></p>
         <p>Eva guides, records and warns, and gives diagnostic support that the crew lead confirms. The AED decides the shock. Treatment decisions belong to validated devices, never to a chat model.</p>
+        <p class="src">Sources: <a href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener">Russell et al. 2023, npj Microgravity</a> · <a href="https://ntrs.nasa.gov/citations/20230006218" target="_blank" rel="noopener">NASA · SANS briefing for astronaut candidates (NTRS 20230006218)</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12322577/" target="_blank" rel="noopener">Khan et al. 2025, Laryngoscope Investigative Otolaryngology</a> · <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-575" target="_blank" rel="noopener">NASA OSDR · OSD-575</a> · <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-569" target="_blank" rel="noopener">NASA OSDR · OSD-569</a> · <a href="https://www.nasa.gov/directorates/esdmd/hhp/human-health-and-performance-data-sharing/" target="_blank" rel="noopener">NASA · Human Health and Performance data sharing</a></p>
       </div>
     </div>
   </section>
@@ -912,24 +911,13 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <div class="pic"><div class="tt" id="tt" tabindex="0" role="img" aria-label="The Eva wristband turning on a white studio stage. Drag it or use the arrow keys to turn it."><img src="a/band2-turntable-000.webp" alt="" loading="lazy" class="on"><img src="a/band2-turntable-045.webp" alt="" loading="lazy"><img src="a/band2-turntable-090.webp" alt="" loading="lazy"><img src="a/band2-turntable-135.webp" alt="" loading="lazy"><img src="a/band2-turntable-180.webp" alt="" loading="lazy"><img src="a/band2-turntable-225.webp" alt="" loading="lazy"><img src="a/band2-turntable-270.webp" alt="" loading="lazy"><img src="a/band2-turntable-315.webp" alt="" loading="lazy"></div><p class="tt-hint" aria-hidden="true">Drag to turn</p></div>
       </article>
       <article class="slab dark g" data-slab>
-        <div><p class="name">Station</p><div class="specs"><div>Holds<span>12 compartments, the AED in 01</span></div><div>Eva<span>Lights 01 and says what to take</span></div><div>Decides<span>The AED, through its own pads</span></div></div></div>
-        <div class="pic"><img src="a/station-front.webp" alt="The ship’s emergency station: 12 compartments, the AED in 01 lit teal." loading="lazy"></div>
+        <div><p class="name">Station</p><div class="specs"><div>Holds<span>Numbered compartments, configurable per ship; the AED in 01</span></div><div>Eva<span>Lights 01 and says what to take</span></div><div>Decides<span>The AED, through its own pads</span></div></div></div>
+        <div class="pic"><img src="a/station-front.webp" alt="The ship’s emergency station: numbered compartments, the AED in 01 lit teal." loading="lazy"></div>
       </article>
-      <article class="slab g" data-slab>
-        <div><p class="name">Ship hub</p><div class="specs"><div>Runs<span>Eva, the AI copilot, offline</span></div><div>Hosts<span>The app, the dashboard, the signed log</span></div><div>Sends<span>Signed records to Earth</span></div></div></div>
-        <div class="pic"><img src="a/sc1.webp" alt="Passenger spacecraft."></div>
+      <article class="slab solo g" data-slab>
+        <div><p class="name">Ship hub</p><div class="specs"><div>Runs<span>Eva, offline, with no link to Earth</span></div><div>Hosts<span>The Super Intelligence and everything it stores</span></div><div>Sends<span>Signed records to Earth</span></div></div></div>
       </article>
     </div>
-    <div class="g"><div class="parts" id="parts">
-      <div class="part-card"><div class="im"><img src="a/ic-eva-orb.webp" alt=""></div><b>Screen module</b><span>Main battery, help button, voice</span></div>
-      <div class="part-card"><div class="im"><img src="a/ic-eda.webp" alt=""></div><b>Sensor base</b><span>On the skin, own battery and LoRa</span></div>
-      <div class="part-card"><div class="im"><img src="a/ic-ecg-pads.webp" alt=""></div><b>ECG pads</b><span>Two fingers, 30 seconds</span></div>
-      <div class="part-card"><div class="im"><img src="a/ic-magnet.webp" alt=""></div><b>Magnets + contacts</b><span>Hold the modules, even through the suit</span></div>
-      <div class="part-card"><div class="im"><img src="a/ic-battery.webp" alt=""></div><b>Two batteries</b><span>Main in the screen, small in the base</span></div>
-      <div class="part-card"><div class="im"><img src="a/ic-lora.webp" alt=""></div><b>LoRa radio</b><span>In both modules</span></div>
-      <div class="part-card"><div class="im"><img src="a/ic-ship-hub.webp" alt=""></div><b>Ship hub</b><span>The one host, runs Eva offline</span></div>
-      <div class="part-card"><div class="im"><img src="a/ic-aed-station.webp" alt=""></div><b>Emergency station</b><span>12 compartments, the AED decides</span></div>
-    </div></div>
   </section>
 
   <!-- 12 · Business -->
@@ -958,10 +946,24 @@ html.lswap main,html.lswap .foot{opacity:.15}
 </main>
 
 <footer class="foot g" id="foot">
-  <p class="notice" id="ai">Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. Concept images are AI-generated; the AI notice is in the project README. The 3D Sun is NASA's free model from NASA 3D Resources.</p>
-  <ol class="notice" id="refs" style="margin:0 0 24px;padding-left:1.2em"><li><span translate="no">Russell BK, Burian BK, Hilmers DC, Beard BL, Martin K, Pletcher DL, Easter B, Lehnhardt K, Levin D. The value of a spaceflight clinical decision support system for earth-independent medical operations. <i>npj Microgravity</i> 9, 46 (2023). <a class="u" href="https://doi.org/10.1038/s41526-023-00284-1">doi:10.1038/s41526-023-00284-1</a></span> · CC BY 4.0. Main source of this project.</li><li>NASA Open Science Data Repository: OSD-575 and OSD-569, Inspiration4 metabolic panel and blood count.</li><li>NASA DONKI and NOAA GOES space weather data.</li></ol>
+  <p class="notice">Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. The 3D Sun is NASA's free model from NASA 3D Resources.</p>
+  <details class="notice disc" id="imgs">
+    <summary>Images generated with Super Intelligence</summary>
+    <div class="disc-b">
+      <p>Which images on this page are generated renders, and how they were made:</p>
+      <ul>
+        <li>Wristband renders: the studio views, the exploded view, the sensor base, the turntable, the passenger in the cabin and the ECG-check view. Generated from text prompts written by team Sanjo-X; the suit-mode layers are cut from the exploded render.</li>
+        <li>Scenes and icons: the cabin hero, the wrist scenes in Case A, the hero chips (planet, Earth, Sun, heart, crew), the planet and Earth globes, the arrival surface and the star fields. Generated from team prompts; some used earlier generated images as references.</li>
+        <li>Emergency station images (front, wide and doors open): generated concept images the team shared as interim design references. They carry Spanish labels; the page overlays the product names.</li>
+        <li>Post-processing, done locally with Python and Pillow: resizing, WebP conversion, edges blended into the page background and contact shadows. The ECG-check view is a studio render placed on black.</li>
+        <li>Not generated: the "How it links" diagram, the screen overlays and the labels are hand-written SVG and HTML, the solar storm is drawn in code, and the 3D Sun texture is NASA's free model from NASA 3D Resources.</li>
+        <li>All images are illustrative concept art: not photographs or NASA imagery, with no NASA insignia and no real people.</li>
+      </ul>
+    </div>
+  </details>
+  <ol class="notice" id="refs" style="margin:0 0 24px;padding-left:1.2em"><li id="ref-1"><span translate="no">Russell BK, Burian BK, Hilmers DC, Beard BL, Martin K, Pletcher DL, Easter B, Lehnhardt K, Levin D. <a class="u" href="https://doi.org/10.1038/s41526-023-00284-1" target="_blank" rel="noopener">The value of a spaceflight clinical decision support system for earth-independent medical operations</a>. <i>npj Microgravity</i> 9, 46 (2023). doi:10.1038/s41526-023-00284-1</span> · CC BY 4.0. Main source of this project.</li><li id="ref-2"><span translate="no">Brunstetter T. <a class="u" href="https://ntrs.nasa.gov/citations/20230006218" target="_blank" rel="noopener">Spaceflight Associated Neuro-Ocular Syndrome (SANS): A Briefing for Astronaut Candidates</a>. NASA Technical Reports Server, 20230006218 (2023).</span></li><li id="ref-3"><span translate="no">Khan F, Ansingkar K, Dongre R, et al. <a class="u" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12322577/" target="_blank" rel="noopener">Congestion and Sinonasal Illness in Outer Space: A Study on the International Space Station</a>. <i>Laryngoscope Investigative Otolaryngology</i> 10 (2025). doi:10.1002/lio2.70229</span></li><li id="ref-4"><a class="u" href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-575" target="_blank" rel="noopener">NASA Open Science Data Repository · OSD-575 · Inspiration4 blood serum metabolic panel</a></li><li id="ref-5"><a class="u" href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-569" target="_blank" rel="noopener">NASA Open Science Data Repository · OSD-569 · Inspiration4 whole blood measurements and blood count</a></li><li id="ref-6"><a class="u" href="https://www.nasa.gov/directorates/esdmd/hhp/human-health-and-performance-data-sharing/" target="_blank" rel="noopener">NASA · Human Health and Performance data sharing</a></li><li id="ref-7"><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/" target="_blank" rel="noopener">NASA DONKI space weather database</a> · <a class="u" href="https://www.swpc.noaa.gov/products/goes-proton-flux" target="_blank" rel="noopener">NOAA GOES proton flux</a></li><li id="ref-8"><a class="u" href="https://science.nasa.gov/3d-resources/" target="_blank" rel="noopener">NASA 3D Resources · the 3D Sun model</a></li></ol>
   <div class="mark"><svg viewBox="0 0 1400 120" role="img" aria-label="Eva by WearMeds"><text x="0" y="104" textLength="1400" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="PP Neue Montreal, Inter, Arial, sans-serif" font-size="132">Eva by WearMeds</text></svg></div>
-  <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><ul><li><a class="u" href="#ai">AI notice</a></li><li><a class="u" href="#refs">References</a></li><li><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/">Data sources</a></li></ul></div>
+  <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><ul><li><a class="u" href="#imgs" data-open="imgs">Image notice</a></li><li><a class="u" href="#refs">References</a></li><li><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/" target="_blank" rel="noopener">Data sources</a></li></ul></div>
 </footer>
 
 <script>
@@ -976,16 +978,16 @@ window.I18N=(function(){
 const ES={
 /* head */
 "Eva by WearMeds":"Eva de WearMeds",
-"Eva is the AI copilot that guides, records and warns passengers on the way to Mars: a wristband, an emergency station and a ship hub that work with no doctor on board and no link to Earth.":"Eva es la copiloto de IA que guía, registra y alerta a los pasajeros en el viaje a Marte: una pulsera, una estación de emergencia y un hub de la nave que funcionan sin médico a bordo y sin enlace con la Tierra.",
+"Eva is the Super Intelligence copilot that guides, records and warns passengers in space: a wristband, an emergency station and a ship hub that work with no doctor on board and no link to Earth.":"Eva es la copiloto de Super Inteligencia que guía, registra y alerta a los pasajeros en el espacio: una pulsera, una estación de emergencia y un hub de la nave que funcionan sin médico a bordo y sin enlace con la Tierra.",
 "Main":"Principal","Language":"Idioma",
 /* hero + statement */
-"The AI copilot that <b>guides</b>, <b>records</b> and <b>warns</b> on the way to Mars.":"La copiloto de IA que <b>guía</b>, <b>registra</b> y <b>alerta</b> en el viaje a Marte.",
-"Fifteen passengers. <span class=\"mk\">No doctor</span> on board. Earth up to <span class=\"mk\">22 minutes</span> away.":"Quince pasajeros. <span class=\"mk\">Ningún médico</span> a bordo. La Tierra puede quedar a <span class=\"mk\">22 minutos</span>.",
-"Calm spacecraft cabin with Mars in the window.":"Cabina tranquila de la nave con Marte en la ventana.",
+"The Super Intelligence copilot that <b>guides</b>, <b>records</b> and <b>warns</b> in space.":"La copiloto de Super Inteligencia que <b>guía</b>, <b>registra</b> y <b>alerta</b> en el espacio.",
+"Fifteen passengers. <span class=\"mk\">No doctor</span> on board. Earth <span class=\"mk\">minutes</span> away.":"Quince pasajeros. <span class=\"mk\">Ningún médico</span> a bordo. La Tierra, a <span class=\"mk\">minutos</span>.",
+"Calm spacecraft cabin with a planet in the window.":"Cabina tranquila de la nave con un planeta en la ventana.",
 "Wristband":"Pulsera",
 "The only thing anyone wears: two magnetic modules, a sensor base on the skin and a screen on top with voice, the help button and ECG on demand.":"Lo único que lleva cada persona: dos módulos magnéticos, una base de sensores sobre la piel y arriba una pantalla con voz, el botón de ayuda y ECG a demanda.",
 "Emergency station":"Estación de emergencia",
-"Twelve lit compartments with the AED in 01, a short float from every seat. The AED decides the shock.":"Doce compartimientos iluminados, con el DEA en el 01, a pocos segundos flotando desde cada asiento. El DEA decide la descarga.",
+"Numbered, lit compartments, configurable per ship, with the AED in 01 a short float from every seat. The AED decides the shock.":"Compartimentos numerados e iluminados, configurables para cada nave, con el DEA en el 01 a pocos segundos flotando desde cada asiento. El DEA decide la descarga.",
 "Ship hub":"Hub de la nave",
 "The one host: runs Eva offline and keeps the signed log. No internet, no Earth needed.":"El único host: corre Eva sin conexión y guarda el registro firmado. Sin internet y sin depender de la Tierra.",
 /* sensors record → Eva acts */
@@ -1016,7 +1018,7 @@ const ES={
 "Magnets hold through the fabric; the contacts part.":"Los imanes sujetan a través de la tela; los contactos se separan.",
 "Screen module":"Módulo de pantalla","Screen module · outside the sleeve":"Módulo de pantalla · fuera de la manga","Sensor base · on the skin, own battery + LoRa":"Base de sensores · sobre la piel, batería propia + LoRa",
 "All good":"Todo bien","Pulse 72 · SpO₂ 98% · 36.4 °C":"Pulso 72 · SpO₂ 98% · 36,4 °C",
-"Keep still · one finger on each pad":"Sin moverte · un dedo en cada placa",
+"Keep still · index and little finger on the pads":"Sin moverte · índice y meñique en las placas",
 "Help button":"Botón de ayuda","Base button":"Botón de la base","Side button":"Botón lateral","Speaker":"Parlante",
 "Spring contacts":"Contactos de resorte","Sensor base":"Base de sensores","Screen module, underside":"Módulo de pantalla, cara inferior",
 "Contacts":"Contactos","Magnet seat":"Alojamiento del imán","Strap loop":"Pasador de la correa","ECG pad":"Placa ECG",
@@ -1029,8 +1031,8 @@ const ES={
 "Pulse and SpO₂, skin temperature, EDA, motion, with its own battery and LoRa. Both straps belong to the base, so the screen lifts off.":"Pulso y SpO₂, temperatura de la piel, EDA y movimiento, con batería y LoRa propias. Las dos correas son de la base, así que la pantalla se separa.",
 "Suit mode":"Modo traje",
 "The sleeve goes between the modules. The magnets hold, the contacts part, and the base runs on its own battery and keeps sending by LoRa.":"La manga queda entre los módulos. Los imanes sujetan, los contactos se separan y la base sigue con su propia batería, enviando por LoRa.",
-"ECG on demand: two fingers, 30 seconds":"ECG a demanda: dos dedos, 30 segundos",
-"One finger of each hand on the two metal pads. A strip for diagnostic support, never continuous, and it never decides a shock.":"Un dedo de cada mano sobre las dos placas metálicas. Un trazado para apoyo al diagnóstico, nunca continuo, y nunca decide una descarga.",
+"ECG on demand: two fingers of one hand, about 30 s":"ECG a demanda: dos dedos de una mano, unos 30 s",
+"Rest two fingers of the same hand on the two metal pads, the index and the little finger lifted, for about 30 s. A strip for diagnostic support, never continuous, and it never decides a shock.":"Apoyá dos dedos de la misma mano en las dos placas metálicas, el índice y el meñique levantados, durante unos 30 s. Un trazado para apoyo al diagnóstico, nunca continuo, y nunca decide una descarga.",
 /* Case A */
 "A still arm on a dark blanket; the wristband screen has gone dim.":"Un brazo inmóvil sobre una manta oscura; la pantalla de la pulsera se atenuó.",
 "A helper's wristband shows a red running figure and an arrow.":"La pulsera de un ayudante muestra una figura roja corriendo y una flecha.",
@@ -1040,7 +1042,7 @@ const ES={
 "Case A · Cannot act":"Caso A · No puede actuar",
 "No pulse, no movement, no answer":"Sin pulso, sin movimiento, sin respuesta",
 "The wristband cross-checks independent signals before Eva calls anyone. Stillness alone is not an emergency.":"La pulsera cruza señales independientes antes de que Eva llame a alguien. Quedarse quieto no es, por sí solo, una emergencia.",
-"The nearest trained passenger starts CPR":"El pasajero capacitado más cercano empieza la RCP",
+"The nearest passenger starts CPR":"El pasajero más cercano empieza la RCP",
 "Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.":"Su pulsera le muestra adónde ir. Si no confirma en 20 segundos, Eva llama al siguiente.",
 "A second passenger brings the AED":"Un segundo pasajero trae el DEA",
 "The station lights compartment 01 teal and its screen says Take the AED, so the runner finds it at a glance.":"La estación ilumina en turquesa el compartimiento 01 y su pantalla dice «Retirá el DEA», así quien corre lo encuentra de un vistazo.",
@@ -1052,21 +1054,21 @@ const ES={
 "Case B · Can act":"Caso B · Puede actuar",
 "Eva offers a quick ECG check":"Eva ofrece un control rápido de ECG",
 "A pulse that looks irregular, or you say you feel unwell. You are awake and able, so Eva guides you through it yourself.":"Un pulso que parece irregular, o decís que te sentís mal. Estás consciente y en condiciones, así que Eva te guía para que lo hagas vos.",
-"One finger of each hand, 30 seconds":"Un dedo de cada mano, 30 segundos",
-"Rest them on the two metal pads and keep still. It works over the suit if your hands are bare.":"Apoyalos en las dos placas metálicas y no te muevas. Funciona sobre el traje si tenés las manos descubiertas.",
+"Two fingers of the same hand, about 30 s":"Dos dedos de la misma mano, unos 30 s",
+"Rest the index and the little finger, lifted, on the two metal pads and keep still for about 30 s. It works over the suit if your hand is bare.":"Apoyá el índice y el meñique, levantados, en las dos placas metálicas y quedate quieto unos 30 s. Funciona sobre el traje si tenés la mano descubierta.",
 "Regular rhythm · saved and sent to the hub":"Ritmo regular · guardado y enviado al hub",
 "The strip goes into your log and to the ship hub, ready for Earth. A check on demand, never continuous, never a shock decision.":"El trazado va a tu registro y al hub de la nave, listo para la Tierra. Un control a demanda, nunca continuo, nunca decide una descarga.",
 "If something looks wrong, a passenger comes":"Si algo parece mal, viene un pasajero",
 "Eva calls the nearest helper and switches to Case A if you stop responding.":"Eva llama al ayudante más cercano y pasa al Caso A si dejás de responder.",
-"One finger of each hand rests on the metal pads at both ends of the wristband during an ECG check.":"Un dedo de cada mano apoyado en las placas metálicas de los dos extremos de la pulsera durante un control de ECG.",
+"The Eva wristband seen from the front, with no hands in view; its screen runs the guided ECG check.":"La pulsera Eva vista de frente, sin manos a la vista; su pantalla muestra el control guiado de ECG.",
 /* emergency station: the overlay tags use the words printed on the station photo */
 "Eva shows what to take.":"Eva muestra qué retirar.","The AED decides the shock.":"El DEA decide la descarga.",
-"The ship's emergency station: a wall cabinet of 12 numbered compartments behind clear windows, an Eva screen and a red emergency button on top. Compartment 01 holds the AED.":"La estación de emergencia de la nave: un gabinete de pared con 12 compartimientos numerados tras ventanas transparentes, una pantalla de Eva y un botón rojo de emergencia arriba. El compartimiento 01 guarda el DEA.",
+"The ship's emergency station: a wall cabinet of numbered compartments behind clear windows, configurable per ship, with an Eva screen and a red emergency button on top. Compartment 01 holds the AED.":"La estación de emergencia de la nave: un gabinete de pared con compartimentos numerados tras ventanas transparentes, configurables para cada nave, con una pantalla de Eva y un botón rojo de emergencia arriba. El compartimento 01 guarda el DEA.",
 "AED":"DEA","Breathing":"Respiración","Diagnostics":"Diagnóstico","Ultrasound":"Ecografía","Wounds":"Heridas","Restraint":"Sujeción",
 "Oral meds":"Medicación oral","Injectables":"Inyectables","IV access":"Acceso IV","Eyes and dental":"Ojos y dental","Airway":"Vía aérea","Hygiene":"Higiene",
 "Standing by":"En espera","All 15 passengers stable":"Los 15 pasajeros, estables","Take the AED":"Retirá el DEA","Compartment 01 · lit":"Compartimiento 01 · encendido",
 "Door sensor":"Sensor de puerta","Item sensor":"Sensor de objeto","Red button":"Botón rojo","AED taken · 00:47":"DEA retirado · 00:47",
-"12 compartments":"12 compartimientos","Numbered, labelled, each behind a clear window with a light strip":"Numerados y rotulados, cada uno tras una ventana transparente con una tira de luz",
+"Numbered compartments":"Compartimentos numerados","Configurable per ship, labelled, each behind a clear window with a light strip":"Configurables para cada nave, rotulados, cada uno tras una ventana transparente con una tira de luz",
 "Eva screen: Take the AED":"Pantalla de Eva: «Retirá el DEA»","Eva says what to take, in words":"Eva dice con palabras qué retirar",
 "Compartment 01 lights teal":"El compartimiento 01 se ilumina en turquesa","The AED and spare pads, found at a glance":"El DEA y los parches de repuesto, a la vista",
 "Door 01 open · 00:41":"Puerta 01 abierta · 00:41","The door sensor reports to the hub":"El sensor de puerta avisa al hub",
@@ -1077,16 +1079,16 @@ const ES={
 "defibrillator + spare pads":"desfibrilador + parches de repuesto","oxygen, mask":"oxígeno, máscara","monitor, thermometer":"monitor, termómetro",
 "probe":"transductor","dressings":"apósitos","straps":"correas","tablets":"comprimidos","crew kit":"kit de la tripulación","lines":"vías",
 "kits":"kits","suction":"aspiración","gloves":"guantes",
-"Front view of the station as a 4 by 3 wall panel, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide.":"Vista frontal de la estación como panel de pared de 4 por 3, con el compartimiento 01 iluminado, la pantalla de Eva, el botón rojo y la guía impresa para retirar el DEA.",
-"Wall panel, four rows of three. On top: the Eva screen, the red button and a printed AED retrieval guide.":"Panel de pared, cuatro filas de tres. Arriba: la pantalla de Eva, el botón rojo y una guía impresa para retirar el DEA.",
-"Variant of the station: a centre cabinet whose side doors open to reveal compartments 07 to 12.":"Variante de la estación: un gabinete central cuyas puertas laterales se abren y muestran los compartimientos 07 a 12.",
-"Variant: a centre cabinet whose side doors open to compartments 07 to 12. Concept images carry Spanish labels; the legend above is the product text.":"Variante: un gabinete central cuyas puertas laterales abren los compartimientos 07 a 12. Las imágenes conceptuales tienen rótulos en español, igual que la leyenda de arriba.",
+"Front view of the station as a wall panel of numbered compartments, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide.":"Vista frontal de la estación como panel de pared de compartimentos numerados, con el compartimento 01 iluminado, la pantalla de Eva, el botón rojo y la guía impresa para retirar el DEA.",
+"Wall panel of numbered compartments, configurable per ship. On top: the Eva screen, the red button and a printed AED retrieval guide.":"Panel de pared de compartimentos numerados, configurables para cada nave. Arriba: la pantalla de Eva, el botón rojo y una guía impresa para retirar el DEA.",
+"Variant of the station: a centre cabinet whose side doors open to reveal more compartments.":"Variante de la estación: un gabinete central cuyas puertas laterales se abren y muestran más compartimentos.",
+"Variant: a centre cabinet whose side doors open to more compartments. Concept images carry Spanish labels; the legend above is the product text.":"Variante: un gabinete central cuyas puertas laterales abren más compartimentos. Las imágenes conceptuales tienen rótulos en español, igual que la leyenda de arriba.",
 /* how it links */
 "How it links":"Cómo se conecta",
 "How Eva's parts link":"Cómo se conectan las partes de Eva",
-"Runs Eva":"Corre Eva","Signed log":"Registro firmado",
-"The ship hub is the only host. Wristbands reach it over a LoRa mesh, phones over Wi-Fi, and the station over LoRa. The hub stores signed records and forwards them to Earth. If the hub is down, a wristband's alarm goes straight to the station.":"El hub de la nave es el único host. Las pulseras llegan a él por una malla LoRa, los teléfonos por Wi-Fi y la estación por LoRa. El hub guarda los registros firmados y los reenvía a la Tierra. Si el hub cae, la alarma de una pulsera va directo a la estación.",
-"Host":"Host","Phones":"Teléfonos","Wi-Fi":"Wi-Fi","LoRa":"LoRa","Wristbands":"Pulseras","LoRa mesh":"Malla LoRa","Earth":"Tierra","Store and forward":"Almacena y reenvía",
+"Hosts the Super":"Aloja la Super","Intelligence":"Inteligencia","Stores everything":"Guarda todo",
+"The ship hub is the only host: it hosts the Super Intelligence and stores everything. Wristbands reach it over a LoRa mesh, phones over Wi-Fi, and the station over LoRa. The hub stores the signed records and forwards them; Earth receives and acknowledges them. If the hub is down, a wristband's alarm goes straight to the station.":"El hub de la nave es el único host: aloja la Super Inteligencia y guarda todo. Las pulseras llegan a él por una malla LoRa, los teléfonos por Wi-Fi y la estación por LoRa. El hub guarda los registros firmados y los reenvía; la Tierra los recibe y los confirma. Si el hub cae, la alarma de una pulsera va directo a la estación.",
+"Host":"Host","Phones":"Teléfonos","Wi-Fi":"Wi-Fi","LoRa":"LoRa","Wristbands":"Pulseras","LoRa mesh":"Malla LoRa","Earth":"Tierra","Receives and acknowledges":"Recibe y confirma","the signed records":"los registros firmados",
 "Hub down? The alarm goes direct.":"¿Se cae el hub? La alarma va directo.",
 "One source of truth: the hub's signed log.":"Una sola fuente de verdad: el registro firmado del hub.",
 "Fully offline: no internet, no Earth needed.":"Todo sin conexión: sin internet y sin depender de la Tierra.",
@@ -1107,31 +1109,30 @@ const ES={
 /* Earth link, arrival */
 "Earth link":"Enlace con la Tierra","Every step recorded, even minutes from Earth":"Cada paso registrado, aun a minutos de la Tierra",
 "one-way light time to Earth":"tiempo luz de ida a la Tierra",
-"Mars, where the ship is.":"Marte, donde está la nave.","Earth.":"La Tierra.",
+"The ship, far out in space.":"La nave, lejos en el espacio.","Earth.":"La Tierra.",
 "No pulse · passenger 07":"Sin pulso · pasajero 07","CPR helper · passenger 03":"Ayudante de RCP · pasajero 03","AED runner · passenger 11":"Trae el DEA · pasajero 11",
 "CPR 2:00":"RCP 2:00","Signed, chained, queued":"Firmado, encadenado, en cola","Received on Earth":"Recibido en la Tierra",
-"Arrival":"Llegada","The surface of Mars at dawn.":"La superficie de Marte al amanecer.","Arrive with every step on record.":"Llegar con cada paso registrado.",
+"Arrival":"Llegada","A rocky planet surface at dawn.":"La superficie rocosa de un planeta al amanecer.","Arrive with every step on record.":"Llegar con cada paso registrado.",
 /* why it matters */
 "Why it matters":"Por qué importa","Care that does not wait for a doctor":"Atención que no espera a un médico",
-"Far from Earth, a crew has to detect, diagnose and treat on its own: one-way radio delays can pass twenty minutes, and on the ISS the crew medical officer often has about 40 hours of medical training. NASA researchers argue for an on-board clinical decision support system that says what to do now, why, how it decided and what comes next. In their preliminary analysis of a 26-month mission, raising the crew's skill this way cut deaths by at least 34%.":"Lejos de la Tierra, una tripulación tiene que detectar, diagnosticar y tratar por su cuenta: la demora de radio de ida puede superar los veinte minutos, y en la ISS el oficial médico de la tripulación suele tener unas 40 horas de formación médica. Investigadores de la NASA proponen un sistema de apoyo a la decisión clínica a bordo que diga qué hacer ahora, por qué, cómo lo decidió y qué sigue. En su análisis preliminar de una misión de 26 meses, mejorar así la capacidad de la tripulación redujo las muertes al menos un 34 %.",
-"Eva brings that idea to passengers with no training at all.":"Eva lleva esa idea a pasajeros sin ninguna formación.",
-"Around 70% of astronauts on six-to-twelve-month missions aboard the ISS show significant vision changes, and 85% of 71 astronauts reported at least one nasal or sinus problem. On a commercial flight to Mars most passengers will not be clinicians, and Earth may be twenty minutes away by radio.":"Alrededor del 70 % de los astronautas en misiones de seis a doce meses en la ISS presenta cambios significativos en la visión, y el 85 % de 71 astronautas informó al menos un problema nasal o de senos paranasales. En un vuelo comercial a Marte la mayoría de los pasajeros no serán profesionales de la salud, y la Tierra puede estar a veinte minutos por radio.",
-"We built Eva on NASA's open Inspiration4 data (OSDR OSD-575 and OSD-569). Against each crew member's own baseline, the metabolic panel the day after landing showed 16 of 72 changes, against 7 with standard laboratory ranges.":"Construimos Eva sobre los datos abiertos de Inspiration4 de la NASA (OSDR OSD-575 y OSD-569). Contra la línea de base de cada tripulante, el panel metabólico del día después del aterrizaje mostró 16 cambios de 72, frente a 7 con los rangos de laboratorio estándar.",
+"Far from Earth, a crew has to detect, diagnose and treat on its own: one-way radio delays can pass twenty minutes, and on the ISS the crew medical officer often has about 40 hours of medical training. NASA researchers argue for an on-board clinical decision support system that says what to do now, why, how it decided and what comes next. In their preliminary analysis of a 26-month mission, raising the crew's skill this way cut deaths by at least 34%.<sup><a class=\"u\" href=\"#ref-1\">1</a></sup> Eva brings that idea to passengers with no training at all.":"Lejos de la Tierra, una tripulación tiene que detectar, diagnosticar y tratar por su cuenta: la demora de radio de ida puede superar los veinte minutos, y en la ISS el oficial médico de la tripulación suele tener unas 40 horas de formación médica. Investigadores de la NASA proponen un sistema de apoyo a la decisión clínica a bordo que diga qué hacer ahora, por qué, cómo lo decidió y qué sigue. En su análisis preliminar de una misión de 26 meses, mejorar así la capacidad de la tripulación redujo las muertes al menos un 34 %.<sup><a class=\"u\" href=\"#ref-1\">1</a></sup> Eva lleva esa idea a pasajeros sin ninguna formación.",
+"About 70% of long-duration ISS crew members, on missions of about six to twelve months, show signs of spaceflight-associated neuro-ocular syndrome, from mild to severe.<sup><a class=\"u\" href=\"#ref-2\">2</a></sup> In a study of NASA health records from 71 ISS astronauts, 85% reported at least one nasal or sinus problem.<sup><a class=\"u\" href=\"#ref-3\">3</a></sup> On a commercial flight in space most passengers will not be clinicians, and Earth may be minutes away by radio.":"Alrededor del 70 % de los tripulantes de larga duración en la ISS, en misiones de unos seis a doce meses, presenta signos del síndrome neuro-ocular asociado al vuelo espacial, de leves a graves.<sup><a class=\"u\" href=\"#ref-2\">2</a></sup> En un estudio sobre registros de salud de la NASA de 71 astronautas de la ISS, el 85 % informó al menos un problema nasal o de senos paranasales.<sup><a class=\"u\" href=\"#ref-3\">3</a></sup> En un vuelo comercial en el espacio la mayoría de los pasajeros no serán profesionales de la salud, y la Tierra puede estar a minutos por radio.",
+"We built Eva on NASA's open Inspiration4 data: the metabolic panel (OSDR OSD-575) and the blood count (OSDR OSD-569).<sup><a class=\"u\" href=\"#ref-4\">4</a></sup><sup><a class=\"u\" href=\"#ref-5\">5</a></sup> In our analysis, against each crew member's own baseline, the metabolic panel the day after landing showed 16 of 72 changes, against 7 with standard laboratory ranges. NASA's Human Health and Performance data-sharing policy sets how astronaut medical and research data can be requested, reviewed and released.<sup><a class=\"u\" href=\"#ref-6\">6</a></sup>":"Construimos Eva sobre los datos abiertos de Inspiration4 de la NASA: el panel metabólico (OSDR OSD-575) y el hemograma (OSDR OSD-569).<sup><a class=\"u\" href=\"#ref-4\">4</a></sup><sup><a class=\"u\" href=\"#ref-5\">5</a></sup> En nuestro análisis, contra la línea de base de cada tripulante, el panel metabólico del día después del aterrizaje mostró 16 cambios de 72, frente a 7 con los rangos de laboratorio estándar. La política de intercambio de datos de Human Health and Performance de la NASA define cómo se pueden pedir, revisar y liberar los datos médicos y de investigación de los astronautas.<sup><a class=\"u\" href=\"#ref-6\">6</a></sup>",
+"Russell et al. 2023, npj Microgravity":"Russell et al. 2023, npj Microgravity",
+"NASA · SANS briefing for astronaut candidates (NTRS 20230006218)":"NASA · informe sobre SANS para candidatos a astronauta (NTRS 20230006218)",
+"Khan et al. 2025, Laryngoscope Investigative Otolaryngology":"Khan et al. 2025, Laryngoscope Investigative Otolaryngology",
+"NASA OSDR · OSD-575":"NASA OSDR · OSD-575","NASA OSDR · OSD-569":"NASA OSDR · OSD-569",
+"NASA · Human Health and Performance data sharing":"NASA · intercambio de datos de Human Health and Performance",
 "Eva guides, records and warns, and gives diagnostic support that the crew lead confirms. The AED decides the shock. Treatment decisions belong to validated devices, never to a chat model.":"Eva guía, registra y alerta, y da apoyo al diagnóstico que confirma el líder de la tripulación. El DEA decide la descarga. Las decisiones de tratamiento corresponden a dispositivos validados, nunca a un modelo de chat.",
 /* kit */
 "Modules":"Módulos","Screen on top, sensor base on the skin, magnets":"Pantalla arriba, base de sensores en la piel, imanes",
 "Screen":"Pantalla","Main battery, help button, voice, ECG pads":"Batería principal, botón de ayuda, voz, placas de ECG",
 "Talks to":"Se comunica con","Ship hub over LoRa, from both modules":"El hub de la nave por LoRa, desde ambos módulos",
 "The Eva wristband turning on a white studio stage. Drag it or use the arrow keys to turn it.":"La pulsera Eva girando en un estudio blanco. Arrastrala o usá las flechas para girarla.","Drag to turn":"Arrastrá para girar",
-"Station":"Estación","Holds":"Contiene","12 compartments, the AED in 01":"12 compartimientos, el DEA en el 01",
+"Station":"Estación","Holds":"Contiene","Numbered compartments, configurable per ship; the AED in 01":"Compartimentos numerados, configurables para cada nave; el DEA en el 01",
 "Lights 01 and says what to take":"Ilumina el 01 y dice qué retirar","Decides":"Decide","The AED, through its own pads":"El DEA, con sus propios parches",
-"The ship’s emergency station: 12 compartments, the AED in 01 lit teal.":"La estación de emergencia de la nave: 12 compartimientos, el DEA en el 01 iluminado en turquesa.",
-"Runs":"Ejecuta","Eva, the AI copilot, offline":"Eva, la copiloto de IA, sin conexión","Hosts":"Aloja","The app, the dashboard, the signed log":"La app, el panel y el registro firmado","Sends":"Envía",
-"Passenger spacecraft.":"Nave de pasajeros.",
-"Main battery, help button, voice":"Batería principal, botón de ayuda, voz","On the skin, own battery and LoRa":"Sobre la piel, con batería y LoRa propias",
-"ECG pads":"Placas de ECG","Two fingers, 30 seconds":"Dos dedos, 30 segundos","Magnets + contacts":"Imanes + contactos","Hold the modules, even through the suit":"Sujetan los módulos, incluso a través del traje",
-"Two batteries":"Dos baterías","Main in the screen, small in the base":"La principal en la pantalla, una pequeña en la base","LoRa radio":"Radio LoRa","In both modules":"En ambos módulos",
-"The one host, runs Eva offline":"El único host, corre Eva sin conexión","12 compartments, the AED decides":"12 compartimientos, el DEA decide",
+"The ship’s emergency station: numbered compartments, the AED in 01 lit teal.":"La estación de emergencia de la nave: compartimentos numerados, el DEA en el 01 iluminado en turquesa.",
+"Runs":"Ejecuta","Eva, offline, with no link to Earth":"Eva, sin conexión y sin enlace con la Tierra","Hosts":"Aloja","The Super Intelligence and everything it stores":"La Super Inteligencia y todo lo que guarda","Sends":"Envía",
 /* business, contact, footer */
 "Business":"Negocio","Hardware once, Eva every mission":"El hardware, una vez; Eva, en cada misión",
 "Operators buy a WearMeds kit for each passenger and run Eva on the ship hub, licensed per mission.":"Los operadores compran un kit WearMeds por pasajero y corren Eva en el hub de la nave, con licencia por misión.",
@@ -1140,11 +1141,21 @@ const ES={
 "Team":"Equipo","Contact":"Contacto",
 "To see Eva working or to discuss a mission, start here:":"Para ver Eva en funcionamiento o hablar de una misión, empezá acá:",
 "Open the prototype":"Abrir el prototipo","Read the research":"Leer la investigación",
-"Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. Concept images are AI-generated; the AI notice is in the project README. The 3D Sun is NASA's free model from NASA 3D Resources.":"Eva es un concepto para el NASA Space Apps Challenge 2026 y no es un dispositivo médico. Las imágenes conceptuales están generadas con IA; el aviso sobre IA está en el README del proyecto. El Sol 3D es el modelo gratuito de la NASA en NASA 3D Resources.",
+"Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. The 3D Sun is NASA's free model from NASA 3D Resources.":"Eva es un concepto para el NASA Space Apps Challenge 2026 y no es un dispositivo médico. El Sol 3D es el modelo gratuito de la NASA en NASA 3D Resources.",
+"Images generated with Super Intelligence":"Imágenes generadas con Super Inteligencia",
+"Which images on this page are generated renders, and how they were made:":"Qué imágenes de esta página son renders generados y cómo se hicieron:",
+"Wristband renders: the studio views, the exploded view, the sensor base, the turntable, the passenger in the cabin and the ECG-check view. Generated from text prompts written by team Sanjo-X; the suit-mode layers are cut from the exploded render.":"Renders de la pulsera: las vistas de estudio, el despiece, la base de sensores, el giro 360°, el pasajero en la cabina y la vista del control de ECG. Generados a partir de prompts de texto escritos por el equipo Sanjo-X; las capas del modo traje están recortadas del despiece.",
+"Scenes and icons: the cabin hero, the wrist scenes in Case A, the hero chips (planet, Earth, Sun, heart, crew), the planet and Earth globes, the arrival surface and the star fields. Generated from team prompts; some used earlier generated images as references.":"Escenas e íconos: la cabina de la portada, las escenas de muñeca del Caso A, los chips de la portada (planeta, Tierra, Sol, corazón, tripulación), los globos del planeta y de la Tierra, la superficie de llegada y los campos de estrellas. Generados a partir de prompts del equipo; algunos usaron imágenes generadas antes como referencia.",
+"Emergency station images (front, wide and doors open): generated concept images the team shared as interim design references. They carry Spanish labels; the page overlays the product names.":"Imágenes de la estación de emergencia (frente, plano general y puertas abiertas): imágenes conceptuales generadas que el equipo compartió como referencias de diseño provisorias. Tienen rótulos en español; la página superpone los nombres del producto.",
+"Post-processing, done locally with Python and Pillow: resizing, WebP conversion, edges blended into the page background and contact shadows. The ECG-check view is a studio render placed on black.":"Posproducción, hecha localmente con Python y Pillow: cambio de tamaño, conversión a WebP, bordes fundidos con el fondo de la página y sombras de contacto. La vista del control de ECG es un render de estudio puesto sobre negro.",
+"Not generated: the \"How it links\" diagram, the screen overlays and the labels are hand-written SVG and HTML, the solar storm is drawn in code, and the 3D Sun texture is NASA's free model from NASA 3D Resources.":"No generado: el diagrama «Cómo se conecta», las pantallas superpuestas y los rótulos son SVG y HTML escritos a mano, la tormenta solar se dibuja con código y la textura del Sol 3D es el modelo gratuito de la NASA en NASA 3D Resources.",
+"All images are illustrative concept art: not photographs or NASA imagery, with no NASA insignia and no real people.":"Todas las imágenes son arte conceptual ilustrativo: no son fotografías ni imágenes de la NASA, no tienen insignias de la NASA ni muestran personas reales.",
 "· CC BY 4.0. Main source of this project.":"· CC BY 4.0. Fuente principal de este proyecto.",
-"NASA Open Science Data Repository: OSD-575 and OSD-569, Inspiration4 metabolic panel and blood count.":"NASA Open Science Data Repository: OSD-575 y OSD-569, panel metabólico y hemograma de Inspiration4.",
-"NASA DONKI and NOAA GOES space weather data.":"Datos de clima espacial de NASA DONKI y NOAA GOES.",
-"AI notice":"Aviso sobre IA","References":"Referencias","Data sources":"Fuentes de datos",
+"NASA Open Science Data Repository · OSD-575 · Inspiration4 blood serum metabolic panel":"NASA Open Science Data Repository · OSD-575 · panel metabólico en suero de Inspiration4",
+"NASA Open Science Data Repository · OSD-569 · Inspiration4 whole blood measurements and blood count":"NASA Open Science Data Repository · OSD-569 · mediciones en sangre entera y hemograma de Inspiration4",
+"NASA DONKI space weather database":"Base de datos de clima espacial NASA DONKI","NOAA GOES proton flux":"Flujo de protones NOAA GOES",
+"NASA 3D Resources · the 3D Sun model":"NASA 3D Resources · el modelo 3D del Sol",
+"Image notice":"Aviso sobre imágenes","References":"Referencias","Data sources":"Fuentes de datos",
 
 /* strings the page script writes (I18N.tr) */
 "Proton flux":"Flujo de protones","S3 strong":"S3 fuerte",
@@ -1154,7 +1165,7 @@ const ES={
 "Stay inside. Your wristband is logging your dose.":"No salgas. Tu pulsera registra tu dosis.",
 "Passenger 07 · no pulse":"Pasajero 07 · sin pulso","Helper 1 · go to seat 07":"Ayudante 1 · al asiento 07",
 "Push · 110 per minute":"Compresiones · 110 por minuto","AED · its own analysis":"DEA · su propio análisis",
-"ECG check · 1 of 3":"Control de ECG · 1 de 3","Touch both metal pads, one finger of each hand":"Tocá las dos placas metálicas, un dedo de cada mano",
+"ECG check · 1 of 3":"Control de ECG · 1 de 3","Index and little finger of one hand on both pads":"Índice y meñique de una mano en las dos placas",
 "Recording · 2 of 3":"Grabando · 2 de 3","Keep still, breathe normally":"No te muevas y respirá normal",
 "Regular rhythm":"Ritmo regular","3 of 3":"3 de 3","Saved and sent to the hub":"Guardado y enviado al hub",
 "Eva · Calling help":"Eva · Pidiendo ayuda","Passenger 03 is on the way":"El pasajero 03 está en camino"
@@ -1290,7 +1301,7 @@ const redoA=steps('caseA',(i,st)=>{scA.forEach((im,k)=>im.classList.toggle('on',
   if(!r){hlA.style.setProperty('--ho',0);return} hlA.style.setProperty('--qx',r[0]+'px');hlA.style.setProperty('--qy',r[1]+'px');hlT.textContent=tr(st.dataset.tag||'');hlA.style.setProperty('--ho',1)});
 onMeasure(redoA); scA.forEach(i=>i.addEventListener('load',redoA));
 // Case B: guided ECG check on the wristband screen [key line, right-hand readout, main line, ring glyph]
-const UI=[["ECG check · 1 of 3","","Touch both metal pads, one finger of each hand","♥︎"],["Recording · 2 of 3","30 s","Keep still, breathe normally","♥︎"],["Regular rhythm","3 of 3","Saved and sent to the hub","✓"],["Eva · Calling help","","Passenger 03 is on the way","!"]];
+const UI=[["ECG check · 1 of 3","","Index and little finger of one hand on both pads","♥︎"],["Recording · 2 of 3","30 s","Keep still, breathe normally","♥︎"],["Regular rhythm","3 of 3","Saved and sent to the hub","✓"],["Eva · Calling help","","Passenger 03 is on the way","!"]];
 const caseB=document.getElementById('caseB'), bdev=document.getElementById('bdev'), scr=document.getElementById('scr'), uiK=document.getElementById('uiK'), uiS=document.getElementById('uiS'), uiT=document.getElementById('uiT'), uiP=document.getElementById('uiP'); let bState=0;
 const redoB=steps('caseB',i=>{const u=UI[Math.max(0,i)]; bState=i; uiT.style.opacity=0; scr.dataset.s=bdev.dataset.s=String(Math.max(0,i));
   setTimeout(()=>{uiK.textContent=tr(u[0]);uiS.textContent=tr(u[1]);uiT.textContent=tr(u[2]);uiP.textContent=u[3];uiT.style.opacity=1;req()},reduce?0:180)});
@@ -1472,16 +1483,13 @@ add(y=>{const p=pinP(ls,y), x=clamp(p/.85)*L.run; track.style.setProperty('--x',
   const mid=lst.clientWidth/2; L.pl.forEach(o=>{const d=Math.abs(o.c-x-mid)/lst.clientWidth;const k=clamp(1-d*1.6);o.el.style.setProperty('--ps',(0.8+0.2*k).toFixed(3));o.el.style.setProperty('--pa',(0.25+0.75*k).toFixed(3))});
   lt.firstChild.textContent=Math.round(3+19*clamp(p/.85))+' min'});
 
-/* 9 · Mars arrival halftone */
+/* 9 · arrival halftone */
 const ar=document.getElementById('arrive'), ast=ar.querySelector('.stage'); let AT=0; onMeasure(()=>AT=docTop(ar));
 add(y=>{const r=reduce?1:io2(clamp((y+V()-AT-.1*V())/(V()*.9)));ast.style.setProperty('--r',r.toFixed(3));ast.style.setProperty('--cell',(46-40*r).toFixed(1)+'px');ast.style.setProperty('--rr',(20-18.8*r).toFixed(1)+'px')});
 
-/* 11 · Slabs + dealt parts */
+/* 11 · Slabs */
 const slabs=[...document.querySelectorAll('[data-slab]')]; let SL=[]; onMeasure(()=>SL=slabs.map(s=>({s,top:docTop(s)})));
 add(y=>{const v=V(),wide=innerWidth>900;SL.forEach((o,i)=>{const n=SL[i+1];const p=(n&&wide&&!reduce)?clamp((y+v-n.top-.15*v)/(.9*v)):0;o.s.style.setProperty('--p',p.toFixed(3))})});
-const cards=[...document.querySelectorAll('.part-card')]; let PT=0; onMeasure(()=>{PT=docTop(document.getElementById('parts'));const cols=innerWidth>900?4:2;
-  cards.forEach((c,i)=>{const col=i%cols, mid=(cols-1)/2;c.style.setProperty('--x0',((mid-col)*(cols===4?14:30))+'vw');c.style.setProperty('--y0',(80+(i%2?40:0))+'px');c.style.setProperty('--r0',((col-mid)*3)+'deg')})});
-add(y=>{const v=V();cards.forEach((c,i)=>{const k=reduce?1:oc3(clamp((y+v-PT-.05*v-.04*v*i)/(.5*v)));c.style.setProperty('--k',k.toFixed(3))})});
 
 /* wordmark */
 const mark=document.querySelector('.mark'); let MT=0; onMeasure(()=>MT=docTop(mark));
@@ -1500,20 +1508,24 @@ add(y=>{const v=V();mark.style.setProperty('--w',(reduce?1:oc3(clamp((y+v-MT)/(m
 /* team (re-mounted when the language changes) */
 const TEAM={
  en:{members:[
-  {name:'Lean',role:'Product & build lead',tasks:['Winners analysis','Happy path','Landing','AI models rationale','30 s video'],bio:'Turns the research into Eva’s product, landing and demo.',tags:['Product','Landing','Demo'],links:[]},
+  {name:'Lean',role:'Product & build lead',tasks:['Winners analysis','Happy path','Landing','Super Intelligence models rationale','30 s video'],bio:'Turns the research into Eva’s product, landing and demo.',tags:['Product','Landing','Demo'],links:[]},
   {name:'Tomi',role:'Hardware & screens',tasks:['Energy budget and components','Screens','Wrist phone mount'],bio:'Picks the components, budgets every milliwatt and designs the screens.',tags:['Hardware','Energy','UI'],links:[]},
   {name:'Hazzi',role:'Medical cases',tasks:['Acute cases','Medical variables'],bio:'Maps each emergency from signal to action.',tags:['Medicine','Cases'],links:[]},
-  {name:'Naza',role:'Medical variables & scale',tasks:['Acute cases','Medical variables','Scalability'],bio:'Defines what we measure and how WearMeds scales.',tags:['Variables','Scale'],links:[]}],
+  {name:'Naza',role:'Scalability',tasks:['Acute cases','Medical variables','Scalability'],bio:'Defines what we measure and how WearMeds scales.',tags:['Variables','Scalability'],links:[]}],
   opts:{title:'Team',meta:'Sanjo-X · NASA Space Apps 2026',teamLine:'Sanjo-X · Space Apps Rosario',org:'Eva by WearMeds',bandLabel:'Crew',serialPrefix:'SX-'}},
  es:{members:[
-  {name:'Lean',role:'Líder de producto y desarrollo',tasks:['Análisis de ganadores','Recorrido principal','Landing','Fundamento de los modelos de IA','Video de 30 s'],bio:'Convierte la investigación en el producto, la landing y la demo de Eva.',tags:['Producto','Landing','Demo'],links:[]},
+  {name:'Lean',role:'Líder de producto y desarrollo',tasks:['Análisis de ganadores','Recorrido principal','Landing','Fundamento de los modelos de Super Inteligencia','Video de 30 s'],bio:'Convierte la investigación en el producto, la landing y la demo de Eva.',tags:['Producto','Landing','Demo'],links:[]},
   {name:'Tomi',role:'Hardware y pantallas',tasks:['Presupuesto energético y componentes','Pantallas','Soporte del teléfono en la muñeca'],bio:'Elige los componentes, presupuesta cada milivatio y diseña las pantallas.',tags:['Hardware','Energía','UI'],links:[]},
   {name:'Hazzi',role:'Casos médicos',tasks:['Casos agudos','Variables médicas'],bio:'Mapea cada emergencia desde la señal hasta la acción.',tags:['Medicina','Casos'],links:[]},
-  {name:'Naza',role:'Variables médicas y escala',tasks:['Casos agudos','Variables médicas','Escalabilidad'],bio:'Define qué medimos y cómo escala WearMeds.',tags:['Variables','Escala'],links:[]}],
+  {name:'Naza',role:'Escalabilidad',tasks:['Casos agudos','Variables médicas','Escalabilidad'],bio:'Define qué medimos y cómo escala WearMeds.',tags:['Variables','Escalabilidad'],links:[]}],
   opts:{title:'Equipo',meta:'Sanjo-X · NASA Space Apps 2026',teamLine:'Sanjo-X · Space Apps Rosario',org:'Eva de WearMeds',bandLabel:'Tripulación',serialPrefix:'SX-',
    labels:{profile:'Perfil',tasks:'Tareas',links:'Enlaces',idle:'Pasá el cursor o enfocá una credencial',hintRail:'Enter para girar · ← → para moverte',hintCarousel:'Tocá para girar · deslizá para ver más',backRail:'Hacé clic otra vez o Esc para volver',backCarousel:'Tocá otra vez para volver',dots:'Elegí a un integrante del equipo',show:'Mostrar',member:'integrante',members:'integrantes'}}}};
 function mountTeam(){if(!window.TeamRail)return; const T=TEAM[I18.lang]||TEAM.en; try{TeamRail.mount(document.getElementById('team'),T.members,T.opts)}catch(e){console.error(e)}}
 mountTeam();
+
+/* image disclosure: the footer link and #imgs in the address open it */
+{const d=document.getElementById('imgs'); if(d){const open=()=>{d.open=true}; if(location.hash==='#imgs')open(); addEventListener('hashchange',()=>{if(location.hash==='#imgs')open()});
+  document.querySelectorAll('[data-open="imgs"]').forEach(a=>a.addEventListener('click',open))}}
 
 /* measure + go */
 function measure(){measures.forEach(f=>f());req()}

@@ -5,6 +5,7 @@ This notice covers the images in `landing/a/`. Team decision (Sun 15/11): the AI
 ## AI-generated images
 - **Codex images** (`ic-*`, `wrist-*`, `chip-*`, `cab-*`, `pe-*`, `pm-*`, `ps-*`, `ms1.jpg`, `s*`, `st*`, `sc*`, `fl*`, `pt1-*`): made with the built-in OpenAI ImageGen tool in Codex, from prompts by team Sanjo-X written with Claude. The tool did not report its exact image model. Some images used earlier AI-generated images as references.
 - **Wristband v2 renders** (`band2-hero-white.webp`, `band2-exploded.webp`, `band2-base-alone.webp`, `band2-on-wrist.webp`, `band2-cabin.webp`, `band2-turntable-000.webp` to `band2-turntable-315.webp`): made with the built-in OpenAI ImageGen tool in Codex, from prompts by team Sanjo-X written with Claude. Used as delivered (WebP), with no post-processing.
+- **ECG-check view** (`band2-ecg-front.webp`, added Sun 15/11): `band2-turntable-000.webp` with its white studio background removed and placed on black, so the ECG step shows the wristband with no hands until the team's one-hand image is ready. It replaces `wrist-ecg.webp`, which showed one finger of each hand and was removed.
 - **Team reference images, v2** (`station-front.webp`, `station-wide.webp`, `station-doors-open.webp`): AI-generated concept images that the team shared on Sun 15/11 as the design references for the emergency station. They are interim visuals; Codex renders will replace them. The station images carry Spanish labels, which the page's English overlay names in English and the Spanish version repeats.
 
 ## Made without AI
