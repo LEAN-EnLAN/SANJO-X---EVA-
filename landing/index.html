@@ -158,12 +158,27 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .solar .stage::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,0) 48%)}
 .solar .txt{position:absolute;z-index:5;left:20px;top:28px;max-width:min(560px,80vw);display:grid;gap:12px;color:var(--space-ink)}
 .solar .txt .note{color:var(--space-muted);max-width:30em}
-.solar .alert{color:var(--space-ink);position:absolute;z-index:5;right:20px;bottom:24px;width:min(340px,80vw);background:#000;border:1px solid #333;padding:18px;display:grid;gap:6px;transform:translateY(calc(60px - 60px*var(--d,0)));opacity:var(--d,0)}
-.solar .alert small{font-size:13px;letter-spacing:.08em;color:var(--alert)}
-.solar .alert b{font-weight:400;font-size:var(--t-sec);line-height:1}
-.solar .alert span{font-size:15px;color:var(--space-muted)}
-.solar .meter{position:absolute;z-index:5;right:380px;bottom:24px;font-size:var(--t-util);color:var(--space-muted);font-variant-numeric:tabular-nums}
-@media (max-width:760px){.solar .meter{right:auto;left:20px;bottom:190px}}
+.solar .alert{--red:#ff2a1f;color:#fff;position:absolute;z-index:5;right:20px;bottom:24px;width:min(460px,calc(100% - 40px));background:var(--red);display:grid;gap:10px;padding:0 0 20px;overflow:hidden;
+  transform:translateY(calc(80px - 80px*var(--d,0))) scale(calc(.94 + .06*var(--d,0)));opacity:var(--d,0);box-shadow:0 0 0 1px #ff6b5f,0 0 calc(90px*var(--d,0)) rgba(255,40,25,.55);animation:alPulse 1.1s steps(1,end) infinite}
+.solar .alert .al-tape{height:14px;background:repeating-linear-gradient(-45deg,#000 0 11px,#ffd400 11px 22px);background-size:31px 14px;animation:alTape .8s linear infinite}
+.solar .alert .al-top{display:flex;align-items:center;gap:10px;padding:4px 20px 0;font-size:13px;letter-spacing:.12em;font-weight:500}
+.solar .alert .al-top svg{width:26px;height:26px;flex:none;animation:alSpin 6s linear infinite}
+.solar .alert .al-top em{margin-left:auto;font-style:normal;display:flex;align-items:center;gap:6px}
+.solar .alert .al-top em::before{content:"";width:9px;height:9px;border-radius:50%;background:#fff;animation:alBlink .5s steps(1,end) infinite}
+.solar .alert b{display:block;padding:0 20px;font-weight:600;font-size:clamp(40px,4.6vw,66px);line-height:.92;letter-spacing:-.02em;text-transform:uppercase}
+.solar .alert .al-count{display:flex;align-items:baseline;gap:12px;padding:0 20px;font-variant-numeric:tabular-nums}
+.solar .alert .al-count strong{font-weight:600;font-size:clamp(30px,3vw,42px);line-height:1;background:#000;color:#fff;padding:4px 10px}
+.solar .alert .al-count i{font-style:normal;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+.solar .alert span{padding:0 20px;font-size:16px;line-height:1.3;font-weight:500}
+.solar .alvig{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:calc(var(--d,0)*.9);background:radial-gradient(120% 90% at 50% 50%,transparent 45%,rgba(255,25,10,.42) 100%);animation:alVig 1.1s ease-in-out infinite}
+@keyframes alPulse{0%{background:var(--red)}50%{background:#c40d05}}
+@keyframes alTape{to{background-position:31px 0}}
+@keyframes alSpin{to{transform:rotate(360deg)}}
+@keyframes alBlink{50%{opacity:0}}
+@keyframes alVig{50%{opacity:calc(var(--d,0)*.35)}}
+@media (prefers-reduced-motion:reduce){.solar .alert,.solar .alert *,.solar .alvig{animation:none!important}}
+.solar .meter{position:absolute;z-index:5;right:500px;bottom:24px;font-size:var(--t-util);color:var(--space-muted);font-variant-numeric:tabular-nums}
+@media (max-width:760px){.solar .meter{right:auto;left:20px;bottom:300px}}
 
 /* Earth link */
 .link-sec .stage{background:var(--space);color:var(--space-ink)}
@@ -360,7 +375,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <p class="drag" id="sunHint">Drag the Sun</p>
       <div class="txt"><p class="label" id="sa">Solar alert</p><h2 class="prop">Minutes of warning before the particles arrive</h2><p class="note">Eva reads NASA DONKI flare reports and NOAA GOES proton data. X-rays arrive with the light; the particles that follow leave time to reach the shelter.</p></div>
       <div class="meter" id="meter">Proton flux · 2 pfu</div>
-      <div class="alert" role="status"><small>SOLAR ALERT</small><b>Go to the shelter</b><span>Particles arrive in about 18 min. Your wristband shows the way.</span></div>
+      <div class="alvig" aria-hidden="true"></div>
+      <div class="alert" role="alert"><div class="al-tape"></div><div class="al-top"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#ffd400"/><circle cx="50" cy="50" r="8" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(120 50 50)"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(240 50 50)"/></svg>RADIATION STORM<em>LIVE</em></div><b>Go to the shelter now</b><div class="al-count"><strong id="alT">18:00</strong><i>until the particles hit</i></div><span>Drop everything. Follow the arrows on your wristband.</span></div>
     </div>
   </section>
 
@@ -669,7 +685,8 @@ function solarFrame(now){const t=now/1000, Gm=SG; if(!Gm){sRun=false;return}
   if(sParts.length||(SP>0&&SP<1))requestAnimationFrame(solarFrame); else sRun=false}
 add(y=>{const p=pinP(so,y); SP=p; SA=ic3(clamp(p/.24)); SB=io2(clamp((p-.2)/.2)); SC=clamp((p-.38)/.36); SD=oc3(clamp((p-.7)/.25));
   sst.style.setProperty('--d',SD);
-  meter.textContent='Proton flux · '+Math.round(2+38*clamp((p-.42)/.45))+' pfu'+(p>.62?' · above S1':'');
+  const fx=Math.round(2*Math.pow(700,clamp((p-.42)/.45))); meter.textContent='Proton flux · '+fx.toLocaleString('en-US')+' pfu'+(fx>=1000?' · S3 strong':fx>=100?' · S2':fx>=10?' · S1':'');
+  if(SD>.85&&!alStart){alStart=performance.now();alTick()} else if(SD<.1)alStart=0;
   const vis=y+innerHeight>so._top && y<so._top+so.offsetHeight; if(vis&&!sRun){sRun=true;requestAnimationFrame(solarFrame)}});
 
 /* NASA Sun model (NASA 3D Resources, Sun_1_1391000.usdz): spherified cube with a 4x3 cube-cross texture.
@@ -715,6 +732,10 @@ add(y=>{const p=pinP(so,y); SP=p; SA=ic3(clamp(p/.24)); SB=io2(clamp((p-.2)/.2))
       if(!shown&&s.k>.95){shown=true;hint.style.left=s.X+'px';hint.style.top=(s.Y+s.sR+18)+'px';hint.style.opacity=1;setTimeout(()=>hint.style.opacity=0,4000)}}};
   addEventListener('resize',size);
 })();
+
+/* alert countdown: real seconds, from 18:00 */
+let alStart=0; const alT=document.getElementById('alT');
+function alTick(){if(!alStart){alT.textContent='18:00';return} const r=Math.max(0,1080-Math.floor((performance.now()-alStart)/1000)); alT.textContent=String(r/60|0).padStart(2,'0')+':'+String(r%60).padStart(2,'0'); setTimeout(alTick,250)}
 
 /* ASCII view of the solar scene (toggle): samples the composed frame into cells and draws coloured glyphs */
 window.asciiOn=false; const asciiCv=document.getElementById('asciiCv'), ag=asciiCv.getContext('2d'), asciiBtn=document.getElementById('asciiBtn'), off=document.createElement('canvas'), og=off.getContext('2d',{willReadFrequently:true});
