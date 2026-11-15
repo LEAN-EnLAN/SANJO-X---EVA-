@@ -1,0 +1,740 @@
+<title>Eva Health Copilot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Manrope:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: teatro de circuito luminoso — portada centrada con monumento "Eva", luego el producto vivo en un marco de navegador, circuito, datos, instrumentos y cierre con dos opciones. Mundo oscuro único. */
+:root{
+  color-scheme:dark;
+  --canvas:#05060f; --tile:rgba(186,214,247,.01); --glass:rgba(186,207,247,.02); --wash:rgba(186,214,247,.06);
+  --edge:rgba(186,207,247,.12); --edge-soft:rgba(186,214,247,.06);
+  --ink:#d1e4fa; --hl:#d8ecf8; --blue:#98c0ef; --glint:#c2ccff;
+  --quote:#c7d3ea; --body:rgba(200,212,234,.78); --muted:rgba(199,211,234,.64);
+  --ok:#7fe0b8; --warn:#f2c47a; --crit:#ff8f98;
+  --f-head:"Manrope",system-ui,sans-serif; --f-body:"Inter",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --rim:rgba(216,236,248,.2) 0 1px 1px 0 inset, rgba(168,216,245,.06) 0 24px 48px 0 inset;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--canvas)}
+body{color:var(--body);font-family:var(--f-body);font-size:16px;line-height:1.5;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--canvas)}
+h1,h2,h3,p{margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid rgba(194,204,255,.3);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.lum{font-family:var(--f-head);font-weight:500;background:linear-gradient(180deg,var(--hl),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 2px 16px rgba(174,207,242,.24)}
+.h2{font-size:clamp(30px,5vw,44px);line-height:1.16;text-align:center;text-wrap:balance}
+.desc{max-width:440px;margin:16px auto 0;text-align:center;color:var(--body)}
+.eyebrow{display:flex;justify-content:center;align-items:center;gap:24px;font-size:14px;line-height:20px;color:var(--muted);margin-bottom:24px}
+.eyebrow::before,.eyebrow::after{content:"";width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--edge))}
+.eyebrow::after{transform:scaleX(-1)}
+.label{font-size:13px;line-height:18px;color:var(--muted)}
+.cap{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 16px;border-radius:9999px;background:var(--wash);color:var(--ink);box-shadow:rgba(186,215,247,.12) 0 0 0 1px inset;backdrop-filter:blur(4px);border:0;font-size:14px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:box-shadow .45s cubic-bezier(.6,.6,0,1),background-color .45s cubic-bezier(.6,.6,0,1)}
+.cap:hover{background:rgba(186,214,247,.1);box-shadow:rgba(194,204,255,.35) 0 0 0 1px inset,0 0 18px rgba(152,192,239,.15)}
+.cap[aria-pressed="true"]{background:rgba(152,192,239,.16);box-shadow:rgba(194,204,255,.5) 0 0 0 1px inset}
+.cap:disabled{opacity:.4;cursor:not-allowed}
+.cap.sm{height:30px;padding:0 12px;font-size:13px}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px currentColor}
+section{position:relative}
+.reg{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(216,236,248,.5);box-shadow:0 0 6px rgba(152,192,239,.6)}
+
+/* nav */
+nav.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:88px;max-width:1200px;margin:0 auto}
+nav.top .l{font-size:14px;color:var(--muted)}
+nav.top .c img{height:26px;opacity:.9;display:block}
+nav.top .r{justify-self:end}
+@media (max-width:640px){nav.top{grid-template-columns:1fr auto;height:72px}nav.top .c,.hide-s{display:none}}
+
+/* opening */
+.opening{padding-block:32px 40px;overflow:hidden}
+.lattice{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(186,207,247,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(186,207,247,.05) 1px,transparent 1px);background-size:120px 120px;background-position:center top;-webkit-mask-image:radial-gradient(ellipse 60% 55% at 50% 30%,#000 30%,transparent 80%);mask-image:radial-gradient(ellipse 60% 55% at 50% 30%,#000 30%,transparent 80%)}
+.spots{position:absolute;left:50%;top:-80px;width:1200px;height:780px;transform:translateX(-50%);pointer-events:none;opacity:.55}
+.spot{position:absolute;top:0;height:770px;filter:blur(15px);background:conic-gradient(from 180deg at 50% 0%,transparent 45%,rgba(124,145,182,.3) 49%,rgba(124,145,182,.5) 50%,rgba(124,145,182,.3) 51%,transparent 55%);-webkit-mask-image:linear-gradient(#000 20%,transparent 92%);mask-image:linear-gradient(#000 20%,transparent 92%)}
+.spot.a{left:200px;width:474px;animation:breathe 6s ease-in-out infinite}
+.spot.b{left:470px;width:260px;animation:breathe 8.5s ease-in-out infinite}
+.spot.c{left:540px;width:420px;animation:breathe 7s ease-in-out infinite reverse}
+@keyframes breathe{50%{opacity:.6;transform:scaleX(1.08)}}
+.mark{position:relative;width:min(512px,100%);margin:0 auto;padding:28px 18px;text-align:center}
+.mark::before,.mark::after{content:"";position:absolute;left:-40px;right:-40px;height:1px;background:linear-gradient(90deg,transparent,var(--edge),transparent)}
+.mark::before{top:0}.mark::after{bottom:0}
+.mark .vl,.mark .vr{position:absolute;top:-30px;bottom:-30px;width:1px;background:linear-gradient(transparent,var(--edge),transparent)}
+.mark .vl{left:0}.mark .vr{right:0}
+.mark .reg.tl{left:-1px;top:-1px}.mark .reg.tr{right:-1px;top:-1px}.mark .reg.bl{left:-1px;bottom:-1px}.mark .reg.br{right:-1px;bottom:-1px}
+.word{font-size:clamp(64px,15vw,128px);line-height:.95;letter-spacing:.02em}
+.promise{max-width:620px;margin:22px auto 0;text-align:center;font-size:clamp(19px,2.6vw,24px);line-height:1.33;letter-spacing:-.01em;color:var(--quote)}
+.promise span{display:block;color:var(--muted);line-height:1.17;margin-top:4px}
+.fan{position:relative;margin:56px auto 0;max-width:1100px;height:310px;perspective:1200px}
+.fp{position:absolute;width:365px;border-radius:16px;background:linear-gradient(180deg,#0d1020,#080a14);box-shadow:var(--rim),0 30px 60px rgba(0,0,0,.5);padding:18px;display:grid;gap:12px;text-align:left}
+.fp.l{left:calc(50% - 520px);top:36px;transform:rotateY(10deg);opacity:.8}
+.fp.r{left:calc(50% + 155px);top:36px;transform:rotateY(-10deg);opacity:.8;padding-left:58px}
+.fp.l{padding-right:58px}
+.fp.c{width:392px;left:calc(50% - 196px);top:0;z-index:2;background:linear-gradient(180deg,#111529,#090b16);box-shadow:var(--rim),0 0 0 1px rgba(194,204,255,.1),0 40px 80px rgba(0,0,0,.6)}
+.fp .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fp .big{font-family:var(--f-head);font-size:21px;line-height:1.25;color:var(--hl)}
+.fp .meter{height:4px;border-radius:2px;background:var(--wash);overflow:hidden}
+.fp .meter i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--glint))}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.tag.crit{color:var(--crit)}.tag.ok{color:var(--ok)}.tag.warn{color:var(--warn)}
+.fade-b{position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(transparent,var(--canvas));z-index:3;pointer-events:none}
+@media (max-width:940px){.fp.l,.fp.r{display:none}.fp.c{width:min(392px,calc(100vw - 32px));left:50%;transform:translateX(-50%)}.fan{height:290px}}
+.strip{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 28px;max-width:1040px;margin:8px auto 0;font-size:14px;color:var(--muted)}
+.strip span{display:inline-flex;align-items:center;gap:8px}
+
+/* chapters */
+.ch{padding-block:110px 40px}
+.browser{margin:56px auto 0;max-width:1040px;border-radius:12px;background:#070811;box-shadow:0 0 0 1px var(--edge-soft),var(--rim);overflow:hidden;position:relative}
+.bbar{height:36px;display:flex;align-items:center;gap:7px;padding:0 14px;background:var(--glass);border-bottom:1px solid rgba(186,207,247,.08);font-size:12px;color:var(--muted)}
+.bbar i{width:8px;height:8px;border-radius:50%;background:rgba(186,207,247,.16)}
+.bbar span{margin-left:10px}
+.bbar .sp{margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.theater{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);min-height:700px}
+@media (max-width:940px){.theater{grid-template-columns:1fr}}
+.stage{position:relative;overflow:hidden;min-height:620px;border-right:1px solid rgba(186,207,247,.06)}
+@media (max-width:940px){.stage{border-right:0;border-bottom:1px solid rgba(186,207,247,.06);min-height:520px}}
+.stage .bg{position:absolute;inset:0;background:center/cover no-repeat;opacity:.22;filter:saturate(.5);-webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 45%,#000 20%,transparent 85%);mask-image:radial-gradient(ellipse 70% 70% at 50% 45%,#000 20%,transparent 85%)}
+.stage .glow{position:absolute;left:50%;top:44%;width:520px;height:520px;max-width:100%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(152,192,239,.16),transparent 62%);pointer-events:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;z-index:1}
+.stage canvas:active{cursor:grabbing}
+.hud{position:absolute;z-index:2;left:16px;right:16px;display:flex;flex-wrap:wrap;gap:8px;pointer-events:none}
+.hud *{pointer-events:auto}
+.hud.t{top:14px;justify-content:space-between;align-items:flex-start}
+.hud.b{bottom:14px;justify-content:space-between;align-items:flex-end}
+.envhead .lum{font-size:22px;line-height:1.2}
+.envhead p{font-size:13px;color:var(--muted)}
+.picked{max-width:min(330px,100%);border-radius:12px;background:rgba(7,8,17,.72);box-shadow:0 0 0 1px var(--edge-soft),var(--rim);padding:10px 12px;font-size:13px;color:var(--muted);backdrop-filter:blur(6px)}
+.picked b{display:block;color:var(--hl);font-weight:500;font-size:14px}
+.loading{position:absolute;inset:0;display:grid;place-items:center;z-index:2;color:var(--muted);font-size:14px;pointer-events:none}
+.envs{display:flex;flex-wrap:wrap;gap:6px}
+.side{display:grid;gap:12px;align-content:start;padding:18px;min-width:0}
+.vela{display:flex;align-items:center;gap:12px}
+.orb{width:38px;height:38px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e8f4ff,#8db6ec 40%,#1b2a50 78%);box-shadow:0 0 0 1px rgba(194,204,255,.25),0 0 22px rgba(152,192,239,.35)}
+.vela.live .orb{animation:orb 1.2s ease-in-out infinite}
+@keyframes orb{50%{box-shadow:0 0 0 6px rgba(152,192,239,.08),0 0 32px rgba(152,192,239,.6)}}
+.vela .lum{font-size:22px;line-height:1.1}
+.vela p{font-size:13px;color:var(--muted)}
+.ask{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.mic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--wash);border:0;box-shadow:rgba(186,215,247,.16) 0 0 0 1px inset;cursor:pointer;color:var(--ink)}
+.mic svg{width:20px;height:20px}
+.mic:disabled{opacity:.4;cursor:not-allowed}
+.mic[aria-pressed="true"]{background:rgba(255,143,152,.14);box-shadow:rgba(255,143,152,.6) 0 0 0 1px inset}
+.ask input{height:44px;min-width:0;border-radius:9999px;border:0;background:rgba(186,214,247,.04);box-shadow:rgba(186,215,247,.1) 0 0 0 1px inset;padding:0 16px;color:var(--hl);font-size:15px}
+.ask input::placeholder{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.opts{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:12px;color:var(--muted)}
+.opts label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+select{height:30px;border-radius:9999px;border:0;background:var(--wash);box-shadow:rgba(186,215,247,.12) 0 0 0 1px inset;padding:0 12px;color:var(--ink);font-size:13px}
+option{background:#0b0d18}
+.inst{border-radius:16px;background:var(--glass);box-shadow:var(--rim);padding:16px;display:grid;gap:10px;transition:box-shadow .45s cubic-bezier(.6,.6,0,1)}
+.inst.crit{box-shadow:var(--rim),0 0 0 1px rgba(255,143,152,.45),0 0 40px rgba(255,143,152,.12)}
+.inst.warn{box-shadow:var(--rim),0 0 0 1px rgba(242,196,122,.4),0 0 40px rgba(242,196,122,.1)}
+.inst.ok{box-shadow:var(--rim),0 0 0 1px rgba(127,224,184,.35)}
+.ihead{display:flex;align-items:center;gap:10px}
+.ihead .st{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)}
+.ihead .st i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.inst.crit .st i{background:var(--crit);box-shadow:0 0 10px var(--crit)}.inst.crit .st{color:var(--crit)}
+.inst.warn .st i{background:var(--warn);box-shadow:0 0 10px var(--warn)}.inst.warn .st{color:var(--warn)}
+.inst.ok .st i{background:var(--ok)}.inst.ok .st{color:var(--ok)}
+.ihead .clock{margin-left:auto;font-size:15px;color:var(--hl)}
+.instr{font-family:var(--f-head);font-weight:500;font-size:clamp(21px,2.4vw,26px);line-height:1.22;color:var(--hl);text-wrap:balance}
+.steps{display:flex;gap:4px}
+.steps i{flex:1;height:3px;border-radius:2px;background:var(--wash)}
+.steps i.on{background:var(--blue);box-shadow:0 0 8px rgba(152,192,239,.6)}
+.steps i.done{background:rgba(127,224,184,.7)}
+.meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;font-size:12px;color:var(--muted)}
+.actrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ai{border-radius:16px;background:var(--tile);box-shadow:0 0 0 1px var(--edge-soft);padding:14px 16px;display:grid;gap:8px}
+.ai .act{font-family:var(--f-head);font-weight:500;font-size:18px;line-height:1.3;color:var(--hl)}
+.ai dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:14px}
+.ai dt{color:var(--muted)} .ai dd{margin:0;color:var(--body)}
+.auth{border-radius:12px;padding:10px 12px;font-size:13px;background:var(--tile);box-shadow:0 0 0 1px var(--edge-soft);color:var(--body)}
+.auth b{color:var(--hl);font-weight:500}
+.auth.crew{box-shadow:0 0 0 1px rgba(242,196,122,.35)}
+.auth.earth{box-shadow:0 0 0 1px rgba(127,224,184,.3)}
+.note{font-size:12px;color:var(--muted)}
+.sats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1040px;margin:16px auto 0;position:relative}
+@media (max-width:940px){.sats{grid-template-columns:1fr;margin-top:16px}}
+.sat{border-radius:16px;background:linear-gradient(180deg,#0c0f1d,#080a13);box-shadow:var(--rim),0 0 0 1px var(--edge-soft),0 24px 48px rgba(0,0,0,.45);padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.sat h3{font-family:var(--f-head);font-weight:500;font-size:16px;color:var(--hl)}
+.vitals{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:6px}
+.vital{border-radius:10px;background:var(--tile);box-shadow:0 0 0 1px var(--edge-soft);padding:8px}
+.vital span{display:block;font-size:11px;color:var(--muted)}
+.vital b{font-family:var(--f-mono);font-weight:400;font-size:16px;color:var(--hl)}
+.vital.l1 b{color:var(--warn)}.vital.l2 b{color:var(--crit)}
+.log{display:grid;gap:6px;max-height:230px;overflow:auto}
+.log .e{display:grid;grid-template-columns:1fr auto;gap:2px 10px;border-radius:10px;background:var(--tile);box-shadow:0 0 0 1px var(--edge-soft);padding:7px 9px;font-size:12px}
+.log .e .h{font-family:var(--f-mono);color:var(--muted);font-size:11px}
+.log .e .tx{grid-column:1/-1;color:var(--body)}
+.log .e .s{font-family:var(--f-mono);font-size:11px;white-space:nowrap}
+.s.q{color:var(--muted)}.s.s{color:var(--warn)}.s.a{color:var(--ok)}
+.circuit{position:relative;max-width:1040px;margin:56px auto 0;overflow-x:auto;-webkit-mask-image:radial-gradient(ellipse 75% 85% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 75% 85% at 50% 50%,#000 55%,transparent 100%)}
+.circuit svg{display:block;width:100%;min-width:720px;height:auto}
+.circuit .trace{stroke:rgba(186,207,247,.14);stroke-width:1;fill:none}
+.circuit .trace.dash{stroke-dasharray:3 5;animation:flow 12s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-160}}
+.circuit .mod rect{fill:#0a0c18;stroke:rgba(186,207,247,.14)}
+.circuit .mod .rimline{stroke:rgba(216,236,248,.35)}
+.circuit .mod text{fill:#d8ecf8;font-family:var(--f-head);font-size:15px}
+.circuit .mod .sub{fill:rgba(199,211,234,.64);font-family:var(--f-body);font-size:11px}
+.circuit .node{fill:rgba(186,207,247,.35)}
+.circuit .mod.live rect{stroke:rgba(194,204,255,.75)}
+.circuit .mod.live .node{fill:#c2ccff;filter:drop-shadow(0 0 4px #98c0ef)}
+.circuit .core rect{fill:#0d1122}
+.datawrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;max-width:1040px;margin:56px auto 0}
+@media (max-width:940px){.datawrap{grid-template-columns:1fr}}
+.panel{border-radius:16px;background:var(--tile);box-shadow:0 0 0 1px var(--edge-soft);padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
+.panel h3{font-family:var(--f-head);font-weight:500;font-size:18px;color:var(--hl)}
+.phead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center}
+.phead div{display:flex;gap:6px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{border-radius:12px;background:var(--glass);box-shadow:var(--rim);padding:12px}
+.kpi b{display:block;font-family:var(--f-head);font-weight:500;font-size:30px;line-height:1.1;color:var(--hl)}
+.kpi span{font-size:12px;color:var(--muted)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{text-align:left;padding:7px 6px;border-bottom:1px solid rgba(186,207,247,.06)}
+.tbl th{font-weight:400;font-size:12px;color:var(--muted)}
+.tbl td{color:var(--body)}
+.tbl td.n{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover td{background:rgba(186,214,247,.03)}
+.up{color:var(--warn)!important}.dn{color:var(--blue)!important}.flag{color:var(--crit);font-size:12px}
+.chart svg{width:100%;height:auto;display:block}
+.field{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:1076px;margin:56px auto 0}
+.tile{width:320px;max-width:100%;height:242px;border-radius:16px;background:var(--tile);box-shadow:0 0 0 1px var(--edge-soft);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.tile svg{position:absolute;left:0;top:0;width:100%;height:calc(100% - 56px)}
+.tile p{position:relative;text-align:center;padding:0 16px 20px;color:var(--body);font-size:15px}
+.closing{padding-block:150px 40px;text-align:center}
+.closing .h2{font-weight:400}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,442px));justify-content:center;gap:24px;margin:56px auto 0}
+@media (max-width:940px){.choices{grid-template-columns:minmax(0,442px)}}
+.choice{position:relative;height:332px;border-radius:28px;background:var(--glass);backdrop-filter:blur(4px);box-shadow:var(--rim);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 24px 32px;cursor:pointer;border:0;color:inherit;text-align:center;overflow:hidden;transition:background-color .45s cubic-bezier(.6,.6,0,1),box-shadow .45s cubic-bezier(.6,.6,0,1)}
+.choice:hover{background:rgba(186,207,247,.04);box-shadow:rgba(216,236,248,.3) 0 1px 1px 0 inset,rgba(168,216,245,.1) 0 24px 48px 0 inset}
+.choice:active{background:rgba(186,207,247,.01);box-shadow:rgba(0,0,0,.5) 0 2px 8px inset}
+.choice svg{position:absolute;left:0;top:0;width:100%;height:70%}
+.choice b{position:relative;font-family:var(--f-head);font-weight:500;font-size:clamp(23px,3vw,28px);line-height:32px}
+.choice span{position:relative;margin-top:8px;font-size:15px;color:var(--muted)}
+.choice .reg.c1{left:18px;top:18px}.choice .reg.c2{right:18px;top:18px}.choice .reg.c3{left:18px;bottom:18px}.choice .reg.c4{right:18px;bottom:18px}
+.credits{max-width:760px;margin:80px auto 0;display:grid;gap:8px;font-size:12px;color:var(--muted);text-align:center;padding-bottom:60px}
+.credits a{color:var(--quote)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<nav class="top gut" aria-label="Principal">
+  <span class="l">Sanjo-X<span class="hide-s"> · NASA Space Apps 2026</span></span>
+  <span class="c"><img src="data/logo.svg" alt="Eva"></span>
+  <span class="r"><a class="cap" href="#teatro">Simular una emergencia →</a></span>
+</nav>
+
+<section class="opening gut">
+  <div class="lattice" aria-hidden="true"></div>
+  <div class="spots" aria-hidden="true"><div class="spot a"></div><div class="spot b"></div><div class="spot c"></div></div>
+  <p class="eyebrow">Copiloto de salud a bordo</p>
+  <div class="mark">
+    <span class="vl"></span><span class="vr"></span>
+    <i class="reg tl"></i><i class="reg tr"></i><i class="reg bl"></i><i class="reg br"></i>
+    <h1 class="word lum">Eva</h1>
+  </div>
+  <p class="promise">Diez segundos entre el pánico y la próxima acción.<span>Protocolo primero. Inteligencia después.</span></p>
+  <div class="fan" aria-hidden="true">
+    <div class="fp l">
+      <div class="row"><span class="tag">Capa 1 · reflejo</span><span class="mono tag">0,1 ms</span></div>
+      <p class="big" style="font-size:18px">¿Respira? Mirá el pecho durante 10 segundos.</p>
+      <div class="meter"><i style="width:22%"></i></div>
+      <span class="tag">Paso 1 de 5 · decí “listo” para avanzar</span>
+    </div>
+    <div class="fp c">
+      <div class="row"><span class="tag crit"><span class="dot" style="background:var(--crit);color:var(--crit)"></span>Rojo · dolor de pecho</span><span class="mono tag">00:06</span></div>
+      <p class="big">Dejá todo esfuerzo y fijate a una estación o asiento.</p>
+      <div class="meter"><i style="width:20%"></i></div>
+      <div class="row"><span class="tag">Capa 2 · razonando con tu basal</span><span class="mono tag">2,9 s</span></div>
+      <span class="tag warn">Decide la tripulación · Tierra a 24 min</span>
+    </div>
+    <div class="fp r">
+      <div class="row"><span class="tag">Enlace con la Tierra</span><span class="tag ok">✓ confirmado</span></div>
+      <p class="mono tag">#12 a3f9c1e0 · Capa 1</p>
+      <p class="mono tag">#13 77b0d2aa · Paso 2/5</p>
+      <p class="mono tag">#14 c01e9f53 · Capa 2</p>
+      <span class="tag">Registro encadenado SHA-256</span>
+    </div>
+    <div class="fade-b"></div>
+  </div>
+  <div class="strip">
+    <span><i class="dot"></i>Voz con manos libres</span><span><i class="dot"></i>Protocolo en menos de 1 s</span><span><i class="dot"></i>IA médica a bordo</span><span><i class="dot"></i>Basal personal real</span><span><i class="dot"></i>Demora con la Tierra</span><span><i class="dot"></i>Registro inalterable</span>
+  </div>
+</section>
+
+<section class="ch gut" id="teatro">
+  <p class="eyebrow">Probalo ahora</p>
+  <h2 class="h2 lum">Tu cuerpo. Tu basal.<br>Tu próxima acción.</h2>
+  <p class="desc">Contale a Eva qué pasa o tocá dónde duele. La primera instrucción aparece antes de que termines de leer esta línea.</p>
+  <div class="browser">
+    <div class="bbar"><i></i><i></i><i></i><span>Eva · a bordo</span><span class="sp mono" id="linkInfo"></span></div>
+    <div class="theater">
+      <div class="stage" id="stage">
+        <div class="bg" id="stageBg"></div><div class="glow"></div>
+        <canvas id="gl" aria-label="Anatomía 3D: arrastrá para girar y tocá una estructura para decir dónde duele"></canvas>
+        <div class="loading" id="loading">Cargando anatomía…</div>
+        <div class="hud t">
+          <div class="envhead"><span class="label">Entorno</span><p class="lum" id="envName">Nave espacial</p><p id="envCtx"></p></div>
+          <div class="envs" role="group" aria-label="Capas del cuerpo"><button class="cap sm" type="button" id="tSkin" aria-pressed="true">Piel</button><button class="cap sm" type="button" id="tOrg" aria-pressed="true">Órganos</button><button class="cap sm" type="button" id="tBone" aria-pressed="true">Esqueleto</button><button class="cap sm" type="button" id="vReset">Centrar</button></div>
+        </div>
+        <div class="hud b">
+          <div class="picked" id="picked"><b>Tocá el cuerpo para decir dónde duele</b>Arrastrá para girar · rueda o pellizco para acercar</div>
+          <div class="envs" id="envs" role="group" aria-label="Entorno de la misión"></div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="vela" id="velaH"><div class="orb" aria-hidden="true"></div><div><p class="lum">Eva</p><p>Hablá o escribí qué pasa.</p></div></div>
+        <div class="ask">
+          <button class="mic" id="mic" type="button" aria-pressed="false" aria-label="Hablar con Eva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+          <input id="q" type="text" placeholder="Me duele el pecho y me falta el aire" autocomplete="off">
+          <button class="cap" id="go" type="button">Enviar</button>
+        </div>
+        <div class="inst" id="inst">
+          <div class="ihead"><span class="st"><i></i><span id="stLabel">En espera</span></span><span class="clock mono" id="clock">00:00</span></div>
+          <div class="steps" id="steps"></div>
+          <p class="instr" id="instr">Elegí una emergencia o contá qué pasa.</p>
+          <div class="meta"><span>Capa 1 · reflejo <span class="mono" id="l1t"></span></span><span id="stepN"></span></div>
+          <div class="actrow"><button class="cap" id="next" type="button" disabled>Listo · siguiente paso</button></div>
+        </div>
+        <div class="ai" id="l2" hidden>
+          <div class="meta"><span>Capa 2 · razonamiento con tus datos</span><span class="mono" id="l2t"></span></div>
+          <div id="l2body"></div>
+        </div>
+        <div class="auth" id="auth" hidden></div>
+        <div class="meta"><span>Probá una emergencia</span></div>
+        <div class="chips" id="chips"></div>
+        <div class="opts"><span id="micNote">Voz en claude.ai</span><label><input type="checkbox" id="speakOn" checked> Eva habla</label><select id="lang" aria-label="Idioma de voz"><option value="es-AR">Español</option><option value="en-US">English</option></select></div>
+        <p class="note">Prototipo: protocolos de ejemplo; la capa 2 usa Claude en lugar de MedGemma.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sats">
+    <div class="sat"><div class="meta"><span>Signos del traje</span><span>simulados</span></div><h3>Bio-monitor</h3><div class="vitals" id="vitals"></div></div>
+    <div class="sat"><div class="meta"><span>Enlace con la Tierra</span><span class="mono">×60</span></div><h3>Registro encadenado</h3><div class="log" id="log"><p class="note">Cada paso se encadena con SHA-256 y se envía con confirmación de recepción.</p></div></div>
+    <div class="sat"><div class="meta"><span>¿Está sano?</span><span>datos reales</span></div><h3>Basal Inspiration4</h3><div id="miniHealth" class="note">Cargando…</div><a class="cap sm" href="#datos" style="justify-self:start">Ver la basal completa</a></div>
+  </div>
+</section>
+
+<section class="ch gut">
+  <p class="eyebrow">Arquitectura en capas</p>
+  <h2 class="h2 lum">Protocolo primero.<br>Inteligencia después.</h2>
+  <p class="desc">Eva nunca espera al modelo para dar la primera instrucción. Cada módulo se ilumina cuando trabaja en la simulación de arriba.</p>
+  <div class="circuit">
+    <svg viewBox="0 0 1040 430" role="img" aria-label="Voz y protocolos alimentan el núcleo Eva, que consulta MedGemma y la basal personal, y envía todo a Tierra">
+      <g class="trace">
+        <path d="M250 100 H380 l30 30 V170 H440"/><path d="M250 330 H380 l30 -30 V260 H440"/>
+        <path d="M790 100 H660 l-30 30 V170 H600"/><path d="M790 330 H660 l-30 -30 V260 H600"/>
+        <path d="M520 290 V360 l20 20 H760"/>
+      </g>
+      <g class="trace dash"><path d="M0 215 H120"/><path d="M920 215 H1040"/><path d="M520 140 V40"/><path d="M60 60 H200 l20 20"/><path d="M980 400 H860 l-20 -20"/></g>
+      <g class="mod" id="m-voice"><rect x="90" y="70" width="160" height="60" rx="12"/><line class="rimline" x1="102" y1="70.5" x2="238" y2="70.5"/><text x="110" y="97">Voz</text><text class="sub" x="110" y="115">MedASR · reconocimiento</text><circle class="node" cx="250" cy="100" r="3"/></g>
+      <g class="mod" id="m-proto"><rect x="90" y="300" width="160" height="60" rx="12"/><line class="rimline" x1="102" y1="300.5" x2="238" y2="300.5"/><text x="110" y="327">Protocolos</text><text class="sub" x="110" y="345">Capa 1 · menos de 1 s</text><circle class="node" cx="250" cy="330" r="3"/></g>
+      <g class="mod" id="m-ai"><rect x="790" y="70" width="160" height="60" rx="12"/><line class="rimline" x1="802" y1="70.5" x2="938" y2="70.5"/><text x="810" y="97">MedGemma 1.5</text><text class="sub" x="810" y="115">Capa 2 · menos de 10 s</text><circle class="node" cx="790" cy="100" r="3"/></g>
+      <g class="mod" id="m-base"><rect x="790" y="300" width="160" height="60" rx="12"/><line class="rimline" x1="802" y1="300.5" x2="938" y2="300.5"/><text x="810" y="327">Basal personal</text><text class="sub" x="810" y="345">Inspiration4 · NASA OSDR</text><circle class="node" cx="790" cy="330" r="3"/></g>
+      <g class="mod" id="m-link"><circle class="node" cx="760" cy="380" r="3"/><text class="sub" x="772" y="384">Enlace a Tierra · confirmación de recepción</text></g>
+      <g class="mod core" id="m-core">
+        <defs><radialGradient id="cg" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#98c0ef" stop-opacity=".28"/><stop offset="1" stop-color="#98c0ef" stop-opacity="0"/></radialGradient></defs>
+        <circle cx="520" cy="215" r="150" fill="url(#cg)"/>
+        <rect x="440" y="140" width="160" height="150" rx="18"/><line class="rimline" x1="456" y1="140.5" x2="584" y2="140.5"/>
+        <text x="520" y="210" text-anchor="middle" style="font-size:26px">Eva</text><text class="sub" x="520" y="232" text-anchor="middle">núcleo a bordo</text>
+        <circle class="node" cx="440" cy="170" r="3"/><circle class="node" cx="440" cy="260" r="3"/><circle class="node" cx="600" cy="170" r="3"/><circle class="node" cx="600" cy="260" r="3"/><circle class="node" cx="520" cy="290" r="3"/>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section class="ch gut" id="datos">
+  <p class="eyebrow">Datos reales de NASA</p>
+  <h2 class="h2 lum">Tu basal, no un promedio.<br>Tus cambios, a tiempo.</h2>
+  <p class="desc">Eva compara cada análisis con las extracciones previas al vuelo de esa misma persona. Los datos son de la misión Inspiration4, publicados por NASA OSDR.</p>
+  <div class="datawrap">
+    <div class="panel">
+      <div class="phead"><h3>Basal personal</h3><div><select id="crew" aria-label="Tripulante"></select><select id="tp" aria-label="Momento"><option value="R+1">R+1 · día siguiente</option><option value="R+45">R+45</option><option value="R+82">R+82</option><option value="R+194">R+194</option></select></div></div>
+      <div class="kpis" id="health"></div>
+      <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Analito</th><th style="text-align:right">Basal</th><th style="text-align:right">Ahora</th><th style="text-align:right">Cambio</th><th>Rango lab.</th></tr></thead><tbody id="dev"></tbody></table></div>
+      <p class="note">Tocá una fila para ver su evolución.</p>
+    </div>
+    <div class="panel">
+      <h3 id="chartH">Evolución del analito</h3>
+      <div class="chart" id="chart"></div>
+      <p class="note">La banda es la basal propia (±2 desvíos estándar o ±5 %), calculada con L-92, L-44 y L-3 días antes del lanzamiento. 4 personas en una misión de 3 días: método exploratorio, sin conclusiones clínicas.</p>
+    </div>
+  </div>
+  <div class="field">
+    <div class="tile"><svg viewBox="0 0 320 186" aria-hidden="true"><circle cx="160" cy="90" r="56" fill="none" stroke="rgba(186,207,247,.12)"/><path d="M160 34 A56 56 0 0 1 207 64" fill="none" stroke="#98c0ef" stroke-width="2" style="filter:drop-shadow(0 0 4px #98c0ef)"/><circle cx="160" cy="90" r="3" fill="#c2ccff"/><line x1="160" y1="90" x2="200" y2="62" stroke="#d8ecf8" stroke-width="1.5"/><text x="160" y="172" text-anchor="middle" fill="#d8ecf8" font-family="IBM Plex Mono" font-size="15">0,1 ms</text></svg><p>Primera instrucción en menos de 1 s</p></div>
+    <div class="tile"><svg viewBox="0 0 320 186" aria-hidden="true"><g fill="#0d1122" stroke="rgba(186,207,247,.14)"><rect x="70" y="52" width="180" height="22" rx="6"/><rect x="70" y="82" width="180" height="22" rx="6"/><rect x="70" y="112" width="180" height="22" rx="6"/></g><rect x="70" y="52" width="150" height="22" rx="6" fill="rgba(152,192,239,.25)"/><rect x="70" y="82" width="110" height="22" rx="6" fill="rgba(152,192,239,.18)"/><rect x="70" y="112" width="70" height="22" rx="6" fill="rgba(152,192,239,.12)"/><text x="80" y="67" fill="#d8ecf8" font-family="Inter" font-size="11">protocolo</text><text x="80" y="97" fill="#c7d3ea" font-family="Inter" font-size="11">signos</text><text x="80" y="127" fill="#c7d3ea" font-family="Inter" font-size="11">basal</text></svg><p>Razonamiento con tus datos en menos de 10 s</p></div>
+    <div class="tile"><svg viewBox="0 0 320 186" aria-hidden="true"><rect x="40" y="78" width="240" height="34" fill="rgba(152,192,239,.08)" stroke="rgba(152,192,239,.18)"/><polyline points="40,96 90,92 140,98 190,94" fill="none" stroke="#98c0ef" stroke-width="1.5"/><polyline points="190,94 240,52 280,60" fill="none" stroke="#f2c47a" stroke-width="1.5"/><circle cx="240" cy="52" r="4" fill="#f2c47a" style="filter:drop-shadow(0 0 4px #f2c47a)"/><text x="40" y="140" fill="rgba(199,211,234,.64)" font-family="Inter" font-size="11">basal propia</text></svg><p>Tu basal, no un promedio poblacional</p></div>
+    <div class="tile"><svg viewBox="0 0 320 186" aria-hidden="true"><circle cx="70" cy="110" r="14" fill="#0d1122" stroke="rgba(152,192,239,.5)"/><circle cx="250" cy="80" r="10" fill="#0d1122" stroke="rgba(242,196,122,.6)"/><path d="M84 106 Q160 30 240 78" fill="none" stroke="rgba(186,207,247,.3)" stroke-dasharray="3 5"/><text x="70" y="146" text-anchor="middle" fill="rgba(199,211,234,.64)" font-family="Inter" font-size="11">Tierra</text><text x="250" y="112" text-anchor="middle" fill="rgba(199,211,234,.64)" font-family="Inter" font-size="11">Marte</text><text x="160" y="58" text-anchor="middle" fill="#d8ecf8" font-family="IBM Plex Mono" font-size="13">8–48 min</text></svg><p>Decide quien llega a tiempo</p></div>
+    <div class="tile"><svg viewBox="0 0 320 186" aria-hidden="true"><g fill="#0d1122" stroke="rgba(186,207,247,.16)"><rect x="34" y="74" width="54" height="40" rx="8"/><rect x="102" y="74" width="54" height="40" rx="8"/><rect x="170" y="74" width="54" height="40" rx="8"/><rect x="238" y="74" width="54" height="40" rx="8" stroke="rgba(194,204,255,.6)"/></g><g stroke="rgba(152,192,239,.5)"><line x1="88" y1="94" x2="102" y2="94"/><line x1="156" y1="94" x2="170" y2="94"/><line x1="224" y1="94" x2="238" y2="94"/></g><g fill="rgba(199,211,234,.64)" font-family="IBM Plex Mono" font-size="9"><text x="42" y="98">a3f9</text><text x="110" y="98">77b0</text><text x="178" y="98">c01e</text><text x="246" y="98" fill="#d8ecf8">9d42</text></g></svg><p>Un registro que no se puede alterar</p></div>
+  </div>
+</section>
+
+<section class="closing gut">
+  <h2 class="h2 lum">Probalo como lo usaría la tripulación.</h2>
+  <div class="choices">
+    <button class="choice" type="button" id="cEmerg">
+      <i class="reg c1"></i><i class="reg c2"></i><i class="reg c3"></i><i class="reg c4"></i>
+      <svg viewBox="0 0 442 232" aria-hidden="true"><g stroke="rgba(186,207,247,.1)" fill="none"><path d="M0 120 H150"/><path d="M292 120 H442"/><path d="M221 0 V60"/></g><rect x="151" y="60" width="140" height="110" rx="20" fill="#0b0e1c" stroke="rgba(186,207,247,.16)"/><line x1="166" y1="60.5" x2="276" y2="60.5" stroke="rgba(216,236,248,.35)"/><circle cx="221" cy="115" r="22" fill="none" stroke="rgba(255,143,152,.55)"/><circle cx="221" cy="115" r="4" fill="#ff8f98" style="filter:drop-shadow(0 0 5px #ff8f98)"/></svg>
+      <b class="lum">Simular una emergencia</b><span>Dolor de pecho en Marte, con voz y protocolo.</span>
+    </button>
+    <button class="choice" type="button" id="cData">
+      <i class="reg c1"></i><i class="reg c2"></i><i class="reg c3"></i><i class="reg c4"></i>
+      <svg viewBox="0 0 442 232" aria-hidden="true"><g stroke="rgba(186,207,247,.1)" fill="none"><path d="M0 120 H160"/><path d="M282 120 H442"/><path d="M221 0 V55"/></g><circle cx="221" cy="115" r="60" fill="#0b0e1c" stroke="rgba(186,207,247,.16)"/><path d="M181 125 L201 110 L221 118 L241 92 L261 100" fill="none" stroke="#98c0ef" stroke-width="1.5"/><circle cx="241" cy="92" r="3" fill="#c2ccff"/></svg>
+      <b class="lum">Ver la basal real</b><span>Los análisis de Inspiration4, persona por persona.</span>
+    </button>
+  </div>
+  <div class="credits">
+    <span><b style="color:var(--quote);font-weight:500">Eva</b>, prototipo del equipo Sanjo-X para NASA Space Apps 2026, desafío Create Health Monitoring Software for Astronauts on Space Missions. Fondos generados con Codex; código del prototipo escrito con Claude. Uso de IA declarado.</span>
+    <span>Anatomía: BodyParts3D 4.0 © The Database Center for Life Science, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>; geometría preparada por <a href="https://github.com/ashemag/human-atlas" target="_blank" rel="noopener">Human Atlas</a>, recomprimida por el equipo. Render con Three.js (MIT). Datos: NASA OSDR <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-575" target="_blank" rel="noopener">OSD-575</a> y <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-569" target="_blank" rel="noopener">OSD-569</a>. Sin afiliación ni aval de NASA. No es un dispositivo médico.</span>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const el = (t, a = {}, ...k) => { const n = document.createElement(t); for (const [x, v] of Object.entries(a)) { if (x === 'class') n.className = v; else if (x === 'text') n.textContent = v; else if (x.startsWith('on')) n.addEventListener(x.slice(2), v); else if (v !== false && v != null) n.setAttribute(x, v === true ? '' : v); } for (const c of k) if (c != null) n.append(c); return n; };
+const capUse = n => (window.claude && window.claude.use) ? window.claude.use(n) : Promise.resolve(null);
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+const ENVS = [
+  { id: 'spacecraft', label: 'Nave', name: 'Nave espacial', ctx: 'Tránsito cislunar · Tierra a ≈3 s', rtt: 2.6, rttTxt: '≈3 s ida y vuelta' },
+  { id: 'station', label: 'Estación', name: 'Estación espacial', ctx: 'Órbita baja · Tierra casi en vivo', rtt: 0.6, rttTxt: 'casi en vivo' },
+  { id: 'moon', label: 'Luna', name: 'Base lunar', ctx: 'Superficie lunar · Tierra a ≈3 s', rtt: 2.6, rttTxt: '≈3 s ida y vuelta' },
+  { id: 'mars', label: 'Marte', name: 'Base marciana', ctx: 'Hábitat aislado · Tierra a 8–48 min', rtt: 1440, rttTxt: '24 min ida y vuelta (rango 8–48)' },
+  { id: 'conj', label: 'Conjunción', name: 'Marte en conjunción', ctx: 'El Sol bloquea el enlace · ~2 semanas', rtt: Infinity, rttTxt: 'sin enlace', bg: 'mars' }
+];
+let env = ENVS[0];
+
+const P = {
+  chest: { title: 'Dolor de pecho', level: 'red', win: 10, kw: ['pecho','torax','tórax','corazon','corazón','chest','heart','opresion','opresión','palpit'],
+    zone: { sys: ['cardiac', 'respiratory'], name: /atri|mitral|tricuspid|pulmonary|aortic|cavity of (left|right) ventricle|bronch|trache/i }, vit: [118, 152, 93, 24, 33.6], lv: [2, 2, 1, 1, 0],
+    steps: ['Dejá todo esfuerzo y fijate a una estación o asiento.', 'Avisá a otro tripulante y al oficial médico de a bordo.', 'Colocá los electrodos de ECG o la remera biomédica.', 'Medí presión, pulso y saturación cada 5 minutos.', 'Abrí el procedimiento de dolor torácico del kit médico. No tomes medicación sin indicación.'] },
+  unconscious: { title: 'Tripulante no responde', level: 'red', win: 2, kw: ['desmay','inconscien','no responde','no reacciona','unconscious','fainted','collapsed','passed out'],
+    zone: { sys: ['cardiac', 'nervous'], name: /atri|mitral|tricuspid|cavity of (left|right) ventricle|cerebr|brain|pons|medulla/i }, vit: [48, 88, 89, 8, 32.9], lv: [2, 2, 2, 2, 0],
+    steps: ['¿Respira? Mirá el pecho durante 10 segundos.', 'Si no respira: llamá a toda la tripulación y empezá RCP.', 'Si respira: asegurá la vía aérea y fijalo en posición estable.', 'Conectá el monitor y el desfibrilador.', 'Registrá la hora del evento.'] },
+  ammonia: { title: 'Posible fuga de amoníaco', level: 'red', win: 2, kw: ['amoniaco','amoníaco','ammonia','olor','toxic','tóxic','gas','humo','smoke'],
+    zone: { sys: ['respiratory'], name: /lung|bronch|trache|larynx/i }, vit: [104, 138, 92, 26, 33.4], lv: [1, 1, 1, 2, 0],
+    steps: ['Ponete ya la máscara de protección respiratoria.', 'Avisá a toda la tripulación: posible atmósfera tóxica.', 'Seguí el procedimiento de emergencia por atmósfera tóxica.', 'Si hubo contacto con ojos o piel, enjuagá con abundante agua.', 'Controlá respiración y saturación de cada tripulante.'] },
+  dcs: { title: 'Síntomas después de la caminata espacial', level: 'red', win: 15, kw: ['eva','caminata','hormigueo','articulacion','articulación','codo','rodilla','hombro','bends','tingling','joint','descompres'],
+    zone: { sys: ['skeletal'], name: /\b(femur|patella|tibia|fibula|humerus|ulna|radius)\b/i }, vit: [96, 128, 95, 20, 33.1], lv: [1, 0, 0, 0, 0],
+    steps: ['Avisá que tenés síntomas después de la caminata espacial.', 'Respirá oxígeno al 100 % con la máscara.', 'Quedate en reposo, sin esfuerzo.', 'Revisá síntomas neurológicos: visión, fuerza y sensibilidad.', 'Prepará el procedimiento de recompresión con Tierra.'] },
+  eye: { title: 'Algo en el ojo', level: 'amber', win: 60, kw: ['ojo','ojos','vista','eye','vision','visión','particula','partícula','borros'],
+    zone: { sys: ['sensory'], name: /eyeball|cornea|lens|retina|iris|choroid|sclera|vitreous/i }, vit: [78, 122, 98, 16, 33.2], lv: [0, 0, 0, 0, 0],
+    steps: ['No te frotes el ojo.', 'Pedí a otro tripulante que lo revise con luz.', 'Enjuagá con el lavaojos del kit médico.', 'Si hay dolor intenso o visión borrosa, tapá el ojo y avisá a Tierra.'] },
+  kidney: { title: 'Dolor lumbar fuerte', level: 'amber', win: 30, kw: ['riñon','riñón','lumbar','flanco','costado','espalda baja','kidney','flank','orina','orinar'],
+    zone: { sys: ['urinary'], name: /kidney|ureter|bladder/i }, vit: [102, 141, 97, 20, 33.5], lv: [1, 1, 0, 0, 0],
+    steps: ['Registrá dónde empezó el dolor y a qué hora.', 'Revisá si hay sangre en la orina.', 'Tomá agua de a sorbos.', 'Medí la temperatura: fiebre más dolor lumbar es urgencia.', 'Prepará el ecógrafo para revisar el riñón con guía de Tierra.'] },
+  burn: { title: 'Quemadura', level: 'amber', win: 30, kw: ['quemadura','queme','quemé','burn','burned','caliente','electric'],
+    zone: { sys: ['skeletal'], name: /finger|thumb|metacarpal|lunate|scaphoid|capitate|hamate|trapez|pisiform|triquetr/i }, vit: [92, 130, 98, 18, 34.1], lv: [0, 0, 0, 0, 1],
+    steps: ['Alejate de la fuente de calor o eléctrica.', 'Enfriá la zona con agua fresca durante 10 a 20 minutos.', 'No revientes las ampollas.', 'Cubrí con un apósito estéril del kit.', 'Si es eléctrica o extensa, avisá a Tierra.'] },
+  nausea: { title: 'Mareo y náuseas', level: 'amber', win: 120, kw: ['mareo','mareado','nausea','náusea','vomit','vómit','dizzy','sick'],
+    zone: { sys: ['digestive'], name: /stomach|duoden|esophag/i }, vit: [88, 116, 98, 17, 33.0], lv: [0, 0, 0, 0, 0],
+    steps: ['Quedate quieto con la cabeza apoyada.', 'Fijá la vista en un punto de referencia de la cabina.', 'Tené a mano una bolsa de contención.', 'Hidratate de a sorbos.', 'Si dura más de 48 horas o no retenés líquidos, avisá a Tierra.'] }
+};
+const DEFAULT = { title: 'Evaluando', level: 'amber', win: 30, zone: null, vit: [84, 124, 97, 17, 33.2], lv: [0, 0, 0, 0, 0],
+  steps: ['Contame qué sentís y en qué parte del cuerpo.', '¿Podés respirar normalmente? Si no, decí “no respiro bien”.', 'Avisá a otro tripulante que estás con un problema de salud.'] };
+const IDLE = { vit: [72, 118, 98, 15, 33.1], lv: [0, 0, 0, 0, 0] };
+const CHIPS = [['chest', 'Me duele el pecho'], ['ammonia', 'Olor a amoníaco'], ['dcs', 'Hormigueo tras la Eva'], ['unconscious', 'Compañero no responde']];
+const VIT = [['Pulso', 'lpm'], ['Presión', 'mmHg'], ['SpO₂', '%'], ['Resp.', '/min'], ['Piel', '°C']];
+const LEVEL = { green: ['Verde', 'ok'], amber: ['Ámbar', 'warn'], red: ['Rojo', 'crit'] };
+
+function light(id, ms = 1600) { const g = document.getElementById(id); if (!g) return; g.classList.add('live'); clearTimeout(g._t); g._t = setTimeout(() => g.classList.remove('live'), ms); }
+
+let ev = null, clockT = null;
+function classify(text) { const t = text.toLowerCase(); let best = null, score = 0; for (const [id, p] of Object.entries(P)) { const s = p.kw.reduce((a, k) => a + (t.includes(k) ? 1 : 0), 0); if (s > score) { score = s; best = id; } } return best; }
+function startEvent(text, forced) {
+  const t0 = performance.now();
+  const id = forced || classify(text);
+  const proto = id ? P[id] : DEFAULT;
+  ev = { id, proto, text, t0, step: 0, wall: Date.now(), done: false };
+  ev.l1ms = performance.now() - t0;
+  renderEvent(); highlight(proto.zone); renderVitals(proto);
+  light('m-proto'); light('m-core');
+  speak(proto.steps[0]);
+  addLog('Evento', `“${text}” → ${proto.title} (${LEVEL[proto.level][0]})`);
+  addLog('Capa 1', `Primera instrucción en ${ev.l1ms.toFixed(1)} ms`);
+  clearInterval(clockT); clockT = setInterval(tick, 250); tick();
+  if (matchMedia('(max-width: 940px)').matches) $('#inst').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  runL2();
+}
+function renderEvent() {
+  const p = ev.proto;
+  $('#inst').className = 'inst ' + LEVEL[p.level][1];
+  $('#stLabel').textContent = `${LEVEL[p.level][0]} · ${p.title}`;
+  $('#l1t').textContent = `${ev.l1ms.toFixed(1)} ms`;
+  $('#instr').textContent = p.steps[ev.step];
+  $('#steps').replaceChildren(...p.steps.map((_, i) => el('i', { class: i < ev.step ? 'done' : i === ev.step ? 'on' : '' })));
+  $('#stepN').textContent = `Paso ${ev.step + 1} de ${p.steps.length}`;
+  $('#next').disabled = false;
+  $('#next').textContent = ev.step >= p.steps.length - 1 ? 'Cerrar protocolo' : 'Listo · siguiente paso';
+  renderAuthority();
+}
+function nextStep() {
+  if (!ev || ev.done) return;
+  if (ev.step < ev.proto.steps.length - 1) { ev.step++; renderEvent(); speak(ev.proto.steps[ev.step]); light('m-proto'); addLog('Paso', `${ev.step}/${ev.proto.steps.length} completado`); }
+  else { ev.done = true; $('#next').disabled = true; $('#instr').textContent = 'Protocolo completo. Seguí la capa 2 y las indicaciones de Tierra.'; $('#steps').replaceChildren(...ev.proto.steps.map(() => el('i', { class: 'done' }))); addLog('Paso', 'Protocolo completo'); }
+}
+function tick() { if (!ev) return; const s = Math.floor((Date.now() - ev.wall) / 1000); $('#clock').textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; }
+function renderAuthority() {
+  const a = $('#auth'); if (!ev) { a.hidden = true; return; }
+  const winS = ev.proto.win * 60, rtt = env.rtt, crew = !isFinite(rtt) || rtt > winS * 0.5;
+  a.hidden = false; a.className = 'auth ' + (crew ? 'crew' : 'earth');
+  a.replaceChildren(el('b', { text: crew ? 'Decide la tripulación. ' : 'La Tierra puede confirmar. ' }),
+    document.createTextNode(!isFinite(rtt) ? 'No hay enlace: Eva guía el protocolo completo a bordo y guarda el registro.' :
+      crew ? `Tierra responde en ${env.rttTxt}, fuera de la ventana clínica de ${ev.proto.win} min. Eva guía a bordo y Tierra recibe el registro.` :
+        `Tierra responde en ${env.rttTxt}, dentro de la ventana clínica de ${ev.proto.win} min. Seguí el protocolo mientras confirman.`));
+}
+
+let sampleNs = null, l2Ctl = null;
+async function runL2() {
+  const box = $('#l2body'), my = ev, t0 = performance.now(); $('#l2').hidden = false;
+  box.replaceChildren(el('p', { class: 'note', text: 'Razonando con tus datos…' })); $('#l2t').textContent = '';
+  light('m-base', 2500);
+  if (!sampleNs) sampleNs = await capUse('sample');
+  if (!sampleNs) { box.replaceChildren(el('p', { class: 'note', text: 'La capa 2 funciona al abrir el prototipo en claude.ai. La capa 1 y el registro siguen activos.' })); return; }
+  if (l2Ctl) l2Ctl.abort(); l2Ctl = new AbortController();
+  const ai = document.getElementById('m-ai'); ai.classList.add('live');
+  const crew = $('#crew').value, devs = deviations(crew, $('#tp').value).slice(0, 6);
+  const lang = $('#lang').value.startsWith('en') ? 'English' : 'español rioplatense';
+  const prompt = `Sos Eva, copiloto de salud a bordo de una misión espacial. No diagnosticás: hacés triage y guiás protocolos. Respondé SOLO un objeto JSON válido, en ${lang}, con estas claves:
+{"estado":"verde|ambar|rojo","titulo":"máx 6 palabras","accion":"UNA instrucción imperativa, máx 18 palabras","porque":"máx 25 palabras, citá el dato que la justifica","medir":"qué medir ahora, máx 12 palabras","confianza":"baja|media|alta"}
+Reglas: acción segura y compatible con el protocolo activo; sin medicación; si hay riesgo vital, priorizá vía aérea, respiración y circulación.
+CONTEXTO
+- Lo que dijo el tripulante: "${my.text}"
+- Protocolo activo: ${my.proto.title}, nivel ${my.proto.level}, paso actual: "${my.proto.steps[my.step]}"
+- Entorno: ${env.name}; demora con Tierra: ${env.rttTxt}; ventana clínica: ${my.proto.win} min
+- Signos del traje (simulados): ${VIT.map((v, i) => `${v[0]} ${my.proto.vit[i]} ${v[1]}`).join(', ')}
+- Basal personal real (Inspiration4, ${crew}, momento ${$('#tp').value}), mayores desvíos: ${devs.map(d => `${d.a} ${d.pct > 0 ? '+' : ''}${d.pct.toFixed(0)}%${d.outLab ? ' (fuera de rango lab)' : ''}`).join('; ') || 'sin desvíos'}`;
+  try {
+    const r = await sampleNs.json(prompt, { modelTier: 'quick', signal: l2Ctl.signal, cache: false });
+    if (ev !== my) return;
+    const ms = performance.now() - t0;
+    $('#l2t').textContent = `${(ms / 1000).toFixed(1)} s`;
+    const lvl = (r.estado || '').startsWith('r') ? 'red' : (r.estado || '').startsWith('v') ? 'green' : 'amber';
+    box.replaceChildren(
+      el('span', { class: 'tag ' + LEVEL[lvl][1], text: `${LEVEL[lvl][0]} · ${r.titulo || ''} · confianza ${r.confianza || '—'}` }),
+      el('p', { class: 'act', text: r.accion || '' }),
+      el('dl', {}, el('dt', { text: 'Por qué' }), el('dd', { text: r.porque || '' }), el('dt', { text: 'Medir' }), el('dd', { text: r.medir || '' })));
+    addLog('Capa 2', `${(ms / 1000).toFixed(1)} s · ${r.accion || ''}`);
+    if (r.accion) speak(r.accion, true);
+  } catch (e) {
+    if (e && (e.name === 'AbortError' || e.code === 'cancelled')) return;
+    const msg = e && e.code === 'not_granted' ? 'No se dio permiso para usar la IA en esta página.' : e && e.code === 'rate_limited' ? 'Demasiadas consultas seguidas; esperá un momento.' : 'La capa 2 no respondió. La capa 1 sigue guiando el protocolo.';
+    box.replaceChildren(el('p', { class: 'note', text: msg }));
+  } finally { ai.classList.remove('live'); }
+}
+
+let tts = null, dict = null, listening = false;
+capUse('tts').then(t => { tts = t; });
+capUse('dictation').then(d => {
+  dict = d;
+  if (!d) { $('#micNote').textContent = 'Voz no disponible aquí'; $('#mic').disabled = true; return; }
+  $('#micNote').textContent = 'Tocá el micrófono · decí “listo” para avanzar';
+  d.onPartial(({ text }) => { $('#q').value = text; light('m-voice', 800); });
+  d.onFinal(({ text }) => { handleUtterance(text); });
+  d.onState(({ state }) => { listening = state === 'listening' || state === 'starting'; $('#mic').setAttribute('aria-pressed', String(listening)); $('#velaH').classList.toggle('live', listening); });
+});
+function handleUtterance(text) {
+  const t = text.trim(); if (!t) return;
+  light('m-voice');
+  if (ev && /\b(listo|siguiente|hecho|next|done)\b/i.test(t) && t.split(/\s+/).length <= 3) { nextStep(); $('#q').value = ''; return; }
+  $('#q').value = t; startEvent(t);
+}
+$('#mic').addEventListener('click', () => {
+  if (!dict) return;
+  if (listening) { dict.stop().catch(() => {}); return; }
+  dict.start({ language: $('#lang').value }).catch(() => { $('#micNote').textContent = 'No se pudo activar el micrófono. Escribí o tocá un ejemplo.'; });
+});
+function speak(text, queue) {
+  if (!tts || !$('#speakOn').checked || !text) return;
+  const lang = $('#lang').value.startsWith('en') ? 'en' : 'es';
+  (queue ? tts.add([{ text, language: lang }]) : tts.speak(text, { language: lang, rate: 1.05 })).catch(() => {});
+}
+
+let prevHash = '0'.repeat(64), seq = 0;
+async function sha(s) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+async function addLog(kind, text) {
+  const n = ++seq, entry = { n, t: new Date().toISOString(), env: env.id, kind, text, prev: prevHash };
+  const h = await sha(JSON.stringify(entry)); prevHash = h;
+  const log = $('#log'); if (log.firstElementChild && log.firstElementChild.tagName === 'P') log.replaceChildren();
+  const st = el('span', { class: 's q', text: 'en cola' });
+  log.prepend(el('div', { class: 'e' }, el('span', { class: 'h', text: `#${n} ${h.slice(0, 8)} · ${kind}` }), st, el('span', { class: 'tx', text })));
+  if (!isFinite(env.rtt)) { st.textContent = 'a bordo · sin enlace'; return; }
+  const oneWay = Math.max(0.3, (env.rtt / 2) / 60) * 1000;
+  setTimeout(() => { st.className = 's s'; st.textContent = 'enviado'; light('m-link', 900); }, 300);
+  setTimeout(() => { st.className = 's a'; st.textContent = '✓ confirmado'; light('m-link', 900); }, 300 + oneWay * 2);
+}
+
+let I4 = null, chartA = null;
+const mean = a => a.reduce((x, y) => x + y, 0) / a.length;
+const sd = a => { const m = mean(a); return Math.sqrt(a.reduce((x, y) => x + (y - m) ** 2, 0) / (a.length - 1)); };
+function deviations(c, tp) {
+  if (!I4 || !I4.crew[c]) return [];
+  const out = [];
+  for (const [a, L] of Object.entries(I4.crew[c].labs)) {
+    const b = ['L-92', 'L-44', 'L-3'].map(t => L.v[t]).filter(v => v != null), v = L.v[tp];
+    if (b.length < 3 || v == null) continue;
+    const m = mean(b), band = Math.max(2 * sd(b), 0.05 * Math.abs(m));
+    if (!m || Math.abs(v - m) <= band) continue;
+    out.push({ a, m, v, unit: L.unit, pct: (v - m) / m * 100, outLab: (L.lo != null && v < L.lo) || (L.hi != null && v > L.hi), lo: L.lo, hi: L.hi });
+  }
+  return out.sort((x, y) => Math.abs(y.pct) - Math.abs(x.pct));
+}
+const fmt = v => Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(2);
+function renderI4() {
+  if (!I4) return;
+  const c = $('#crew').value, tp = $('#tp').value, d = deviations(c, tp);
+  let lab = 0; for (const L of Object.values(I4.crew[c].labs)) { const v = L.v[tp]; if (v != null && ((L.lo != null && v < L.lo) || (L.hi != null && v > L.hi))) lab++; }
+  const hidden = d.filter(x => !x.outLab).length;
+  $('#health').replaceChildren(
+    el('div', { class: 'kpi' }, el('b', { text: String(d.length) }), el('span', { text: 'cambios contra su basal' })),
+    el('div', { class: 'kpi' }, el('b', { text: String(lab) }), el('span', { text: 'fuera del rango estándar' })),
+    el('div', { class: 'kpi' }, el('b', { text: String(hidden) }), el('span', { text: 'que el rango estándar no ve' })));
+  $('#miniHealth').replaceChildren(document.createTextNode(`${c} en ${tp}: `), el('b', { style: 'color:var(--hl);font-weight:500', text: `${d.length} cambios contra su basal` }), document.createTextNode(`, ${hidden} invisibles para el rango estándar.`));
+  $('#dev').replaceChildren(...(d.length ? d.slice(0, 8).map(x => el('tr', { tabindex: '0', onclick: () => drawChart(c, x.a), onkeydown: e => { if (e.key === 'Enter') drawChart(c, x.a); } },
+    el('td', { text: x.a.toLowerCase() }), el('td', { class: 'n', text: fmt(x.m) }), el('td', { class: 'n', text: `${fmt(x.v)} ${x.unit}` }),
+    el('td', { class: 'n ' + (x.pct > 0 ? 'up' : 'dn'), text: `${x.pct > 0 ? '▲ +' : '▼ '}${x.pct.toFixed(0)}%` }),
+    el('td', {}, x.outLab ? el('span', { class: 'flag', text: 'fuera de rango' }) : el('span', { class: 'note', text: `${x.lo ?? '—'}–${x.hi ?? '—'}` })))) : [el('tr', {}, el('td', { colspan: '5', class: 'note', text: 'Sin cambios contra su basal en este momento.' }))]));
+  drawChart(c, (d[0] && d[0].a) || (I4.crew[c].labs[chartA] ? chartA : 'HEMOGLOBIN'));
+}
+function drawChart(c, a) {
+  const L = I4.crew[c].labs[a]; if (!L) return; chartA = a;
+  const tps = I4.timepoints, vals = tps.map(t => L.v[t]);
+  const b = ['L-92', 'L-44', 'L-3'].map(t => L.v[t]).filter(v => v != null);
+  const m = b.length ? mean(b) : 0, band = b.length === 3 ? Math.max(2 * sd(b), 0.05 * Math.abs(m)) : 0;
+  const all = vals.filter(v => v != null).concat(band ? [m - band, m + band] : []), lo = Math.min(...all), hi = Math.max(...all), pad = (hi - lo) * 0.15 || 1;
+  const W = 480, H = 220, x0 = 48, x1 = W - 16, y0 = 18, y1 = H - 34;
+  const X = i => x0 + (x1 - x0) * i / (tps.length - 1), Y = v => y1 - (y1 - y0) * (v - (lo - pad)) / ((hi + pad) - (lo - pad));
+  const s = document.createElementNS(SVGNS, 'svg'); s.setAttribute('viewBox', `0 0 ${W} ${H}`); s.setAttribute('role', 'img'); s.setAttribute('aria-label', `${a} de ${c} a lo largo de la misión`);
+  const add = (t, at, txt) => { const n = document.createElementNS(SVGNS, t); for (const [k, v] of Object.entries(at)) n.setAttribute(k, v); if (txt != null) n.textContent = txt; s.append(n); return n; };
+  [lo - pad, (lo + hi) / 2, hi + pad].forEach(v => { add('line', { x1: x0, x2: x1, y1: Y(v), y2: Y(v), stroke: 'rgba(186,207,247,.06)' }); add('text', { x: x0 - 6, y: Y(v) + 4, 'text-anchor': 'end', fill: 'rgba(199,211,234,.64)', 'font-size': 10, 'font-family': 'IBM Plex Mono' }, fmt(v)); });
+  if (band) add('rect', { x: x0, width: x1 - x0, y: Y(m + band), height: Y(m - band) - Y(m + band), fill: 'rgba(152,192,239,.08)', stroke: 'rgba(152,192,239,.18)' });
+  add('line', { x1: X(2.5), x2: X(2.5), y1: y0, y2: y1, stroke: 'rgba(186,207,247,.2)', 'stroke-dasharray': '3 4' });
+  add('text', { x: X(2.5), y: y0 - 4, 'text-anchor': 'middle', fill: 'rgba(199,211,234,.64)', 'font-size': 10, 'font-family': 'Inter' }, 'vuelo');
+  const pts = vals.map((v, i) => v == null ? null : `${X(i)},${Y(v)}`).filter(Boolean);
+  add('polyline', { points: pts.join(' '), fill: 'none', stroke: '#98c0ef', 'stroke-width': 1.5 });
+  vals.forEach((v, i) => { if (v == null) return; const out = band && Math.abs(v - m) > band && i > 2; add('circle', { cx: X(i), cy: Y(v), r: out ? 4.5 : 3, fill: out ? '#f2c47a' : '#c2ccff' }); });
+  tps.forEach((t, i) => add('text', { x: X(i), y: H - 12, 'text-anchor': 'middle', fill: 'rgba(199,211,234,.64)', 'font-size': 10, 'font-family': 'IBM Plex Mono' }, t));
+  $('#chart').replaceChildren(s); $('#chartH').textContent = `${a.toLowerCase()} · ${c} (${L.unit})`;
+}
+fetch('data/inspiration4.json').then(r => r.json()).then(j => {
+  I4 = j; const sel = $('#crew');
+  for (const [c, x] of Object.entries(j.crew)) sel.append(el('option', { value: c, text: `${c} · ${x.sex === 'F' ? 'mujer' : 'hombre'}` }));
+  renderI4();
+}).catch(() => { $('#health').replaceChildren(el('p', { class: 'note', text: 'No se pudieron cargar los datos de Inspiration4.' })); });
+$('#crew').addEventListener('change', renderI4); $('#tp').addEventListener('change', renderI4);
+function renderVitals(p) { $('#vitals').replaceChildren(...VIT.map((v, i) => el('div', { class: 'vital l' + p.lv[i] }, el('span', { text: v[0] }), el('b', { text: String(p.vit[i]) }), el('span', { text: v[1] })))); }
+
+function setEnv(e) {
+  env = e;
+  for (const b of document.querySelectorAll('#envs .cap')) b.setAttribute('aria-pressed', String(b.dataset.id === e.id));
+  $('#envName').textContent = e.name; $('#envCtx').textContent = e.ctx;
+  $('#stageBg').style.backgroundImage = `url(data/${e.bg || e.id}.jpg)`;
+  $('#linkInfo').textContent = isFinite(e.rtt) ? `Tierra · ${e.rttTxt}` : 'Sin enlace · todo queda a bordo';
+  renderAuthority();
+}
+$('#envs').append(...ENVS.map(e => el('button', { class: 'cap sm', type: 'button', 'data-id': e.id, 'aria-pressed': 'false', onclick: () => setEnv(e) }, e.label)));
+$('#chips').append(...CHIPS.map(([id, t]) => el('button', { class: 'cap sm', type: 'button', text: t, onclick: () => { $('#q').value = t; startEvent(t, id); } })));
+$('#go').addEventListener('click', () => { const t = $('#q').value.trim(); if (t) handleUtterance(t); });
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#go').click(); } });
+$('#next').addEventListener('click', nextStep);
+$('#cEmerg').addEventListener('click', () => { setEnv(ENVS[3]); $('#teatro').scrollIntoView({ behavior: 'smooth' }); const t = 'Me duele el pecho y me falta el aire'; $('#q').value = t; startEvent(t, 'chest'); });
+$('#cData').addEventListener('click', () => $('#datos').scrollIntoView({ behavior: 'smooth' }));
+setEnv(ENVS[0]); renderVitals(IDLE);
+
+const SYS = { integumentary: 0x9fb6d8, cardiac: 0xc98a9a, respiratory: 0xa9b6dc, digestive: 0x8f98b8, urinary: 0xb3a8d6, endocrine: 0xa49ad8, sensory: 0x9fd0e6, skeletal: 0xc9d3e4, nervous: 0xc2ccff };
+const HI = { cardiac: 0xff8f98, respiratory: 0x98c0ef, digestive: 0xf2c47a, urinary: 0xf2c47a, sensory: 0x98e0f0, skeletal: 0xd8ecf8, nervous: 0xc2ccff, endocrine: 0xc2ccff };
+const SYSNAME = { cardiac: 'Corazón', respiratory: 'Respiratorio', digestive: 'Digestivo', urinary: 'Urinario', sensory: 'Sentidos', nervous: 'Nervioso', skeletal: 'Esqueleto', endocrine: 'Endocrino' };
+const canvas = $('#gl');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); } catch (e) { $('#loading').textContent = 'Este dispositivo no soporta WebGL.'; return; }
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 1, 0.01, 50);
+scene.add(new THREE.HemisphereLight(0xd8ecf8, 0x0a0c18, 0.9));
+const key = new THREE.DirectionalLight(0xe6f1ff, 0.85); key.position.set(1.2, 3.2, 2.4); scene.add(key);
+const rim = new THREE.DirectionalLight(0x98c0ef, 0.9); rim.position.set(-2, 1.6, -2.2); scene.add(rim);
+const root = new THREE.Group(); scene.add(root);
+const mats = {}, hiMat = {};
+for (const [k, c] of Object.entries(SYS)) {
+  mats[k] = k === 'integumentary' ? new THREE.MeshStandardMaterial({ color: c, transparent: true, opacity: 0.1, roughness: 0.5, metalness: 0.1, depthWrite: false })
+    : new THREE.MeshStandardMaterial({ color: c, roughness: 0.6, metalness: 0.08, transparent: true, opacity: 1 });
+  const h = HI[k] || c; hiMat[k] = new THREE.MeshStandardMaterial({ color: h, emissive: h, emissiveIntensity: 0.6, roughness: 0.35 });
+}
+const meshes = [], vis = { skin: true, org: true, bone: true };
+const view = { yaw: 0.35, pitch: 0.05, dist: 3.4, target: new THREE.Vector3(0, 0.88, 0) }, goal = { dist: 3.4, target: new THREE.Vector3(0, 0.88, 0) };
+let dirty = true; const home = { y: 0.88 };
+const layerOf = sys => sys === 'integumentary' ? 'skin' : (sys === 'skeletal' || sys === 'nervous') ? 'bone' : 'org';
+async function loadPack(man, pack) {
+  const info = man.packs[pack]; const txt = await (await fetch(info.file)).text(); const bin = atob(txt.trim());
+  const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); const buf = u8.buffer;
+  for (const [id, name, sys, n, m, off, ioff, lo, sc] of info.parts) {
+    const q = new Uint16Array(buf, off, n * 3), pos = new Float32Array(n * 3);
+    for (let i = 0; i < n * 3; i++) { const a = i % 3; pos[i] = lo[a] + q[i] / 65535 * sc[a]; }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setIndex(new THREE.BufferAttribute(new Uint16Array(buf, ioff, m), 1)); g.computeVertexNormals(); g.computeBoundingSphere();
+    const mesh = new THREE.Mesh(g, mats[sys]); mesh.userData = { id, name, sys, layer: layerOf(sys) };
+    if (sys === 'integumentary') mesh.renderOrder = 2;
+    mesh.visible = vis[mesh.userData.layer]; root.add(mesh); meshes.push(mesh);
+  }
+  dirty = true;
+}
+fetch('data/anatomy.json').then(r => r.json()).then(async man => {
+  await loadPack(man, 'core'); $('#loading').textContent = 'Cargando esqueleto y sistema nervioso…';
+  await loadPack(man, 'frame'); $('#loading').hidden = true;
+  const box = new THREE.Box3().setFromObject(root), c = box.getCenter(new THREE.Vector3());
+  root.position.x -= c.x; root.position.z -= c.z; home.y = c.y; resetView(); if (ev) highlight(ev.proto.zone);
+}).catch(() => { $('#loading').textContent = 'No se pudo cargar la anatomía 3D.'; });
+function resetView() { goal.target.set(0, home.y, 0); goal.dist = 3.4; dirty = true; }
+let hiSet = new Set();
+function highlight(zone) {
+  hiSet = new Set();
+  for (const m of meshes) { const u = m.userData; const hit = !!zone && u.sys !== 'integumentary' && zone.sys.includes(u.sys) && zone.name.test(u.name); if (hit) hiSet.add(m); m.material = hit ? hiMat[u.sys] : mats[u.sys]; }
+  for (const [k, mt] of Object.entries(mats)) if (k !== 'integumentary') mt.opacity = hiSet.size ? 0.22 : 1;
+  if (hiSet.size) {
+    const b = new THREE.Box3(); for (const m of hiSet) b.expandByObject(m);
+    const c = b.getCenter(new THREE.Vector3()), s = b.getSize(new THREE.Vector3()).length();
+    goal.target.copy(c); goal.dist = Math.min(3.4, Math.max(0.9, s * 2.6));
+    $('#picked').replaceChildren(el('b', { text: ev ? ev.proto.title : 'Zona' }), document.createTextNode(`${hiSet.size} estructuras · ${[...new Set([...hiSet].map(m => SYSNAME[m.userData.sys]))].join(', ')}`));
+  } else resetView();
+  dirty = true;
+}
+function setLayer(k, btn) { vis[k] = !vis[k]; btn.setAttribute('aria-pressed', String(vis[k])); for (const m of meshes) if (m.userData.layer === k) m.visible = vis[k]; dirty = true; }
+$('#tSkin').addEventListener('click', e => setLayer('skin', e.currentTarget));
+$('#tOrg').addEventListener('click', e => setLayer('org', e.currentTarget));
+$('#tBone').addEventListener('click', e => setLayer('bone', e.currentTarget));
+$('#vReset').addEventListener('click', () => { view.yaw = 0.35; view.pitch = 0.05; resetView(); });
+const ptrs = new Map(); let downAt = null, pinch0 = null;
+canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); downAt = { x: e.clientX, y: e.clientY, t: performance.now() }; if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch0 = { d: Math.hypot(a.x - b.x, a.y - b.y), dist: goal.dist }; } });
+canvas.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId)) return; const p = ptrs.get(e.pointerId); const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+  if (ptrs.size === 1) { view.yaw -= dx * 0.008; view.pitch = Math.max(-1.2, Math.min(1.2, view.pitch + dy * 0.006)); dirty = true; }
+  else if (ptrs.size === 2 && pinch0) { const [a, b] = [...ptrs.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y); goal.dist = Math.max(0.5, Math.min(6, pinch0.dist * pinch0.d / d)); dirty = true; }
+});
+canvas.addEventListener('pointerup', e => { const tap = downAt && ptrs.size === 1 && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) < 6 && performance.now() - downAt.t < 350; ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch0 = null; if (tap) pick(e); downAt = null; });
+canvas.addEventListener('pointercancel', e => { ptrs.delete(e.pointerId); pinch0 = null; });
+canvas.addEventListener('wheel', e => { e.preventDefault(); goal.dist = Math.max(0.5, Math.min(6, goal.dist * (1 + Math.sign(e.deltaY) * 0.1))); dirty = true; }, { passive: false });
+const ray = new THREE.Raycaster();
+function pick(e) {
+  const r = canvas.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+  const hit = ray.intersectObjects(meshes.filter(m => m.visible && m.userData.sys !== 'integumentary'), false)[0]; if (!hit) return;
+  const u = hit.object.userData;
+  $('#picked').replaceChildren(el('b', { text: u.name }), document.createTextNode(`${SYSNAME[u.sys] || u.sys} · se agregó a tu mensaje`));
+  const q = $('#q'); q.value = (q.value ? q.value + ' — ' : 'Molestia en: ') + u.name; q.focus();
+}
+function resize() { const r = canvas.getBoundingClientRect(); if (!r.width) return; renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); dirty = true; }
+new ResizeObserver(resize).observe(canvas); resize();
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame() {
+  const k = reduce ? 1 : 0.12;
+  view.dist += (goal.dist - view.dist) * k; view.target.lerp(goal.target, k);
+  if (Math.abs(goal.dist - view.dist) > 1e-4 || view.target.distanceTo(goal.target) > 1e-4) dirty = true;
+  if (dirty) { const cp = Math.cos(view.pitch); camera.position.set(view.target.x + view.dist * Math.sin(view.yaw) * cp, view.target.y + view.dist * Math.sin(view.pitch), view.target.z + view.dist * Math.cos(view.yaw) * cp); camera.lookAt(view.target); renderer.render(scene, camera); dirty = false; }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>

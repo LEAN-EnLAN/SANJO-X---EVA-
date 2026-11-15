@@ -1,0 +1,9 @@
+{
+  "project": "Eva · Sanjo-X · NASA Space Apps 2026",
+  "orchestrator_model": "gpt-6.1-terra",
+  "image_model": "gpt-image-2",
+  "generated_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "assets": [
+    { "id": "S1", "file": "scenes/s1-cabin-hero.png", "size": "1536x1024", "background": "opaque", "prompt": "…", "retries": 0, "notes": "" }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "style_file": "STYLE.md",
+  "image_model": "gpt-image-2",
+  "quality": "high",
+  "output_format": "png",
+  "assets": [
+    {
+      "id": "S1",
+      "file": "scenes/s1-cabin-hero.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Landing hero. Interior of a calm commercial passenger spacecraft cabin in transit to Mars: soft upholstered seats, warm indirect lighting, a large rounded window on the right showing a small reddish Mars and a starfield. Two or three passengers seen from behind as faceless silhouettes, one wearing a slim white wristband with a softly glowing black screen. Left third of the frame is calm, darker negative space for a headline. Wide shot. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Hero background behind headline"
+    },
+    {
+      "id": "S2",
+      "file": "scenes/s2-shared-station.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "A wall-mounted shared medical station inside the passenger cabin: a matte white unit with a black screen above and three recessed bays below holding a blood pressure cuff, a fingertip pulse oximeter and an infrared thermometer. Only the middle bay (pulse oximeter) is illuminated with a warm amber glow; the other bays are dim. A faceless passenger's hand reaches toward the lit bay. Calm, reassuring mood. Screen is pure black. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Section: the station lights the item you need"
+    },
+    {
+      "id": "S3",
+      "file": "scenes/s3-solar-flare.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Stylized deep-space view: the Sun on the left erupting a bright solar flare, a soft stream of energetic particles curving across the frame toward a small passenger spacecraft on the right. Dark plum space with lilac glows; elegant, not apocalyptic. Leave the center-top area calm for text. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Section: solar particle alert"
+    },
+    {
+      "id": "S4",
+      "file": "scenes/s4-bystander-help.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Editorial illustration inside the passenger cabin: one faceless passenger slumped in a seat, another faceless passenger kneeling beside them looking at a glowing wristband on their own wrist that guides them; a subtle blue light trail connects the two wristbands. Caring, calm, human. No medical gore. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Section: Eva guides the nearest passenger"
+    },
+    {
+      "id": "S5",
+      "file": "scenes/s5-earth-mars-delay.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Minimal editorial composition: Earth small on the left, Mars small on the right, connected by a fine dotted elliptical arc of white light; deep forest-green to plum gradient space with soft lilac blooms. Very clean, lots of negative space. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Section: Earth is up to 22 minutes away"
+    },
+    {
+      "id": "L1",
+      "file": "layers/l1-wristband.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated product render of a slim premium medical wristband with a large rounded-rectangle screen, matte white strap, small green status LED. Screen is pure black #000000 and perfectly flat for compositing. 3/4 front view. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Device hero; UI composited on the black screen"
+    },
+    {
+      "id": "L2",
+      "file": "layers/l2-chest-band.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated product render of a slim chest strap biosensor: soft white elastic band with a small rounded sensor pod in the center with one tiny blue LED. 3/4 view. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Device: ECG and respiration"
+    },
+    {
+      "id": "L3",
+      "file": "layers/l3-station.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated product render of a matte white wall-mounted medical station with a pure black screen on top and three recessed bays below (blood pressure cuff, pulse oximeter, infrared thermometer). All bays unlit. Front view. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Station base layer (unlit)"
+    },
+    {
+      "id": "L4",
+      "file": "layers/l4-pulse-oximeter.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated product render of a white fingertip pulse oximeter with a small pure black display. 3/4 view. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Station item"
+    },
+    {
+      "id": "L5",
+      "file": "layers/l5-bp-cuff.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated product render of a compact white automatic upper-arm blood pressure cuff with a small pure black display unit. 3/4 view. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Station item"
+    },
+    {
+      "id": "L6",
+      "file": "layers/l6-thermometer.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated product render of a white non-contact infrared thermometer, ergonomic, small pure black display. 3/4 view. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Station item"
+    },
+    {
+      "id": "L7",
+      "file": "layers/l7-sun-flare.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated stylized Sun disc with a graceful solar flare loop erupting from its edge, warm amber and soft red tones, glowing edges. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Animated layer: flare"
+    },
+    {
+      "id": "L8",
+      "file": "layers/l8-particle-stream.png",
+      "size": "1536x1024",
+      "background": "transparent",
+      "prompt": "Isolated soft stream of tiny glowing particles flowing left to right in a gentle curve, lilac and warm white, motion-blurred streaks. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Animated layer: particles"
+    },
+    {
+      "id": "L9",
+      "file": "layers/l9-spacecraft.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated small sleek commercial passenger spacecraft, white hull with soft rounded forms and a row of warm-lit windows, side view, no markings. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Animated layer: ship"
+    },
+    {
+      "id": "L10",
+      "file": "layers/l10-mars.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated planet Mars, realistic but softly lit from upper left, subtle atmosphere rim. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Animated layer"
+    },
+    {
+      "id": "L11",
+      "file": "layers/l11-earth.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Isolated planet Earth, softly lit from upper left, gentle blue atmosphere rim. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Animated layer"
+    },
+    {
+      "id": "L12",
+      "file": "layers/l12-figure-standing.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Flat editorial vector-style faceless human figure standing, wearing a chest band and a wristband, lavender and white tones, simple shapes. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Diagram figure"
+    },
+    {
+      "id": "L13",
+      "file": "layers/l13-figure-seated.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Flat editorial vector-style faceless human figure slumped in a seat, same style as the standing figure, lavender and white tones. Transparent background. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Diagram figure"
+    },
+    {
+      "id": "F1",
+      "file": "frames/f1-station-bay1.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Same wall-mounted shared medical station as scene S2, identical framing and lighting, but now only the LEFT bay (blood pressure cuff) glows warm amber; other bays dim. No hand. Screen pure black. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Motion frame A (station sequence)"
+    },
+    {
+      "id": "F2",
+      "file": "frames/f2-station-bay2.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Same wall-mounted shared medical station, identical framing and lighting as F1, but only the MIDDLE bay (pulse oximeter) glows warm amber. No hand. Screen pure black. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Motion frame B"
+    },
+    {
+      "id": "F3",
+      "file": "frames/f3-station-bay3.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Same wall-mounted shared medical station, identical framing and lighting as F1, but only the RIGHT bay (infrared thermometer) glows warm amber. No hand. Screen pure black. Follow this style strictly: soft cinematic editorial concept art, deep plum #281647, wine #421d24 and forest #0c4243 tones with soft violet and lilac light blooms, warm key light from upper left and cool lilac rim light from the right, matte white rounded consumer-medical hardware, no text, no numbers, no logos, no flags, no recognizable faces.",
+      "usage": "Motion frame C"
+    }
+  ]
+}

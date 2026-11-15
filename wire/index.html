@@ -1,0 +1,140 @@
+<title>Eva Landing Wireframe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
+<style>
+/* Layout: annotated wireframe of the Eva landing on the Two Create system — same grid and type scale as the live page, media replaced by labelled boxes naming the Codex asset and its motion. */
+:root{
+  --canvas:#f9f7f4; --ink:#0c0c0c; --rule:#e3e1dd; --muted:rgba(12,12,12,.55);
+  --box:#ecebe7; --hatch:rgba(12,12,12,.06); --anno:#3b5bdb; --anno-bg:rgba(59,91,219,.07);
+  --font:"PP Neue Montreal","Inter",Arial,sans-serif;
+  --t-display:clamp(44px,7.71vw,111px); --t-prop:clamp(30px,4.627vw,66.6px); --t-sec:clamp(24px,3.085vw,44.4px); --t-label:clamp(17px,2.315vw,33.3px); --t-util:clamp(15px,1.543vw,22.2px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--canvas:#0c0c0c;--ink:#f9f7f4;--rule:#3d3d3d;--muted:rgba(249,247,244,.6);--box:#1a1a1a;--hatch:rgba(249,247,244,.06);--anno:#91a7ff;--anno-bg:rgba(145,167,255,.1);color-scheme:dark}}
+:root[data-theme="dark"]{--canvas:#0c0c0c;--ink:#f9f7f4;--rule:#3d3d3d;--muted:rgba(249,247,244,.6);--box:#1a1a1a;--hatch:rgba(249,247,244,.06);--anno:#91a7ff;--anno-bg:rgba(145,167,255,.1);color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--canvas);color:var(--ink);font:400 var(--t-util)/1.1 var(--font)}
+h1,h2,h3,p,ul{margin:0;padding:0;font-weight:400}
+a{color:inherit}
+.g{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.anno{display:inline-block;font:400 13px/1.4 ui-monospace,Menlo,monospace;color:var(--anno);background:var(--anno-bg);border:1px dashed var(--anno);padding:5px 8px;margin-top:8px;max-width:46ch}
+.nav{height:72px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;font-size:var(--t-sec)}
+.promise{padding-block:20px 120px}
+.promise h1{font-size:var(--t-display);line-height:1.02;letter-spacing:-.01em;max-width:76%}
+.promise .ln{display:block}
+.sh{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--rule);padding-top:14px;min-height:72px;font-size:var(--t-sec);line-height:1.02}
+.sh .act{text-transform:uppercase}
+.box{position:relative;background:repeating-linear-gradient(135deg,var(--hatch) 0 10px,transparent 10px 20px),var(--box);display:grid;place-items:center;text-align:center;padding:16px}
+.box b{font:500 14px ui-monospace,Menlo,monospace}
+.box span{display:block;font-size:14px;color:var(--muted);margin-top:4px;max-width:36ch;line-height:1.35}
+.wide{aspect-ratio:16/9}
+.dip{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-block:20px 50px}
+.dip .w{grid-column:1/-1;aspect-ratio:3/2}
+.dip .d{aspect-ratio:1/1}
+.dip .t{padding:0 10px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.dip.flip .d{order:2}
+.label{font-size:var(--t-label);line-height:1.1;text-transform:uppercase}
+.prop{font-size:var(--t-prop);line-height:1.02;letter-spacing:-.01em}
+.note{font-size:var(--t-util);line-height:1.25;color:var(--muted);margin-top:20px;max-width:30em}
+.ed{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-block:20px 120px}
+.ed .body{font-size:var(--t-label);line-height:1.1;color:var(--muted);padding:0 10px}
+.inv{position:relative;padding-block:20px 120px}
+.inv ul{list-style:none}
+.inv li{font-size:var(--t-prop);line-height:1.02;padding-left:10px}
+.inv .pv{position:absolute;right:8vw;top:30px;width:min(430px,34vw);aspect-ratio:4/5}
+.close{padding-block:0 120px;display:grid;gap:30px}
+.close p,.close li{font-size:var(--t-sec);line-height:1.02}
+.close ul{list-style:none;display:grid;gap:6px}
+.mark{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding-block:20px}
+.mark svg{display:block;width:100%;height:auto}
+.util{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-block:14px 20px}
+.notes{border-top:1px solid var(--rule);padding-block:40px 60px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.notes h2{font-size:var(--t-sec);padding:0 10px}
+.notes ul{padding:0 10px 0 30px;font-size:var(--t-util);line-height:1.35;display:grid;gap:10px;min-width:0}
+@media (max-width:760px){.promise h1{max-width:none}.promise .ln{display:inline}.dip,.ed,.notes{grid-template-columns:1fr}.dip.flip .d{order:0}.inv .pv{position:relative;right:auto;top:auto;width:100%;margin-top:20px;aspect-ratio:1/1}}
+</style>
+
+<nav class="nav g"><span>Eva</span><span>Contact</span></nav>
+<div class="g"><p class="anno">Split navigation · 72 px band, 1 px rule · one word per edge · sticky · type 44.4 px</p></div>
+
+<main>
+  <section class="promise g">
+    <h1><span class="ln">Care that guides,</span> <span class="ln">records and warns</span> <span class="ln">on the way to Mars</span></h1>
+    <p class="anno">Display 111 px / 1.02, weight 400, three lines inside ~76% width · no paragraph, no button · 180 px pause after</p>
+  </section>
+
+  <section class="g">
+    <div class="sh"><h2>Selected moments</h2><span class="act">+ Prototype</span></div>
+    <div class="box wide"><div><b>S1 · cabin hero</b><span>Near full width, square corners · motion: settles from 104% to 100% scale on load (1.6 s)</span></div></div>
+
+    <article class="dip">
+      <div class="box w"><div><b>S4 · bystander help + blue link overlay</b><span>Motion: the wristband link (motion preview layer) fades in when 55% of the frame is visible</span></div></div>
+      <div class="box d"><div><b>L1 · wristband</b><span>Isolated layer on the dark product backing · "AI-generated" label bottom right</span></div></div>
+      <div class="t"><p class="label">Case 01 · Cannot act</p><h3 class="prop">The nearest passenger becomes the help</h3><p class="note">One sentence of explanation at 22.2 px.</p><p class="anno">Label 33.3 px uppercase · proposition 66.6 px · 5 px between</p></div>
+    </article>
+
+    <article class="dip flip">
+      <div class="box w"><div><b>F1 → F2 → F3 · station bays</b><span>Motion: the lit bay moves left → centre → right every 2.8 s while visible; Eva's instruction is written live on the black screen</span></div></div>
+      <div class="box d"><div><b>L4 · pulse oximeter</b><span>Detail of the tool being lit</span></div></div>
+      <div class="t"><p class="label">Case 02 · Can act</p><h3 class="prop">The station lights the right tool</h3><p class="note">Three underline toggles (Cuff · Oximeter · Thermometer) let the viewer pick the bay.</p><p class="anno">Text half sits left: diptychs alternate sides</p></div>
+    </article>
+
+    <article class="dip">
+      <div class="box w"><div><b>S3 · solar flare + L8 particle stream</b><span>Motion: the particle stream drifts slowly across the scene (9 s, alternate)</span></div></div>
+      <div class="box d"><div><b>L7 · sun flare</b><span>Detail</span></div></div>
+      <div class="t"><p class="label">Solar alert</p><h3 class="prop">Minutes of warning before the particles arrive</h3><p class="note">NASA DONKI + NOAA GOES; X-rays arrive with the light, particles later.</p></div>
+    </article>
+
+    <article class="dip flip">
+      <div class="box w"><div><b>S5 · Earth–Mars delay + signal pulse</b><span>Motion: a light dot travels the dotted round-trip path (7 s loop, our own SVG on top of the scene)</span></div></div>
+      <div class="box d"><div><b>L10 · Mars</b><span>Detail</span></div></div>
+      <div class="t"><p class="label">Earth link</p><h3 class="prop">Every step recorded, even twenty minutes from Earth</h3><p class="note">Chained, signed log; 3–22 min one way.</p></div>
+    </article>
+  </section>
+
+  <section class="g">
+    <div class="sh"><h2>Why it matters</h2></div>
+    <div class="ed"><p class="prop" style="padding:0 10px">Care that does not wait for a doctor</p><div class="body">Editorial prose at 33.3 px with the numbers inside sentences: ~70% vision changes, 85% nasal or sinus issues, Inspiration4 baseline 16 vs 7 of 72. No stat cards.<br><span class="anno">Statement left, prose right · 180 px pause after</span></div></div>
+  </section>
+
+  <section class="g">
+    <div class="sh"><h2>WearMeds</h2><span class="act">+ Details</span></div>
+    <div class="inv">
+      <ul><li>Chest band</li><li>Wristband</li><li>Shared station</li><li>Pulse oximeter</li><li>Blood pressure cuff</li><li>Thermometer</li></ul>
+      <div class="box pv"><div><b>L2 · L1 · L3 · L4 · L5 · L6</b><span>Floating 430 px preview; swaps to the hovered or focused name · "+ Details" opens one spec line per item</span></div></div>
+    </div>
+  </section>
+
+  <section class="g">
+    <div class="sh"><h2>Business</h2></div>
+    <div class="ed"><p class="prop" style="padding:0 10px">Hardware once, Eva every mission</p><div class="body">Kit per passenger, station per cabin, Eva licensed per mission; sizes and finishes; orbital, lunar and remote work on Earth.<br><span class="anno">No prices until the business doc defines them</span></div></div>
+  </section>
+
+  <section class="g close">
+    <div class="sh"><h2>Contact</h2></div>
+    <p>To see Eva working or to discuss a mission, start here:</p>
+    <ul><li>Open the prototype ↗</li><li>Inspiration4 data on NASA OSDR ↗</li></ul>
+    <p class="anno" style="font-size:13px">Direct destinations as 44.4 px text links with a diagonal arrow · wide empty right field · no buttons</p>
+  </section>
+</main>
+
+<footer class="g">
+  <p class="note" style="margin:0 0 30px">AI notice: concept art generated with an OpenAI image model through Codex; no NASA insignia; Eva is not a medical device.</p>
+  <div class="mark"><svg viewBox="0 0 1400 120" role="img" aria-label="Eva by WearMeds"><text x="0" y="104" textLength="1400" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="PP Neue Montreal, Inter, Arial, sans-serif" font-size="132">Eva by WearMeds</text></svg></div>
+  <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><span>AI notice · Data sources</span></div>
+  <p class="anno">Monumental identity: fitted vector lettering across the full width between hairlines · 22.2 px utility row below</p>
+</footer>
+
+<section class="notes g" aria-labelledby="bn">
+  <h2 id="bn">Build notes</h2>
+  <ul>
+    <li>Design system: Two Create (warm canvas #f9f7f4, ink #0c0c0c, 1 px rules #e3e1dd). Dark theme uses its reversed canvas.</li>
+    <li>Type: PP Neue Montreal, Inter as the substitute, weight 400 only; hierarchy by size (111 / 66.6 / 44.4 / 33.3 / 22.2).</li>
+    <li>No filled buttons, no rounded corners, no shadows. Color lives only inside the images.</li>
+    <li>Assets: Codex kit (S1–S5, L1–L13, F1–F3) plus the blue link layer from the motion preview. Every image carries an "AI-generated" mark.</li>
+    <li>Motion: 0.7 s ease-in-out reveals from a visible state; one orchestrated moment (the station); everything stops with reduced motion.</li>
+    <li>Copy in English (NASA requirement). Eva guides, records and warns; never "diagnoses" or "treats".</li>
+    <li>Live page: <a href="https://claude.ai/artifact/Ja6v2YathtvXUeaS7EcdRo">Eva by WearMeds</a>.</li>
+  </ul>
+</section>
