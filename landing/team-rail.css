@@ -18,7 +18,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme]) {
     --tr-bg: #000000;
     --tr-ink: #f3f2ef;
     --tr-muted: #9a9893;
@@ -35,7 +35,9 @@
   }
 }
 
-:root[data-theme="dark"] {
+:root[data-theme="dark"],
+:root[data-theme="mars"],
+:root[data-theme="lime"] {
   --tr-bg: #000000;
   --tr-ink: #f3f2ef;
   --tr-muted: #9a9893;
@@ -586,3 +588,7 @@
 .tr--reduced .tr-badge,
 .tr--reduced .tr-card,
 .tr--reduced .tr-dot::before { transition: none; }
+
+:root[data-theme="mars"] { --tr-font: "Space Grotesk", Arial, sans-serif; --tr-focus: #ff5a1f; }
+:root[data-theme="lime"] { --tr-focus: #c8ff3d; }
+:root[data-theme="blue"] { --tr-font: "Manrope", Arial, sans-serif; --tr-focus: #1f45ff; --tr-ink: #0b1a3a; }
