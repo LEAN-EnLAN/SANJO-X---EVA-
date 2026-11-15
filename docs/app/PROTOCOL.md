@@ -51,7 +51,7 @@ Control frames (Hello, Welcome, Ping, Pong, Ack, Nack, Presence, Bye) bypass the
 
 | type | id | payload |
 |---|---|---|
-| Hello | 0 | `u8 role` · `str name` · `uvar client_ms` (session id) |
+| Hello | 0 | `u8 role` · `str name` · `uvar client_ms` (session id) · [`bytes pubkey`] (optional, 32-byte Ed25519 public key; ships send it, the ground pins it on first use) |
 | Welcome | 1 | `uvar node_id` · `uvar server_ms` |
 | Ping | 2 | `uvar t_ms` (sender's clock) |
 | Pong | 3 | the ping payload echoed unchanged → RTT = now − t_ms, no clock sync needed |
@@ -60,12 +60,14 @@ Control frames (Hello, Welcome, Ping, Pong, Ack, Nack, Presence, Bye) bypass the
 | Vitals | 6 | see §6 |
 | Alarm | 7 | `str subject` (seat) · `u8 code` (1 no pulse, 2 low SpO₂, 3 solar storm, 4 help request, 5 battery) · `str text` |
 | Guidance | 8 | same as Text |
-| Record | 9 | `uvar chain_seq` · `uvar ts_ms` · `str kind` · `str subject` · `8 bytes hash prefix` · `bytes body` (JSON `{"body":…, "prev"?:hex}`) |
+| Record | 9 | `uvar chain_seq` · `uvar ts_ms` · `str kind` · `str subject` · `8 bytes hash prefix` · `bytes body` (JSON `{"body":…, "prev"?:hex}`) · [`bytes sig`] (optional, 64-byte Ed25519 signature over `"eva-record-v1\0" ‖ full SHA-256`; ADR-010) |
 | Text | 10 | `str from` · `str to` · `str text` |
 | Presence | 11 | `uvar n` · n × (`uvar id` · `u8 role` · `str name` · `uvar rtt_ms`) |
 | Bye | 12 | empty |
 
 Roles: 0 hub, 1 ship, 2 ground, 3 app, 4 dash, 5 band.
+
+Optional trailing fields (`[…]` above) are read only if bytes remain after the mandatory ones, so a v1 decoder that does not know them still works, and they cost nothing when absent. A present `pubkey` must be 32 bytes and a present `sig` 64 bytes, or the payload is rejected.
 
 ## 6. Delta-encoded vitals
 
@@ -81,10 +83,12 @@ Deltas are **against the last keyframe, not the previous sample**: a lost delta 
 ## 7. Reliability and store-and-forward
 
 - Reliable frames enter an **in-flight table** when sent; the receiver acks each `seq` (duplicates are acked again but delivered once).
-- **RTO** follows RFC 6298: `srtt`, `rttvar`, RTO = srtt + 4·rttvar, clamped 200 ms … 60 s, 1 s before the first sample. Samples come from pongs and from acks of frames never retransmitted (Karn). Each retransmission doubles the timeout.
+- **RTO** follows RFC 6298: `srtt`, `rttvar`, RTO = srtt + 4·rttvar, clamped 200 ms … 60 s, 1 s before the first sample. Samples come from pongs and from acks of frames never retransmitted (Karn). On a timeout the **RTO itself backs off** (×2, §5.5) and stays backed off until a valid sample arrives; each further retry of the same frame doubles again. Without the global backoff, a link slower than 1 s retransmits every frame and never gets a clean sample.
 - **Never give up** on reliable frames: during a contact gap they stay queued; `poll(now, budget)` with budget 0 sends nothing.
 - `poll` takes a **byte budget** (token bucket from the profile's bandwidth) and always drains alarm → guidance → vitals → logs, retransmissions first within a class.
-- Unreliable vitals carry a TTL and are dropped when stale (`dropped_stale`).
+- Unreliable vitals carry a TTL and are dropped when stale (`dropped_stale`), both when polled and when a new sample is queued, so a long contact gap holds at most one TTL of vitals.
+- **Dedup and replays:** the receiver remembers the last 65,536 reliable seqs per peer (O(1) lookup); duplicates are acked again but delivered once. A replay older than that window reaches the application, where the ground's mirror drops a record it already holds (same chain seq and hash prefix). Records are idempotent end to end.
+- **Clock skew:** nothing needs synchronised clocks. RTT comes from echoed ping times on the sender's own clock; vitals timestamps are relative to the stream's keyframe, and a timestamp that goes backwards forces a new keyframe.
 
 ## 8. Link profiles (simulator)
 
@@ -100,8 +104,8 @@ Deltas are **against the last keyframe, not the previous sample**: a lost delta 
 
 ## 9. Mesh behaviour at the hub
 
-Frames with a `dst` other than 0 are relayed verbatim to that node. The hub pings every node every 2 s and keeps an RTT estimate per client; it broadcasts Presence to apps and dashboards every 2 s. Two browsers measure their end-to-end RTT through the hub by pinging each other's node id (dev panel → "Ping every client end to end"). See ADR-008.
+Frames with a `dst` other than 0 are relayed verbatim to that node. Each client has a bounded outbox (512 datagrams); a client that falls behind loses frames (vitals and presence are latest-wins, reliable frames are retransmitted by their sender) and is closed if it cannot take a frame within 5 s. A WebSocket message above 256 KB closes that connection. Band vitals refresh open pages at once, at most 5 times a second. The hub pings every node every 2 s and keeps an RTT estimate per client; it broadcasts Presence to apps and dashboards every 2 s. Two browsers measure their end-to-end RTT through the hub by pinging each other's node id (dev panel → "Ping every client end to end"). See ADR-008.
 
 ## 10. Byte accounting
 
-`ByteStats` counts frames, bytes, payload bytes and retransmissions per type on both sides. Exposed in `/api/link`, the dashboard's sync card, the dev panel and `eva bench`; the table of typical sizes is `GET /api/protocol/sizes`.
+`ByteStats` counts frames, bytes, payload bytes and retransmissions per type on both sides. Exposed in `/api/link`, the dashboard's sync card, the dev panel and `eva bench`; the table of typical sizes is `GET /api/protocol/sizes`. Measured sizes, throughput and per-profile delivery: [BENCHMARKS.md](BENCHMARKS.md).

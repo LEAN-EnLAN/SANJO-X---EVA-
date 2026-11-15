@@ -27,13 +27,14 @@ Option 4. A 2-byte header (version, flags, priority, type) + LEB128 varints for 
 | vitals keyframe (10 fields) | 29 |
 | alarm: no pulse | 10 |
 | ack of 10 records | 17 |
-| chain record (CRC on) | 52 |
+| chain record, unsigned (CRC on) | 61 |
+| chain record, Ed25519-signed (CRC on) | 126 |
 | *same vitals as JSON* | *123* |
 
-10 minutes, 15 bands at 1 Hz + 1 record/s + 1 alarm: the alarm arrives in 0.1 s (LAN), 0.4 s (LoRa), 1.7 s (near space), 4 s (storm); during an outage everything queues and nothing is lost.
+10 minutes, 15 bands at 1 Hz + 1 record/s + 1 alarm: the alarm arrives in 0.1 s (LAN), 0.5 s (LoRa), 1.8 s (near space), 3.4 s (storm); during an outage everything queues and nothing is lost. Full tables: [BENCHMARKS.md](BENCHMARKS.md).
 
 ## Consequences
 
 - Browsers speak it too (`link.js`, ~150 lines), so every PWA instance is a mesh node (ADR-008).
 - Adding a message type = enum value + payload struct + test; the version byte allows breaking changes later.
-- No encryption in v1: the ship LAN and the uplink are assumed to be protected below us (WPA3 / link encryption). TLS covers browser ↔ hub when `--tls` is on. Payload signing beyond the hash chain is future work.
+- No encryption in v1: the ship LAN and the uplink are assumed to be protected below us (WPA3 / link encryption). TLS covers browser ↔ hub when `--tls` is on. Chain records are Ed25519-signed by the node that wrote them (ADR-010).

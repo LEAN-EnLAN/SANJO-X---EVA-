@@ -22,7 +22,7 @@ Eva must keep every clinically relevant step (alarms, guidance, tool calls, ECGs
 
 **Privacy:** private journal text never enters the chain (tool calls log `"(private)"`); the chain is what travels to the ground. The person's own export (`/export/journal.csv?seat=`) includes it; the ship report includes only shared entries.
 
-**What "signed" means today:** hashed and chained under the ship's node id. Per-device **Ed25519 signatures** (band and hub keys) are the next step; the `origin` field and the record layout leave room for a `sig` field.
+**What "signed" means:** hashed, chained and **Ed25519-signed** with the node's own key (ADR-010, from 15/11). Per-band keys are a later step.
 
 ## Why not SQLite now
 
@@ -31,5 +31,5 @@ rusqlite with `bundled` is fine and remains the plan for the working set once sc
 ## Consequences
 
 - `Reset demo` truncates the chain file and re-seeds four acknowledged morning records.
-- The ground's mirror is in memory (lost on restart; the ship resends nothing already acknowledged). Persisting it is an open item.
+- The ground's mirror is persisted (`data/mirror-<node>.jsonl`) and replayed on restart (ADR-010).
 - Exports read straight from the chain: CSV (formula-safe quoting), JSON (with the verify report), printable HTML report.

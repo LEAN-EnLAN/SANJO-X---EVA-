@@ -15,7 +15,7 @@ One Rust binary (`eva`) serves everything: the astronaut PWA, the crew/ground da
                          │   eva_agent ◀──────┘  │ tools.rs (13 tools, validated, logged)               │
                          │    L1 reflex.rs  (every tick, instant, offline)                              │
                          │    L2 chat.rs · speech.rs · vision.rs  (Groq, key from env only)             │
-                         │    L3 chain.rs   (SHA-256 hash chain, JSONL, signed → sent → acked)          │
+                         │    L3 chain.rs   (SHA-256 hash chain + Ed25519, JSONL, signed → sent → acked)│
                          │                    │                                                         │
                          │   web/  axum router ── /app /dash (askama + htmx) ── /sse/* (fragments)      │
                          │         /api/* (JSON | CBOR) ── /export/* ── /static (rust-embed)            │
@@ -44,10 +44,11 @@ One Rust binary (`eva`) serves everything: the astronaut PWA, the crew/ground da
 | `seed.rs` | demo data matching the wireframes (Ana 4B, Leo 3B, Tomás 1B, Priya, Diego, Kwame…) |
 | `clock.rs` | mission clock (day 96, 13:58 at start) with fast-forward |
 | `sim.rs` | simulated bands: healthy baseline + server-side scenario overlay; `eva sim` client |
-| `eva_agent/` | `reflex` (layer 1), `tools` (registry), `chat`, `speech` (STT/TTS), `vision`, `prompt`, `config` (key handling), emergency flow and case timeline in `mod.rs` |
-| `chain.rs` | hash-chained record log, replay from JSONL, verify, sync states |
+| `eva_agent/` | `reflex` (layer 1), `tools` (registry, refusal guard), `schema` (JSON-schema validator for tool args), `chat`, `offline` (intents + Now/Why/How/Next answers), `speech` (STT/TTS, browser-voice fallback), `vision`, `prompt`, `config` (one config per pipeline, key redaction), emergency flow and case timeline in `mod.rs` |
+| `chain.rs` | hash-chained, Ed25519-signed record log, node keys, replay from JSONL, verify (records and files), sync states (ADR-010) |
 | `mesh.rs` | mesh registry: nodes, relay, hub heartbeat (ping + presence every 2 s) |
-| `link.rs` | `/link` WebSocket handler for every role; ground-side chain `Mirror` |
+| `link.rs` | `/link` WebSocket handler for every role; ground-side chain `Mirror` (verifies hash + signature, pins ship keys, persisted to `mirror-<node>.jsonl`) |
+| `bench.rs` | `eva bench`: message sizes vs JSON/CBOR, throughput, link profiles, live server run (BENCHMARKS.md) |
 | `uplink.rs` | ship → ground client: records + vitals through a simulated profile, acks back |
 | `tls.rs` | self-signed certificate for `--tls` (rcgen) |
 | `web/` | `mod.rs` router and embedded assets, `pages` (screens), `views` (askama view models), `sse`, `api`, `export`, `ui` (class lookups, own icons) |
@@ -69,4 +70,4 @@ Templates live in `app/templates/` (`app/`, `dash/`, `dev/`, `export/`); static 
 * **Eva**: new tool = one `ToolDef` + one match arm in `eva_agent/tools.rs` (logged automatically). New pipeline backend = implement the trait in `chat.rs`, `speech.rs` or `vision.rs`.
 * **Telemetry**: `POST /api/ingest/vitals` (JSON) and Eva Link `Vitals` frames are the two ways in; NASA dictionaries / Hermes go behind them (ADR-007).
 * **Storage**: the chain is the durable store; SQLite can replace the in-memory working set behind `state.rs` (ADR-005).
-* **Tests / benchmarks**: `cargo test`, `eva bench`, `protocol::message_size_table()`, `GET /api/protocol/sizes`.
+* **Tests / benchmarks**: `cargo test` (TESTING.md), `eva bench` (BENCHMARKS.md), `scripts/e2e/run.sh` (Playwright happy path), `protocol::message_size_table()`, `GET /api/protocol/sizes`.
