@@ -3,6 +3,8 @@
 Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedido de Lean.
 **La fuente de verdad es el Drive** (carpeta `1NCFN_22gxWjRGJdxKjX11KcOk5v7bic7`). Si algo de este archivo choca con el Registro de decisiones, manda el Registro.
 
+> **Actualización dom 15/11 09:22 (manda sobre las de abajo):** brazalete v2, "más contenido y robusto": módulo rectangular gris grafito más ancho que alto, paragolpes de metal plateado con tornillos a la vista, dos módulos apilados unidos por imanes (base de sensores sobre la piel con dos contactos dorados con resorte; módulo de pantalla táctil negra de borde a borde afuera), botones naranjas, las dos placas del ECG de 30 s en el marco de la pantalla y dos correas textiles que van en la base (la pantalla se saca). Vuelve la estación de emergencia de la nave: gabinete de 12 compartimentos con DEA, pantalla de Eva, botón rojo, luces y sensores. Cómo se conecta todo (propuesta, falta confirmar): el hub es el único host; brazaletes, teléfonos y estación son clientes; LoRa en malla y respaldo directo brazalete-estación si cae el hub. Ver `docs/station.md` y "06 · Concepto actual: Eva".
+>
 > **Actualización dom 01:45:** el brazalete pasa a tener dos partes (sensores adentro con batería chica; interfaz afuera con pantalla y batería grande; imanes y pines con resorte). Ver "06 · Concepto actual: Eva".
 >
 > **Actualización sáb 22:15:** el encargo de investigación del equipo (`docs/encargo-investigacion.md`, anexo en el Drive) eliminó la estación compartida. Quedan brazalete, arnés (con desfibrilación vestible e inyectable) y el hub de la nave. Donde este archivo hable de la estación, manda "06 · Concepto actual: Eva".
@@ -17,8 +19,8 @@ Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedi
 - **Eva**: nombre propio del asistente (no sigla; así no se confunde con EVA, "caminata espacial", de NASA). Nombres anteriores (Vela, Hermes) solo en el historial del Registro y la Bitácora.
 - **WearMeds**: marca de los wearables. "Power Mats" queda por confirmar.
 - **Concepto IoT** para un viaje comercial a Marte:
-  - Banda torácica (ECG, respiración) y pulsera con pantalla grande (pulso, movimiento, instrucciones paso a paso).
-  - Estación compartida por cabina (presión, SpO₂, temperatura) que **ilumina la bandeja** que hay que usar.
+  - Brazalete WearMeds v2, único dispositivo en el cuerpo: dos módulos apilados con imanes (base de sensores con batería y LoRa propios; módulo de pantalla con batería principal y LoRa), cuerpo grafito #3A3D42 con paragolpes plateados, botones naranjas #F28A1A, contactos dorados, dos placas metálicas en el marco de la pantalla para el ECG a pedido de 30 s y dos correas textiles en la base. Sin banda torácica ni arnés.
+  - Estación de emergencia de la nave (gabinete de pared con 12 compartimentos, DEA en el 01) que **ilumina el compartimento** que hay que usar y reporta puertas y elementos. Es cliente del hub. Ver `docs/station.md`.
   - **Caso 01**: la persona no responde o no puede actuar → Eva avisa al pasajero más cercano y lo guía; los demás reciben un aviso informativo.
   - **Caso 02**: puede actuar y moverse → Eva lo lleva a la estación, ilumina el elemento y muestra cómo usarlo.
   - **Alerta solar** con NASA DONKI (`https://ccmc.gsfc.nasa.gov/DONKI-API/get/FLR`) y NOAA GOES (`services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json`, `integral-protons-1-day.json`). Los rayos X llegan con la luz; el margen de aviso es hasta que llegan las partículas.
