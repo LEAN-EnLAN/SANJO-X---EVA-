@@ -1,0 +1,32 @@
+<div class="flex items-center justify-between pt-2">
+  {% if active %}<span class="inline-flex items-center gap-1 rounded-full border border-critical/50 bg-critical/15 px-2.5 py-0.5 text-xs font-medium text-critical">Solar storm</span>
+  {% else %}<span class="inline-flex items-center gap-1 rounded-full border border-ok/40 bg-ok/10 px-2.5 py-0.5 text-xs font-medium text-ok">Sun quiet</span>{% endif %}
+  <span class="text-xs text-muted">Shelter · Deck B</span>
+</div>
+{% if active %}
+<p class="text-5xl leading-none tracking-tight text-ink">Go to the shelter now</p>
+<div class="flex items-center gap-3">
+  <p class="font-mono text-4xl tracking-tight text-ink" data-countdown>{{ left }}</p>
+  <span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">Walk, don't run</span>
+</div>
+<div class="flex flex-col gap-3">
+  <p class="text-xs uppercase tracking-label text-muted">Your route · 40 m</p>
+  <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full bg-ink text-sm text-on-light">1</span><p class="pt-1 text-sm text-ink">Leave your seat and turn left</p></div>
+  <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full border border-line text-sm text-ink">2</span><p class="pt-1 text-sm text-ink">Follow the floor arrows to Deck B</p></div>
+  <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full border border-line text-sm text-ink">3</span><p class="pt-1 text-sm text-ink">Go in and close the hatch</p></div>
+</div>
+<div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
+  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Why</span><span>Water walls block the radiation</span></div>
+  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Next</span><span>Stay until Eva says it is over</span></div>
+  <p class="text-xs text-faint">How Eva decided · NOAA GOES X-ray flux and ship radiation sensors</p>
+</div>
+<div class="mt-auto flex flex-col gap-2">
+  <div class="flex items-baseline justify-between"><p class="text-sm text-ink">Crew in shelter {{ in_shelter }}/{{ total }}</p></div>
+  <div class="relative h-4 w-full overflow-hidden rounded-full bg-hatch"><div class="spring-w h-full w-(--pct) rounded-full bg-ink" style="--pct: {{ pct }}%"></div></div>
+</div>
+{% if me_in %}<p class="rounded-tile bg-ok/10 px-4 py-3 text-sm text-ok">You are in the shelter. Eva will tell you when it is over.</p>
+{% else %}<button type="button" class="press inline-flex h-14 w-full items-center justify-center rounded-full bg-ink px-7 text-base font-medium text-on-light" hx-post="/api/shelter" hx-vals='{"seat":"{{ c.seat }}"}' hx-target="#screen">I'm in the shelter</button>{% endif %}
+{% else %}
+<p class="text-4xl leading-none tracking-tight text-ink">No storm warning</p>
+<p class="text-sm text-muted">Eva watches the Sun's X-rays (NOAA GOES) and the ship's radiation sensors. If a storm comes, this screen shows your route to the shelter.</p>
+{% endif %}

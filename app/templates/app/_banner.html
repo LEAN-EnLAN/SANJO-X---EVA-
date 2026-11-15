@@ -1,0 +1,18 @@
+{% if let Some(cb) = case %}
+<a href="/app/emergency" hx-get="/app/emergency" hx-target="#screen" hx-push-url="true" hx-include="[name=seat]" class="press flex items-center gap-3 rounded-card border border-critical/50 bg-critical/10 p-3">
+  <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"><span class="absolute inset-0 animate-ping rounded-full bg-critical"></span></span>
+  <span class="flex min-w-0 flex-1 flex-col">
+    {% if cb.role == "helper" %}<span class="text-sm text-ink">{{ cb.name }} needs you · {{ cb.task }}</span><span class="text-xs text-muted">Seat {{ cb.seat }} · tap for the way</span>
+    {% else if cb.role == "patient" %}<span class="text-sm text-ink">Help is coming</span><span class="text-xs text-muted">Eva called the crew</span>
+    {% else %}<span class="text-sm text-ink">{{ cb.name }} is being helped</span><span class="text-xs text-muted">Seat {{ cb.seat }} · keep the corridor clear</span>{% endif %}
+  </span>
+  <span class="text-critical">{{ crate::web::ui::ic("arrow", 18)|safe }}</span>
+</a>
+{% endif %}
+{% if storm %}
+<a href="/app/storm" hx-get="/app/storm" hx-target="#screen" hx-push-url="true" class="press mt-2 flex items-center gap-3 rounded-card border border-warn/40 bg-warn/10 p-3">
+  <span class="text-warn">{{ crate::web::ui::ic("sun", 18)|safe }}</span>
+  <span class="flex flex-1 flex-col"><span class="text-sm text-ink">Solar storm · go to the shelter</span><span class="text-xs text-muted">Deck B · walk, don't run</span></span>
+  <span class="text-warn">{{ crate::web::ui::ic("arrow", 18)|safe }}</span>
+</a>
+{% endif %}

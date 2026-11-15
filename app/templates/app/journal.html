@@ -1,0 +1,75 @@
+{% import "mascot.html" as m %}
+<div class="flex items-center justify-between gap-3 pt-1">
+  <a href="/app/eva?seat={{ c.seat }}" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" aria-label="Back" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <p class="text-xs uppercase tracking-label text-muted">Journal · {{ c.time }}</p>
+  <span class="size-11"></span>
+</div>
+{% if saved %}<p class="rounded-tile bg-ok/10 px-4 py-2 text-sm text-ok">Saved on board. Only you can read it unless you share it.</p>{% endif %}
+
+<form class="flex flex-col gap-5" hx-post="/api/journal" hx-target="#screen" data-journal>
+  <input type="hidden" name="seat" value="{{ c.seat }}">
+  <div class="flex flex-col items-center gap-5 pt-2">
+    <span id="mood-orb" class="inline-block shrink-0 orb orb-4 size-52 animate-orb-breathe" aria-hidden="true" data-orb></span>
+    <div class="flex flex-col items-center gap-1">
+      <p class="text-xs uppercase tracking-label text-muted">How do you feel right now?</p>
+      <p class="text-4xl leading-none tracking-tight text-ink" data-mood-word>Pleasant</p>
+    </div>
+  </div>
+  <div class="flex flex-col gap-2">
+    <label class="sr-only" for="valence">Valence, very unpleasant to very pleasant</label>
+    <input id="valence" type="range" name="valence" min="1" max="5" step="1" value="4" class="mood-range w-full" data-valence>
+    <div class="flex justify-between text-xs text-muted"><span>Very unpleasant</span><span>Very pleasant</span></div>
+  </div>
+  <fieldset class="flex flex-col gap-2">
+    <legend class="mb-2 text-xs uppercase tracking-label text-muted">You feel</legend>
+    <div class="flex flex-wrap gap-1.5">
+      {% for l in labels %}<label class="cursor-pointer"><input type="checkbox" name="labels" value="{{ l }}" class="peer sr-only"><span class="inline-flex h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-xs text-ink peer-checked:border-transparent peer-checked:bg-ink peer-checked:text-on-light peer-focus-visible:outline-2 peer-focus-visible:outline-info">{{ l }}</span></label>{% endfor %}
+    </div>
+  </fieldset>
+  <fieldset class="flex flex-col gap-2">
+    <legend class="mb-2 text-xs uppercase tracking-label text-muted">What's affecting you?</legend>
+    <div class="flex flex-wrap gap-1.5">
+      {% for a in affects %}<label class="cursor-pointer"><input type="checkbox" name="affects" value="{{ a }}" class="peer sr-only"><span class="inline-flex h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-xs text-ink peer-checked:border-transparent peer-checked:bg-ink peer-checked:text-on-light peer-focus-visible:outline-2 peer-focus-visible:outline-info">{{ a }}</span></label>{% endfor %}
+    </div>
+  </fieldset>
+  <div class="flex flex-col gap-3 rounded-card bg-surface p-4">
+    <div class="flex items-start gap-2.5">
+      {% call m::eva(c.mood, "care", "size-8") %}
+      <p class="text-sm text-info">Write for 5 minutes. What's on your mind, and why?</p>
+    </div>
+    <label class="sr-only" for="jtext">Journal text</label>
+    <textarea id="jtext" name="text" rows="4" maxlength="4000" class="w-full resize-none bg-transparent text-lg leading-snug text-ink placeholder:text-faint focus-visible:outline-none" placeholder="A few lines, or just save"></textarea>
+    <div class="flex items-center justify-between">
+      <label class="flex items-center gap-1.5 text-xs text-muted"><input type="checkbox" name="shared" value="1" class="accent-info"> Share with the crew lead</label>
+      <span class="flex items-center gap-1.5 text-xs text-muted">{{ crate::web::ui::ic("lock", 12)|safe }}Private by default</span>
+    </div>
+  </div>
+  <button type="submit" class="press inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ink px-7 text-base font-medium text-on-light">{{ crate::web::ui::ic("check", 18)|safe }}Save</button>
+</form>
+
+<section class="rounded-card border border-line bg-surface p-5 py-4">
+  <div class="mb-3 flex items-center justify-between"><p class="text-xs uppercase tracking-label text-muted">This week</p><span class="text-xs text-muted">{{ entries.len() }} entries</span></div>
+  <div class="flex flex-col gap-2">
+    <div class="relative grid grid-cols-7 gap-x-1">
+      <span class="pointer-events-none absolute inset-x-0 top-1/2 border-t border-dashed border-line"></span>
+      {% for (d, moods, today) in week %}<div class="grid h-16 grid-rows-5 place-items-center">{% for v in moods %}<span class="col-start-1 {{ crate::web::ui::mood_row(v) }}"><span class="inline-block size-3.5 shrink-0 orb orb-sm {{ crate::web::ui::orb(v) }}"></span></span>{% endfor %}</div>{% endfor %}
+    </div>
+    <div class="grid grid-cols-7 gap-x-1 text-center text-xs">{% for (d, moods, today) in week %}<span class="{% if *today %}text-ink{% else %}text-muted{% endif %}">{{ d }}</span>{% endfor %}</div>
+  </div>
+</section>
+
+<div class="flex flex-col gap-2">
+  <p class="text-xs uppercase tracking-label text-muted">Entries</p>
+  {% for e in entries %}
+  <div class="flex items-center gap-3 rounded-tile bg-surface px-3 py-3">
+    <span class="inline-block size-9 shrink-0 orb orb-sm {{ crate::web::ui::orb(e.valence) }}" aria-hidden="true"></span>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <span class="text-xs text-muted">{{ crate::web::ui::stamp(e.ts_ms) }}</span>
+      <span class="text-sm text-ink">{% if e.labels.is_empty() %}{{ crate::web::ui::mood_word(e.valence) }}{% else %}{{ e.labels.join(" · ") }}{% endif %}</span>
+      {% if !e.text.is_empty() %}<span class="truncate text-xs text-muted">{{ e.text }}</span>{% endif %}
+    </div>
+    {% if e.shared %}<span class="inline-flex items-center gap-1 rounded-full border border-info/40 bg-info/10 px-2.5 py-0.5 text-xs font-medium text-info">{{ crate::web::ui::ic("users", 11)|safe }}Crew lead</span>{% else %}<span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">{{ crate::web::ui::ic("lock", 11)|safe }}Private</span>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+<p class="flex gap-2 text-xs text-faint">{{ crate::web::ui::ic("book", 12)|safe }}<span>Why writing helps · Pennebaker &amp; Beall 1986; Frattaroli 2006; Lieberman et al. 2007</span></p>

@@ -1,0 +1,18 @@
+<section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
+  <header class="flex items-center justify-between gap-3">
+    <h3 class="text-base text-ink">Eva Link mesh</h3>
+    <span class="inline-flex items-center gap-1 rounded-full border border-ok/40 bg-ok/10 px-2.5 py-0.5 text-xs font-medium text-ok"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>{{ nodes.len() }} online</span>
+  </header>
+  <p class="text-xs text-muted">Every app talks to the others through this hub: presence, routing and relay. RTT measured per client every 2 s.</p>
+  <ul class="flex flex-col divide-y divide-line">
+    {% for n in nodes %}
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">{{ n.id }}</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">{{ n.name }}</span><span class="text-faint">{{ n.role.name() }}{% if let Some(s) = n.seat %} · {{ s }}{% endif %} · {{ n.frames_in }} in / {{ n.frames_out }} out</span></span>
+      <span class="font-mono tabular-nums {% if n.rtt_samples == 0 %}text-faint{% else %}text-ink{% endif %}">{% if n.rtt_samples == 0 %}—{% else %}{{ n.rtt_ms }} ms{% endif %}</span>
+    </li>
+    {% endfor %}
+    {% if nodes.is_empty() %}<li class="py-2 text-xs text-faint">No clients yet. Open /app on another device or tab.</li>{% endif %}
+  </ul>
+  <p class="text-xs text-faint">{{ relayed }} frames relayed between clients</p>
+</section>

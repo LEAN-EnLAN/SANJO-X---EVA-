@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+{% include "head.html" %}
+<title>Eva · {{ c.first }}</title>
+</head>
+<body class="min-h-dvh bg-background text-ink antialiased" data-view="app" data-seat="{{ c.seat }}">
+<div class="mx-auto flex min-h-dvh w-full max-w-md flex-col" hx-ext="sse" sse-connect="/sse/app?seat={{ c.seat }}">
+  <header class="flex items-center justify-between gap-3 px-6 pt-3 pb-1 text-sm">
+    <button type="button" class="tabular-nums text-ink" data-konami-tap title="Ship time">{{ c.time }}</button>
+    <label class="flex items-center gap-2 text-xs text-muted">
+      <span class="sr-only">Who is using this app</span>
+      <select class="rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-ink" onchange="location.href='/app?seat='+this.value">
+        {% for (s, n) in seats %}<option value="{{ s }}" {% if s == &c.seat %}selected{% endif %}>{{ s }} · {{ n }}</option>{% endfor %}
+      </select>
+    </label>
+    <span class="flex items-center gap-1.5 text-xs text-muted" id="mesh-indicator" title="Eva Link to the ship hub"><span class="size-1.5 rounded-full bg-faint" data-link-dot></span><span data-link-rtt>LoRa</span></span>
+  </header>
+
+  <div class="hidden" sse-swap="eva" hx-swap="none"></div>
+  <div class="hidden" hx-trigger="sse:go-home" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}"></div>
+  <div class="hidden" hx-trigger="sse:go-eva" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
+  <div class="hidden" hx-trigger="sse:go-emergency" hx-get="/app/emergency?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
+  <div class="hidden" hx-trigger="sse:go-journal" hx-get="/app/journal?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
+  <div class="hidden" hx-trigger="sse:go-storm" hx-get="/app/storm?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
+  <div class="hidden" hx-trigger="sse:go-records" hx-get="/app/records?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
+  <div class="hidden" hx-trigger="sse:go-plan" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen"></div>
+
+  <main id="screen" class="flex flex-1 flex-col gap-4 px-5 pt-2 pb-32">{{ screen|safe }}</main>
+
+  <nav class="fixed inset-x-0 bottom-3 z-40 mx-auto flex w-full max-w-md px-5" aria-label="Main">
+    <div class="flex w-full items-center justify-around rounded-full bg-raised py-3 ring-1 ring-line">
+      <a href="/app?seat={{ c.seat }}" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" data-tab="home" aria-label="Home" class="tab grid size-11 place-items-center rounded-full {% if tab == "home" %}bg-ink text-on-light{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("home", 20)|safe }}</a>
+      <a href="/app/journal?seat={{ c.seat }}" hx-get="/app/journal?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="journal" aria-label="Journal" class="tab grid size-11 place-items-center rounded-full {% if tab == "journal" %}bg-ink text-on-light{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("book", 20)|safe }}</a>
+      <a href="/app/eva?seat={{ c.seat }}" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="eva" aria-label="Eva" class="tab -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 {% if tab == "eva" %}ring-info{% else %}ring-line{% endif %}"><img src="/static/img/eva/eva-neutral.webp" alt="" class="size-10 object-contain"></a>
+      <a href="/app/records?seat={{ c.seat }}" hx-get="/app/records?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="records" aria-label="Records" class="tab grid size-11 place-items-center rounded-full {% if tab == "records" %}bg-ink text-on-light{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("records", 20)|safe }}</a>
+      <a href="/app/emergency?seat={{ c.seat }}" hx-get="/app/emergency?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="emergency" aria-label="Help" class="tab grid size-11 place-items-center rounded-full {% if tab == "emergency" %}bg-critical text-ink{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("siren", 20)|safe }}</a>
+    </div>
+  </nav>
+</div>
+{% include "dev/slot.html" %}
+</body>
+</html>

@@ -1,0 +1,175 @@
+/* Eva app stylesheet: Tailwind v4 input. Built into static/css/app.css by
+   scripts/build-css.sh (npx @tailwindcss/cli). Tokens ported from the
+   wireframes' src/theme.css; motion tokens and app-only utilities appended.
+
+   Eva design system: pure black, grotesk type, uppercase tracked labels, soft cards.
+   Every colour, radius and spacing used by screens must come from this file. */
+@import "tailwindcss" source(none);
+@source "../templates";
+@source "../src";
+@source "../static/js/eva.js";
+@source "../static/sw.js";
+
+@theme {
+  --color-background: #000000;
+  --color-surface: #0c0c0e;
+  --color-raised: #141417;
+  --color-elevated: #1c1c21;
+  --color-line: #26262c;
+  --color-ink: #f4f3f0;
+  --color-muted: #8f8e8a;
+  --color-faint: #57564f;
+  --color-brand: #ff6a3d;
+  --color-critical: #ff3b2a;
+  --color-warn: #ffb347;
+  --color-ok: #5be38a;
+  --color-info: #7fd4ff;
+  --color-on-light: #0c0c0c;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --tracking-label: 0.14em;
+  --radius-card: 1.75rem;
+  --radius-tile: 1.25rem;
+  --radius-device: 3rem;
+
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.02;
+  --text-hero: 4rem;
+  --text-hero--line-height: 0.95;
+
+  /* motion: springs only (see docs/app/MOTION.md). --ease-eva is the gentle spring. */
+  --ease-eva: var(--ease-spring-gentle);
+  --animate-eva-rise: eva-rise var(--dur-spring-gentle) var(--ease-spring-gentle) both;
+  @keyframes eva-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* eased move between the Eva assistant's positions (minimised, docked, expanded); still for reduced motion */
+@utility transition-eva {
+  transition-property: width, height, border-radius, opacity, transform, translate, scale, background-color;
+  transition-duration: var(--dur-spring-gentle);
+  transition-timing-function: var(--ease-spring-gentle);
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 1ms;
+  }
+}
+
+/* the hatched "remaining / other" fill used by progress, split bars and highlighted chart bars */
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(135deg, var(--color-line) 0 2px, transparent 2px 7px);
+}
+@utility bg-hatch-info {
+  background-image: repeating-linear-gradient(135deg, var(--color-info) 0 2px, transparent 2px 7px);
+}
+@utility bg-hatch-critical {
+  background-image: repeating-linear-gradient(135deg, var(--color-critical) 0 2px, transparent 2px 7px);
+}
+
+html, body { background: var(--color-background); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; color-scheme: dark; margin: 0; }
+
+/* CPR metronome: one compression per beat. The period comes from --beat (60 s / rate), so the visual stays in sync with the number shown. */
+@keyframes beat-press { 0%, 100% { transform: scale(1); } 12% { transform: scale(0.86); } 40% { transform: scale(1); } }
+@keyframes beat-wave { 0% { transform: scale(0.62); opacity: 0.55; } 70% { opacity: 0.12; } 100% { transform: scale(1); opacity: 0; } }
+@utility animate-beat-press { animation: beat-press var(--beat, 545ms) cubic-bezier(0.3, 0, 0.2, 1) infinite; }
+@utility animate-beat-wave { animation: beat-wave var(--beat, 545ms) cubic-bezier(0.2, 0.6, 0.3, 1) infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-beat-press, .animate-beat-wave { animation: none; } }
+
+/* ---------- Eva assistant and journaling ---------- */
+/* State of Mind valence palette, very unpleasant (1) to very pleasant (5). Only for the journaling orb, its slider and mood charts. */
+@theme {
+  --color-mood-1: #5a4ad1;
+  --color-mood-2: #9a6fe0;
+  --color-mood-3: #7ea6c8;
+  --color-mood-4: #6fdcae;
+  --color-mood-5: #ffc461;
+}
+
+/* soft cyan halo behind the Eva mascot (the colour of its eyes) */
+@utility bg-eva-glow {
+  background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-info) 30%, transparent), color-mix(in oklab, var(--color-info) 8%, transparent) 60%, transparent);
+}
+
+/* the valence scale as one gradient track */
+@utility bg-mood-scale {
+  background-image: linear-gradient(90deg, var(--color-mood-1), var(--color-mood-2), var(--color-mood-3), var(--color-mood-4), var(--color-mood-5));
+}
+
+/* glowing 3D orb: specular highlight, lit body, dark underside and a halo, all from --orb (set by orb-1 ... orb-5).
+   Shape follows valence: tight and lumpy when unpleasant, round and open when pleasant. */
+@utility orb {
+  border-radius: var(--orb-shape, 50%);
+  background-image:
+    radial-gradient(circle at 34% 26%, color-mix(in oklab, var(--color-ink) 85%, var(--orb)) 0, color-mix(in oklab, var(--color-ink) 30%, transparent) 9%, transparent 26%),
+    radial-gradient(circle at 70% 82%, color-mix(in oklab, var(--orb) 60%, var(--color-ink)) 0, transparent 30%),
+    radial-gradient(circle at 42% 38%, color-mix(in oklab, var(--orb) 75%, var(--color-ink)) 0, var(--orb) 38%, color-mix(in oklab, var(--orb) 45%, var(--color-background)) 100%);
+  box-shadow:
+    0 0 calc(var(--orb-halo, 48px) * var(--orb-scale, 1)) color-mix(in oklab, var(--orb) 55%, transparent),
+    inset calc(-10px * var(--orb-scale, 1)) calc(-14px * var(--orb-scale, 1)) calc(28px * var(--orb-scale, 1)) color-mix(in oklab, var(--color-background) 45%, transparent),
+    inset calc(6px * var(--orb-scale, 1)) calc(8px * var(--orb-scale, 1)) calc(18px * var(--orb-scale, 1)) color-mix(in oklab, var(--color-ink) 18%, transparent);
+}
+@utility orb-1 { --orb: var(--color-mood-1); --orb-shape: 44% 56% 38% 62% / 58% 40% 60% 42%; --orb-halo: 18px; }
+@utility orb-2 { --orb: var(--color-mood-2); --orb-shape: 48% 52% 44% 56% / 54% 46% 54% 46%; --orb-halo: 28px; }
+@utility orb-3 { --orb: var(--color-mood-3); --orb-shape: 50% 50% 47% 53% / 52% 48% 52% 48%; --orb-halo: 36px; }
+@utility orb-4 { --orb: var(--color-mood-4); --orb-shape: 50%; --orb-halo: 48px; }
+@utility orb-5 { --orb: var(--color-mood-5); --orb-shape: 50%; --orb-halo: 64px; }
+/* small orbs (chart dots, entry cards) keep the colour with a tighter halo and softer shading */
+@utility orb-sm { --orb-scale: 0.22; }
+
+/* slow breathing for the big orb and the push-to-talk rings; still for reduced motion */
+@keyframes orb-breathe { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.04) rotate(6deg); } }
+@utility animate-orb-breathe { animation: orb-breathe 6s var(--ease-eva) infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-orb-breathe { animation: none; } }
+
+/* ---------- motion tokens (single source; motion.js reads the spring numbers) ----------
+   Each spring = mass / stiffness / damping. The linear() curves below are
+   fallbacks sampled from the same numbers; motion.js regenerates them at load
+   so CSS transitions and JS springs always match. No cubic-bezier, no linear easing. */
+:root {
+  --spring-snappy-mass: 1;  --spring-snappy-stiffness: 400; --spring-snappy-damping: 30;
+  --spring-gentle-mass: 1;  --spring-gentle-stiffness: 170; --spring-gentle-damping: 26;
+  --spring-bouncy-mass: 1;  --spring-bouncy-stiffness: 300; --spring-bouncy-damping: 14;
+  --spring-slow-mass: 1;    --spring-slow-stiffness: 90;    --spring-slow-damping: 20;
+
+  --ease-spring-snappy: linear(0, 0.0238, 0.0815, 0.1609, 0.2613, 0.3581, 0.4541, 0.5534, 0.6369, 0.7118, 0.7828, 0.838, 0.8843, 0.9222, 0.955, 0.9781, 0.9956, 1.0092, 1.0176, 1.0229, 1.0258, 1.0266, 1.0261, 1.0246, 1.0224, 1.0199, 1.0173, 1.0146, 1.0121, 1.0099, 1.0077, 1.0059, 1.0044, 1.0032, 1.0021, 1.0013, 1.0006, 1.0001, 0.9998, 0.9995, 0.9994);
+  --dur-spring-snappy: 452ms;
+  --ease-spring-gentle: linear(0, 0.0251, 0.0838, 0.1609, 0.246, 0.3323, 0.4156, 0.4933, 0.5677, 0.6306, 0.6861, 0.7346, 0.7764, 0.8124, 0.8431, 0.8691, 0.8922, 0.9105, 0.9259, 0.9387, 0.9494, 0.9583, 0.9657, 0.9718, 0.9771, 0.9813, 0.9846, 0.9874, 0.9897, 0.9916, 0.9932, 0.9944, 0.9955, 0.9963, 0.997, 0.9976, 0.998, 0.9984, 0.9987, 0.9989, 0.9992);
+  --dur-spring-gentle: 725ms;
+  --ease-spring-bouncy: linear(0, 0.0799, 0.2707, 0.5129, 0.7564, 0.9655, 1.1196, 1.212, 1.2471, 1.2361, 1.1939, 1.1357, 1.0744, 1.0198, 0.9781, 0.9515, 0.9396, 0.9399, 0.9489, 0.9627, 0.978, 0.9921, 1.0033, 1.0108, 1.0146, 1.0152, 1.0134, 1.0101, 1.0064, 1.0027, 0.9998, 0.9977, 0.9965, 0.9962, 0.9965, 0.9973, 0.9982, 0.9991, 0.9999, 1.0005, 1.0008);
+  --dur-spring-bouncy: 960ms;
+  --ease-spring-slow: linear(0, 0.0306, 0.1004, 0.1887, 0.2828, 0.375, 0.4612, 0.5394, 0.6087, 0.6692, 0.7215, 0.7677, 0.8056, 0.8376, 0.8646, 0.8872, 0.9062, 0.922, 0.9353, 0.9463, 0.9554, 0.9633, 0.9696, 0.9748, 0.9791, 0.9827, 0.9857, 0.9881, 0.9902, 0.9919, 0.9933, 0.9945, 0.9954, 0.9962, 0.9969, 0.9974, 0.9979, 0.9982, 0.9985, 0.9988, 0.999);
+  --dur-spring-slow: 1123ms;
+}
+
+/* width / height changes of live bars glide to the new value (retargets mid-flight) */
+.spring-w { transition: width var(--dur-spring-gentle) var(--ease-spring-gentle); }
+.spring-h { transition: height var(--dur-spring-gentle) var(--ease-spring-gentle); }
+/* press feedback: JS drives a spring on --press; CSS only applies it */
+.press { transform: scale(var(--press, 1)); will-change: transform; touch-action: manipulation; }
+.spring-panel { transform: translateX(var(--panel-x, 0%)); }
+@media (prefers-reduced-motion: reduce) {
+  .spring-w, .spring-h { transition-duration: 1ms; }
+  .press { transform: none; }
+}
+
+/* htmx swaps settle in with the gentle spring */
+#screen.htmx-swapping { opacity: 0.6; }
+#screen { transition: opacity var(--dur-spring-snappy) var(--ease-spring-snappy); }
+
+/* ---------- Eva mascot: state-driven placeholder animation ----------
+   motion.js springs translate/scale/rotate/glow toward per-state targets;
+   these CSS variables are what it writes. */
+.eva-mascot .eva-body { transform: translateY(calc(var(--eva-y, 0) * 1px)) scale(var(--eva-s, 1)) rotate(calc(var(--eva-r, 0) * 1deg)); transform-origin: 50% 80%; will-change: transform; }
+.eva-mascot .eva-glow { opacity: var(--eva-glow, 0.6); transform: scale(var(--eva-gs, 1)); }
+.eva-mascot[data-state="alert"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-critical) 35%, transparent), transparent); }
+.eva-mascot[data-state="concerned"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-warn) 28%, transparent), transparent); }
+.eva-mascot[data-state="happy"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-mood-5) 30%, transparent), transparent); }
+
+/* ---------- journaling valence slider ---------- */
+.mood-range { -webkit-appearance: none; appearance: none; height: 0.75rem; border-radius: 999px; background-image: linear-gradient(90deg, var(--color-mood-1), var(--color-mood-2), var(--color-mood-3), var(--color-mood-4), var(--color-mood-5)); }
+.mood-range::-webkit-slider-thumb { -webkit-appearance: none; width: 1.75rem; height: 1.75rem; border-radius: 999px; background: var(--color-ink); border: 4px solid var(--color-background); box-shadow: 0 4px 12px rgb(0 0 0 / .5); }
+.mood-range::-moz-range-thumb { width: 1.25rem; height: 1.25rem; border-radius: 999px; background: var(--color-ink); border: 4px solid var(--color-background); }
+.mood-range:focus-visible { outline: 2px solid var(--color-info); outline-offset: 4px; }

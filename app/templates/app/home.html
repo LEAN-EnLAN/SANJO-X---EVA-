@@ -1,0 +1,23 @@
+{% import "mascot.html" as m %}
+<div id="banner" sse-swap="banner">{{ banner|safe }}</div>
+<div class="flex items-center justify-between gap-3 pt-1">
+  <a href="/app/records?seat={{ c.seat }}" hx-get="/app/records?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" aria-label="Records" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("grid", 18)|safe }}</a>
+  <a href="/app/eva?seat={{ c.seat }}" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" aria-label="Messages from Eva" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("bell", 18)|safe }}</a>
+</div>
+<div class="flex flex-col gap-1">
+  <p class="text-xs uppercase tracking-label text-muted">Day {{ c.day }} of {{ c.days }}</p>
+  <h1 class="text-4xl leading-none tracking-tight text-ink">{{ c.greeting }}, {{ c.first }}</h1>
+</div>
+<a href="/app/eva?seat={{ c.seat }}" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" class="press flex items-center gap-3 rounded-full bg-info/10 py-1.5 pr-1.5 pl-2 ring-1 ring-info/30">
+  {% call m::eva(c.mood, c.art, "size-10") %}
+  <span class="flex flex-1 flex-col"><span class="text-sm text-ink">Ask Eva</span><span class="text-xs text-muted">"How am I today?"</span></span>
+  <span class="inline-flex size-11 items-center justify-center rounded-full bg-ink text-on-light" aria-label="Talk to Eva">{{ crate::web::ui::ic("mic", 18)|safe }}</span>
+</a>
+<div id="live" class="flex flex-col gap-4" sse-swap="live">{{ live|safe }}</div>
+{% if let Some((t, text)) = next %}
+<div class="flex items-center gap-3 rounded-full bg-surface py-2 pr-2 pl-5">
+  <div class="flex flex-1 flex-col"><span class="text-xs text-muted">Next · {{ t }}</span><span class="text-sm text-ink">{{ text }}</span></div>
+  <button type="button" class="press inline-flex size-11 items-center justify-center rounded-full bg-ink text-on-light" aria-label="Done: log a glass of water" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"log_water","args":"{\"ml\":250}"}' hx-target="#toast" hx-swap="innerHTML">{{ crate::web::ui::ic("check", 18)|safe }}</button>
+</div>
+{% endif %}
+<p class="text-center text-xs text-faint">Eva guides, records and warns · the AED decides shocks · images AI-generated</p>

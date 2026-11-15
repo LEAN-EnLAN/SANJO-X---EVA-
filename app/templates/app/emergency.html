@@ -1,0 +1,115 @@
+{% match mode %}
+{% when "helper_cpr" %}
+{% if let Some(cs) = case %}
+<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical p-5 text-ink">
+  <div class="flex items-center justify-between pt-1">
+    <p class="text-xs uppercase tracking-label text-ink">Emergency · near you</p>
+    <span class="grid size-11 place-items-center rounded-full bg-background/20 text-sm text-ink">{{ c.initials }}</span>
+  </div>
+  <div class="mt-1 flex flex-col gap-3">
+    <p class="text-6xl leading-none tracking-tight text-ink">{{ cs.name.split(' ').next().unwrap_or("") }} needs help</p>
+    <div class="flex items-end justify-between gap-3">
+      <p class="text-xl text-ink">Seat {{ cs.seat }} · {{ distance }} away</p>
+      <span class="block h-16 w-24 shrink-0 overflow-hidden rounded-tile bg-background ring-1 ring-line"><img src="/static/img/wrist/wrist-alert.webp" alt="Your band shows the way too" class="size-full object-cover"></span>
+    </div>
+  </div>
+  <div class="flex items-center gap-4 rounded-card bg-background/15 p-4">
+    <span class="grid size-12 shrink-0 place-items-center rounded-full bg-ink text-on-light">{{ crate::web::ui::ic("upleft", 24)|safe }}</span>
+    <p class="text-base text-ink">{{ direction }}</p>
+  </div>
+  <div class="flex flex-col gap-2 rounded-tile bg-background/15 px-4 py-3">
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Why</span><span>{{ cs.why }}</span></div>
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Next</span><span>{{ cs.next }}</span></div>
+    <p class="text-xs text-ink/70">How Eva decided · {{ cs.how }}</p>
+  </div>
+  <p class="flex items-center gap-2 text-xs text-ink"><span class="size-2 shrink-0 animate-pulse rounded-full bg-ink"></span><span><span class="text-ink">AED:</span> station, corridor B · blinking{% if !aed_helper.is_empty() %} · {{ aed_helper }} is bringing it{% endif %}</span></p>
+  <div class="mt-auto flex flex-col gap-3">
+    <button type="button" class="press inline-flex h-20 w-full items-center justify-center gap-2 rounded-full bg-ink px-8 text-xl font-medium text-on-light" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"yes"}' hx-target="#screen">I'm going</button>
+    <button type="button" class="press inline-flex h-14 w-full items-center justify-center gap-2 rounded-full border border-line bg-raised px-7 text-base font-medium text-ink" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"no"}' hx-target="#screen">I can't</button>
+  </div>
+</section>
+{% endif %}
+{% when "helper_aed" %}
+{% if let Some(cs) = case %}
+<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical p-5 text-ink">
+  <p class="pt-1 text-xs uppercase tracking-label text-ink">Emergency · bring the AED</p>
+  <p class="text-5xl leading-none tracking-tight text-ink">Get the AED</p>
+  <p class="text-xl text-ink">Emergency station, corridor B · then seat {{ cs.seat }}</p>
+  <div class="flex items-center gap-4 rounded-card bg-background/15 p-4">
+    <span class="inline-grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/aed-station.webp" alt="" class="size-full scale-90 object-cover"></span>
+    <p class="text-base text-ink">Its light is blinking. Open the door, take the bag, walk fast to {{ cs.name.split(' ').next().unwrap_or("") }}.</p>
+  </div>
+  <div class="flex flex-col gap-2 rounded-tile bg-background/15 px-4 py-3">
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Why</span><span>The AED reads the heart and decides if a shock is needed.</span></div>
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Next</span><span>Pads on the bare chest · follow the AED's voice.</span></div>
+    <p class="text-xs text-ink/70">How Eva decided · nearest trained person to the station</p>
+  </div>
+  <div class="mt-auto flex flex-col gap-3">
+    <button type="button" class="press inline-flex h-20 w-full items-center justify-center rounded-full bg-ink px-8 text-xl font-medium text-on-light" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"yes"}' hx-target="#screen">I have it</button>
+    <button type="button" class="press inline-flex h-14 w-full items-center justify-center rounded-full border border-line bg-raised px-7 text-base font-medium text-ink" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"no"}' hx-target="#screen">I can't</button>
+  </div>
+</section>
+{% endif %}
+{% when "cpr" %}
+{% if let Some(cs) = case %}
+<div class="flex items-center justify-between pt-2">
+  <span class="inline-flex items-center gap-1 rounded-full border border-critical/50 bg-critical/15 px-2.5 py-0.5 text-xs font-medium text-critical">Emergency · {{ cs.name.split(' ').next().unwrap_or("") }}, {{ cs.seat }}</span>
+  <span class="text-xs text-muted">Step {{ step }} of 4</span>
+</div>
+<div class="flex gap-1.5">{% for i in 1..=4 %}<span class="h-1.5 flex-1 rounded-full {% if i <= step %}bg-ink{% else %}bg-line{% endif %}"></span>{% endfor %}</div>
+<p class="text-3xl leading-tight tracking-tight text-ink">Push hard and fast in the middle of the chest</p>
+<div class="flex justify-center">
+  <div class="relative grid size-56 place-items-center overflow-hidden rounded-full" style="--beat: 545ms">
+    <span class="absolute inset-0 rounded-full border border-critical/25"></span>
+    <span class="absolute inset-0 animate-beat-wave rounded-full border-4 border-critical/60"></span>
+    <span class="absolute inset-7 animate-beat-press rounded-full bg-critical/20 ring-2 ring-critical/70"></span>
+    <div class="relative flex flex-col items-center gap-1"><p class="text-6xl tracking-tight text-ink">110</p><p class="text-xs uppercase tracking-label text-muted">pushes a minute</p></div>
+  </div>
+</div>
+<div class="flex items-center gap-3 rounded-tile bg-ok/10 p-2 pr-4">
+  <span class="block h-12 w-18 shrink-0 overflow-hidden rounded-tile bg-background ring-1 ring-line"><img src="/static/img/wrist/wrist-cpr.webp" alt="Hands on the chest, the band counting the pushes" class="size-full object-cover"></span>
+  <span class="flex flex-1 flex-col gap-0.5"><span class="flex items-center gap-2 text-sm text-ink"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>Good depth · keep going</span><span class="text-xs text-muted">Your band counts the pushes</span></span>
+</div>
+<div class="flex items-center gap-3 rounded-tile bg-info/10 px-4 py-3">
+  <span class="text-info">{{ crate::web::ui::ic("zap", 18)|safe }}</span>
+  <p class="flex-1 text-sm text-ink">{% if aed_helper.is_empty() %}AED on its way{% else %}AED · {{ aed_helper }}{% endif %}</p>
+  <span class="inline-flex items-center gap-1 rounded-full border border-info/40 bg-info/10 px-2.5 py-0.5 text-xs font-medium text-info">AED decides shocks</span>
+</div>
+<div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
+  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Now</span><span>{{ cs.now }}</span></div>
+  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Why</span><span>Your pushes move blood to the brain.</span></div>
+  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Next</span><span>{{ cs.next }}</span></div>
+  <p class="text-xs text-faint">How Eva decided · {{ cs.how }}</p>
+</div>
+{% endif %}
+{% when "patient" %}
+<section class="flex flex-col gap-4 rounded-card border border-critical/50 bg-critical/10 p-5">
+  <p class="text-xs uppercase tracking-label text-critical">Emergency</p>
+  <p class="text-5xl leading-none tracking-tight text-ink">Help is coming</p>
+  {% if let Some(cs) = case %}
+  {% for h in cs.helpers %}<p class="flex items-center gap-2 text-sm text-ink"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-info"></span>{{ h.name }} · {{ h.task }}</p>{% endfor %}
+  {% endif %}
+  <p class="text-sm text-muted">Eva called the crew and is recording every step. Stay still if you can.</p>
+</section>
+{% when "other" %}
+{% if let Some(cs) = case %}
+<section class="flex flex-col gap-4 rounded-card border border-info/40 bg-info/5 p-5">
+  <p class="text-xs uppercase tracking-label text-info">For your information</p>
+  <p class="text-4xl leading-none tracking-tight text-ink">{{ cs.name }} is being helped</p>
+  <p class="text-base text-ink">Keep corridor B clear. Stay in your seat unless Eva asks you.</p>
+  {% for h in cs.helpers %}<p class="flex items-center gap-2 text-sm text-muted"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-info"></span>{{ h.name }} · {{ h.task }}</p>{% endfor %}
+</section>
+{% endif %}
+{% else %}
+<div class="flex flex-col gap-1 pt-2">
+  <p class="text-xs uppercase tracking-label text-muted">Help</p>
+  <h1 class="text-4xl leading-none tracking-tight text-ink">No emergency right now</h1>
+</div>
+<p class="text-sm text-muted">If you or someone near you is in danger, press the button. Eva sends the nearest trained person and tells the crew lead.</p>
+<button type="button" class="press inline-flex h-20 w-full items-center justify-center gap-3 rounded-full bg-critical px-8 text-xl font-medium text-ink" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"request_help","args":"{\"reason\":\"Help button on the app\"}"}' hx-target="#toast">{{ crate::web::ui::ic("siren", 24)|safe }}Get help now</button>
+<div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
+  <p class="flex items-center gap-2 text-xs text-muted"><span class="size-2 shrink-0 animate-pulse rounded-full bg-info"></span><span><span class="text-ink">AED:</span> emergency station, corridor B · blinks when needed</span></p>
+  <p class="flex items-center gap-2 text-xs text-muted"><span class="size-2 shrink-0 rounded-full bg-info"></span><span><span class="text-ink">Shelter:</span> Deck B · water walls block radiation</span></p>
+  <p class="text-xs text-faint">Eva guides, records and warns. The AED decides shocks.</p>
+</div>
+{% endmatch %}

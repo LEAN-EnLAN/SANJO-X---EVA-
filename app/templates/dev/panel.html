@@ -1,0 +1,56 @@
+<div class="pointer-events-auto absolute inset-0 bg-background/60" data-dev-close></div>
+<aside class="spring-panel pointer-events-auto absolute top-0 right-0 flex h-full w-full max-w-md flex-col gap-5 overflow-y-auto border-l border-line bg-surface p-5" role="dialog" aria-label="Dev panel">
+  <header class="flex items-center justify-between gap-3">
+    <div class="flex flex-col"><p class="text-xs uppercase tracking-label text-brand">Dev panel · ↑↑↓↓←→←→BA</p><p class="text-xl tracking-tight text-ink">Demo controls</p></div>
+    <button type="button" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink" aria-label="Close" data-dev-close>{{ crate::web::ui::ic("x", 18)|safe }}</button>
+  </header>
+  <p class="text-xs text-muted">Node: {{ role }} · ship time {{ time }} · Eva: {{ agent_mode }}</p>
+  {% if !flash.is_empty() %}<p class="rounded-tile bg-info/10 px-3 py-2 text-sm text-info">{{ flash }}</p>{% endif %}
+
+  <form class="flex flex-col gap-3" hx-target="#dev-panel" hx-swap="innerHTML">
+    <p class="text-xs uppercase tracking-label text-muted">Passenger</p>
+    <select name="seat" class="h-10 rounded-full border border-line bg-background px-3 text-sm text-ink">
+      {% for (s, n) in seats %}<option value="{{ s }}" {% if s == "4B" %}selected{% endif %}>{{ s }} · {{ n }}</option>{% endfor %}
+    </select>
+    <div class="grid grid-cols-2 gap-2">
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full bg-critical px-4 text-sm font-medium text-ink" hx-post="/api/dev/cardiac">{{ crate::web::ui::ic("heart", 16)|safe }}Cardiac arrest</button>
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/close_case">Close case</button>
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/suit">{{ crate::web::ui::ic("shirt", 16)|safe }}Toggle suit mode</button>
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/battery">Low battery</button>
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/warm">Skin warm</button>
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/spo2">Oxygen dip</button>
+    </div>
+    <p class="mt-2 text-xs uppercase tracking-label text-muted">Ship</p>
+    <div class="grid grid-cols-2 gap-2">
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-warn/40 bg-warn/10 px-4 text-sm text-warn" hx-post="/api/dev/storm">{{ crate::web::ui::ic("sun", 16)|safe }}Solar storm</button>
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/storm_end">End storm</button>
+    </div>
+    <p class="mt-2 text-xs uppercase tracking-label text-muted">Uplink profile</p>
+    <div class="grid grid-cols-2 gap-2">
+      {% for (name, label, on) in profiles %}
+      <button class="press inline-flex h-10 items-center justify-center rounded-full px-3 text-xs {% if *on %}bg-ink text-on-light{% else %}border border-line bg-raised text-ink{% endif %}" hx-post="/api/dev/profile" name="profile" value="{{ name }}">{{ label }}</button>
+      {% endfor %}
+    </div>
+    <p class="mt-2 text-xs uppercase tracking-label text-muted">Clock</p>
+    <div class="grid grid-cols-3 gap-2">
+      <button class="press inline-flex h-10 items-center justify-center rounded-full border border-line bg-raised px-3 text-xs text-ink" hx-post="/api/dev/ff" name="minutes" value="1">+1 min</button>
+      <button class="press inline-flex h-10 items-center justify-center rounded-full border border-line bg-raised px-3 text-xs text-ink" hx-post="/api/dev/ff" name="minutes" value="10">+10 min</button>
+      <button class="press inline-flex h-10 items-center justify-center rounded-full border border-line bg-raised px-3 text-xs text-ink" hx-post="/api/dev/ff" name="minutes" value="60">+1 h</button>
+    </div>
+    <button class="press mt-2 inline-flex h-11 items-center justify-center gap-2 rounded-full border border-critical/50 px-4 text-sm text-critical" hx-post="/api/dev/reset" hx-confirm="Reset the demo? The chain file is wiped.">Reset demo</button>
+  </form>
+
+  <section class="flex flex-col gap-2">
+    <p class="text-xs uppercase tracking-label text-muted">Mesh · RTT per client</p>
+    {% for n in nodes %}<p class="flex items-center justify-between text-xs"><span class="text-ink">#{{ n.id }} {{ n.name }} <span class="text-faint">{{ n.role.name() }}</span></span><span class="font-mono text-muted">{% if n.rtt_samples == 0 %}—{% else %}{{ n.rtt_ms }} ms{% endif %}</span></p>{% endfor %}
+    <button type="button" class="inline-flex h-9 items-center justify-center rounded-full border border-line bg-raised px-3 text-xs text-ink" data-mesh-ping-all>Ping every client end to end</button>
+    <div class="flex flex-col gap-1 text-xs text-muted" data-mesh-results></div>
+  </section>
+
+  <section class="flex flex-col gap-2">
+    <p class="text-xs uppercase tracking-label text-muted">Eva Link · bytes per message</p>
+    <table class="w-full text-xs"><tbody>
+      {% for (name, bytes, payload) in sizes %}<tr class="border-b border-line"><td class="py-1 text-ink">{{ name }}</td><td class="py-1 text-right font-mono text-muted">{{ bytes }} B</td><td class="py-1 text-right font-mono text-faint">{{ payload }} payload</td></tr>{% endfor %}
+    </tbody></table>
+  </section>
+</aside>

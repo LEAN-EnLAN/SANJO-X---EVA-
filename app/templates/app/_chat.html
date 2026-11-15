@@ -1,0 +1,16 @@
+{% if msgs.is_empty() %}
+<p class="text-center text-xs text-muted">Ask anything, or tap a chip. Eva answers in short, plain lines.</p>
+{% endif %}
+{% for msg in msgs %}
+{% if msg.eva %}
+<div class="flex max-w-full items-end gap-2 self-start animate-eva-rise" data-eva-msg>
+  <img src="/static/img/eva/eva-neutral.webp" alt="Eva" class="size-8 shrink-0 object-contain">
+  <div class="flex min-w-0 flex-col gap-1 rounded-tile rounded-bl-sm bg-raised px-3.5 py-2.5 text-sm leading-snug text-ink">
+    {% if let Some(l) = msg.label %}<span class="text-xs uppercase tracking-label text-info">{{ l }}</span>{% endif %}
+    {% for line in msg.lines %}<span data-say>{{ line }}</span>{% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="flex max-w-64 flex-col gap-1 self-end rounded-tile rounded-br-sm bg-elevated px-3.5 py-2.5 text-sm leading-snug text-ink animate-eva-rise">{% for line in msg.lines %}<span>{{ line }}</span>{% endfor %}</div>
+{% endif %}
+{% endfor %}

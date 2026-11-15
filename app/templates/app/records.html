@@ -1,0 +1,30 @@
+<div class="flex items-center justify-between gap-3 pt-1">
+  <a href="/app?seat={{ c.seat }}" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" aria-label="Back" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <p class="text-xs uppercase tracking-label text-muted">Logbook</p>
+  <span class="size-11"></span>
+</div>
+<div class="flex items-end justify-between gap-3">
+  <p class="text-4xl leading-none tracking-tight text-ink">Your records</p>
+  {% if verified %}<span class="inline-flex items-center gap-1 rounded-full border border-ok/40 bg-ok/10 px-2.5 py-0.5 text-xs font-medium text-ok">Chain verified · {{ total }}</span>{% else %}<span class="inline-flex items-center gap-1 rounded-full border border-critical/50 bg-critical/15 px-2.5 py-0.5 text-xs font-medium text-critical">Chain broken</span>{% endif %}
+</div>
+<div class="grid grid-cols-3 gap-2">
+  <a href="/export/report?seat={{ c.seat }}" target="_blank" class="press inline-flex h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-3 text-sm font-medium text-on-light">{{ crate::web::ui::ic("file", 16)|safe }}Report</a>
+  <a href="/export/records.csv?seat={{ c.seat }}" class="press inline-flex h-11 items-center justify-center gap-1.5 rounded-full border border-line bg-raised px-3 text-sm text-ink">{{ crate::web::ui::ic("download", 16)|safe }}CSV</a>
+  <a href="/export/records.json?seat={{ c.seat }}" class="press inline-flex h-11 items-center justify-center gap-1.5 rounded-full border border-line bg-raised px-3 text-sm text-ink">{{ crate::web::ui::ic("download", 16)|safe }}JSON</a>
+</div>
+<div class="flex flex-col gap-2">
+  {% for r in records %}
+  <div class="flex items-center gap-3 rounded-tile bg-surface px-3 py-3">
+    <div class="flex min-w-0 flex-1 flex-col">
+      <span class="font-mono text-xs text-muted">{{ r.time }} · #{{ r.seq }} · {{ r.kind }}</span>
+      <span class="truncate text-sm text-ink">{{ r.text }}</span>
+      <span class="font-mono text-xs text-faint">{{ r.hash }}…</span>
+    </div>
+    <div class="flex shrink-0 flex-col items-end gap-1.5">
+      <div class="flex gap-1">{% for on in r.bars() %}<span class="h-1.5 w-4 rounded-full {% if on %}{{ crate::web::ui::sync_fill(r.step) }}{% else %}bg-line{% endif %}"></span>{% endfor %}</div>
+      <p class="text-xs text-muted">{{ r.sync_label() }}</p>
+    </div>
+  </div>
+  {% endfor %}
+  {% if records.is_empty() %}<p class="text-sm text-muted">Nothing yet. Every check-in, journal entry and alert you make lands here.</p>{% endif %}
+</div>

@@ -1,0 +1,39 @@
+<article class="flex flex-col rounded-tile border {% if r.care %}border-critical/50 bg-critical/10{% else %}border-transparent bg-raised{% endif %}">
+  <div class="flex items-center gap-4 overflow-x-auto px-4 py-3">
+    <div class="min-w-40 flex-1">
+      <span class="flex min-w-0 items-center gap-3">
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium {% if r.care %}bg-critical/20 text-critical{% else %}bg-warn/15 text-warn{% endif %}">{{ r.initials }}</span>
+        <span class="flex min-w-0 flex-col leading-tight"><span class="truncate text-sm text-ink">{{ r.name }}</span><span class="text-xs text-muted">Seat {{ r.seat }}{% if r.stale %} · no data 30 s{% endif %}</span></span>
+      </span>
+    </div>
+    <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(r.status_tone) }}">{% if r.care %}<span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"><span class="absolute inset-0 animate-ping rounded-full bg-critical"></span></span>{% endif %}{{ r.status_label }}</span></div>
+    <div class="w-52 shrink-0">
+      <span class="flex items-center gap-3">
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums {{ crate::web::ui::text(r.hr_tone) }}">{{ r.hr }}{% if r.hr_unit %}<span class="ml-1 text-xs text-muted">bpm</span>{% endif %}</span><span class="truncate text-xs {% if r.care %}text-critical{% else %}text-muted{% endif %}">{{ r.hr_word }}</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="{{ r.band_y }}" height="{{ r.band_h }}" rx="4" class="fill-ok/15"/><polyline points="{{ r.pts }}" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="{{ crate::web::ui::stroke(r.line_tone) }}"/><circle cx="{{ r.last_x }}" cy="{{ r.last_y }}" r="3.5" class="fill-current {{ crate::web::ui::text(r.line_tone) }}"/></svg>
+      </span>
+    </div>
+    <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums {% if r.spo2 == "—" %}text-critical{% else %}text-ink{% endif %}">{{ r.spo2 }}{% if r.spo2 != "—" %}<span class="ml-1 text-xs text-muted">%</span>{% endif %}</span><span class="truncate text-xs {{ crate::web::ui::text(r.spo2_tone) }}">{{ r.spo2_word }}</span></span></div>
+    <div class="w-28 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums {% if r.skin_tone == "warn" %}text-warn{% else %}text-ink{% endif %}">{{ r.skin }}<span class="ml-1 text-xs text-muted">°C</span></span><span class="truncate text-xs {{ crate::web::ui::text(r.skin_tone) }}">{{ r.skin_word }}</span></span></div>
+    <div class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="font-mono text-sm tabular-nums {% if r.ecg_tone == "warn" %}text-warn{% else %}text-ink{% endif %}">{{ r.ecg_t }}</span><span class="truncate text-xs {{ crate::web::ui::text(r.ecg_tone) }}">{{ r.ecg_word }}</span></span></div>
+    <div class="w-24 shrink-0">{% if r.suit %}<span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line bg-elevated px-2.5 text-xs text-ink">{{ crate::web::ui::ic("shirt", 13)|safe }}Suit</span>{% else %}<span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs text-muted">{{ crate::web::ui::ic("magnet", 13)|safe }}Joined</span>{% endif %}</div>
+    <div class="w-36 shrink-0">
+      <span class="flex flex-col gap-1">
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full {{ crate::web::ui::dot(crate::web::ui::batt_tone(r.base)) }}" style="--pct: {{ r.base }}%"></span></span><span class="w-9 text-right text-xs tabular-nums {% if r.base < 20 %}text-warn{% else %}text-muted{% endif %}">{{ r.base }}%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full {{ crate::web::ui::dot(crate::web::ui::batt_tone(r.screen)) }}" style="--pct: {{ r.screen }}%"></span></span><span class="w-9 text-right text-xs tabular-nums {% if r.screen < 20 %}text-warn{% else %}text-muted{% endif %}">{{ r.screen }}%</span></span>
+      </span>
+    </div>
+  </div>
+  {% if !r.eva_line.is_empty() || !r.helpers.is_empty() %}
+  <div class="flex flex-wrap items-center gap-3 border-t px-4 py-2.5 {% if r.care %}border-critical/30{% else %}border-line{% endif %}">
+    <span class="grid size-6 shrink-0 place-items-center rounded-full bg-info/15 text-info">{{ crate::web::ui::ic("sparkles", 13)|safe }}</span>
+    <p class="min-w-0 flex-1 truncate text-sm text-ink">{{ r.eva_line }}</p>
+    {% if !r.helpers.is_empty() %}
+    <span class="flex shrink-0 flex-wrap items-center gap-2">
+      {% for h in r.helpers %}<span class="inline-flex h-8 items-center gap-2 rounded-full bg-background/60 pr-3 pl-1"><span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-info/15 text-xs font-medium text-info">{{ h.initials }}</span><span class="text-xs text-ink">{{ h.first }} · {{ h.task }}</span><span class="text-xs text-muted tabular-nums">{{ h.hr }} bpm</span></span>{% endfor %}
+      <a href="#case" class="inline-flex h-8 items-center justify-center gap-2 rounded-full bg-ink px-3 text-xs font-medium text-on-light">Open case {{ crate::web::ui::ic("arrow", 14)|safe }}</a>
+    </span>
+    {% endif %}
+  </div>
+  {% endif %}
+</article>

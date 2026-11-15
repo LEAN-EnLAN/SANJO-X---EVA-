@@ -1,0 +1,153 @@
+// Eva motion engine: springs only (docs/app/MOTION.md).
+// - Spring tokens (mass / stiffness / damping) are read from CSS custom properties,
+//   so CSS and JS share one source. CSS `linear()` easings are regenerated from them.
+// - Every animation is a spring with position + velocity: setting a new target mid-flight
+//   keeps the current velocity (interruptible, retargetable, no jumps).
+// - Gestures drive values directly while the finger is down, then hand their release
+//   velocity to a spring (continuous with the gesture).
+// - prefers-reduced-motion: values jump to their target, idle loops stop.
+(function () {
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var css = getComputedStyle(document.documentElement);
+  var NAMES = ["snappy", "gentle", "bouncy", "slow"];
+
+  function token(name) {
+    function n(k, d) { var v = parseFloat(css.getPropertyValue("--spring-" + name + "-" + k)); return isFinite(v) ? v : d; }
+    return { mass: n("mass", 1), stiffness: n("stiffness", 170), damping: n("damping", 26) };
+  }
+
+  // sample a unit spring into a CSS linear() easing + duration
+  function linearFor(cfg) {
+    var x = 0, v = 0, t = 0, dt = 1 / 1000, pts = [0];
+    while (t < 3) {
+      var a = (-cfg.stiffness * (x - 1) - cfg.damping * v) / cfg.mass;
+      v += a * dt; x += v * dt; t += dt; pts.push(x);
+      if (t > 0.05 && Math.abs(x - 1) < 0.001 && Math.abs(v) < 0.01) break;
+    }
+    var out = [], n = 40;
+    for (var i = 0; i <= n; i++) out.push(pts[Math.min(pts.length - 1, Math.round((pts.length - 1) * i / n))].toFixed(4));
+    return { ease: "linear(" + out.join(", ") + ")", ms: Math.round(t * 1000) };
+  }
+  NAMES.forEach(function (name) {
+    var l = linearFor(token(name));
+    document.documentElement.style.setProperty("--ease-spring-" + name, l.ease);
+    document.documentElement.style.setProperty("--dur-spring-" + name, l.ms + "ms");
+  });
+
+  // ---- one rAF loop for all active springs
+  var active = new Set(), raf = 0, last = 0;
+  function loop(now) {
+    var dt = Math.min(0.064, (now - (last || now)) / 1000); last = now;
+    active.forEach(function (s) { if (s._step(dt)) active.delete(s); });
+    raf = active.size ? requestAnimationFrame(loop) : 0;
+    if (!raf) last = 0;
+  }
+  function wake(s) { active.add(s); if (!raf) raf = requestAnimationFrame(loop); }
+
+  function Spring(value, cfg, onUpdate) {
+    this.x = value; this.v = 0; this.target = value;
+    this.cfg = typeof cfg === "string" ? token(cfg) : (cfg || token("gentle"));
+    this.onUpdate = onUpdate || function () {};
+  }
+  Spring.prototype.set = function (target, cfg, velocity) {
+    this.target = target;
+    if (cfg) this.cfg = typeof cfg === "string" ? token(cfg) : cfg;
+    if (velocity !== undefined) this.v = velocity;
+    if (reduced.matches) { this.x = target; this.v = 0; this.onUpdate(this.x); return this; }
+    wake(this); return this;
+  };
+  // follow a gesture directly (no animation), remembering velocity for the release
+  Spring.prototype.track = function (value, dt) {
+    if (dt > 0) this.v = (value - this.x) / dt;
+    this.x = value; this.target = value; active.delete(this); this.onUpdate(this.x);
+  };
+  Spring.prototype._step = function (dt) {
+    var c = this.cfg, steps = Math.max(1, Math.ceil(dt * 240)), h = dt / steps;
+    for (var i = 0; i < steps; i++) {
+      var a = (-c.stiffness * (this.x - this.target) - c.damping * this.v) / c.mass;
+      this.v += a * h; this.x += this.v * h;
+    }
+    var done = Math.abs(this.x - this.target) < 0.0005 * Math.max(1, Math.abs(this.target)) && Math.abs(this.v) < 0.01;
+    if (done) { this.x = this.target; this.v = 0; }
+    this.onUpdate(this.x);
+    return done;
+  };
+
+  // drive a CSS custom property on an element with a spring
+  function varSpring(el, prop, initial, cfg) {
+    return new Spring(initial, cfg, function (x) { el.style.setProperty(prop, x.toFixed(4)); });
+  }
+
+  // ---- press feedback on .press: scale follows the finger down, springs back up
+  document.addEventListener("pointerdown", function (e) {
+    var el = e.target.closest && e.target.closest(".press");
+    if (!el || reduced.matches) return;
+    var s = el._press || (el._press = varSpring(el, "--press", 1, "snappy"));
+    s.set(0.95, "snappy");
+    function up() { s.set(1, "bouncy"); el.removeEventListener("pointerup", up); el.removeEventListener("pointerleave", up); el.removeEventListener("pointercancel", up); }
+    el.addEventListener("pointerup", up); el.addEventListener("pointerleave", up); el.addEventListener("pointercancel", up);
+  }, { passive: true });
+
+  // ---- Eva mascot: state-driven springs
+  // targets per state: y (px), s (scale), r (deg), glow (opacity), gs (glow scale), and an
+  // optional idle loop that alternates targets so the motion keeps breathing.
+  var STATES = {
+    idle:      { y: 0,  s: 1,    r: 0,  glow: 0.55, gs: 1,    cfg: "slow",   loop: { every: 2600, y: -3, s: 1.025, glow: 0.7 } },
+    listening: { y: -4, s: 1.06, r: -4, glow: 0.9,  gs: 1.15, cfg: "gentle", loop: { every: 900, s: 1.08, glow: 1 } },
+    thinking:  { y: -2, s: 1,    r: -6, glow: 0.6,  gs: 1.05, cfg: "gentle", loop: { every: 800, r: 6 } },
+    speaking:  { y: -1, s: 1.02, r: 0,  glow: 0.8,  gs: 1.1,  cfg: "snappy", loop: { every: 260, s: 1.06, y: -3 } },
+    happy:     { y: -10, s: 1.08, r: 3, glow: 0.85, gs: 1.2,  cfg: "bouncy", settle: { after: 420, y: 0, s: 1.03 } },
+    concerned: { y: 2,  s: 0.97, r: -3, glow: 0.7,  gs: 1,    cfg: "slow",   loop: { every: 2000, y: 0 } },
+    alert:     { y: -2, s: 1.04, r: 0,  glow: 1,    gs: 1.25, cfg: "snappy", loop: { every: 500, s: 1, gs: 1.1 } }
+  };
+  var ART = { idle: "neutral", thinking: "neutral", listening: "wink", speaking: "happy", happy: "happy", concerned: "care", alert: "care" };
+
+  function Mascot(el) {
+    this.el = el;
+    this.sp = {
+      y: varSpring(el, "--eva-y", 0), s: varSpring(el, "--eva-s", 1), r: varSpring(el, "--eva-r", 0),
+      glow: varSpring(el, "--eva-glow", 0.55), gs: varSpring(el, "--eva-gs", 1)
+    };
+    this.timer = 0; this.flip = false;
+    this.setState(el.getAttribute("data-state") || "idle");
+  }
+  Mascot.prototype.apply = function (t, cfg) {
+    var sp = this.sp;
+    Object.keys(sp).forEach(function (k) { if (t[k] !== undefined) sp[k].set(t[k], cfg); });
+  };
+  Mascot.prototype.setState = function (state) {
+    var st = STATES[state] || STATES.idle, self = this;
+    this.state = state;
+    this.el.setAttribute("data-state", state);
+    var img = this.el.querySelector("img");
+    if (img && ART[state]) {
+      var want = "/static/img/eva/eva-" + ART[state] + ".webp";
+      if (img.getAttribute("src") !== want) img.setAttribute("src", want);
+    }
+    clearInterval(this.timer); clearTimeout(this.settle);
+    this.apply(st, st.cfg);
+    if (st.settle) this.settle = setTimeout(function () { self.apply(st.settle, "gentle"); }, st.settle.after);
+    if (st.loop && !reduced.matches) {
+      this.flip = false;
+      this.timer = setInterval(function () {
+        if (!document.body.contains(self.el)) { clearInterval(self.timer); return; }
+        self.flip = !self.flip;
+        self.apply(self.flip ? st.loop : st, st.cfg);
+      }, st.loop.every);
+    }
+  };
+
+  function mountMascots(root) {
+    (root || document).querySelectorAll("[data-eva]").forEach(function (el) { if (!el._eva) el._eva = new Mascot(el); });
+  }
+  function setMood(state) {
+    document.querySelectorAll("[data-eva]").forEach(function (el) { (el._eva || (el._eva = new Mascot(el))).setState(state); });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () { mountMascots(document); });
+  document.addEventListener("htmx:load", function (e) { mountMascots(e.target); });
+  reduced.addEventListener && reduced.addEventListener("change", function () { setMood(document.querySelector("[data-eva]")?.getAttribute("data-state") || "idle"); });
+
+  window.EvaMotion = { Spring: Spring, token: token, varSpring: varSpring, setMood: setMood, mountMascots: mountMascots, reduced: reduced, linearFor: linearFor };
+})();
