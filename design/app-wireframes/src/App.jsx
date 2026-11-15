@@ -3,9 +3,9 @@ import { Bell, Plus, HeartPulse } from "lucide-react"
 import MobileScreens from "@/screens/mobile"
 import { CrewDashboard, EarthView } from "@/screens/dashboard"
 
-const Section = ({ id, eyebrow, title, intro, children }) => (
+const Section = ({ id, eyebrow, title, children }) => (
   <section id={id} className="flex flex-col gap-8 border-t border-line px-6 py-16 lg:px-12">
-    <div className="flex max-w-3xl flex-col gap-3"><Eyebrow>{eyebrow}</Eyebrow><Headline>{title}</Headline>{intro && <Body muted>{intro}</Body>}</div>
+    <div className="flex max-w-3xl flex-col gap-3"><Eyebrow>{eyebrow}</Eyebrow><Headline>{title}</Headline></div>
     {children}
   </section>
 )
@@ -33,12 +33,12 @@ function DesignSystem() {
       </Card>
       <Card>
         <CardHeader><CardTitle>Progress · split · gauge</CardTitle></CardHeader>
-        <div className="flex flex-col gap-4"><Progress value={64} /><SplitBar a={70} b={30} /><div className="flex items-center gap-4"><Ring value={72} size={96}><span className="text-lg">72%</span></Ring><HalfGauge size={180} thickness={26} segments={[{ value: 55, tone: "info" }, { value: 15, tone: "ink" }, { value: 30, hatched: true }]} /></div></div>
+        <div className="flex flex-col gap-4"><Progress value={64} /><SplitBar a={70} b={30} /><div className="flex items-center gap-4"><Ring value={72} size={96}><span className="text-xl font-medium text-ink">72%</span></Ring><HalfGauge size={180} thickness={26} segments={[{ value: 55, tone: "info" }, { value: 15, tone: "ink" }, { value: 30, hatched: true }]} /></div></div>
       </Card>
       <Card>
         <CardHeader><CardTitle>Charts and rows</CardTitle><PillSelect>This week</PillSelect></CardHeader>
         <Sparkline data={[70, 72, 71, 74, 73, 78, 76, 72]} band={[62, 80]} />
-        <div className="mt-4 flex flex-col gap-1"><ListRow leading={<Avatar name="Ana Ruiz" tone="ok" />} title="Ana Ruiz" subtitle="Seat 4B · all good" trailing={<Check done />} /><ListRow leading={<IconTile src="img/chip-vitals-b.jpg" size="sm" />} title="Drink 1 glass of water" subtitle="32 min left" trailing={<Check />} /></div>
+        <div className="mt-4 flex flex-col gap-1"><ListRow leading={<Avatar name="Ana Ruiz" tone="ok" />} title="Ana Ruiz" subtitle="Seat 4B · all good" trailing={<Check done />} /><ListRow leading={<IconTile src="img/icons/water.webp" alt="Water" size="sm" />} title="Drink 1 glass of water" subtitle="32 min left" trailing={<Check />} /></div>
         <div className="mt-4"><Segmented items={["Day", "Week", "Trip"]} active="Week" /></div>
       </Card>
       <Card className="lg:col-span-3">
@@ -55,22 +55,21 @@ export default function App() {
       <header className="flex flex-col gap-6 px-6 pt-16 pb-12 lg:px-12">
         <Eyebrow>Eva by WearMeds · app wireframes</Eyebrow>
         <h1 className="max-w-5xl text-hero tracking-tight">Two views of the same care: the passenger's and the crew's.</h1>
-        <Body muted className="max-w-2xl">Semi-detailed wireframes for the passenger app and wristband screen, and for the crew and Earth dashboards. Every screen is built from one design system and checked by a linter, so any person or agent who adds a screen gets the same colours, spacing and components.</Body>
         <nav className="flex flex-wrap gap-2 text-sm"><a href="#passenger"><Badge>Passenger app</Badge></a><a href="#crew"><Badge>Crew dashboard</Badge></a><a href="#earth"><Badge>Earth view</Badge></a><a href="#system"><Badge>Design system</Badge></a></nav>
       </header>
-      <Section id="passenger" eyebrow="View 1 · passenger" title="The passenger app and the wristband screen" intro="For people with no medical training. One idea per screen, verbs first, and a plain read-out next to every number.">
+      <Section id="passenger" eyebrow="View 1 · passenger" title="Passenger app and wristband">
         <MobileScreens />
       </Section>
-      <Section id="crew" eyebrow="View 2 · crew on board" title="Crew dashboard" intro="The ship hub's view for the crew lead: who is fine, who needs help, what Eva is doing, and what is waiting to reach Earth.">
+      <Section id="crew" eyebrow="View 2 · crew on board" title="Crew dashboard">
         <CrewDashboard />
       </Section>
-      <Section id="earth" eyebrow="View 2b · flight surgeon on Earth" title="Earth view, minutes behind" intro="Everything arrives late. The view says how late, and what the ship already did about it.">
+      <Section id="earth" eyebrow="View 2b · flight surgeon on Earth" title="Earth view, minutes behind">
         <EarthView />
       </Section>
-      <Section id="system" eyebrow="Design system" title="One system, enforced by a linter" intro="Tokens live in theme.css; components live in @/ds; @shadcn/lint rejects raw colours, made-up values, inline styles and restyled components.">
+      <Section id="system" eyebrow="Design system" title="One system, enforced by a linter">
         <DesignSystem />
       </Section>
-      <footer className="border-t border-line px-6 py-10 text-xs text-muted lg:px-12">Wireframes, not medical software. Product images are AI-generated concept art from the team's kit. Eva guides, records and warns. Shocks are decided by the AED at the ship's emergency station, never by Eva.</footer>
+      <footer className="border-t border-line px-6 py-10 text-xs text-muted lg:px-12">Wireframes, not medical software · AI-generated concept images · Eva guides, records and warns · shocks: the AED decides, never Eva</footer>
     </main>
   )
 }

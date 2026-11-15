@@ -1,59 +1,79 @@
-import { Phone, Headline, Body, Button, IconButton, Card, CardHeader, CardTitle, Badge, StatusDot, Progress, Sparkline, ListRow, IconTile, Check, Segmented } from "@/ds"
-import { PhoneTop, Label, Reading, Tile, Hero, Legend } from "@/ds/mobile-extra"
-import { Check as CheckIcon, Bell, LayoutGrid, ChevronLeft, Info, HeartPulse, Droplet, ArrowRight, Moon, Utensils, Wind, CalendarDays, Plus, Dumbbell, Sun, MessageCircle, Zap } from "lucide-react"
+import { Phone, Headline, Button, IconButton, Card, CardHeader, CardTitle, Badge, StatusDot, Progress, Sparkline, ListRow, IconTile, Check, Segmented } from "@/ds"
+import { PhoneTop, Label, Reading, Tile, Legend, PhotoTile, Thumb, Hero, IconLine } from "@/ds/mobile-extra"
+import { Check as CheckIcon, Bell, LayoutGrid, ChevronLeft, Info, ArrowRight, CalendarDays, Plus, Compass, NotebookPen, BellRing, CircleCheck } from "lucide-react"
 import { Tabs } from "./shared"
 
 export function Welcome() {
   return (
-    <Phone number="01" caption="Welcome. One promise, one button. The round check confirms the band is paired before the trip starts.">
+    <Phone number="01" caption="Welcome">
       <PhoneTop left={<Label>Eva by WearMeds</Label>} right={<Badge>Offline ready</Badge>} />
-      <Hero src="img/chip-vitals-b.jpg" alt="A passenger wearing the Eva wristband" size="lg" />
+      <Hero src="img/wrist/wrist-hero.webp" alt="The Eva wristband worn on the wrist like a watch" size="lg" />
+      <div className="grid grid-cols-2 gap-3">
+        {[{ src: "img/wrist/band-interface.webp", label: "Screen" }, { src: "img/wrist/band-base.webp", label: "Sensor base" }].map(p => (
+          <div key={p.label} className="flex items-center gap-2.5">
+            <PhotoTile src={p.src} alt={p.label} size="sm" />
+            <span className="flex flex-col"><span className="text-sm text-ink">{p.label}</span><span className="text-xs text-ok">Paired</span></span>
+          </div>
+        ))}
+      </div>
       <h1 className="mt-2 text-5xl leading-none tracking-tight text-ink">Care for the whole trip to Mars.</h1>
-      <Body muted>Eva guides you, keeps your health log and warns you early. It works on board, even when Earth is far away.</Body>
       <div className="flex flex-wrap gap-2">
-        <Badge>Guides</Badge><Badge>Records</Badge><Badge>Warns</Badge>
+        <Badge tone="info"><Compass size={12} />Guides</Badge><Badge tone="info"><NotebookPen size={12} />Records</Badge><Badge tone="info"><BellRing size={12} />Warns</Badge>
       </div>
       <div className="mt-auto flex items-center gap-3">
         <Button size="lg" className="flex-1">Get started</Button>
         <IconButton tone="light" size="lg" label="Wristband paired"><CheckIcon size={22} strokeWidth={2.5} /></IconButton>
       </div>
-      <p className="text-center text-xs text-faint">Wristband paired · sensor base and screen</p>
     </Phone>
   )
 }
 
+const BandPart = ({ src, name, pct, read }) => (
+  <div className="flex items-center gap-2.5">
+    <PhotoTile src={src} alt={name} size="xs" />
+    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+      <span className="flex items-baseline justify-between gap-2"><span className="text-sm text-ink">{name}</span><span className="truncate text-xs text-muted">{read}</span></span>
+      <Progress value={pct} tone="ink" marker={false} size="sm" />
+    </div>
+  </div>
+)
+
+const Vital = ({ src, value, unit, read }) => (
+  <div className="flex flex-col items-start gap-3">
+    <PhotoTile src={src} size="sm" />
+    <Reading value={value} unit={unit} read={read} size="sm" />
+  </div>
+)
+
 export function Home() {
   return (
-    <Phone number="02" caption="Home. A friendly greeting, one card that answers &quot;am I OK?&quot;, and the state of both parts of the wristband. Each part has its own battery and LoRa radio." tabbar={<Tabs active="Home" />}>
+    <Phone number="02" caption="Home" tabbar={<Tabs active="Home" />}>
       <PhoneTop left={<IconButton label="Menu"><LayoutGrid size={18} /></IconButton>} right={<IconButton label="Alerts"><Bell size={18} /></IconButton>} />
       <div className="flex flex-col gap-1">
-        <Label>Day 94 of 212 · on the way</Label>
+        <Label>Day 94 of 212</Label>
         <Headline as="h1" className="text-5xl leading-none">Good morning, Ana</Headline>
       </div>
       <Card>
-        <CardHeader className="mb-5 items-center">
+        <CardHeader className="items-center">
           <CardTitle>Today: all good</CardTitle>
           <Badge tone="ok">Normal for you</Badge>
         </CardHeader>
         <div className="grid grid-cols-3 gap-3">
-          <Reading value="72" unit="bpm" read="Pulse · calm" />
-          <Reading value="98" unit="%" read="Oxygen · good" />
-          <Reading value="36.4" unit="°C" read="Skin · normal" />
+          <Vital src="img/icons/heart.webp" value="72" unit="bpm" read="Pulse · calm" />
+          <Vital src="img/icons/lungs.webp" value="98" unit="%" read="Oxygen · good" />
+          <Vital src="img/icons/skin-temp.webp" value="36.4" unit="°C" read="Skin · normal" />
         </div>
       </Card>
-      <Card>
-        <CardHeader className="items-center">
+      <Card className="py-4">
+        <CardHeader className="mb-3 items-center">
           <CardTitle>Your wristband</CardTitle>
           <span className="flex items-center gap-2 text-xs text-ink"><StatusDot tone="ok" />Joined</span>
         </CardHeader>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-xs"><span className="text-ink">Screen battery · 64%</span><span className="text-muted">about 2 days</span></div>
-            <Progress value={64} tone="ink" marker={false} />
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-xs"><span className="text-ink">Sensor battery · 100%</span><span className="text-muted">keeps sending to the hub</span></div>
-            <Progress value={100} tone="ink" marker={false} />
+        <div className="flex items-center gap-4">
+          <Thumb src="img/wrist/band-top.webp" alt="The wristband, screen part on top" size="band" />
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <BandPart src="img/wrist/band-interface.webp" name="Screen" pct={64} read="64%" />
+            <BandPart src="img/wrist/band-base.webp" name="Sensor" pct={100} read="100%" />
           </div>
         </div>
       </Card>
@@ -67,31 +87,31 @@ export function Home() {
 
 export function HomeGrid() {
   return (
-    <Phone number="02b" caption="Home, scrolled. Nine round tiles for everything Eva watches. Each dot is green when it is normal for you, amber when it needs a look." tabbar={<Tabs active="Home" />}>
+    <Phone number="02b" caption="Everything Eva watches" tabbar={<Tabs active="Home" />}>
       <PhoneTop left={<IconButton label="Menu"><LayoutGrid size={18} /></IconButton>} right={<IconButton label="Alerts"><Bell size={18} /></IconButton>} />
-      <div className="flex flex-col gap-1">
-        <Label>Everything Eva watches</Label>
-        <p className="text-2xl tracking-tight text-ink">8 of 9 are fine. Water needs a look.</p>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-3xl tracking-tight text-ink">8 of 9 fine</p>
+        <Badge tone="warn">Water · check</Badge>
       </div>
       <div className="grid grid-cols-3 gap-x-2 gap-y-5">
-        <Tile icon={HeartPulse} label="Heart" read="72 · calm" />
-        <Tile icon={Wind} label="Oxygen" read="98% · good" />
-        <Tile icon={Moon} label="Sleep" read="7 h 10 · good" />
-        <Tile icon={Droplet} label="Water" read="1.2 of 2 L" tone="warn" />
-        <Tile src="img/chip-sun-b.jpg" label="Radiation" read="Low today" />
-        <Tile icon={Utensils} label="Food" read="1,640 kcal" />
-        <Tile icon={Zap} label="Station" read="AED · corridor B" />
-        <Tile src="img/chip-crew-b.jpg" label="Crew" read="15 · all fine" />
-        <Tile src="img/chip-earth-b.jpg" label="Earth link" read="14 min away" />
+        <Tile src="img/icons/heart.webp" label="Heart" read="72 · calm" />
+        <Tile src="img/icons/lungs.webp" label="Oxygen" read="98% · good" />
+        <Tile src="img/icons/sleep.webp" label="Sleep" read="7 h 10 · good" />
+        <Tile src="img/icons/water.webp" label="Water" read="1.2 of 2 L" tone="warn" />
+        <Tile src="img/icons/radiation.webp" label="Radiation" read="Low today" />
+        <Tile src="img/icons/food.webp" label="Food" read="1,640 kcal" />
+        <Tile src="img/icons/aed-station.webp" label="Station" read="AED · corridor B" />
+        <Tile src="img/icons/crew.webp" label="Crew" read="15 · all fine" />
+        <Tile src="img/icons/earth-link.webp" label="Earth link" read="14 min away" />
       </div>
-      <p className="mt-auto text-center text-xs text-faint">Checked 2 min ago · saved on board</p>
+      <p className="mt-auto text-center text-xs text-faint">Checked 2 min ago</p>
     </Phone>
   )
 }
 
 export function Heart() {
   return (
-    <Phone number="03" caption="Heart. The number, the person's own normal band, what it means and what to do, in that order.">
+    <Phone number="03" caption="Heart">
       <PhoneTop left={<IconButton label="Back"><ChevronLeft size={20} /></IconButton>} title="Heart" right={<IconButton label="About this reading"><Info size={18} /></IconButton>} />
       <div className="flex flex-col gap-3">
         <p className="text-8xl leading-none tracking-tight text-ink">72<span className="ml-2 text-xl text-muted">bpm</span></p>
@@ -103,45 +123,44 @@ export function Heart() {
           <div className="w-36"><Segmented items={["8 h", "Week"]} active="8 h" /></div>
         </CardHeader>
         <Sparkline data={[62, 57, 54, 53, 56, 64, 79, 92, 88, 74, 72]} band={[58, 82]} tone="ink" height={96} />
-        <div className="mt-2 flex justify-between text-xs text-muted"><span>Sleep · low is normal</span><span>Exercise</span><span>Now</span></div>
-        <div className="mt-3"><Legend>Your normal at rest · 58 to 82</Legend></div>
+        <div className="mt-2 flex justify-between text-xs text-muted"><span>Sleep</span><span>Exercise</span><span>Now</span></div>
+        <div className="mt-3"><Legend>Your normal · 58 to 82 · learned in 30 days</Legend></div>
       </Card>
-      <div className="flex flex-col gap-1.5">
-        <Label>What this means</Label>
-        <Body>Your heart beats 72 times a minute. That is inside your own normal, learned over 30 days on board.</Body>
+      <div className="flex items-center gap-3 rounded-tile bg-ok/10 px-4 py-3">
+        <IconLine icon={CircleCheck} tone="ok">Nothing to do · keep your day</IconLine>
       </div>
-      <div className="flex flex-col gap-1.5">
-        <Label>What to do</Label>
-        <Body>Nothing. Keep your day as planned. Eva tells you if it changes.</Body>
+      <div className="mt-auto flex items-center gap-3">
+        <IconTile src="img/wrist/band-base.webp" alt="Sensor base" size="sm" />
+        <p className="text-xs text-muted">Sensor base · 1 min ago</p>
       </div>
-      <p className="mt-auto text-xs text-faint">Wristband sensor base · light through the skin · 1 min ago</p>
     </Phone>
   )
 }
 
 export function Plan() {
   const items = [
-    { icon: Dumbbell, title: "2 h exercise", sub: "For bones and muscles · done 11:20", done: true },
-    { icon: Droplet, title: "Drink 2 L of water", sub: "1.2 L so far · 3 glasses to go", done: false },
-    { icon: Sun, title: "Take vitamin D", sub: "Done with breakfast", done: true },
-    { icon: Moon, title: "Sleep 22:30 to 06:30", sub: "Tonight · lights dim at 22:00", done: false },
-    { icon: MessageCircle, title: "Check in with Eva", sub: "Done at 09:12 · all good", done: true },
+    { src: "img/icons/exercise.webp", title: "2 h exercise", sub: "Done 11:20", done: true },
+    { src: "img/icons/water.webp", title: "Drink 2 L of water", sub: "1.2 of 2 L", done: false },
+    { src: "img/icons/vitamin-d.webp", title: "Take vitamin D", sub: "Done · breakfast", done: true },
+    { src: "img/icons/sleep.webp", title: "Sleep 22:30 to 06:30", sub: "Lights dim 22:00", done: false },
+    { src: "img/icons/eva-orb.webp", title: "Check in with Eva", sub: "Done 09:12", done: true },
   ]
   return (
-    <Phone number="04" caption="Today's plan. One score in plain words and a short checklist. The hatched part of the bar is what is left." tabbar={<Tabs active="Plan" />}>
+    <Phone number="04" caption="Today's plan" tabbar={<Tabs active="Plan" />}>
       <PhoneTop left={<IconButton label="Calendar"><CalendarDays size={18} /></IconButton>} title="Today's plan" right={<IconButton label="Add"><Plus size={18} /></IconButton>} />
       <div className="flex flex-col gap-3">
-        <p className="text-7xl leading-none tracking-tight text-ink">88%</p>
-        <p className="text-lg text-ink">You are doing well</p>
+        <div className="flex items-end justify-between gap-3">
+          <p className="text-7xl leading-none tracking-tight text-ink">88%</p>
+          <Badge tone="ok" className="mb-2">Doing well</Badge>
+        </div>
         <Progress value={88} tone="info" size="lg" />
-        <p className="text-xs text-muted">3 of 5 done · water and sleep are next</p>
+        <p className="text-xs text-muted">3 of 5 done</p>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-1">
         {items.map(it => (
-          <ListRow key={it.title} className="px-0" leading={<IconTile size="sm"><it.icon size={20} /></IconTile>} title={it.title} subtitle={it.sub} trailing={<Check done={it.done} />} />
+          <ListRow key={it.title} className="px-0" leading={<PhotoTile size="sm" src={it.src} />} title={it.title} subtitle={it.sub} trailing={<Check done={it.done} />} />
         ))}
       </div>
     </Phone>
   )
 }
-

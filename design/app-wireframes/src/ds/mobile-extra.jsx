@@ -27,13 +27,28 @@ export const Reading = ({ value, unit, read, size = "md", tone = "muted" }) => (
   </div>
 )
 
-/** round photo (or icon) tile with a label, a read-out and a status dot, for the 3x3 home grid */
-export const Tile = ({ src, icon: Icon, label, read, tone = "ok" }) => (
+/** photoreal object on black in a circle. The icons are centred squares on pure black, so the photo
+ *  sits a little inside the ring (scale-90) and nothing reaches the edge of the circle. */
+const photoSize = { xs: "size-9", sm: "size-12", md: "size-14", lg: "size-18" }
+export const PhotoTile = ({ src, alt = "", size = "md", className }) => (
+  <span className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line", photoSize[size], className)}>
+    <img src={src} alt={alt} className="size-full scale-90 object-cover" />
+  </span>
+)
+
+/** small rectangular photo crop (product shot, inset). Small, so the page-level "AI-generated" note covers it. */
+const thumbSize = { band: "h-20 w-32", inset: "h-16 w-24" }
+export const Thumb = ({ src, alt = "", size = "inset", className }) => (
+  <span className={cn("block shrink-0 overflow-hidden rounded-tile bg-background ring-1 ring-line", thumbSize[size], className)}>
+    <img src={src} alt={alt} className="size-full object-cover" />
+  </span>
+)
+
+/** round photo tile with a label, a read-out and a status dot, for the 3x3 home grid */
+export const Tile = ({ src, label, read, tone = "ok" }) => (
   <div className="flex flex-col items-center gap-2 text-center">
-    <span className="relative">
-      <span className="grid size-18 place-items-center overflow-hidden rounded-full bg-raised">
-        {src ? <img src={src} alt="" className="size-full scale-110 object-cover" /> : <Icon size={26} className="text-ink" />}
-      </span>
+    <span className="relative flex">
+      <PhotoTile src={src} size="lg" />
       <span className={cn("absolute top-0.5 right-0.5 size-3 rounded-full ring-2 ring-background", dot[tone])} />
     </span>
     <span className="flex flex-col">
@@ -41,6 +56,14 @@ export const Tile = ({ src, icon: Icon, label, read, tone = "ok" }) => (
       <span className="text-xs text-muted">{read}</span>
     </span>
   </div>
+)
+
+/** one short line with a leading icon: facts, limits, sources */
+export const IconLine = ({ icon: Icon, children, tone = "muted" }) => (
+  <p className="flex items-center gap-2.5 text-sm text-ink">
+    <Icon size={16} className={cn("shrink-0", textTone[tone])} />
+    <span>{children}</span>
+  </p>
 )
 
 /** labelled meter: name, value of goal, and a bar whose remainder is hatched */
@@ -89,11 +112,11 @@ export const StepBars = ({ step, total, tone = "ink" }) => (
 
 /** CPR rhythm target: concentric rings with the push rate in the middle */
 export const BeatRing = ({ rate, label = "pushes a minute" }) => (
-  <div className="relative grid size-60 place-items-center">
-    <span className="absolute inset-0 rounded-full border border-critical/30" />
-    <span className="absolute inset-0 animate-ping rounded-full border-2 border-critical/40" />
-    <span className="absolute inset-5 rounded-full border-2 border-critical/70" />
-    <span className="absolute inset-12 rounded-full bg-critical/15" />
+  // everything stays inside the ring's own box, so nothing spills onto the feedback row below
+  <div className="relative grid size-56 place-items-center overflow-hidden rounded-full" style={{ "--beat": `${Math.round(60000 / rate)}ms` }}>
+    <span className="absolute inset-0 rounded-full border border-critical/25" />
+    <span className="absolute inset-0 animate-beat-wave rounded-full border-4 border-critical/60" />
+    <span className="absolute inset-7 animate-beat-press rounded-full bg-critical/20 ring-2 ring-critical/70" />
     <div className="relative flex flex-col items-center gap-1">
       <p className="text-6xl tracking-tight text-ink">{rate}</p>
       <p className="text-xs uppercase tracking-label text-muted">{label}</p>
@@ -120,18 +143,14 @@ const Layer = ({ graphic, title, read, accent }) => (
   </div>
 )
 export const SuitDiagram = () => (
-  <div className="flex flex-col gap-3">
-    <Layer title="Screen part" read="ECG pads, battery, LoRa" graphic={
-      <span className="flex h-10 w-full items-center justify-center rounded-tile border border-line bg-elevated"><span className="h-4 w-16 rounded-sm bg-background" /></span>
-    } />
-    <Layer accent title="Suit fabric" read="Magnets hold, pins don't" graphic={<>
+  <div className="flex flex-col gap-1">
+    <Layer title="Screen part" read="ECG pads · LoRa" graphic={<img src="img/wrist/band-interface.webp" alt="" className="h-10 w-full object-cover" />} />
+    <Layer accent title="Suit fabric" read="Magnets hold · pins don't" graphic={<>
       <span className="flex w-20 justify-between"><span className="h-3 w-0.5 bg-muted" /><span className="h-3 w-0.5 bg-muted" /><span className="h-3 w-0.5 bg-muted" /></span>
       <span className="h-5 w-full rounded-sm bg-hatch-info" />
     </>} />
-    <Layer title="Sensor base" read="Own battery and LoRa" graphic={
-      <span className="flex h-7 w-24 items-center justify-center gap-1.5 rounded-full border border-line bg-raised"><span className="size-2 rounded-full bg-muted" /><span className="size-2 rounded-full bg-muted" /></span>
-    } />
-    <Layer title="Your skin" read="Light reads your pulse" graphic={<span className="h-2 w-full rounded-full bg-faint" />} />
+    <Layer title="Sensor base" read="Own battery · LoRa" graphic={<img src="img/wrist/band-base.webp" alt="" className="h-10 w-full object-cover" />} />
+    <Layer title="Your skin" read="Light reads pulse" graphic={<span className="h-2 w-full rounded-full bg-faint" />} />
   </div>
 )
 
@@ -144,10 +163,12 @@ export const Legend = ({ swatch = "band", children }) => (
 )
 
 /** photo hero on black with the visible "AI-generated" label the team requires on concept renders.
- *  Pass `baked` when the image already carries its own label, so it is not shown twice. */
-export const Hero = ({ src, alt = "", size = "md", fit = "cover", baked, className }) => (
+ *  Pass `baked` when the image already carries its own label, so it is not shown twice. Children are overlays. */
+const heroPosition = { center: "object-center", top: "object-top", bottom: "object-bottom" }
+export const Hero = ({ src, alt = "", size = "md", fit = "cover", position = "center", baked, className, children }) => (
   <div className={cn("relative shrink-0 overflow-hidden rounded-card bg-surface", size === "lg" ? "h-72" : size === "sm" ? "h-32" : "h-48", className)}>
-    <img src={src} alt={alt} className={cn("size-full", fit === "contain" ? "object-contain" : "object-cover")} />
+    <img src={src} alt={alt} className={cn("size-full", fit === "contain" ? "object-contain" : "object-cover", heroPosition[position])} />
+    {children}
     {!baked && <span className="absolute right-3 bottom-3 rounded-full bg-background/70 px-2 py-0.5 text-xs text-muted">AI-generated</span>}
   </div>
 )

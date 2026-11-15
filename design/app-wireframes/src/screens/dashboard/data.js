@@ -3,26 +3,40 @@
 export const crewLead = { name: "Mara Okoye", role: "Crew lead" }
 export const surgeon = { name: "Sam Patel", role: "Flight surgeon, MD · Houston" }
 
-// band: joined (both parts together, pins powering sensors) | suit (suit between the parts)
-// status: care | helping | ok | battery | suit | ecg
-// skin: skin temperature °C · hr/spo2: null when the band finds no pulse
-// ecg: last on-demand 1-lead wrist ECG (30 s, one finger of each hand on the two metal pads); null if none today
+// group: help (needs help now) | watch (Eva is following up) | ok (all good)
+// status: care | ecg | battery | warm | ok | helping | aed | suit
+// band: joined (both parts together) | suit (the suit is between the parts; the sensor base runs on its own battery)
+// battery: each part has its own · base = sensor base, screen = interface part
+// hr/spo2: null when the band finds no pulse · skin: skin temperature °C
+// ecg: last on-demand wrist ECG (30 s, one finger of each hand on the two metal pads); null if none today
+// pulse + usual: last 2 h of pulse and this person's usual range (only for help / watch rows)
+// note: one plain line for everyone else · eva: one plain line from Eva for help / watch rows
 export const roster = [
-  { seat: "1A", name: "Mara Okoye", status: "ok", hr: 68, spo2: 98, band: "joined", battery: 82, skin: 33.8, ecg: { t: "08:04", result: "regular" } },
-  { seat: "1B", name: "Tomás Rey", status: "aed", hr: 118, spo2: 97, band: "joined", battery: 64, skin: 34.1, ecg: { t: "07:58", result: "regular" } },
-  { seat: "2A", name: "Yuki Sato", status: "suit", hr: 88, spo2: 98, band: "suit", battery: 46, skin: 33.2, ecg: { t: "13:10", result: "regular" } },
-  { seat: "2B", name: "Omar Haddad", status: "suit", hr: 91, spo2: 97, band: "suit", battery: 51, skin: 33.4, ecg: null },
-  { seat: "3A", name: "Lena Vogel", status: "ok", hr: 62, spo2: 99, band: "joined", battery: 77, skin: 33.9, ecg: { t: "08:10", result: "regular" } },
-  { seat: "3B", name: "Leo Brandt", status: "helping", hr: 112, spo2: 98, band: "joined", battery: 70, skin: 34.6, ecg: { t: "08:02", result: "regular" } },
-  { seat: "4A", name: "Priya Nair", status: "ecg", hr: 70, spo2: 98, band: "joined", battery: 58, skin: 34.0, ecg: { t: "12:40", result: "irregular" } },
-  { seat: "4B", name: "Ana Ruiz", status: "care", hr: null, spo2: null, band: "joined", battery: 66, skin: 32.9, ecg: { t: "08:06", result: "regular" } },
-  { seat: "5A", name: "Diego Luna", status: "battery", hr: 76, spo2: 97, band: "joined", battery: 14, skin: 34.2, ecg: { t: "08:12", result: "regular" } },
-  { seat: "5B", name: "Chloé Martin", status: "ok", hr: 66, spo2: 98, band: "joined", battery: 88, skin: 33.7, ecg: { t: "08:01", result: "regular" } },
-  { seat: "6A", name: "Kwame Mensah", status: "ok", hr: 72, spo2: 97, band: "joined", battery: 61, skin: 34.0, ecg: { t: "08:15", result: "regular" } },
-  { seat: "6B", name: "Sofia Rossi", status: "suit", hr: 84, spo2: 98, band: "suit", battery: 49, skin: 33.3, ecg: null },
-  { seat: "7A", name: "Ivan Petrov", status: "ok", hr: 64, spo2: 98, band: "joined", battery: 73, skin: 33.6, ecg: { t: "08:09", result: "regular" } },
-  { seat: "7B", name: "Hana Kim", status: "ok", hr: 69, spo2: 99, band: "joined", battery: 90, skin: 33.9, ecg: { t: "08:03", result: "regular" } },
-  { seat: "8A", name: "Noah Clark", status: "ok", hr: 71, spo2: 97, band: "joined", battery: 55, skin: 34.1, ecg: { t: "08:11", result: "regular" } },
+  { seat: "4B", name: "Ana Ruiz", group: "help", status: "care", hr: null, spo2: null, skin: 32.9, skinWord: "falling", band: "joined", battery: { base: 66, screen: 71 }, ecg: { t: "08:06", result: "regular" },
+    pulse: [66, 68, 65, 67, 70, 66, 112, 178, 0], usual: [58, 78], hrWord: "since 14:02",
+    eva: "No pulse since 14:02 · CPR going · AED attached, it decides shocks" },
+
+  { seat: "4A", name: "Priya Nair", group: "watch", status: "ecg", hr: 70, spo2: 98, skin: 34.0, skinWord: "usual", band: "joined", battery: { base: 58, screen: 62 }, ecg: { t: "12:40", result: "review" },
+    pulse: [68, 71, 69, 84, 70, 74, 71, 88, 70], usual: [60, 80], hrWord: "normal for her",
+    eva: "Pulse uneven twice this morning · wrist ECG at 12:40 sent to Earth for review" },
+  { seat: "5A", name: "Diego Luna", group: "watch", status: "battery", hr: 76, spo2: 97, skin: 34.2, skinWord: "usual", band: "joined", battery: { base: 14, screen: 52 }, ecg: { t: "08:12", result: "regular" },
+    pulse: [72, 74, 75, 73, 77, 74, 75, 78, 76], usual: [62, 84], hrWord: "normal for him",
+    eva: "Sensor base at 14%, about 1 h left · spare base in the med bay, drawer B2" },
+  { seat: "6A", name: "Kwame Mensah", group: "watch", status: "warm", hr: 79, spo2: 97, skin: 35.6, skinWord: "warmer than usual", band: "joined", battery: { base: 61, screen: 70 }, ecg: { t: "08:15", result: "regular" },
+    pulse: [70, 71, 72, 70, 73, 75, 77, 78, 79], usual: [60, 82], hrWord: "normal for him",
+    eva: "Skin 1.6 °C above his usual since 13:20 · asked him to drink water and rest · recheck 14:30" },
+
+  { seat: "1A", name: "Mara Okoye", group: "ok", status: "ok", hr: 68, spo2: 98, band: "joined", note: "Crew lead · usual for her" },
+  { seat: "1B", name: "Tomás Rey", group: "ok", status: "aed", hr: 118, spo2: 97, band: "joined", note: "AED helper · pulse up, fine" },
+  { seat: "3B", name: "Leo Brandt", group: "ok", status: "helping", hr: 112, spo2: 98, band: "joined", note: "CPR helper · pulse up, fine" },
+  { seat: "2A", name: "Yuki Sato", group: "ok", status: "suit", hr: 88, spo2: 98, band: "suit", note: "Suit drill until 14:30" },
+  { seat: "2B", name: "Omar Haddad", group: "ok", status: "suit", hr: 91, spo2: 97, band: "suit", note: "Suit drill until 14:30" },
+  { seat: "6B", name: "Sofia Rossi", group: "ok", status: "suit", hr: 84, spo2: 98, band: "suit", note: "Suit drill until 14:30" },
+  { seat: "3A", name: "Lena Vogel", group: "ok", status: "ok", hr: 62, spo2: 99, band: "joined", note: "Usual for her" },
+  { seat: "5B", name: "Chloé Martin", group: "ok", status: "ok", hr: 66, spo2: 98, band: "joined", note: "Usual for her" },
+  { seat: "7A", name: "Ivan Petrov", group: "ok", status: "ok", hr: 64, spo2: 98, band: "joined", note: "Usual for him" },
+  { seat: "7B", name: "Hana Kim", group: "ok", status: "ok", hr: 69, spo2: 99, band: "joined", note: "Usual for her" },
+  { seat: "8A", name: "Noah Clark", group: "ok", status: "ok", hr: 71, spo2: 97, band: "joined", note: "Usual for him" },
 ]
 
 // Alerts this week (Mon..Sun). Today is Saturday.

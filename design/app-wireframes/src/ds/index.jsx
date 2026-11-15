@@ -88,7 +88,7 @@ export const Progress = ({ value, tone = "info", marker = true, className, size 
 export const SplitBar = ({ a, b, aLabel, bLabel, tone = "ink" }) => (
   <div className="flex h-10 w-full gap-1">
     <div className={cn("flex w-(--pct) items-center rounded-full px-4 text-sm", fill[tone], tone === "ink" ? "text-on-light" : "text-on-light")} style={{ "--pct": `${a}%` }}>{aLabel ?? `${a}%`}</div>
-    <div className="flex flex-1 items-center justify-end rounded-full bg-hatch-info px-4 text-sm text-ink">{bLabel ?? `${b}%`}</div>
+    <div className="flex flex-1 items-center justify-end rounded-full bg-hatch-info px-1.5 text-sm"><span className="rounded-full bg-background px-3 py-1 text-ink">{bLabel ?? `${b}%`}</span></div>
   </div>
 )
 
@@ -171,8 +171,8 @@ export const ListRow = ({ leading, title, subtitle, trailing, tone = "default", 
   </div>
 )
 export const IconTile = ({ src, alt = "", active, size = "md", className, children }) => (
-  <span className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full", active ? "bg-elevated ring-1 ring-line" : "bg-raised", size === "sm" ? "size-12" : size === "lg" ? "size-24" : "size-16", className)}>
-    {src ? <img src={src} alt={alt} className="size-full object-cover" /> : children}
+  <span className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full", src ? "bg-background ring-1 ring-line" : active ? "bg-elevated ring-1 ring-line" : "bg-raised", size === "sm" ? "size-12" : size === "lg" ? "size-24" : "size-16", className)}>
+    {src ? <img src={src} alt={alt} className="size-full scale-90 object-cover" /> : children}
   </span>
 )
 export const Check = ({ done }) => (

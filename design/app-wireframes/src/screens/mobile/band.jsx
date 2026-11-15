@@ -15,7 +15,7 @@ const Column = ({ label, value, unit, read, first }) => (
 
 export function BandIdle() {
   return (
-    <BandScreenRect number="B1" caption="Wristband, idle. The main screen: three columns, each a number with its read-out. Time and battery stay small on top.">
+    <BandScreenRect number="B1" caption="Idle">
       <Strip left={<span className="text-ink">9:41 · Day 94</span>} right={<span className="flex items-center gap-2 text-muted"><StatusDot tone="ok" />Joined · 64%</span>} />
       <div className="grid flex-1 grid-cols-3 content-center gap-4">
         <Column first label="Pulse" value="72" unit="bpm" read="Normal for you" />
@@ -28,7 +28,7 @@ export function BandIdle() {
 
 export function BandEcg() {
   return (
-    <BandScreenRect number="B2" caption="Wristband, ECG check, on demand. One finger of each hand on the two metal pads on top of the screen part, still, for 30 s. It doesn't need the wrist skin, so it works over the suit with bare hands.">
+    <BandScreenRect number="B2" caption="ECG check">
       <Strip left={<span className="uppercase tracking-label text-info">ECG check</span>} right={<span className="text-muted">Signal good</span>} />
       <div className="flex flex-1 items-center gap-4">
         <Ring value={40} size={64} thickness={6} tone="info"><span className="text-lg text-ink">18</span></Ring>
@@ -41,13 +41,13 @@ export function BandEcg() {
 
 export function BandHelper() {
   return (
-    <BandScreenRect tone="critical" number="B3" caption="Wristband, second helper. Eva sends this person to the emergency station for the AED, with an arrow to follow and one press to say &quot;I'm going&quot;.">
+    <BandScreenRect tone="critical" number="B3" caption="Bring the AED">
       <Strip left={<span className="uppercase tracking-label text-ink">Emergency · bring the AED</span>} right={<span className="text-ink">4 m</span>} />
       <div className="flex flex-1 items-center gap-4">
         <span className="grid size-14 shrink-0 place-items-center rounded-full bg-ink text-on-light"><ArrowUpLeft size={28} /></span>
         <div className="flex flex-col gap-1">
           <p className="text-3xl leading-none tracking-tight text-ink">Get the AED</p>
-          <p className="text-sm text-ink">Emergency station · corridor B · then Ana, seat 4B</p>
+          <p className="text-sm text-ink">Station B → Ana, 4B</p>
         </div>
       </div>
       <div className="flex items-center justify-between">
@@ -60,11 +60,11 @@ export function BandHelper() {
 
 export function BandCpr() {
   return (
-    <BandScreenRect number="B4" caption="Wristband, CPR step. The ring pulses at 110 a minute and the band vibrates with it, so the helper can follow without looking. The AED, not Eva, decides any shock.">
+    <BandScreenRect number="B4" caption="CPR">
       <Strip left={<span className="uppercase tracking-label text-critical">Step 2 of 4</span>} right={<div className="w-28"><StepBars step={2} total={4} tone="critical" /></div>} />
       <div className="flex flex-1 items-center gap-4">
-        <span className="relative grid size-20 shrink-0 place-items-center">
-          <span className="absolute inset-0 animate-ping rounded-full border-2 border-critical/40" />
+        <span className="relative grid size-20 shrink-0 place-items-center overflow-hidden rounded-full" style={{ "--beat": "545ms" }}>
+          <span className="absolute inset-0 animate-beat-wave rounded-full border-4 border-critical/60" />
           <span className="absolute inset-0 rounded-full border-2 border-critical/70" />
           <span className="relative flex flex-col items-center"><span className="text-2xl text-ink">110</span><span className="text-xs text-muted">a minute</span></span>
         </span>
@@ -77,16 +77,16 @@ export function BandCpr() {
 
 export function BandShelter() {
   return (
-    <BandScreenRect number="B5" caption="Wristband, shelter. Countdown, the next turn and how many people are already safe.">
+    <BandScreenRect number="B5" caption="Shelter">
       <Strip left={<span className="uppercase tracking-label text-critical">Solar storm</span>} right={<span className="text-muted">9/15 in shelter</span>} />
       <div className="flex flex-1 items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <p className="font-mono text-5xl leading-none tracking-tight text-ink">08:40</p>
-          <p className="text-xs text-muted">to reach the shelter</p>
+          <p className="text-xs text-muted">to shelter</p>
         </div>
         <p className="flex items-center gap-2 text-2xl tracking-tight text-ink"><ArrowLeft size={26} />Turn left</p>
       </div>
-      <p className="text-xs text-muted">Then follow the floor arrows to Deck B · 40 m</p>
+      <p className="text-xs text-muted">Floor arrows → Deck B · 40 m</p>
     </BandScreenRect>
   )
 }

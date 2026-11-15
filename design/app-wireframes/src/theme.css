@@ -30,6 +30,24 @@
   --text-display--line-height: 1.02;
   --text-hero: 4rem;
   --text-hero--line-height: 0.95;
+
+  /* motion: one calm ease for every move between predefined positions */
+  --ease-eva: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-eva-rise: eva-rise 520ms var(--ease-eva) both;
+  @keyframes eva-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* eased move between the Eva assistant's positions (minimised, docked, expanded); still for reduced motion */
+@utility transition-eva {
+  transition-property: width, height, border-radius, opacity, transform, translate, scale, background-color;
+  transition-duration: 520ms;
+  transition-timing-function: var(--ease-eva);
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 1ms;
+  }
 }
 
 /* the hatched "remaining / other" fill used by progress, split bars and highlighted chart bars */
@@ -43,4 +61,11 @@
   background-image: repeating-linear-gradient(135deg, var(--color-critical) 0 2px, transparent 2px 7px);
 }
 
-html { background: var(--color-background); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+html, body { background: var(--color-background); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; color-scheme: dark; margin: 0; }
+
+/* CPR metronome: one compression per beat. The period comes from --beat (60 s / rate), so the visual stays in sync with the number shown. */
+@keyframes beat-press { 0%, 100% { transform: scale(1); } 12% { transform: scale(0.86); } 40% { transform: scale(1); } }
+@keyframes beat-wave { 0% { transform: scale(0.62); opacity: 0.55; } 70% { opacity: 0.12; } 100% { transform: scale(1); opacity: 0; } }
+@utility animate-beat-press { animation: beat-press var(--beat, 545ms) cubic-bezier(0.3, 0, 0.2, 1) infinite; }
+@utility animate-beat-wave { animation: beat-wave var(--beat, 545ms) cubic-bezier(0.2, 0.6, 0.3, 1) infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-beat-press, .animate-beat-wave { animation: none; } }

@@ -1,24 +1,28 @@
-import { Avatar, Badge, Body, Button, Card, CardHeader, CardTitle, Eyebrow, IconTile, Progress, Segmented, Sparkline, StatusDot } from "@/ds"
+import { Avatar, Badge, Button, Card, CardHeader, CardTitle, Eyebrow, IconTile, Progress, Segmented, Sparkline, StatusDot } from "@/ds"
 import { AppWindow, EcgStrip, InfoChip, Readout, TextBox, Timeline } from "@/ds/dashboard-extra"
-import { Clock, Send, Rocket, ShieldCheck } from "lucide-react"
+import { Clock, Send, ShieldCheck, Hand, Zap } from "lucide-react"
 import { Citation, Rail, TopBar } from "./shared"
 import { anaCase, surgeon, trends } from "./data"
+import { EarthChat } from "./EarthChat"
 
 const DelayBanner = () => (
   <Card tone="info" className="flex items-center gap-8 px-6">
     <span className="grid size-14 shrink-0 place-items-center rounded-full bg-info text-on-light"><Clock size={26} /></span>
     <div className="flex min-w-0 flex-1 flex-col gap-1">
       <p className="text-2xl tracking-tight text-ink">You are seeing the ship as it was 12 min 40 s ago</p>
-      <Body muted>Last packet: ship time 14:04:12, received here 14:16:52. Anything newer is still on its way.</Body>
-      <p className="text-xs text-muted">The crew does not wait for you: Eva guides them now. Without decision support, a ground answer can take 45 min to several hours to reach the crew (Russell et al., 2023).</p>
+      <div className="flex flex-wrap gap-2">
+        <InfoChip tone="info"><span className="font-mono">Ship 14:04:12</span> · last packet</InfoChip>
+        <InfoChip tone="info"><span className="font-mono">Here 14:16:52</span> · received</InfoChip>
+        <InfoChip tone="ok">Eva guides the crew now</InfoChip>
+      </div>
     </div>
     <div className="flex w-96 shrink-0 items-center gap-3">
-      <span className="flex flex-col items-center gap-1"><span className="grid size-12 place-items-center rounded-full bg-raised text-ink"><Rocket size={20} /></span><span className="text-xs text-muted">Ship</span></span>
+      <span className="flex flex-col items-center gap-1"><IconTile src="img/icons/ship-hub.webp" alt="Ship hub" size="sm" /><span className="text-xs text-muted">Ship hub</span></span>
       <div className="flex flex-1 flex-col gap-2">
         <Progress value={68} size="sm" />
         <span className="text-center text-xs text-muted">Next packet arrives in about 4 min</span>
       </div>
-      <span className="flex flex-col items-center gap-1"><IconTile src="img/pe-earth.webp" alt="Earth" size="sm" /><span className="text-xs text-muted">You</span></span>
+      <span className="flex flex-col items-center gap-1"><IconTile src="img/icons/earth.webp" alt="Earth" size="sm" /><span className="text-xs text-muted">You</span></span>
     </div>
   </Card>
 )
@@ -28,7 +32,7 @@ const CaseCard = () => (
     <CardHeader>
       <div className="flex items-center gap-3">
         <Avatar name="Ana Ruiz" tone="critical" />
-        <div className="flex flex-col"><CardTitle>Ana Ruiz · seat 4B</CardTitle><Body muted>Case 0414 · no pulse at wrist · opened 14:02 ship time · no heart history</Body></div>
+        <div className="flex flex-col gap-1.5"><CardTitle>Ana Ruiz · seat 4B</CardTitle><div className="flex flex-wrap gap-1.5"><Badge>Case 0414</Badge><Badge>Opened 14:02 ship</Badge><Badge>No heart history</Badge></div></div>
       </div>
       <Badge tone="critical"><StatusDot tone="critical" pulse />Open on the ship</Badge>
     </CardHeader>
@@ -43,7 +47,7 @@ const CaseCard = () => (
 const Composer = () => (
   <Card className="col-span-5 flex flex-col gap-4">
     <div className="flex items-start justify-between gap-3">
-      <div className="flex flex-col gap-1"><CardTitle>Message the ship</CardTitle><Body muted>They will read it after the next link slot</Body></div>
+      <CardTitle>Message the ship</CardTitle>
       <Segmented items={["Text", "Voice"]} active="Text" />
     </div>
     <div className="flex flex-wrap items-center gap-2">
@@ -57,7 +61,7 @@ const Composer = () => (
       <div className="flex items-start gap-3 rounded-tile bg-raised p-3">
         <Avatar name="Mara Okoye" size="sm" />
         <div className="flex min-w-0 flex-col gap-0.5">
-          <p className="text-sm text-ink">Ana collapsed in the galley, no pulse. Leo is doing CPR, Tomás brought the AED. Eva is guiding.</p>
+          <p className="text-sm text-ink">Ana collapsed at her seat in the cabin, no pulse. Leo is doing CPR, Tomás brought the AED. Eva is guiding.</p>
           <p className="font-mono text-xs text-muted">ship 14:03:50 · received 14:16:30</p>
         </div>
       </div>
@@ -86,15 +90,15 @@ const WristEcg = () => (
     <CardHeader>
       <div className="flex items-center gap-3">
         <Avatar name="Priya Nair" tone="warn" />
-        <div className="flex flex-col"><CardTitle>Priya Nair · seat 4A · wrist ECG, 30 s</CardTitle><Body muted>Ship time 12:40:10 · received 12:52:50 · one finger of each hand on the two metal pads, sitting still</Body></div>
+        <div className="flex flex-col gap-1.5"><CardTitle>Priya Nair · seat 4A · wrist ECG, 30 s</CardTitle><div className="flex flex-wrap gap-1.5"><Badge><span className="font-mono">Ship 12:40:10</span></Badge><Badge><span className="font-mono">Here 12:52:50</span></Badge><Badge><Hand size={12} />Two pads · one finger each hand</Badge></div></div>
       </div>
-      <div className="flex items-center gap-2"><Badge>1-lead wrist ECG (two pads) · not a 12-lead ECG</Badge><Badge tone="warn">Irregular, review</Badge></div>
+      <div className="flex shrink-0 items-center gap-2"><Badge>1-lead · not 12-lead</Badge><Badge tone="warn">Irregular, review</Badge></div>
     </CardHeader>
     <div className="rounded-tile bg-raised px-4 pt-4 pb-2"><EcgStrip rr={priyaRR} tone="ink" /></div>
-    <div className="mt-4 grid grid-cols-12 items-center gap-5">
-      <div className="col-span-3 flex flex-col"><span className="text-sm text-ink">Pulse 58–108, uneven</span><span className="text-xs text-muted">Gaps between beats keep changing</span></div>
-      <div className="col-span-5 flex flex-col"><span className="text-sm text-ink">A wrist check on demand, not continuous</span><span className="text-xs text-muted">Shocks are decided by the AED, never by Eva</span></div>
-      <div className="col-span-4 flex justify-end gap-2">
+    <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+      <div className="shrink-0"><Readout value="58–108" unit="bpm" note="uneven gaps between beats" tone="warn" /></div>
+      <div className="flex flex-wrap gap-2"><Badge>On demand · not continuous</Badge><Badge><Zap size={12} />AED decides shocks</Badge></div>
+      <div className="ml-auto flex shrink-0 justify-end gap-2">
         <Button size="sm" variant="outline">Ask for a repeat check</Button>
         <Button size="sm">Mark reviewed</Button>
       </div>
@@ -105,10 +109,13 @@ const WristEcg = () => (
 const Trends = () => (
   <Card>
     <CardHeader>
-      <div className="flex flex-col gap-1"><CardTitle>Trends since 08:00</CardTitle><Body muted>Shaded band = normal for that person. Line = their last 6 hours.</Body></div>
+      <div className="flex items-center gap-4">
+        <CardTitle>Trends since 08:00</CardTitle>
+        <span className="flex items-center gap-2 text-xs text-muted"><span className="h-3 w-5 rounded-full bg-ok/20 ring-1 ring-ok/40" />Usual range</span>
+      </div>
       <div className="w-80"><Segmented items={["Heart", "Oxygen", "Skin", "Sleep"]} active="Heart" /></div>
     </CardHeader>
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-2 gap-3">
       {trends.map(t => (
         <div key={t.name} className="flex flex-col gap-3 rounded-tile bg-raised p-4">
           <div className="flex items-center gap-3">
@@ -134,11 +141,13 @@ export function EarthView() {
           <main className="flex flex-col gap-5 p-6">
             <DelayBanner />
             <div className="grid grid-cols-12 items-stretch gap-5">
-              <CaseCard />
-              <Composer />
+              <div className="col-span-7 flex flex-col gap-5">
+                <CaseCard />
+                <WristEcg />
+                <Trends />
+              </div>
+              <EarthChat className="col-span-5" />
             </div>
-            <WristEcg />
-            <Trends />
           </main>
         </div>
       </div>
