@@ -1,6 +1,6 @@
 # Contexto del proyecto (generado desde el Drive)
 
-Generado: Sat 14/11/2026 21:16 (hora de Rosario) por `scripts/sync-context.sh`. No editar a mano: editá el Drive.
+Generado: Sat 14/11/2026 21:35 (hora de Rosario) por `scripts/sync-context.sh`. No editar a mano: editá el Drive.
 
 ---
 
@@ -49,11 +49,14 @@ Generado: Sat 14/11/2026 21:16 (hora de Rosario) por `scripts/sync-context.sh`. 
 * **07 Escalabilidad**: Naza  
 * **08 Landing page**: Lean (landing y wireframe hechos con el design system twocreate)  
 * **09 Justificación de modelos de IA médicos**: Lean  
-* **10 Maqueta del video de 30 s**: Lean
+* **10 Maqueta del video de 30 s: Lean**  
+* **11 Soporte de celular en muñeca: Tomi**
 
 ## **Documentos clave**
 
-* **Bitácora del proyecto**: todas las discusiones en orden.  
+* **Traspaso entre sesiones: resumen de todo lo decidido, para cualquier sesión nueva.**  
+* **Encargo de investigación médica y arquitectura (anexo, Fase 2): https\://docs.google.com/document/d/1pSradgUdKCN5O2YeCmGXNlE20-SyGAsuZZhEqzMcr90/edit**  
+* **Bitácora del proyecto: todas las discusiones en orden.**  
 * **06 · Concepto actual**: Eva: la fuente de verdad del producto.  
 * **Prototipo Eva**: [https\://claude.ai/artifact/DjrUadizcmVevJFVpCqR4m](https://claude.ai/artifact/DjrUadizcmVevJFVpCqR4m)  
 * **Landing Eva by WearMeds: https\://claude.ai/artifact/Ja6v2YathtvXUeaS7EcdRo**  
@@ -91,14 +94,17 @@ Sáb 14/11 18:25 · PRODUCTO, NO SOLO PROYECTO: los wearables se venden con la m
 Sáb 14/11 18:30 · (REEMPLAZADO a las 19:30) Design system Eva v1: NASA Horizon (hds-core) modernizado con escenarios de color. Rojo \= ir a otro lado, azul \= acción en la página, ámbar \= lo que Eva ilumina, verde \= OK. Rojo de botones oscurecido a \#d42d24 para pasar contraste AA. Se exporta en un zip (carpeta Fase 2 · 05\) para generar pantallas con GPT Image 2.5 Flare (borradores) y Sunburst (versión final) y después rehacerlas en Rust \+ htmx \+ HTML · Lean.  
 Sáb 14/11 19:30 · (DESCARTADO a las 20:55) Design system del kit de Tomás: manda el kit visual del equipo (las láminas de las fases), pasado de HERMES a Eva. Fondo blanco, texto \#050A2D, azul \#06356D, rojo \#EF0010 solo para diagonales, insignias y urgencias, amarillo \#F3CC43 solo para el elemento activo, Liberation Sans 400/700, pictogramas de línea planos. Pantalla del brazalete blanca de 800×480 con Repetir y Pedir ayuda siempre visibles. Las referencias que se le pasan a la IA van sin el emblema de NASA. Zip en Fase 2 · 05 · Lean.  
 Sáb 14/11 20:55 · SE DESCARTA EL DESIGN SYSTEM DE TOMÁS: el equipo lo considera inútil. La landing y su wireframe se regeneran con un design system nuevo (pendiente de recibir). Las pantallas generadas con imágenes de Tomás quedan pendientes. El asistente se escribe Eva, nombre propio, en todo el material; los nombres anteriores (Vela, Hermes) quedan solo en este Registro y en la Bitácora · Lean.  
-Sáb 14/11 21:05 · LANDING Y WIREFRAME CON EL DESIGN SYSTEM TWOCREATE: lienzo crema \#f9f7f4, tinta \#0c0c0c, tipografía grotesca 400 en escalas grandes, sin botones rellenos ni esquinas redondeadas, dípticos de imagen ancha \+ detalle y wordmark final "Eva by WearMeds". Usa los 21 assets de Codex y la capa del enlace azul del preview de motion. Motion: estación que enciende cada bandeja con la instrucción en la pantalla, enlace entre pulseras, partículas solares y señal Tierra–Marte. Landing: https\://claude.ai/artifact/Ja6v2YathtvXUeaS7EcdRo · Wireframe: https\://claude.ai/artifact/UUnPWQ5vwBjevhU5DdG7u8 · Lean.
+Sáb 14/11 21:05 · LANDING Y WIREFRAME CON EL DESIGN SYSTEM TWOCREATE: lienzo crema \#f9f7f4, tinta \#0c0c0c, tipografía grotesca 400 en escalas grandes, sin botones rellenos ni esquinas redondeadas, dípticos de imagen ancha \+ detalle y wordmark final "Eva by WearMeds". Usa los 21 assets de Codex y la capa del enlace azul del preview de motion. Motion: estación que enciende cada bandeja con la instrucción en la pantalla, enlace entre pulseras, partículas solares y señal Tierra–Marte. Landing: https\://claude.ai/artifact/Ja6v2YathtvXUeaS7EcdRo · Wireframe: https\://claude.ai/artifact/UUnPWQ5vwBjevhU5DdG7u8 · Lean.  
+Sáb 14/11 21:20 · ENTORNO COMPARTIDO: tarea 11 (soporte de celular en muñeca) para Tomi. Repo público LEAN-EnLAN/sanjo-x-spaceapps-2026 con CLAUDE.md (reglas), HANDOFF.md y docs/CONTEXT.md regenerado desde el Drive al iniciar cada sesión. Una rama y una sesión en la nube por tarea de la Fase 2 (fase2/NN-nombre). Traspaso subido al Drive como "Traspaso entre sesiones". Las sesiones agregan abajo en este Registro, nunca editan lo de otros · Lean.  
+Sáb 14/11 22:15 · ENCARGO DE INVESTIGACIÓN DEL EQUIPO (anexo en Fase 2): se elimina la estación compartida; quedan brazalete y arnés como únicos dispositivos médicos personales, más el hub informático de la nave (IA offline). Monitoreo no invasivo; tratamiento invasivo solo ante emergencia mortal. Cuatro funciones: descarga (desfibrilación vestible con análisis de ritmo validado), procedimientos guiados, inyectable (vía y fármaco sin decidir) y bitácora. LoRa \+ hub, malla a evaluar. Pantalla táctil ≥ \~100 mm de lado activo, preferentemente flexible. Unos 15 pasajeros. Concepto actual reescrito con estos cambios. Quedan para decidir: nombre (HERMES en el encargo vs Eva), lenguaje ("trata" vs "guides, records and warns"), alerta solar y rehacer la estación en la landing · Equipo (encargo), registrado por Lean.
 
 ## **Propuestas pendientes de confirmar**
 
 > * **Datos principales:** Inspiration4, panel metabólico (OSD-575) y hemograma (OSD-569). Públicos y sin login.  
 > * **Usuario:** astronauta en misión larga y oficial médico de a bordo, con la Tierra respondiendo con demora.  
 > * **Métrica de impacto:** cambios detectados con línea basal personal vs rango estándar de laboratorio. Prueba en R+1 con el panel metabólico: 7 de 72 por rango, 16 de 72 por línea basal, 11 que solo ve la basal. Exploratorio: 4 personas, 3 puntos de basal.  
-> * **Base de código:** HealthLog tiene licencia no comercial; ver la evaluación en 04 · Proyectos similares.
+> * **Base de código:** HealthLog tiene licencia no comercial; ver la evaluación en 04 · Proyectos similares.  
+> * Edge cases de los casos médicos (propuesta de Claude, sáb 21:40, para Hassi y Naza): Eva no descarga ni inyecta; desfibrilación e insulina como módulos certificados de terceros que Eva coordina. Caso 2B sin inyección automática (reformulado como prevención y cólico renal). Caso 3A como despresurización de cabina. Cada variable marcada como continua, de estación o de laboratorio. Ver "03-04 · Edge cases: cómo responde Eva" en Fase 2 · 03\.
 
 ## **Preguntas para mentor u organización**
 
@@ -123,7 +129,8 @@ Sáb 14/11 · Claude (Anthropic) en el prototipo · La capa 2 de razonamiento us
 Sáb 14/11 · Claude (Anthropic) · (Descartado) Design system sobre el kit de Tomás (CSS de componentes, muestrario, referencias sin logo, prompts de 14 pantallas, guía de imagen a código) · Fase 2 · 05 · Hecho, falta revisión.  
 Sáb 14/11 · OpenAI GPT Image 2.5 (Flare y Sunburst) · Pantallas de UI como referencia de diseño, con marca de agua "AI-generated" · Fase 2 · 05 · Pendiente.  
 Sáb 14/11 · Codex (OpenAI, modelo de imágenes) · 21 assets (escenas, capas y cuadros de la estación) y preview de motion, con marca "AI-generated" · Fase 2 · 08 · Hecho.  
-Sáb 14/11 · Claude (Anthropic) · Landing y wireframe con el design system twocreate, motion y textos en inglés · Fase 2 · 08 · Hecho, falta revisión.
+Sáb 14/11 · Claude (Anthropic) · Landing y wireframe con el design system twocreate, motion y textos en inglés · Fase 2 · 08 · Hecho, falta revisión.  
+Sáb 14/11 · Claude (Anthropic) · Edge cases de los casos médicos con fuentes y 23 escenarios para la simulación (sim/scenarios.json) · Fase 2 · 03-04 · Hecho, falta revisión de Hassi y Naza.
 
 ---
 
@@ -131,58 +138,62 @@ Sáb 14/11 · Claude (Anthropic) · Landing y wireframe con el design system two
 
 # **06 · Concepto actual: Eva**
 
-*Fuente de verdad del producto al sábado 14/11, 20:55. Reemplaza a los borradores anteriores de esta carpeta, que quedan como historial.*
+Fuente de verdad del producto al sábado 14/11, 22:15. Incorpora el encargo de investigación del equipo (anexo abajo). La versión anterior queda en el historial del Drive.
 
 ## **En una línea**
 
-**Eva** es un copiloto de salud para un viaje comercial a Marte. Guía a cualquier pasajero, aunque no sea médico, en el primer minuto de una emergencia; registra todo y lo envía a la Tierra, que está a entre 3 y 22 minutos.
+Eva es el asistente de salud de WearMeds para un viaje comercial a Marte con unos 15 pasajeros sin formación de astronauta, sin médico a bordo y sin ayuda inmediata desde la Tierra. Reconoce emergencias con monitoreo no invasivo, guía a quien puede ayudar, activa tratamientos de emergencia a través de subsistemas validados y documenta todo.
 
-Los wearables se venden con la marca WearMeds y Eva es su asistente. Desde las 18:25 lo presentamos como un producto real para inversores, no solo como un proyecto de hackathon: hace falta negocio, producto y prototipo. Al ser wearables personalizables y de calidad, es una plataforma con varias líneas de desarrollo.
+## **Qué cambió con el encargo**
 
-## **Pregunta que responde**
-
-¿Cómo ayuda Eva a una persona sin formación médica a actuar en el primer minuto, cuando no hay médico a bordo y la Tierra tarda en responder?
+* La estación compartida se eliminó. Todo va en dos dispositivos personales, brazalete y arnés, más el hub informático de la nave.  
+* La banda torácica pasa a ser un arnés con sensores y subsistemas de tratamiento.  
+* Monitoreo siempre no invasivo (sin implantes ni agujas para medir). El tratamiento puede ser invasivo ante una emergencia mortal.  
+* Comunicación: LoRa en cada brazalete hacia un hub a bordo, con una malla entre dispositivos que hay que evaluar, no dar por buena. Todo funciona sin Internet ni Tierra.  
+* Pantalla táctil con lado largo del área activa de al menos \~100 mm, preferentemente flexible.  
+* Sin presupuesto económico fijado; el bajo consumo es prioridad fuerte.
 
 ## **Piezas**
 
-> * **Banda torácica:** ECG y respiración.  
-> * **Pulsera con pantalla grande:** pulso y movimiento; muestra instrucciones gráficas paso a paso.  
-> * **Estación compartida:** presión arterial, SpO₂ y temperatura. Ilumina el elemento que hay que usar.  
-> * **Núcleo Eva:** protocolo primero (instrucción en menos de 1 s) y IA a bordo después (MedGemma 1.5, en menos de 10 s).  
-> * **Enlace:** registro encadenado que viaja a la Tierra con confirmación de recepción.
+* **Brazalete (muñeca y antebrazo):** pantalla táctil grande, alertas, firmware local, radio LoRa, botón de ayuda, voz y vibración, y los sensores que se justifiquen ahí.  
+* **Arnés (torso):** sensores por contacto y subsistemas de tratamiento. Desfibrilación vestible con análisis de ritmo validado y un compartimento para el inyectable. Una luz identifica el elemento a usar (reemplaza la bandeja iluminada de la estación).  
+* **Hub de la nave:** procesamiento, IA médica principal sin conexión y comunicaciones. No es un equipo médico.
 
-## **Casos**
+## **Las cuatro funciones**
 
-> * **01 · No responde o no puede actuar:** Eva avisa al pasajero más cercano y lo guía para ayudar. Los demás reciben un aviso informativo.  
-> * **02 · Puede actuar y moverse:** Eva lo guía a la estación, ilumina el elemento y muestra cómo usarlo.  
-> * **Alerta solar:** con datos de NASA DONKI y NOAA GOES, avisa a cada pasajero cuándo ir al refugio. La ventana de aviso es la llegada de partículas, que tarda de decenas de minutos a horas; los rayos X llegan junto con la luz y no se pueden anticipar.  
-> * En todos los casos: registra lo ocurrido y la asistencia.
+* **Descarga:** desfibrilación solo con ritmo desfibrilable detectado por el análisis validado del subsistema. Nunca por un dato anormal genérico ni por un modelo de lenguaje.  
+* **Procedimientos:** guía visual de una acción por paso para el afectado o para el compañero que ayuda.  
+* **Inyectable:** vía y fármaco sin decidir. Comparar autoinyector, intramuscular, subcutáneo y otras vías; no suponer acceso a una vena.  
+* **Bitácora:** eventos, mediciones, decisiones, incertidumbre y acciones, para el análisis en Tierra.
 
-## **Diferencia con DeltaMesh (Rosario 2018\)**
+## **Casos de uso**
 
-> * Ellos detectaban y avisaban; Eva resuelve qué pasa después del aviso: quién ayuda y cómo.  
-> * Ellos no contemplaban médico a bordo ni demora con la Tierra; Eva está diseñado para eso.  
-> * Ellos entregaron un informe sin prototipo; nosotros mostramos una demo que funciona con datos reales.
+* **Caso A, no responde o no puede ayudarse:** Eva reconoce la posible emergencia con señales cruzadas, asigna al pasajero más cercano, le manda ubicación e instrucciones y avisa a los demás de forma informativa. Si el auxiliador no confirma, reasigna.  
+* **Caso B, responde y puede actuar:** Eva evalúa si puede moverse y seguir pasos y le muestra la secuencia para usar los elementos del brazalete y del arnés. Si no puede, pasa a un compañero.  
+* **Alerta solar (NASA DONKI y NOAA GOES):** sigue en el concepto, pero el encargo no la menciona. Confirmar.
+
+## **Choques para decidir en equipo**
+
+* **Nombre:** el encargo usa HERMES como nombre de trabajo; el Registro fija Eva (sáb 20:55). Propuesta: Eva para el producto y HERMES solo como nombre del encargo.  
+* **Lenguaje:** la definición literal del encargo dice "totalmente autónomo… que prevenga, trate"; el Registro decidió "guides, records and warns". Con descarga e inyectable en el alcance, propuesta para el pitch: "Eva guides, records and warns; validated subsystems treat".  
+* **Estación:** la landing (Caso 02), los cuadros F1–F3, las capas de la estación y el documento de edge cases la incluyen. Hay que rehacer esa parte con el arnés.  
+* **Alerta solar:** ¿sigue en el alcance?  
+* **Marca:** "Power Mats" sigue sin confirmar.
 
 ## **Cómo hablar del producto**
 
-> * Decir: "guía, registra y avisa". No decir: "totalmente autónomo", "diagnostica" ni "trata".  
-> * Cifras con fuente: \~70% con cambios de visión en misiones de 6 a 12 meses en la ISS; 81% con al menos un signo de SANS; 85% con problemas nasales o de senos paranasales; demora de 3 a 22 minutos por tramo a Marte.  
-> * Sin logo ni marcas de NASA en ningún material.  
-> * Nombre: Eva, como nombre propio (no sigla), para no confundirlo con la sigla EVA (caminata espacial) de NASA. El historial del nombre está en la Bitácora.
-
-## **Criterios del jurado (según Jacobo)**
-
-Factibilidad · innovación · formato y presentación · pitch de los integrantes · foco del problema y ajuste al desafío. Hay un jurado médico y un patrocinador de Rosario.
+* Cifras verificadas: \~70% con cambios de visión en misiones de 6 a 12 meses en la ISS; 85% de 71 astronautas con problemas nasales o de senos; demora de 3 a 22 minutos por tramo a Marte; con línea basal personal, Inspiration4 muestra 16 de 72 cambios contra 7 con rangos de laboratorio.  
+* Sin logos ni marcas de NASA. Textos de la entrega en inglés.  
+* Jurado (según Jacobo): factibilidad, innovación, formato, pitch de los integrantes y ajuste al desafío. Nos evalúa como inversores.
 
 ## **Pendientes**
 
-> * Repositorio de GitHub y laptop de la demo.  
-> * Descargar MedGemma 1.5 y MedASR (aceptar términos en Hugging Face).  
-> * Decidir si la estación se demuestra con hardware real (LEDs) o simulada.  
-> * Verificar si DeltaProtocol fue ganador global o nominado.  
-> * Kit de Codex corrido: 21 assets y preview de motion recibidos y usados en la landing.  
-> * Armar el negocio: cliente, precio, mercado, salida al mercado y línea de productos WearMeds.  
-> * Confirmar el nombre "Power Mats".  
-> * Landing y wireframe regenerados con el design system twocreate (sáb 21:05): revisarlos en equipo.  
-> * Pantallas de UI generadas con imágenes (Tomás): pendientes.
+* Ejecutar el encargo de investigación: casos clínicos, sensores, componentes, energía y comunicaciones. Propuesta de reparto: 03-04 casos y sensores (Hassi y Naza), 02 componentes y energía (Tomi), 09 IA y comunicaciones (Lean).  
+* Rehacer el Caso 02 de la landing y los assets con el arnés en lugar de la estación.  
+* Repositorio de GitHub, laptop de la demo, MedGemma y MedASR.
+
+## **Anexos**
+
+* Encargo de investigación médica y arquitectura (equipo): [https\://docs.google.com/document/d/1pSradgUdKCN5O2YeCmGXNlE20-SyGAsuZZhEqzMcr90/edit](https://docs.google.com/document/d/1pSradgUdKCN5O2YeCmGXNlE20-SyGAsuZZhEqzMcr90/edit)  
+* Edge cases, cómo responde Eva (parcialmente obsoleto por la estación): [https\://docs.google.com/document/d/1CNWBJEB4Js406\_LJ3AJqSkPxbjGQzrc1j6EciFRMesU/edit](https://docs.google.com/document/d/1CNWBJEB4Js406_LJ3AJqSkPxbjGQzrc1j6EciFRMesU/edit)  
+> * 

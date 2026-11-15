@@ -3,6 +3,8 @@
 Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedido de Lean.
 **La fuente de verdad es el Drive** (carpeta `1NCFN_22gxWjRGJdxKjX11KcOk5v7bic7`). Si algo de este archivo choca con el Registro de decisiones, manda el Registro.
 
+> **Actualización sáb 22:15:** el encargo de investigación del equipo (`docs/encargo-investigacion.md`, anexo en el Drive) eliminó la estación compartida. Quedan brazalete, arnés (con desfibrilación vestible e inyectable) y el hub de la nave. Donde este archivo hable de la estación, manda "06 · Concepto actual: Eva".
+
 ## Evento
 - Desafío: **Create Health Monitoring Software for Astronauts on Space Missions**.
 - Entrega local: **domingo 15/11 a las 15:00** (GitHub + materiales). Pitch 16:00. Cierre global 23:59.
