@@ -7,6 +7,10 @@ __pycache__/
 .env
 .env.*
 *.env
+eva.env
+# templates with an empty key are fine
+!*.env.example
+!.env.example
 # app runtime data and dev certs
 app/data/
 app/certs/

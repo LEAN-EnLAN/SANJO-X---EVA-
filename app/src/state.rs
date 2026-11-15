@@ -55,6 +55,8 @@ pub enum UiEvent {
     Station { grid: bool },
     /// the demo was reset
     Reset,
+    /// Eva went online or onto her on-board rules (`/api/eva/status` changed)
+    EvaStatus,
 }
 
 #[derive(Debug, Clone, Serialize, Default)]

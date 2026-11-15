@@ -211,6 +211,8 @@ pub struct AgentConfig {
     pub voice: Arc<VoiceStatus>,
     /// topic guard: scope classifier, Prompt Guard, cache, rate limits (ADR-012)
     pub guard: super::guard::GuardConfig,
+    /// online / on-board rules and why (`/api/eva/status`, shared by clones)
+    pub health: Arc<super::status::EvaHealth>,
 }
 
 fn env_or(name: &str, default: &str) -> String {
@@ -253,6 +255,7 @@ impl AgentConfig {
             offline: false,
             voice: Arc::new(VoiceStatus::default()),
             guard,
+            health: Arc::default(),
         };
         c.set_offline(offline);
         c
@@ -270,6 +273,7 @@ impl AgentConfig {
             offline: true,
             voice: Arc::new(VoiceStatus::default()),
             guard: super::guard::GuardConfig::new(p("guard", super::guard::defaults::CLASSIFIER_MODEL), Some(super::guard::defaults::SAFETY_MODEL.into()), super::guard::defaults::TIMEOUT_MS, super::guard::defaults::RATE_PER_MIN),
+            health: Arc::default(),
         };
         c.voice.set(VoiceEngine::BrowserOffline, 0, 0);
         c
@@ -285,6 +289,7 @@ impl AgentConfig {
         }
         c.offline = false;
         c.voice = Arc::new(VoiceStatus::default());
+        c.health = Arc::default();
         c
     }
 

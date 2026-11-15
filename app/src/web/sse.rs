@@ -47,6 +47,7 @@ fn app_events(state: &Shared, seat: &str, e: UiEvent) -> Vec<Event> {
         UiEvent::Chat { seat: s } if s == seat => out.push(ev("chat", render(&ChatList::build(state, seat)))),
         UiEvent::Navigate { seat: s, screen } if s == seat => out.push(ev(&format!("go-{screen}"), "1".into())),
         UiEvent::Reset => out.push(ev("go-home", "1".into())),
+        UiEvent::EvaStatus => out.push(ev("eva-status", crate::eva_agent::status::status_json(&state.agent).to_string())),
         _ => {}
     }
     out
@@ -57,6 +58,7 @@ fn dash_events(state: &Shared, e: UiEvent) -> Vec<Event> {
         UiEvent::Eva { seat: None, mood } => vec![ev("eva", mood.name().to_string())],
         UiEvent::Eva { .. } | UiEvent::Chat { .. } | UiEvent::Navigate { .. } => Vec::new(),
         UiEvent::Station { .. } => Vec::new(),
+        UiEvent::EvaStatus => vec![ev("eva-status", crate::eva_agent::status::status_json(&state.agent).to_string())],
         _ => vec![
             ev("kpis", render(&KpiStrip::build(state))),
             ev("roster", render(&RosterCard::build(state))),

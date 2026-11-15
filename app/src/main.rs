@@ -20,6 +20,10 @@ use std::sync::Arc;
 #[derive(Parser)]
 #[command(name = "eva", version, about = "Eva by WearMeds: AI health copilot server (astronaut PWA, crew/ground dashboard, Eva Link)")]
 struct Cli {
+    /// read KEY=VALUE lines (e.g. GROQ_API_KEY=…) from this file; default: ./.env, then .env or
+    /// eva.env next to the eva program. Variables already set in the environment win.
+    #[arg(long, global = true, env = "EVA_ENV_FILE")]
+    env_file: Option<PathBuf>,
     #[command(subcommand)]
     cmd: Cmd,
 }
@@ -108,9 +112,27 @@ enum Cmd {
 fn agent_config(offline: bool) -> AgentConfig {
     let mut a = AgentConfig::from_env();
     if offline {
-        a.offline = true;
+        a.set_offline(true);
+    }
+    // --offline or EVA_OFFLINE: /api/eva/status says "offline_flag", not "no_key"
+    if a.offline {
+        a.health.mark_offline_flag();
     }
     a
+}
+
+/// One startup line about Eva's mode. Never the key.
+fn log_eva_mode(env: &eva::envfile::Report, offline: bool) {
+    let offline = offline || std::env::var("EVA_OFFLINE").is_ok_and(|v| v == "1" || v == "true");
+    let has_key = std::env::var("GROQ_API_KEY").is_ok_and(|k| !k.trim().is_empty());
+    if offline {
+        tracing::info!("Eva: on-board rules · --offline");
+    } else if has_key {
+        tracing::info!("Eva: online · key from {}", env.where_words);
+    } else {
+        let looked: Vec<String> = env.looked.iter().map(|p| p.display().to_string()).collect();
+        tracing::warn!("Eva: on-board rules · no GROQ_API_KEY found (looked in {}) · create one of them with GROQ_API_KEY=… and restart", looked.join(", "));
+    }
 }
 
 fn build_node(args: &ServeArgs, clock: Arc<MissionClock>) -> anyhow::Result<Shared> {
@@ -139,6 +161,7 @@ async fn run_node(args: ServeArgs, state: Shared) -> anyhow::Result<()> {
     if args.role == NodeRole::Ship && args.station {
         eva::station::spawn_local(&state);
     }
+    tokio::spawn(eva::eva_agent::status::run_monitor(state.clone()));
     let app = eva::web::router(state.clone());
     let addr: SocketAddr = format!("{}:{}", args.host, args.port).parse()?;
     let scheme = if args.tls { "https" } else { "http" };
@@ -193,11 +216,28 @@ fn verify_dir(data: &std::path::Path) -> anyhow::Result<bool> {
     Ok(all_ok)
 }
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
+/// Plain `fn main`: (1) parse the CLI, (2) load the env file and set its variables while this
+/// is still the only thread (`set_var` is not thread-safe), (3) then build the tokio runtime.
+fn main() -> anyhow::Result<()> {
+    let cli = Cli::parse();
+    let env = match eva::envfile::load(cli.env_file.as_deref()) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("eva: {e}");
+            std::process::exit(2);
+        }
+    };
     tracing_subscriber::fmt().with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "eva=info,tower_http=warn".into())).with_target(false).init();
     let _ = rustls::crypto::ring::default_provider().install_default();
-    let cli = Cli::parse();
+    match &cli.cmd {
+        Cmd::Serve(a) => log_eva_mode(&env, a.offline),
+        Cmd::Demo { offline, .. } => log_eva_mode(&env, *offline),
+        _ => {}
+    }
+    tokio::runtime::Builder::new_multi_thread().enable_all().build()?.block_on(run(cli))
+}
+
+async fn run(cli: Cli) -> anyhow::Result<()> {
     let clock = || Arc::new(MissionClock::new(seed::DEMO_DAY, seed::DEMO_HH, seed::DEMO_MM, seed::MISSION_DAYS));
     match cli.cmd {
         Cmd::Serve(args) => {

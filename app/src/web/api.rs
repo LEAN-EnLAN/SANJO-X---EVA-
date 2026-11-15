@@ -108,6 +108,11 @@ pub async fn protocol_sizes() -> Json<Value> {
     Json(json!({"version": crate::protocol::frame::VERSION, "messages": rows}))
 }
 
+/// `GET /api/eva/status`: online or on-board rules, and why. No secrets, never cached.
+pub async fn eva_status(State(state): State<Shared>) -> Response {
+    ([(header::CACHE_CONTROL, "no-store")], Json(eva_agent::status::status_json(&state.agent))).into_response()
+}
+
 pub async fn tools_json() -> Json<Value> {
     Json(tools::openai_tools())
 }
@@ -242,6 +247,7 @@ pub async fn eva_stt(State(state): State<Shared>, headers: HeaderMap, mp: Multip
     state.set_mood(None, EvaMood::Listening);
     match pipe.transcribe(&state.http, speech::AudioInput { bytes, filename, mime }).await {
         Ok(text) => {
+            eva_agent::status::record(&state, Ok(()));
             let c = guard::neutralise(&text);
             let local = guard::classify_local(&c.text.to_lowercase());
             let scope = match local {
@@ -256,7 +262,8 @@ pub async fn eva_stt(State(state): State<Shared>, headers: HeaderMap, mp: Multip
             (StatusCode::PAYLOAD_TOO_LARGE, Json(json!({"error": guard::AUDIO_TOO_LONG_REPLY}))).into_response()
         }
         Err(e) => {
-            tracing::warn!("stt failed: {e}");
+            tracing::warn!("stt failed: {}", state.agent.redact(&e.to_string()));
+            eva_agent::status::record(&state, Err(&e.to_string()));
             (StatusCode::BAD_GATEWAY, Json(json!({"error": "transcription failed"}))).into_response()
         }
     }
@@ -331,9 +338,13 @@ pub async fn eva_vision(State(state): State<Shared>, headers: HeaderMap, mp: Mul
     };
     let pipe = vision::pipeline(&state.agent);
     let text = match pipe.describe(&state.http, images, task.clone(), question).await {
-        Ok(t) => t,
+        Ok(t) => {
+            eva_agent::status::record(&state, Ok(()));
+            t
+        }
         Err(e) => {
             tracing::warn!("vision failed: {}", state.agent.redact(&e.to_string()));
+            eva_agent::status::record(&state, Err(&e.to_string()));
             "I could not read the image right now. It is saved in your log.".into()
         }
     };

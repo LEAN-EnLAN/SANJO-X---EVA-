@@ -4,6 +4,7 @@
 pub mod bench;
 pub mod chain;
 pub mod clock;
+pub mod envfile;
 pub mod eva_agent;
 pub mod link;
 pub mod mesh;

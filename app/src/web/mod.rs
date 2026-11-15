@@ -95,6 +95,7 @@ pub fn router(state: Shared) -> Router {
         .route("/api/link", get(api::link_json))
         .route("/api/protocol/sizes", get(api::protocol_sizes))
         .route("/api/tools", get(api::tools_json))
+        .route("/api/eva/status", get(api::eva_status))
         .route("/api/eva/chat", post(api::eva_chat))
         .route("/api/eva/tool", post(api::eva_tool))
         .route("/api/eva/stt", post(api::eva_stt).layer(axum::extract::DefaultBodyLimit::max(MEDIA_BODY_LIMIT)))

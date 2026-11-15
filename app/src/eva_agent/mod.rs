@@ -18,6 +18,7 @@ pub mod prompt;
 pub mod reflex;
 pub mod schema;
 pub mod speech;
+pub mod status;
 pub mod tools;
 pub mod vision;
 
@@ -342,7 +343,12 @@ pub async fn converse(state: &Shared, seat: &str, text: &str) -> chat::ChatReply
         _ => {
             let asked = decision.as_ref().map(|d| d.text.clone()).unwrap_or_else(|| text.to_string());
             let history = model_history(state, seat, &asked);
-            match pipe.reply(state, seat, history, asked.clone()).await {
+            let res = pipe.reply(state, seat, history, asked.clone()).await;
+            match &res {
+                Ok(_) => status::record(state, Ok(())),
+                Err(e) => status::record(state, Err(&e.to_string())),
+            }
+            match res {
                 Ok(r) if !r.text.is_empty() => r,
                 Ok(_) => chat::offline_reply(state, seat, &asked),
                 Err(e) => {
