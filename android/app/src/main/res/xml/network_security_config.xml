@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cleartext: the hub is any machine on the LAN (192.168.x.x, 10.x.x.x, 172.16-31.x.x, a hotspot address), and a
+  network security config can only list host names, not IP ranges. So cleartext is permitted here and the range
+  check is enforced in code: HubConfig.isCleartextAllowed() is applied to every WebView request
+  (MainActivity.HubClient.shouldInterceptRequest) and to the hub address in the setup screen. http:// to a public
+  host is blocked.
+
+  Trust: system CAs, plus user-installed CAs so a hub certificate made with mkcert (root CA installed on the phone,
+  see docs/app/ADR-004) is accepted without a prompt. Any other self-signed certificate goes through
+  trust-on-first-use pinning in MainActivity (onReceivedSslError).
+-->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config cleartextTrafficPermitted="true" tools:ignore="InsecureBaseConfiguration">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" tools:ignore="AcceptsUserCertificates" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

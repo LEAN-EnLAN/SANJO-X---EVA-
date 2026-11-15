@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Eva</string>
+    <string name="setup_title">Connect to the ship hub</string>
+    <string name="setup_lead">The laptop running <tt>eva demo</tt> is the ship hub. Enter the address it prints, on the same Wi-Fi as this phone.</string>
+    <string name="hub_address">Hub address</string>
+    <string name="hub_address_hint">192.168.0.10:8080</string>
+    <string name="hub_address_help">IP or name and port. A full URL (https://…/app?seat=3B) also works.</string>
+    <string name="scheme">Connection</string>
+    <string name="scheme_https" tools:ignore="TypographyDashes">https (hub started with --tls)</string>
+    <string name="scheme_http">http (plain, local network only)</string>
+    <string name="voice_note_https">Voice, photo and video work over https. You will be asked once to trust the hub\'s certificate.</string>
+    <string name="voice_note_http" tools:ignore="TypographyDashes">Over plain http the hub works, but Android blocks the microphone and camera: hold-to-talk needs https (start the hub with --tls).</string>
+    <string name="open_as">Open as</string>
+    <string name="keep_screen_on">Keep the screen on while Eva is open</string>
+    <string name="keep_screen_on_help">So an emergency alert is never missed behind a locked screen.</string>
+    <string name="pinned_cert_detail">Trusted hub certificate · %1$s\nSHA-256\n%2$s</string>
+    <string name="seat_option">%1$s  ·  %2$s</string>
+    <string name="version_label">Eva %1$s · Sanjo-X</string>
+    <string name="forget_cert">Forget</string>
+    <string name="connect">Connect</string>
+    <string name="settings_shortcut_short">Hub settings</string>
+    <string name="settings_shortcut_long">Change the ship hub or seat</string>
+
+    <string name="error_unreachable_title">Can\'t reach the ship hub</string>
+    <string name="error_offline_title">No network</string>
+    <string name="error_cert_changed_title">Hub certificate changed</string>
+    <string name="error_cert_rejected_title">Certificate not trusted</string>
+    <string name="error_cert_invalid_title">Certificate rejected</string>
+    <string name="retry">Retry</string>
+    <string name="change_hub">Change hub</string>
+
+    <string name="trust_title">Trust this hub?</string>
+    <string name="trust_button">Trust</string>
+    <string name="dont_trust_button">Don\'t trust</string>
+
+    <string name="leave_title">Leave Eva?</string>
+    <string name="leave">Leave</string>
+    <string name="stay">Stay</string>
+    <string name="file_chooser_title">Photo or video for Eva</string>
+    <string name="permission_denied">Eva needs the microphone or camera for voice, photo and video. You can allow it in Android settings.</string>
+</resources>

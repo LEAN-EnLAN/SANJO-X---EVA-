@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Long-press the Eva launcher icon → "Hub settings". -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="hub_settings"
+        android:enabled="true"
+        android:icon="@drawable/ic_settings"
+        android:shortcutShortLabel="@string/settings_shortcut_short"
+        android:shortcutLongLabel="@string/settings_shortcut_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="tech.sanjox.eva"
+            android:targetClass="tech.sanjox.eva.SetupActivity" />
+    </shortcut>
+</shortcuts>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ splash: the icon area is 288dp and only the inner 192dp circle is shown. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/eva_mark"
+    android:inset="11%" />
