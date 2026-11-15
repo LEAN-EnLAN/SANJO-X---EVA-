@@ -32,7 +32,9 @@
     backRail: 'Click again or Esc to flip back',
     backCarousel: 'Tap again to flip back',
     dots: 'Choose a team member',
-    show: 'Show'
+    show: 'Show',
+    member: 'member',
+    members: 'members'
   };
 
   /* ---------- small helpers ---------- */
@@ -271,7 +273,7 @@
     if (reduced) section.classList.add('tr--reduced');
     var head = make('header', 'tr-head');
     head.appendChild(make('h2', 'tr-title', { id: uid + '-title' }, opts.title || 'Team'));
-    var metaText = opts.meta != null ? opts.meta : pad2(n) + (n === 1 ? ' member' : ' members');
+    var metaText = opts.meta != null ? opts.meta : pad2(n) + ' ' + (n === 1 ? labels.member : labels.members);
     if (metaText) head.appendChild(make('p', 'tr-meta', null, metaText));
     section.appendChild(head);
 
@@ -409,7 +411,7 @@
       captionFor = i;
       var main, hint;
       if (i == null) {
-        main = pad2(n) + (n === 1 ? ' member' : ' members') + (ctx.teamLine ? ' — ' + ctx.teamLine : '');
+        main = pad2(n) + ' ' + (n === 1 ? labels.member : labels.members) + (ctx.teamLine ? ' — ' + ctx.teamLine : '');
         hint = carousel ? labels.hintCarousel : labels.idle;
       } else {
         var m = members[i];

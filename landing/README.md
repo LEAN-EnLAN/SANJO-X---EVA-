@@ -14,6 +14,9 @@ The public landing page for Eva by WearMeds, team Sanjo-X, NASA Space Apps Chall
 9. How it links: one host (the ship hub), clients, the hub-down alarm path and the near-space link.
 10. Solar alert, Earth link, Mars arrival, why it matters, kit, business, team and contact.
 
+## Language (EN / ES)
+English is the default and is what the HTML contains. The EN / ES switch in the top bar swaps to Spanish in place, with no reload; the choice is saved per viewer, and `?lang=es` (or `?lang=en`) forces a language. The Spanish text is the `ES` dictionary in the script after the footer, keyed by the English text, so **when you change an English string, update its key in `ES` too** (an English string with no entry stays in English). Elements marked `data-i18n` swap their whole inner HTML; strings written by the page script go through `I18N.tr()`. Spanish is Rioplatense with "vos", like the station screen ("Retirá el DEA"). The formal citation stays in English (`translate="no"`).
+
 ## Swapping the interim visuals
 The wristband and station visuals are team reference images. To replace them with renders, overwrite the files and keep the names and aspect ratios:
 - `a/band2-joined.webp`, `a/band2-stacked.webp`, `a/band2-parts.webp`: 1400 × 933 (3:2). Hotspots, the ECG pads and the screen overlay are positioned in % of this frame. If the framing changes, update their `left`/`top` values and the `matrix3d` in `.bscr .ui`.
@@ -31,4 +34,4 @@ The page uses AI-generated images. Team decision (Sun 15/11): the AI declaration
 See `a/AI-NOTICE.md` for the full list and the post-processing.
 
 ## Product rules
-Eva gives diagnostic support and never decides a shock; the AED does. No harness and no wearable injector. Product text is in English. Main source: Russell et al., *npj Microgravity* 9, 46 (2023).
+Eva gives diagnostic support and never decides a shock; the AED does. No harness and no wearable injector. Product text is in English, with a full Spanish version behind the EN / ES switch. Main source: Russell et al., *npj Microgravity* 9, 46 (2023).

@@ -1,7 +1,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script>document.documentElement.dataset.theme="dark"</script>
+<script>(function(){var d=document.documentElement,l="en";d.dataset.theme="dark";
+/* language: ?lang=es|en forces it for this visit, else the viewer's saved choice, else English */
+try{var q=new URLSearchParams(location.search).get("lang");if(q==="es"||q==="en")l=q;else{var s=localStorage.getItem("wm-lang");if(s==="es"||s==="en")l=s}}catch(e){}
+d.lang=l;if(l==="es"){d.setAttribute("data-i18n-wait","");setTimeout(function(){d.removeAttribute("data-i18n-wait")},2500)}})()</script>
 <title>Eva by WearMeds</title>
+<meta name="description" content="Eva is the AI copilot that guides, records and warns passengers on the way to Mars: a wristband, an emergency station and a ship hub that work with no doctor on board and no link to Earth.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -424,9 +428,21 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   [data-reveal].pre{opacity:1;transform:none}
   .slab{position:relative;top:auto;transform:none;filter:none}
 }
+/* language switch EN / ES (same family as the old theme picker: small caps-size label, round buttons, ink border on the current one) */
+html[data-i18n-wait] body{visibility:hidden}
+.lpick{display:flex;align-items:center;gap:6px;font-size:13px;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+.lpick button{min-width:36px;height:26px;padding:0 9px;border:1px solid var(--rule);border-radius:13px;background:none;color:var(--muted);font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;transition:transform .3s var(--ease),border-color .3s,color .3s}
+.lpick button:hover{transform:scale(1.08);color:var(--ink)}
+.lpick button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.lpick .sep{color:var(--muted)}
+main,.foot{transition:opacity .16s ease}
+html.lswap main,html.lswap .foot{opacity:.15}
+:root[lang="es"] .link-sec .playhead::after{content:"ahora"}
+:root[lang="es"] .dg.wide .es-sm{font-size:17px}:root[lang="es"] .dg.tall .es-sm{font-size:16px!important}
+@media (prefers-reduced-motion:reduce){main,.foot{transition:none}.lpick button{transition:none}.lpick button:hover{transform:none}}
 </style>
 
-<nav class="nav g" aria-label="Main"><a href="#top">WearMeds</a></nav>
+<nav class="nav g" aria-label="Main"><a href="#top">WearMeds</a><div class="lpick" role="group" aria-label="Language"><button type="button" data-l="en" lang="en" translate="no" aria-label="English" aria-pressed="true">EN</button><span class="sep" aria-hidden="true">/</span><button type="button" data-l="es" lang="es" translate="no" aria-label="Español" aria-pressed="false">ES</button></div></nav>
 
 <main id="top">
   <!-- 1 · Hero -->
@@ -446,14 +462,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <div class="cab"><img class="bg" src="a/cab-bg-b.jpg" alt="Calm spacecraft cabin with Mars in the window."><img class="mid" src="a/cab-mid-b.webp" alt=""><img class="fg" src="a/cab-fg-b.webp" alt=""></div>
         <div class="shade"></div>
       </div>
-      <div class="copy" id="heroCopy"><h1>Eva</h1><p>The AI copilot that <b>guides</b>, <b>records</b> and <b>warns</b> on the way to Mars.</p></div>
+      <div class="copy" id="heroCopy"><h1>Eva</h1><p data-i18n>The AI copilot that <b>guides</b>, <b>records</b> and <b>warns</b> on the way to Mars.</p></div>
     </div>
   </section>
 
   <!-- 2 · Statement -->
   <section class="space statement g" aria-labelledby="st">
     <img class="stars" src="a/st2.jpg" alt="" aria-hidden="true">
-    <p class="big" id="st" data-reveal>Fifteen passengers. <span class="mk">No doctor</span> on board. Earth up to <span class="mk">22 minutes</span> away.</p>
+    <p class="big" id="st" data-reveal data-i18n>Fifteen passengers. <span class="mk">No doctor</span> on board. Earth up to <span class="mk">22 minutes</span> away.</p>
     <div class="row">
       <p data-reveal>Wristband<small>The only thing anyone wears: two magnetic modules, a sensor base on the skin and a screen on top with voice, the help button and ECG on demand.</small></p>
       <p data-reveal>Emergency station<small>Twelve lit compartments with the AED in 01, a short float from every seat. The AED decides the shock.</small></p>
@@ -563,7 +579,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <img class="sc" src="a/station-front.webp" alt="The ship's emergency station with compartment 01, the AED, lit teal and the Eva screen above it.">
         <img class="sc" src="a/wrist-cpr.webp" alt="A helper does chest compressions on a training manikin; a ring on the wristband paces each push.">
         <img class="sc icn" src="a/ic-aed-pads.webp" alt="AED pads in their sealed pack.">
-        <div class="ping" id="hlA"><i></i><span id="hlT"></span></div>
+        <div class="ping" id="hlA"><i></i><span id="hlT" data-i18n-js></span></div>
       </div>
       <div class="ptxt">
         <p class="label" id="ca">Case A · Cannot act</p>
@@ -596,11 +612,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <div class="w"><img src="a/wrist-ecg.webp" alt="One finger of each hand rests on the metal pads at both ends of the wristband during an ECG check.">
           <i class="hot pad" style="left:31%;top:41.6%"></i><i class="hot pad" style="left:67.3%;top:41.6%"></i>
           <div class="scr" id="scr" data-s="0" aria-live="polite">
-            <div class="ring" id="uiP" aria-hidden="true">♥︎</div>
+            <div class="ring" id="uiP" data-i18n-js aria-hidden="true">♥︎</div>
             <div class="col">
-              <div class="top"><small id="uiK">ECG check · 1 of 3</small><b id="uiS"></b></div>
+              <div class="top"><small id="uiK" data-i18n-js>ECG check · 1 of 3</small><b id="uiS" data-i18n-js></b></div>
               <svg viewBox="0 0 240 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M0 24H18l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H72l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H126l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H180l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H240"/></svg>
-              <span class="tx" id="uiT">Touch both metal pads, one finger of each hand</span>
+              <span class="tx" id="uiT" data-i18n-js>Touch both metal pads, one finger of each hand</span>
             </div>
           </div>
         </div>
@@ -689,7 +705,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <rect class="box" x="50" y="250" width="240" height="60"/><text class="t1" x="66" y="277">Wristband</text><text class="t2" x="66" y="299">Passenger 07 · client</text>
       <rect class="box" x="50" y="360" width="240" height="60"/><text class="t1" x="66" y="387">Wristband</text><text class="t2" x="66" y="409">Passenger 11 · client</text>
       <text class="tnet" x="50" y="124">LoRa mesh: bands relay for each other</text>
-      <rect class="box" x="920" y="250" width="250" height="150"/><rect class="teal" x="1140" y="262" width="18" height="18"/><text class="t1" x="936" y="280">Emergency station</text><text class="t2" x="936" y="304">Client · own small computer</text><text class="t2" x="936" y="326">Lights, door and item sensors</text><text class="t2" x="936" y="348">LoRa · backup battery</text><text class="t2" x="936" y="370">Red button</text>
+      <rect class="box" x="920" y="250" width="250" height="150"/><rect class="teal" x="1140" y="262" width="18" height="18"/><text class="t1 es-sm" x="936" y="280">Emergency station</text><text class="t2" x="936" y="304">Client · own small computer</text><text class="t2" x="936" y="326">Lights, door and item sensors</text><text class="t2" x="936" y="348">LoRa · backup battery</text><text class="t2" x="936" y="370">Red button</text>
       <text class="tnet" x="744" y="282">Light 01 · Take the AED</text>
       <text class="tnet" x="744" y="362">Door 01 · AED taken</text>
       <text class="t2" x="610" y="168">Ship Wi-Fi</text>
@@ -720,7 +736,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <rect class="box" x="46" y="381" width="114" height="44"/><text class="t2" x="56" y="408" style="fill:var(--ink)">Wristband 07</text>
       <rect class="box" x="46" y="454" width="114" height="44"/><text class="t2" x="56" y="481" style="fill:var(--ink)">Wristband 11</text>
       <text class="tnet" x="46" y="294">LoRa · mesh</text>
-      <rect class="box" x="198" y="318" width="142" height="180"/><rect class="teal" x="314" y="330" width="14" height="14"/><text class="t1" x="210" y="346" style="font-size:18px">Emergency</text><text class="t1" x="210" y="368" style="font-size:18px">station</text><text class="t2" x="210" y="394">Client</text><text class="t2" x="210" y="414">Lights, door</text><text class="t2" x="210" y="432">and item sensors</text><text class="t2" x="210" y="452">Backup battery</text><text class="t2" x="210" y="472">Red button</text>
+      <rect class="box" x="198" y="318" width="142" height="180"/><rect class="teal" x="314" y="330" width="14" height="14"/><text class="t1 es-sm" x="210" y="346" style="font-size:18px">Emergency</text><text class="t1 es-sm" x="210" y="368" style="font-size:18px">station</text><text class="t2" x="210" y="394">Client</text><text class="t2" x="210" y="414">Lights, door</text><text class="t2" x="210" y="432">and item sensors</text><text class="t2" x="210" y="452">Backup battery</text><text class="t2" x="210" y="472">Red button</text>
       <text class="tal" x="20" y="536">Hub down: a wristband's no-pulse</text><text class="tal" x="20" y="556">alarm goes straight to the station,</text><text class="tal" x="20" y="576">and its red button alarms every band.</text>
       <g transform="translate(20 624)"><path class="lora" d="M0 -5H36"/><text class="t2" x="46" y="0">LoRa</text><path class="wifi" d="M0 23H36"/><text class="t2" x="46" y="28">Ship Wi-Fi</text><path class="alarm" d="M0 51H36" style="animation:none"/><text class="t2" x="46" y="56">Alarm path when the hub is down</text><path class="nsl" d="M0 79H36"/><text class="t2" x="46" y="84">Near-space link</text></g>
     </svg>
@@ -739,8 +755,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <canvas id="sunGL" aria-label="3D model of the Sun from NASA. Drag to rotate it."></canvas>
       <canvas id="fxCv" aria-hidden="true"></canvas>
       <canvas id="asciiCv" aria-hidden="true"></canvas>
-      <div class="hud" aria-hidden="true"><i class="c c1"></i><i class="c c2"></i><i class="c c3"></i><i class="c c4"></i><div class="bar"><span>Hull cam 02 · forward</span><span class="rec" id="recT">00:00:00</span></div></div>
-      <div class="meter" id="meter">Proton flux · 2 pfu</div>
+      <div class="hud" aria-hidden="true"><i class="c c1"></i><i class="c c2"></i><i class="c c3"></i><i class="c c4"></i><div class="bar"><span>Hull cam 02 · forward</span><span class="rec" id="recT" data-i18n-js>00:00:00</span></div></div>
+      <div class="meter" id="meter" data-i18n-js>Proton flux · 2 pfu</div>
       <ol class="log" id="slog">
         <li data-at=".03">Eva watches NASA DONKI and NOAA GOES</li>
         <li data-at=".16" class="red">X-ray flare seen · the particles are about 18 minutes behind</li>
@@ -752,7 +768,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <p class="drag" id="sunHint">Drag the Sun</p>
       <div class="txt"><p class="label" id="sa">Solar alert</p><h2>Warned minutes early. Everyone stays in the shelter.</h2></div>
       <div class="alvig" aria-hidden="true"></div>
-      <div class="alert" role="alert"><div class="al-tape"></div><div class="al-top"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#ffd400"/><circle cx="50" cy="50" r="8" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(120 50 50)"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(240 50 50)"/></svg>RADIATION STORM<em>LIVE</em></div><b>Go to the shelter now</b><div class="al-count"><strong id="alT">18:00</strong><i id="alI">until the particles hit</i></div><span>Drop everything. Follow the arrows on your wristband.</span></div>
+      <div class="alert" role="alert"><div class="al-tape"></div><div class="al-top"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#ffd400"/><circle cx="50" cy="50" r="8" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(120 50 50)"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(240 50 50)"/></svg>RADIATION STORM<em>LIVE</em></div><b data-i18n-js>Go to the shelter now</b><div class="al-count"><strong id="alT" data-i18n-js>18:00</strong><i id="alI" data-i18n-js>until the particles hit</i></div><span data-i18n-js>Drop everything. Follow the arrows on your wristband.</span></div>
     </div>
   </section>
 
@@ -850,16 +866,288 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 <footer class="foot g" id="foot">
   <p class="notice" id="ai">Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. Concept images are AI-generated; the AI notice is in the project README. The 3D Sun is NASA's free model from NASA 3D Resources.</p>
-  <ol class="notice" id="refs" style="margin:0 0 24px;padding-left:1.2em"><li>Russell BK, Burian BK, Hilmers DC, Beard BL, Martin K, Pletcher DL, Easter B, Lehnhardt K, Levin D. The value of a spaceflight clinical decision support system for earth-independent medical operations. <i>npj Microgravity</i> 9, 46 (2023). <a class="u" href="https://doi.org/10.1038/s41526-023-00284-1">doi:10.1038/s41526-023-00284-1</a> · CC BY 4.0. Main source of this project.</li><li>NASA Open Science Data Repository: OSD-575 and OSD-569, Inspiration4 metabolic panel and blood count.</li><li>NASA DONKI and NOAA GOES space weather data.</li></ol>
+  <ol class="notice" id="refs" style="margin:0 0 24px;padding-left:1.2em"><li><span translate="no">Russell BK, Burian BK, Hilmers DC, Beard BL, Martin K, Pletcher DL, Easter B, Lehnhardt K, Levin D. The value of a spaceflight clinical decision support system for earth-independent medical operations. <i>npj Microgravity</i> 9, 46 (2023). <a class="u" href="https://doi.org/10.1038/s41526-023-00284-1">doi:10.1038/s41526-023-00284-1</a></span> · CC BY 4.0. Main source of this project.</li><li>NASA Open Science Data Repository: OSD-575 and OSD-569, Inspiration4 metabolic panel and blood count.</li><li>NASA DONKI and NOAA GOES space weather data.</li></ol>
   <div class="mark"><svg viewBox="0 0 1400 120" role="img" aria-label="Eva by WearMeds"><text x="0" y="104" textLength="1400" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="PP Neue Montreal, Inter, Arial, sans-serif" font-size="132">Eva by WearMeds</text></svg></div>
   <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><ul><li><a class="u" href="#ai">AI notice</a></li><li><a class="u" href="#refs">References</a></li><li><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/">Data sources</a></li></ul></div>
 </footer>
 
+<script>
+/* EN / ES. English is written in the HTML and is the default (the deliverable is in English for NASA).
+   Spanish lives in ES below, keyed by the English text itself (whitespace collapsed), so the HTML stays plain English.
+   What gets translated: every visible text node, alt and aria-label, <title> and the meta description;
+   elements marked data-i18n swap their whole innerHTML (for sentences with inline markup);
+   elements marked data-i18n-js are written by the page script, which asks I18N.tr() for its strings;
+   [translate="no"] (the formal citation, the language buttons) and the team rail (re-mounted per language) are skipped.
+   Rioplatense register with "vos", the way the station screen already says "Retirá el DEA". */
+window.I18N=(function(){
+const ES={
+/* head */
+"Eva by WearMeds":"Eva de WearMeds",
+"Eva is the AI copilot that guides, records and warns passengers on the way to Mars: a wristband, an emergency station and a ship hub that work with no doctor on board and no link to Earth.":"Eva es la copiloto de IA que guía, registra y alerta a los pasajeros en el viaje a Marte: una pulsera, una estación de emergencia y un hub de la nave que funcionan sin médico a bordo y sin enlace con la Tierra.",
+"Main":"Principal","Language":"Idioma",
+/* hero + statement */
+"The AI copilot that <b>guides</b>, <b>records</b> and <b>warns</b> on the way to Mars.":"La copiloto de IA que <b>guía</b>, <b>registra</b> y <b>alerta</b> en el viaje a Marte.",
+"Fifteen passengers. <span class=\"mk\">No doctor</span> on board. Earth up to <span class=\"mk\">22 minutes</span> away.":"Quince pasajeros. <span class=\"mk\">Ningún médico</span> a bordo. La Tierra puede quedar a <span class=\"mk\">22 minutos</span>.",
+"Calm spacecraft cabin with Mars in the window.":"Cabina tranquila de la nave con Marte en la ventana.",
+"Wristband":"Pulsera",
+"The only thing anyone wears: two magnetic modules, a sensor base on the skin and a screen on top with voice, the help button and ECG on demand.":"Lo único que lleva cada persona: dos módulos magnéticos, una base de sensores sobre la piel y arriba una pantalla con voz, el botón de ayuda y ECG a demanda.",
+"Emergency station":"Estación de emergencia",
+"Twelve lit compartments with the AED in 01, a short float from every seat. The AED decides the shock.":"Doce compartimientos iluminados, con el DEA en el 01, a pocos segundos flotando desde cada asiento. El DEA decide la descarga.",
+"Ship hub":"Hub de la nave",
+"The one host: runs Eva offline and keeps the signed log. No internet, no Earth needed.":"El único host: corre Eva sin conexión y guarda el registro firmado. Sin internet y sin depender de la Tierra.",
+/* sensors record → Eva acts */
+"Sensors record. Eva acts.":"Los sensores registran. Eva actúa.",
+"NASA already senses the crew. Eva turns that sensing into action.":"La NASA ya mide a la tripulación. Eva convierte esas mediciones en acción.",
+"Today":"Hoy","The wrist records":"La muñeca registra",
+"On Artemis II, the ARCHeR study (Artemis Research for Crew Health and Readiness) had the crew wear the ActLumus wrist actigraph by Condor Instruments.":"En Artemis II, el estudio ARCHeR (Artemis Research for Crew Health and Readiness) hizo que la tripulación usara el actígrafo de muñeca ActLumus, de Condor Instruments.",
+"Motion":"Movimiento","Arm activity, rest":"Actividad del brazo, reposo",
+"Sleep":"Sueño","Sleep and wake patterns":"Patrones de sueño y vigilia",
+"Light":"Luz","10 spectral sensors":"10 sensores espectrales",
+"Temperature":"Temperatura","Body temperature":"Temperatura corporal",
+"Event button":"Botón de evento","Marks a moment":"Marca un momento",
+"Output":"Salida","Data for later analysis":"Datos para analizar después",
+"It records. It does not alert or guide.":"Registra. No alerta ni guía.",
+"With Eva":"Con Eva",
+"Within 10 seconds of an event, the person knows what to do, where to go and how to get there":"En menos de 10 segundos desde un evento, la persona sabe qué hacer, adónde ir y cómo llegar",
+"What to do":"Qué hacer","One action per step":"Una acción por paso",
+"Where to go":"Adónde ir","Seat, station or shelter":"Asiento, estación o refugio",
+"How to get there":"Cómo llegar","Route on the wrist, voice, vibration":"Ruta en la muñeca, voz, vibración",
+"Who helps":"Quién ayuda","Nearest trained helper, AED runner":"El ayudante capacitado más cercano y quien trae el DEA",
+"Record":"Registro","Signed and sent to Earth":"Firmado y enviado a la Tierra",
+"The 10 seconds are our design target. Eva is a new interface over the sensing, not a new sensor.":"Los 10 segundos son nuestro objetivo de diseño. Eva es una interfaz nueva sobre esas mediciones, no un sensor nuevo.",
+"Sources:":"Fuentes:",
+"FAPESP · Pesquisa para Inovação, the Condor Instruments actigraph on Artemis II":"FAPESP · Pesquisa para Inovação, el actígrafo de Condor Instruments en Artemis II",
+"NASA · ARCHeR actigraphy device (jsc2025e075542)":"NASA · dispositivo de actigrafía de ARCHeR (jsc2025e075542)",
+"Agência FAPESP · the ActLumus actigraph":"Agência FAPESP · el actígrafo ActLumus",
+/* what Eva does */
+"What Eva does":"Qué hace Eva",
+"Eva, the AI copilot, in twelve lines":"Eva, la copiloto de IA, en doce líneas",
+"Multimodal chat":"Chat multimodal","Text, voice, photo and video, in plain language.":"Texto, voz, foto y video, en lenguaje simple.",
+"Reads the wristband live":"Lee la pulsera en vivo","Every signal against your own baseline, not a population average.":"Cada señal contra tu propia línea de base, no contra un promedio poblacional.",
+"Diagnostic support in four parts":"Apoyo al diagnóstico en cuatro partes","What is happening now, why, how she decided, what comes next. The crew lead confirms.":"Qué pasa ahora, por qué, cómo lo decidió y qué sigue. El líder de la tripulación confirma.",
+"Emergency guidance":"Guía en emergencias","One action per step, on the wrist, by voice and by vibration.":"Una acción por paso, en la muñeca, por voz y con vibración.",
+"Assigns the helpers":"Asigna a los ayudantes","The nearest trained passenger for CPR and a runner for the AED.":"El pasajero capacitado más cercano para la RCP y otro que va a buscar el DEA.",
+"Guides to the station":"Guía hasta la estación","Lights the right compartment and says what to take.":"Ilumina el compartimiento correcto y dice qué retirar.",
+"ECG on demand":"ECG a demanda","Two fingers, 30 seconds. Never continuous, never a shock decision.":"Dos dedos, 30 segundos. Nunca continuo, nunca decide una descarga.",
+"Solar storm alert":"Alerta de tormenta solar","Minutes of warning and a lit route to the shelter.":"Minutos de aviso y una ruta iluminada hasta el refugio.",
+"Daily log and emotional journal":"Registro diario y diario emocional","Sleep, meals, water and mood, in a few taps or a few words.":"Sueño, comidas, agua y ánimo, con unos toques o unas palabras.",
+"Signed records to Earth":"Registros firmados a la Tierra","Every step hash-chained and sent over the near-space link.":"Cada paso encadenado por hash y enviado por el enlace de espacio cercano.",
+"Works offline":"Funciona sin conexión","Runs on the ship hub. No internet and no Earth needed.":"Corre en el hub de la nave. Sin internet y sin depender de la Tierra.",
+"Shared tools":"Herramientas compartidas","Eva or you can trigger any tool: ECG check, check-in, call for help, route to the shelter.":"Eva o vos pueden activar cualquier herramienta: control de ECG, chequeo de estado, pedido de ayuda, ruta al refugio.",
+"Diagnostic support, not diagnosis.":"Apoyo al diagnóstico, no diagnóstico.",
+"Eva guides, records and warns. The crew lead confirms, and the AED decides the shock.":"Eva guía, registra y alerta. El líder de la tripulación confirma y el DEA decide la descarga.",
+/* wristband v2 */
+"The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.":"La pulsera Eva: un módulo de pantalla robusto color grafito, con esquinas plateadas y botones naranjas, sobre dos correas de tela oscuras.",
+"The screen module lifted above the sensor base, showing the spring contacts and the magnet seats between them.":"El módulo de pantalla levantado sobre la base de sensores, con los contactos de resorte y los alojamientos de los imanes a la vista.",
+"The two modules side by side: the screen module seen from below, and the sensor base with its two straps through metal loops.":"Los dos módulos lado a lado: el módulo de pantalla visto desde abajo y la base de sensores con sus dos correas pasadas por pasadores metálicos.",
+"Suit mode cross-section: the suit sleeve sits between the screen module and the sensor base; the magnets hold, the contacts stay apart, and the base keeps sending by LoRa.":"Corte en modo traje: la manga del traje queda entre el módulo de pantalla y la base de sensores; los imanes sujetan, los contactos quedan separados y la base sigue enviando por LoRa.",
+"Screen module":"Módulo de pantalla","Main battery · help button · voice · ECG pads":"Batería principal · botón de ayuda · voz · placas de ECG",
+"Magnets":"Imanes","hold":"sujetan","Suit":"Manga","sleeve":"del traje",
+"Sensor base · contacts apart · own battery":"Base de sensores · sin contacto · batería propia",
+"LoRa keeps":"LoRa sigue","sending":"enviando",
+"Skin · pulse, SpO₂, temperature, EDA":"Piel · pulso, SpO₂, temperatura, EDA",
+"ECG still works with bare fingers on the two pads":"El ECG sigue funcionando con los dedos sobre las dos placas",
+"All good":"Todo bien","Pulse 72 · SpO₂ 98% · 36.4 °C":"Pulso 72 · SpO₂ 98% · 36,4 °C",
+"Keep still · one finger on each pad":"Sin moverte · un dedo en cada placa",
+"Help button":"Botón de ayuda","Base button":"Botón de la base","Side button":"Botón lateral","Speaker":"Parlante",
+"Spring contacts":"Contactos de resorte","Sensor base":"Base de sensores","Screen module, underside":"Módulo de pantalla, cara inferior",
+"Contacts":"Contactos","Magnet seat":"Alojamiento del imán","Strap loop":"Pasador de la correa","ECG pad":"Placa ECG",
+"One band, two magnetic modules":"Una pulsera, dos módulos magnéticos",
+"A rugged screen module clicks onto a slim sensor base. Metal corner bumpers, a rubberised frame and orange buttons you can find without looking.":"Un módulo de pantalla robusto encastra sobre una base de sensores delgada. Esquinas metálicas, marco engomado y botones naranjas que se encuentran sin mirar.",
+"The screen module on top":"Arriba, el módulo de pantalla",
+"The main battery, the help button, voice, vibration, its own LoRa radio and the two ECG pads. Spring contacts link it to the base.":"La batería principal, el botón de ayuda, voz, vibración, su propia radio LoRa y las dos placas de ECG. Unos contactos de resorte lo conectan con la base.",
+"The sensor base on the skin":"Sobre la piel, la base de sensores",
+"Pulse and SpO₂, skin temperature, EDA, motion, with its own battery and LoRa. Both straps belong to the base, so the screen lifts off.":"Pulso y SpO₂, temperatura de la piel, EDA y movimiento, con batería y LoRa propias. Las dos correas son de la base, así que la pantalla se separa.",
+"Suit mode":"Modo traje",
+"The sleeve goes between the modules. The magnets hold, the contacts part, and the base runs on its own battery and keeps sending by LoRa.":"La manga queda entre los módulos. Los imanes sujetan, los contactos se separan y la base sigue con su propia batería, enviando por LoRa.",
+"ECG on demand: two fingers, 30 seconds":"ECG a demanda: dos dedos, 30 segundos",
+"One finger of each hand on the two metal pads. A strip for diagnostic support, never continuous, and it never decides a shock.":"Un dedo de cada mano sobre las dos placas metálicas. Un trazado para apoyo al diagnóstico, nunca continuo, y nunca decide una descarga.",
+/* Case A */
+"A still arm on a dark blanket; the wristband screen has gone dim.":"Un brazo inmóvil sobre una manta oscura; la pantalla de la pulsera se atenuó.",
+"A helper's wristband shows a red running figure and an arrow.":"La pulsera de un ayudante muestra una figura roja corriendo y una flecha.",
+"The ship's emergency station with compartment 01, the AED, lit teal and the Eva screen above it.":"La estación de emergencia de la nave con el compartimiento 01, el del DEA, iluminado en turquesa y la pantalla de Eva arriba.",
+"A helper does chest compressions on a training manikin; a ring on the wristband paces each push.":"Un ayudante hace compresiones torácicas en un maniquí de entrenamiento; un anillo en la pulsera marca el ritmo de cada compresión.",
+"AED pads in their sealed pack.":"Parches del DEA en su envase sellado.",
+"Case A · Cannot act":"Caso A · No puede actuar",
+"No pulse, no movement, no answer":"Sin pulso, sin movimiento, sin respuesta",
+"The wristband cross-checks independent signals before Eva calls anyone. Stillness alone is not an emergency.":"La pulsera cruza señales independientes antes de que Eva llame a alguien. Quedarse quieto no es, por sí solo, una emergencia.",
+"The nearest trained passenger starts CPR":"El pasajero capacitado más cercano empieza la RCP",
+"Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.":"Su pulsera le muestra adónde ir. Si no confirma en 20 segundos, Eva llama al siguiente.",
+"A second passenger brings the AED":"Un segundo pasajero trae el DEA",
+"The station lights compartment 01 teal and its screen says Take the AED, so the runner finds it at a glance.":"La estación ilumina en turquesa el compartimiento 01 y su pantalla dice «Retirá el DEA», así quien corre lo encuentra de un vistazo.",
+"CPR, one step at a time":"RCP, paso a paso",
+"Eva paces every compression on the helper's wrist with a ring, voice and vibration.":"Eva marca el ritmo de cada compresión en la muñeca del ayudante con un anillo, voz y vibración.",
+"The AED decides the shock":"El DEA decide la descarga",
+"It reads the rhythm through its own pads. Eva never does. Every step goes into the log for the ship and for Earth.":"Lee el ritmo con sus propios parches. Eva nunca lo hace. Cada paso queda en el registro para la nave y para la Tierra.",
+/* Case B */
+"Case B · Can act":"Caso B · Puede actuar",
+"Eva offers a quick ECG check":"Eva ofrece un control rápido de ECG",
+"A pulse that looks irregular, or you say you feel unwell. You are awake and able, so Eva guides you through it yourself.":"Un pulso que parece irregular, o decís que te sentís mal. Estás consciente y en condiciones, así que Eva te guía para que lo hagas vos.",
+"One finger of each hand, 30 seconds":"Un dedo de cada mano, 30 segundos",
+"Rest them on the two metal pads and keep still. It works over the suit if your hands are bare.":"Apoyalos en las dos placas metálicas y no te muevas. Funciona sobre el traje si tenés las manos descubiertas.",
+"Regular rhythm · saved and sent to the hub":"Ritmo regular · guardado y enviado al hub",
+"The strip goes into your log and to the ship hub, ready for Earth. A check on demand, never continuous, never a shock decision.":"El trazado va a tu registro y al hub de la nave, listo para la Tierra. Un control a demanda, nunca continuo, nunca decide una descarga.",
+"If something looks wrong, a passenger comes":"Si algo parece mal, viene un pasajero",
+"Eva calls the nearest helper and switches to Case A if you stop responding.":"Eva llama al ayudante más cercano y pasa al Caso A si dejás de responder.",
+"One finger of each hand rests on the metal pads at both ends of the wristband during an ECG check.":"Un dedo de cada mano apoyado en las placas metálicas de los dos extremos de la pulsera durante un control de ECG.",
+/* emergency station: the overlay tags use the words printed on the station photo */
+"Eva shows what to take.":"Eva muestra qué retirar.","The AED decides the shock.":"El DEA decide la descarga.",
+"The ship's emergency station: a wall cabinet of 12 numbered compartments behind clear windows, an Eva screen and a red emergency button on top. Compartment 01 holds the AED.":"La estación de emergencia de la nave: un gabinete de pared con 12 compartimientos numerados tras ventanas transparentes, una pantalla de Eva y un botón rojo de emergencia arriba. El compartimiento 01 guarda el DEA.",
+"AED":"DEA","Breathing":"Respiración","Diagnostics":"Diagnóstico","Ultrasound":"Ecografía","Wounds":"Heridas","Restraint":"Sujeción",
+"Oral meds":"Medicación oral","Injectables":"Inyectables","IV access":"Acceso IV","Eyes and dental":"Ojos y dental","Airway":"Vía aérea","Hygiene":"Higiene",
+"Standing by":"En espera","All 15 passengers stable":"Los 15 pasajeros, estables","Take the AED":"Retirá el DEA","Compartment 01 · lit":"Compartimiento 01 · encendido",
+"Door sensor":"Sensor de puerta","Item sensor":"Sensor de objeto","Red button":"Botón rojo","AED taken · 00:47":"DEA retirado · 00:47",
+"12 compartments":"12 compartimientos","Numbered, labelled, each behind a clear window with a light strip":"Numerados y rotulados, cada uno tras una ventana transparente con una tira de luz",
+"Eva screen: Take the AED":"Pantalla de Eva: «Retirá el DEA»","Eva says what to take, in words":"Eva dice con palabras qué retirar",
+"Compartment 01 lights teal":"El compartimiento 01 se ilumina en turquesa","The AED and spare pads, found at a glance":"El DEA y los parches de repuesto, a la vista",
+"Door 01 open · 00:41":"Puerta 01 abierta · 00:41","The door sensor reports to the hub":"El sensor de puerta avisa al hub",
+"The item sensor confirms; it goes into the signed log":"El sensor de objeto lo confirma y queda en el registro firmado",
+"Anyone can raise the alarm to every wristband":"Cualquiera puede dar la alarma a todas las pulseras",
+/* station legend */
+"Inside the station":"Dentro de la estación",
+"The AED and spare pads. Lights teal when Eva asks for it.":"El DEA y los parches de repuesto. Se ilumina en turquesa cuando Eva lo pide.",
+"Oxygen bottle, mask, bag-valve mask":"Tubo de oxígeno, máscara, bolsa-válvula-máscara","Monitor, thermometer, glucometer":"Monitor, termómetro, glucómetro",
+"Probe, screen and gel":"Transductor, pantalla y gel","Dressings, bandages, scissors":"Apósitos, vendas, tijera","Straps to secure a patient":"Correas para sujetar a un paciente",
+"Tablets in blister packs":"Comprimidos en blíster","Station kit used by the crew":"Kit de la estación, para uso de la tripulación","Fluids and lines":"Sueros y vías",
+"Eye irrigation and dental kit":"Lavado ocular y kit dental","Airway tubes and suction":"Tubos de vía aérea y aspiración","Gloves, goggles, waste bags, sharps bin":"Guantes, antiparras, bolsas de residuos, descartador de punzantes",
+"Front view of the station as a 4 by 3 wall panel, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide.":"Vista frontal de la estación como panel de pared de 4 por 3, con el compartimiento 01 iluminado, la pantalla de Eva, el botón rojo y la guía impresa para retirar el DEA.",
+"Wall panel, four rows of three. On top: the Eva screen, the red button and a printed AED retrieval guide.":"Panel de pared, cuatro filas de tres. Arriba: la pantalla de Eva, el botón rojo y una guía impresa para retirar el DEA.",
+"Variant of the station: a centre cabinet whose side doors open to reveal compartments 07 to 12.":"Variante de la estación: un gabinete central cuyas puertas laterales se abren y muestran los compartimientos 07 a 12.",
+"Variant: a centre cabinet whose side doors open to compartments 07 to 12. Concept images carry Spanish labels; the legend above is the product text.":"Variante: un gabinete central cuyas puertas laterales abren los compartimientos 07 a 12. Las imágenes conceptuales tienen rótulos en español, igual que la leyenda de arriba.",
+/* how it links (diagram labels are sized to their boxes) */
+"How it links":"Cómo se conecta",
+"One ship hub hosts everything. Wristbands, phones and the station are its clients.":"Un único hub de la nave aloja todo. Pulseras, teléfonos y la estación son sus clientes.",
+"How Eva's parts link":"Cómo se conectan las partes de Eva",
+"The ship hub is the one host. Wristbands talk to it over LoRa and relay for each other in a mesh. A phone or tablet connects over the ship's Wi-Fi. The emergency station is a client over LoRa: the hub tells it to light compartment 01 and it reports the door open and the AED taken. If the hub is down, a wristband's no-pulse alarm goes straight to the station, and the station's red button alarms every wristband. The hub sends signed records to a ground station on Earth over the near-space link.":"El hub de la nave es el único host. Las pulseras se comunican con él por LoRa y se retransmiten entre sí en malla. Un teléfono o una tableta se conecta por el Wi-Fi a bordo. La estación de emergencia es un cliente por LoRa: el hub le indica que ilumine el compartimiento 01 y ella informa la puerta abierta y el DEA retirado. Si el hub cae, la alarma de falta de pulso de una pulsera va directo a la estación, y el botón rojo de la estación alerta a todas las pulseras. El hub envía registros firmados a una estación terrena en la Tierra por el enlace de espacio cercano.",
+"Phone or tablet":"Teléfono o tableta","Optional big screen · the app":"Pantalla grande opcional · app",
+"Ground station":"Estación terrena","Earth · gets signed records":"Tierra · registros firmados","Store and forward, ACK":"Almacena y reenvía, ACK",
+"Eva · the signed log":"Eva · el registro firmado","Dashboard · serves the app":"Panel · sirve la app","Near-space link to Earth":"Enlace con la Tierra",
+"Passenger 03 · client":"Pasajero 03 · cliente","Passenger 07 · client":"Pasajero 07 · cliente","Passenger 11 · client":"Pasajero 11 · cliente",
+"LoRa mesh: bands relay for each other":"Malla LoRa: las pulseras se retransmiten entre sí",
+"Client · own small computer":"Cliente · computadora propia","Lights, door and item sensors":"Luz, sensor de puerta y objeto","LoRa · backup battery":"LoRa · batería auxiliar",
+"Light 01 · Take the AED":"Luz 01 · Retirá el DEA","Door 01 · AED taken":"Puerta 01 · DEA retirado",
+"Ship Wi-Fi":"Wi-Fi a bordo","Near-space link":"Enlace de espacio cercano",
+"Hub down: a wristband's no-pulse alarm goes straight to the station,":"Si el hub cae, la alarma de falta de pulso de una pulsera va directo a la estación,",
+"and the station's red button alarms every wristband.":"y el botón rojo de la estación alerta a todas las pulseras.",
+"Alarm path when the hub is down":"Ruta de la alarma si cae el hub",
+"Light 01":"Luz 01","AED taken":"DEA retirado",
+"Ground station · Earth":"Estación terrena · Tierra","Signed records, store and forward, ACK":"Firmados, almacena y reenvía, ACK",
+"Eva · signed log":"Eva · registro firmado","Dashboard · the app":"Panel · la app",
+"Phone":"Teléfono","or tablet":"o tableta",
+"Wristband 03":"Pulsera 03","Wristband 07":"Pulsera 07","Wristband 11":"Pulsera 11","LoRa · mesh":"LoRa · malla",
+"Emergency":"Estación","station":"de emergencia","Client":"Cliente","Lights, door":"Luz, sensores de","and item sensors":"puerta y objeto","Backup battery":"Batería auxiliar",
+"Hub down: a wristband's no-pulse":"Si cae el hub, la alarma de falta","alarm goes straight to the station,":"de pulso va directo a la estación,","and its red button alarms every band.":"y su botón rojo alerta a todas.",
+"For the demo, one laptop is the ship hub. Phones play the wristbands, and a tablet or a second browser window plays the station.":"Para la demo, una notebook hace de hub de la nave. Los teléfonos hacen de pulseras, y una tableta o una segunda ventana del navegador hace de estación.",
+"One source of truth":"Una sola fuente de verdad","The hub keeps the signed log and Eva's state. Every client reads and writes the same case.":"El hub guarda el registro firmado y el estado de Eva. Todos los clientes leen y escriben el mismo caso.",
+"Simple clients, fully offline":"Clientes simples, sin conexión","Bands, phones and the station sense, show and report. The ship works with no internet and no Earth.":"Pulseras, teléfonos y estación miden, muestran e informan. La nave funciona sin internet y sin la Tierra.",
+"The alarm survives the hub":"La alarma sobrevive al hub","If the hub fails, the alarm still reaches the station. When it returns, everyone uploads and the hash chain keeps the order.":"Si el hub falla, la alarma igual llega a la estación. Cuando vuelve, todos suben sus datos y la cadena de hashes mantiene el orden.",
+/* solar alert */
+"Hull camera view from the spacecraft: the Sun flares and a storm of protons streams straight at the camera.":"Vista de la cámara del casco de la nave: el Sol erupciona y una tormenta de protones viene directo hacia la cámara.",
+"3D model of the Sun from NASA. Drag to rotate it.":"Modelo 3D del Sol de la NASA. Arrastralo para girarlo.",
+"Hull cam 02 · forward":"Cámara de casco 02 · proa",
+"Eva watches NASA DONKI and NOAA GOES":"Eva vigila NASA DONKI y NOAA GOES",
+"X-ray flare seen · the particles are about 18 minutes behind":"Fulguración de rayos X detectada · las partículas llegan unos 18 minutos después",
+"Every wristband alerted ·":"Alerta en todas las pulseras ·","/15 acknowledged":"/15 confirmaron",
+"The route to the storm shelter lights up on every wrist ·":"La ruta al refugio se ilumina en cada muñeca ·","/15 inside":"/15 adentro",
+"All 15 sheltered before the particles arrive · dose logged per passenger":"Los 15 a resguardo antes de que lleguen las partículas · dosis registrada por pasajero",
+"Drag the Sun":"Arrastrá el Sol","Solar alert":"Alerta solar",
+"Warned minutes early. Everyone stays in the shelter.":"Aviso con minutos de anticipación. Todos se quedan en el refugio.",
+"RADIATION STORM":"TORMENTA DE RADIACIÓN","LIVE":"EN VIVO",
+/* Earth link, arrival */
+"Earth link":"Enlace con la Tierra","Every step recorded, even minutes from Earth":"Cada paso registrado, aun a minutos de la Tierra",
+"one-way light time to Earth":"tiempo luz de ida a la Tierra",
+"Mars, where the ship is.":"Marte, donde está la nave.","Earth.":"La Tierra.",
+"No pulse · passenger 07":"Sin pulso · pasajero 07","CPR helper · passenger 03":"Ayudante de RCP · pasajero 03","AED runner · passenger 11":"Trae el DEA · pasajero 11",
+"CPR 2:00":"RCP 2:00","Signed, chained, queued":"Firmado, encadenado, en cola","Received on Earth":"Recibido en la Tierra",
+"Arrival":"Llegada","The surface of Mars at dawn.":"La superficie de Marte al amanecer.","Arrive with every step on record.":"Llegar con cada paso registrado.",
+/* why it matters */
+"Why it matters":"Por qué importa","Care that does not wait for a doctor":"Atención que no espera a un médico",
+"Far from Earth, a crew has to detect, diagnose and treat on its own: one-way radio delays can pass twenty minutes, and on the ISS the crew medical officer often has about 40 hours of medical training. NASA researchers argue for an on-board clinical decision support system that says what to do now, why, how it decided and what comes next. In their preliminary analysis of a 26-month mission, raising the crew's skill this way cut deaths by at least 34%.":"Lejos de la Tierra, una tripulación tiene que detectar, diagnosticar y tratar por su cuenta: la demora de radio de ida puede superar los veinte minutos, y en la ISS el oficial médico de la tripulación suele tener unas 40 horas de formación médica. Investigadores de la NASA proponen un sistema de apoyo a la decisión clínica a bordo que diga qué hacer ahora, por qué, cómo lo decidió y qué sigue. En su análisis preliminar de una misión de 26 meses, mejorar así la capacidad de la tripulación redujo las muertes al menos un 34 %.",
+"Eva brings that idea to passengers with no training at all.":"Eva lleva esa idea a pasajeros sin ninguna formación.",
+"Around 70% of astronauts on six-to-twelve-month missions aboard the ISS show significant vision changes, and 85% of 71 astronauts reported at least one nasal or sinus problem. On a commercial flight to Mars most passengers will not be clinicians, and Earth may be twenty minutes away by radio.":"Alrededor del 70 % de los astronautas en misiones de seis a doce meses en la ISS presenta cambios significativos en la visión, y el 85 % de 71 astronautas informó al menos un problema nasal o de senos paranasales. En un vuelo comercial a Marte la mayoría de los pasajeros no serán profesionales de la salud, y la Tierra puede estar a veinte minutos por radio.",
+"We built Eva on NASA's open Inspiration4 data (OSDR OSD-575 and OSD-569). Against each crew member's own baseline, the metabolic panel the day after landing showed 16 of 72 changes, against 7 with standard laboratory ranges.":"Construimos Eva sobre los datos abiertos de Inspiration4 de la NASA (OSDR OSD-575 y OSD-569). Contra la línea de base de cada tripulante, el panel metabólico del día después del aterrizaje mostró 16 cambios de 72, frente a 7 con los rangos de laboratorio estándar.",
+"Eva guides, records and warns, and gives diagnostic support that the crew lead confirms. The AED decides the shock. Treatment decisions belong to validated devices, never to a chat model.":"Eva guía, registra y alerta, y da apoyo al diagnóstico que confirma el líder de la tripulación. El DEA decide la descarga. Las decisiones de tratamiento corresponden a dispositivos validados, nunca a un modelo de chat.",
+/* kit */
+"Modules":"Módulos","Screen on top, sensor base on the skin, magnets":"Pantalla arriba, base de sensores en la piel, imanes",
+"Screen":"Pantalla","Main battery, help button, voice, ECG pads":"Batería principal, botón de ayuda, voz, placas de ECG",
+"Talks to":"Se comunica con","Ship hub over LoRa, from both modules":"El hub de la nave por LoRa, desde ambos módulos",
+"The Eva wristband: a rugged graphite screen module on a sensor base with two fabric straps.":"La pulsera Eva: un módulo de pantalla robusto color grafito sobre una base de sensores con dos correas de tela.",
+"Station":"Estación","Holds":"Contiene","12 compartments, the AED in 01":"12 compartimientos, el DEA en el 01",
+"Lights 01 and says what to take":"Ilumina el 01 y dice qué retirar","Decides":"Decide","The AED, through its own pads":"El DEA, con sus propios parches",
+"The ship’s emergency station: 12 compartments, the AED in 01 lit teal.":"La estación de emergencia de la nave: 12 compartimientos, el DEA en el 01 iluminado en turquesa.",
+"Runs":"Ejecuta","Eva, the AI copilot, offline":"Eva, la copiloto de IA, sin conexión","Hosts":"Aloja","The app, the dashboard, the signed log":"La app, el panel y el registro firmado","Sends":"Envía",
+"Passenger spacecraft.":"Nave de pasajeros.",
+"Main battery, help button, voice":"Batería principal, botón de ayuda, voz","On the skin, own battery and LoRa":"Sobre la piel, con batería y LoRa propias",
+"ECG pads":"Placas de ECG","Two fingers, 30 seconds":"Dos dedos, 30 segundos","Magnets + contacts":"Imanes + contactos","Hold the modules, even through the suit":"Sujetan los módulos, incluso a través del traje",
+"Two batteries":"Dos baterías","Main in the screen, small in the base":"La principal en la pantalla, una pequeña en la base","LoRa radio":"Radio LoRa","In both modules":"En ambos módulos",
+"The one host, runs Eva offline":"El único host, corre Eva sin conexión","12 compartments, the AED decides":"12 compartimientos, el DEA decide",
+/* business, contact, footer */
+"Business":"Negocio","Hardware once, Eva every mission":"El hardware, una vez; Eva, en cada misión",
+"Operators buy a WearMeds kit for each passenger and run Eva on the ship hub, licensed per mission.":"Los operadores compran un kit WearMeds por pasajero y corren Eva en el hub de la nave, con licencia por misión.",
+"Bands come in sizes and finishes, the sensor base takes new validated sensors, and Eva works with the AED the ship already carries. The same platform serves orbital stays, lunar bases and remote work on Earth.":"Las pulseras vienen en varios talles y terminaciones, la base de sensores admite nuevos sensores validados y Eva funciona con el DEA que la nave ya lleva. La misma plataforma sirve para estadías orbitales, bases lunares y trabajo remoto en la Tierra.",
+"Three passengers, each wearing a WearMeds wristband.":"Tres pasajeros, cada uno con una pulsera WearMeds.",
+"Team":"Equipo","Contact":"Contacto",
+"To see Eva working or to discuss a mission, start here:":"Para ver Eva en funcionamiento o hablar de una misión, empezá acá:",
+"Open the prototype":"Abrir el prototipo","Read the research":"Leer la investigación",
+"Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. Concept images are AI-generated; the AI notice is in the project README. The 3D Sun is NASA's free model from NASA 3D Resources.":"Eva es un concepto para el NASA Space Apps Challenge 2026 y no es un dispositivo médico. Las imágenes conceptuales están generadas con IA; el aviso sobre IA está en el README del proyecto. El Sol 3D es el modelo gratuito de la NASA en NASA 3D Resources.",
+"· CC BY 4.0. Main source of this project.":"· CC BY 4.0. Fuente principal de este proyecto.",
+"NASA Open Science Data Repository: OSD-575 and OSD-569, Inspiration4 metabolic panel and blood count.":"NASA Open Science Data Repository: OSD-575 y OSD-569, panel metabólico y hemograma de Inspiration4.",
+"NASA DONKI and NOAA GOES space weather data.":"Datos de clima espacial de NASA DONKI y NOAA GOES.",
+"AI notice":"Aviso sobre IA","References":"Referencias","Data sources":"Fuentes de datos",
+
+/* strings the page script writes (I18N.tr) */
+"Proton flux":"Flujo de protones","S3 strong":"S3 fuerte",
+"Go to the shelter now":"Andá al refugio ya","Stay in the shelter":"Quedate en el refugio",
+"until the particles hit":"para que lleguen las partículas","particles hitting the hull now":"partículas impactando el casco",
+"Drop everything. Follow the arrows on your wristband.":"Dejá todo. Seguí las flechas de tu pulsera.",
+"Stay inside. Your wristband is logging your dose.":"No salgas. Tu pulsera registra tu dosis.",
+"Passenger 07 · no pulse":"Pasajero 07 · sin pulso","Helper 1 · go to seat 07":"Ayudante 1 · al asiento 07",
+"Push · 110 per minute":"Compresiones · 110 por minuto","AED · its own analysis":"DEA · su propio análisis",
+"ECG check · 1 of 3":"Control de ECG · 1 de 3","Touch both metal pads, one finger of each hand":"Tocá las dos placas metálicas, un dedo de cada mano",
+"Recording · 2 of 3":"Grabando · 2 de 3","Keep still, breathe normally":"No te muevas y respirá normal",
+"Regular rhythm":"Ritmo regular","3 of 3":"3 de 3","Saved and sent to the hub":"Guardado y enviado al hub",
+"Eva · Calling help":"Eva · Pidiendo ayuda","Passenger 03 is on the way":"El pasajero 03 está en camino"
+};
+const root=document.documentElement, norm=s=>String(s).replace(/\s+/g,' ').trim(), subs=[];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let lang=root.lang==='es'?'es':'en';
+const tr=s=>{if(lang!=='es'||s==null)return s; const v=ES[norm(s)]; return v==null?s:v};
+const keep=(en)=>{const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(en); return m[1]+tr(m[2])+m[3]};
+/* snapshot the English once */
+const SKIP='script,style,[data-i18n],[data-i18n-js],[translate="no"],#team';
+const blocks=[...document.querySelectorAll('[data-i18n]')].map(el=>({el,en:el.innerHTML}));
+const texts=[]; {const tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  for(let n;(n=tw.nextNode());){if(!n.nodeValue.trim()||n.parentElement.closest(SKIP))continue;texts.push({n,en:n.nodeValue})}}
+const attrs=[]; document.querySelectorAll('[alt],[aria-label]').forEach(el=>{if(el.closest('#team,[translate="no"]'))return;
+  ['alt','aria-label'].forEach(a=>{const v=el.getAttribute(a);if(v&&v.trim())attrs.push({el,a,en:v})})});
+const meta=document.querySelector('meta[name="description"]'), head={title:document.title,desc:meta?meta.content:''};
+const btns=[...document.querySelectorAll('.lpick button')];
+function apply(){root.lang=lang;
+  blocks.forEach(b=>{const v=lang==='es'?ES[norm(b.en)]:null; b.el.innerHTML=v==null?b.en:v});
+  texts.forEach(t=>{t.n.nodeValue=keep(t.en)});
+  attrs.forEach(t=>t.el.setAttribute(t.a,keep(t.en)));
+  document.title=tr(head.title); if(meta)meta.content=tr(head.desc);
+  btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===lang)));
+  subs.forEach(f=>{try{f(lang)}catch(e){console.error(e)}})}
+/* keep the reader where they are: remember which top-level block holds the top of the viewport and the offset into it */
+const docTop=el=>{let y=0;for(let n=el;n;n=n.offsetParent)y+=n.offsetTop;return y};
+function anchor(){const y=scrollY+72; for(const el of document.querySelectorAll('main > section, body > footer')){const t=docTop(el);if(y>=t&&y<t+el.offsetHeight)return {el,off:scrollY-t}}return null}
+function set(l,save){if(l!=='en'&&l!=='es')return; if(save){try{localStorage.setItem('wm-lang',l)}catch(e){}} if(l===lang)return;
+  const go=()=>{const a=anchor(); lang=l; apply(); if(a)scrollTo(0,docTop(a.el)+a.off)};
+  if(reduce){go();return}
+  root.classList.add('lswap'); setTimeout(()=>{go(); requestAnimationFrame(()=>root.classList.remove('lswap'))},160)}
+btns.forEach(b=>b.addEventListener('click',()=>set(b.dataset.l,true)));
+try{if(lang==='es')apply();else btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===lang)))}catch(e){console.error(e)}
+root.removeAttribute('data-i18n-wait');
+return {get lang(){return lang}, tr, set, on(f){subs.push(f)}};
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="team-rail.js"></script>
 <script>
 (()=>{
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const I18=window.I18N||{lang:'en',tr:s=>s,on(){}}, tr=I18.tr;
 
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const io2=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, ic3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, oc3=t=>1-Math.pow(1-t,3);
@@ -942,13 +1230,13 @@ function imgPt(img,pt){if(!img||!pt||!img.naturalWidth)return null; const cs=get
   const [x,y]=pt.split(',').map(Number); return [ox+x/100*iw*sc, oy+y/100*ih*sc]}
 const scA=[...document.querySelectorAll('#caseA .sc')];
 const redoA=steps('caseA',(i,st)=>{scA.forEach((im,k)=>im.classList.toggle('on',k===i)); const r=imgPt(scA[i],st.dataset.pt);
-  if(!r){hlA.style.setProperty('--ho',0);return} hlA.style.setProperty('--qx',r[0]+'px');hlA.style.setProperty('--qy',r[1]+'px');hlT.textContent=st.dataset.tag||'';hlA.style.setProperty('--ho',1)});
+  if(!r){hlA.style.setProperty('--ho',0);return} hlA.style.setProperty('--qx',r[0]+'px');hlA.style.setProperty('--qy',r[1]+'px');hlT.textContent=tr(st.dataset.tag||'');hlA.style.setProperty('--ho',1)});
 onMeasure(redoA); scA.forEach(i=>i.addEventListener('load',redoA));
 // Case B: guided ECG check on the wristband screen [key line, right-hand readout, main line, ring glyph]
 const UI=[["ECG check · 1 of 3","","Touch both metal pads, one finger of each hand","♥︎"],["Recording · 2 of 3","30 s","Keep still, breathe normally","♥︎"],["Regular rhythm","3 of 3","Saved and sent to the hub","✓"],["Eva · Calling help","","Passenger 03 is on the way","!"]];
 const caseB=document.getElementById('caseB'), bdev=document.getElementById('bdev'), scr=document.getElementById('scr'), uiK=document.getElementById('uiK'), uiS=document.getElementById('uiS'), uiT=document.getElementById('uiT'), uiP=document.getElementById('uiP'); let bState=0;
-steps('caseB',i=>{const u=UI[Math.max(0,i)]; bState=i; uiT.style.opacity=0; scr.dataset.s=bdev.dataset.s=String(Math.max(0,i));
-  setTimeout(()=>{uiK.textContent=u[0];uiS.textContent=u[1];uiT.textContent=u[2];uiP.textContent=u[3];uiT.style.opacity=1;req()},reduce?0:180)});
+const redoB=steps('caseB',i=>{const u=UI[Math.max(0,i)]; bState=i; uiT.style.opacity=0; scr.dataset.s=bdev.dataset.s=String(Math.max(0,i));
+  setTimeout(()=>{uiK.textContent=tr(u[0]);uiS.textContent=tr(u[1]);uiT.textContent=tr(u[2]);uiP.textContent=u[3];uiT.style.opacity=1;req()},reduce?0:180)});
 // the 30 s countdown follows the scroll through step 2
 add(y=>{if(bState!==1)return; const p=pinP(caseB,y), t=clamp((p-.25)/.25); uiS.textContent=Math.max(1,Math.ceil(30*(1-t)))+' s'});
 
@@ -1028,10 +1316,10 @@ add(y=>{const p=pinP(so,y); SP=p;
   SF=Math.pow(Math.max(0,1-Math.abs(p-.19)/.04),1.5);
   SI=.03+.07*clamp((p-.2)/.1)+.9*io2(clamp((p-.56)/.14));
   SD=oc3(clamp((p-.29)/.07)); sst.style.setProperty('--d',SD);
-  const fl=Math.round(2*Math.pow(1500,clamp((p-.26)/.44))); meter.textContent='Proton flux · '+fl.toLocaleString('en-US')+' pfu'+(fl>=1000?' · S3 strong':fl>=100?' · S2':fl>=10?' · S1':'');
+  const fl=Math.round(2*Math.pow(1500,clamp((p-.26)/.44))); meter.textContent=tr('Proton flux')+' · '+fl.toLocaleString(I18.lang==='es'?'es-AR':'en-US')+' pfu'+(fl>=1000?' · '+tr('S3 strong'):fl>=100?' · S2':fl>=10?' · S1':'');
   slogItems.forEach(li=>li.classList.toggle('on',p>=+li.dataset.at));
   nAck.textContent=Math.round(15*clamp((p-.35)/.08)); nIn.textContent=Math.round(15*clamp((p-.5)/.24));
-  const hit=p>=.6; if(hit!==impact){impact=hit; alB.textContent=hit?'Stay in the shelter':'Go to the shelter now'; alI.textContent=hit?'particles hitting the hull now':'until the particles hit'; alS.textContent=hit?'Stay inside. Your wristband is logging your dose.':'Drop everything. Follow the arrows on your wristband.'}
+  const hit=p>=.6; if(hit!==impact){impact=hit; alB.textContent=tr(hit?'Stay in the shelter':'Go to the shelter now'); alI.textContent=tr(hit?'particles hitting the hull now':'until the particles hit'); alS.textContent=tr(hit?'Stay inside. Your wristband is logging your dose.':'Drop everything. Follow the arrows on your wristband.')}
   const rem=hit?0:Math.round(1080*(1-clamp((p-.29)/.31))); if(rem!==lastRem){lastRem=rem;alT.textContent=String(rem/60|0).padStart(2,'0')+':'+String(rem%60).padStart(2,'0')}
   so.classList.toggle('explain',p>.86);
   sVis=y+innerHeight>so._top && y<so._top+so.offsetHeight; if(sVis&&!sRun){sRun=true;requestAnimationFrame(solarFrame)}});
@@ -1105,19 +1393,32 @@ add(y=>{const v=V();cards.forEach((c,i)=>{const k=reduce?1:oc3(clamp((y+v-PT-.05
 const mark=document.querySelector('.mark'); let MT=0; onMeasure(()=>MT=docTop(mark));
 add(y=>{const v=V();mark.style.setProperty('--w',(reduce?1:oc3(clamp((y+v-MT)/(mark.offsetHeight+v*.25)))).toFixed(3))});
 
-/* team */
-if(window.TeamRail)TeamRail.mount(document.getElementById('team'),[
- {name:'Lean',role:'Product & build lead',tasks:['Winners analysis','Happy path','Landing','AI models rationale','30 s video'],bio:'Turns the research into Eva’s product, landing and demo.',tags:['Product','Landing','Demo'],links:[]},
- {name:'Tomi',role:'Hardware & screens',tasks:['Energy budget and components','Screens','Wrist phone mount'],bio:'Picks the components, budgets every milliwatt and designs the screens.',tags:['Hardware','Energy','UI'],links:[]},
- {name:'Hassi',role:'Medical cases',tasks:['Acute cases','Medical variables'],bio:'Maps each emergency from signal to action.',tags:['Medicine','Cases'],links:[]},
- {name:'Naza',role:'Medical variables & scale',tasks:['Acute cases','Medical variables','Scalability'],bio:'Defines what we measure and how WearMeds scales.',tags:['Variables','Scale'],links:[]}
-],{title:'Team',meta:'Sanjo-X · NASA Space Apps 2026',teamLine:'Sanjo-X · Space Apps Rosario',org:'Eva by WearMeds',bandLabel:'Crew',serialPrefix:'SX-'});
+/* team (re-mounted when the language changes) */
+const TEAM={
+ en:{members:[
+  {name:'Lean',role:'Product & build lead',tasks:['Winners analysis','Happy path','Landing','AI models rationale','30 s video'],bio:'Turns the research into Eva’s product, landing and demo.',tags:['Product','Landing','Demo'],links:[]},
+  {name:'Tomi',role:'Hardware & screens',tasks:['Energy budget and components','Screens','Wrist phone mount'],bio:'Picks the components, budgets every milliwatt and designs the screens.',tags:['Hardware','Energy','UI'],links:[]},
+  {name:'Hassi',role:'Medical cases',tasks:['Acute cases','Medical variables'],bio:'Maps each emergency from signal to action.',tags:['Medicine','Cases'],links:[]},
+  {name:'Naza',role:'Medical variables & scale',tasks:['Acute cases','Medical variables','Scalability'],bio:'Defines what we measure and how WearMeds scales.',tags:['Variables','Scale'],links:[]}],
+  opts:{title:'Team',meta:'Sanjo-X · NASA Space Apps 2026',teamLine:'Sanjo-X · Space Apps Rosario',org:'Eva by WearMeds',bandLabel:'Crew',serialPrefix:'SX-'}},
+ es:{members:[
+  {name:'Lean',role:'Líder de producto y desarrollo',tasks:['Análisis de ganadores','Recorrido principal','Landing','Fundamento de los modelos de IA','Video de 30 s'],bio:'Convierte la investigación en el producto, la landing y la demo de Eva.',tags:['Producto','Landing','Demo'],links:[]},
+  {name:'Tomi',role:'Hardware y pantallas',tasks:['Presupuesto energético y componentes','Pantallas','Soporte del teléfono en la muñeca'],bio:'Elige los componentes, presupuesta cada milivatio y diseña las pantallas.',tags:['Hardware','Energía','UI'],links:[]},
+  {name:'Hassi',role:'Casos médicos',tasks:['Casos agudos','Variables médicas'],bio:'Mapea cada emergencia desde la señal hasta la acción.',tags:['Medicina','Casos'],links:[]},
+  {name:'Naza',role:'Variables médicas y escala',tasks:['Casos agudos','Variables médicas','Escalabilidad'],bio:'Define qué medimos y cómo escala WearMeds.',tags:['Variables','Escala'],links:[]}],
+  opts:{title:'Equipo',meta:'Sanjo-X · NASA Space Apps 2026',teamLine:'Sanjo-X · Space Apps Rosario',org:'Eva de WearMeds',bandLabel:'Tripulación',serialPrefix:'SX-',
+   labels:{profile:'Perfil',tasks:'Tareas',links:'Enlaces',idle:'Pasá el cursor o enfocá una credencial',hintRail:'Enter para girar · ← → para moverte',hintCarousel:'Tocá para girar · deslizá para ver más',backRail:'Hacé clic otra vez o Esc para volver',backCarousel:'Tocá otra vez para volver',dots:'Elegí a un integrante del equipo',show:'Mostrar',member:'integrante',members:'integrantes'}}}};
+function mountTeam(){if(!window.TeamRail)return; const T=TEAM[I18.lang]||TEAM.en; try{TeamRail.mount(document.getElementById('team'),T.members,T.opts)}catch(e){console.error(e)}}
+mountTeam();
 
 /* measure + go */
 function measure(){measures.forEach(f=>f());req()}
 window.__measureAll=()=>setTimeout(measure,60);
 measure();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
-addEventListener('load',measure); let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(measure,120)});
+addEventListener('load',measure);
+/* language switch: re-render what the script writes, re-mount the team, re-measure the pinned scenes */
+I18.on(()=>{mountTeam(); impact=null; redoA(); redoB(); measure()});
+let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(measure,120)});
 })();
 </script>
