@@ -70,7 +70,7 @@ export default function App() {
       <Section id="system" eyebrow="Design system" title="One system, enforced by a linter">
         <DesignSystem />
       </Section>
-      <footer className="border-t border-line px-6 py-10 text-xs text-muted lg:px-12">Wireframes, not medical software · AI-generated concept images · Eva guides, records and warns · shocks: the AED decides, never Eva</footer>
+      <footer className="border-t border-line px-6 py-10 text-xs text-muted lg:px-12">Wireframes, not medical software · Eva guides, records and warns · shocks: the AED decides, never Eva</footer>
     </main>
   )
 }

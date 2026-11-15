@@ -21,7 +21,7 @@ const Group = ({ eyebrow, children }) => (
 export default function MobileScreens() {
   return (
     <div className="flex flex-col gap-16">
-      <p className="-mt-4 text-xs text-faint">Russell et al., npj Microgravity 9:46 (2023) · photos and the Eva mascot are AI-generated</p>
+      <p className="-mt-4 text-xs text-faint">Russell et al., npj Microgravity 9:46 (2023)</p>
       <Group eyebrow="Eva · your health copilot">
         <EvaHome /><EvaChat /><EvaCauses /><DailyLog /><StateOfMind /><WriteItDown /><JournalEntries />
         <BandEvaLive /><BandEvaAsk />

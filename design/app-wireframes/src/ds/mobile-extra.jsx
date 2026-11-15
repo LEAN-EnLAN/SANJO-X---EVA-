@@ -27,7 +27,7 @@ export const Reading = ({ value, unit, read, size = "md", tone = "muted" }) => (
   </div>
 )
 
-/** a 3D icon (Codex "clay-lite" kit, transparent, AI-generated: covered by the page-level note) on a soft
+/** a 3D icon (Codex "clay-lite" kit, transparent, AI-generated, declared in README.md) on a soft
  *  lit disc. The art keeps its own padding, so it sits inside the ring without touching it. */
 const photoSize = { xs: "size-9", sm: "size-12", md: "size-14", lg: "size-18" }
 export const PhotoTile = ({ src, alt = "", size = "md", className }) => (
@@ -36,7 +36,7 @@ export const PhotoTile = ({ src, alt = "", size = "md", className }) => (
   </span>
 )
 
-/** small rectangular photo crop (product shot, inset). Small, so the page-level "AI-generated" note covers it. */
+/** small rectangular photo crop (product shot, inset). AI-generated, declared in README.md. */
 const thumbSize = { band: "h-20 w-32", inset: "h-16 w-24" }
 export const Thumb = ({ src, alt = "", size = "inset", className }) => (
   <span className={cn("block shrink-0 overflow-hidden rounded-tile bg-background ring-1 ring-line", thumbSize[size], className)}>
@@ -162,14 +162,13 @@ export const Legend = ({ swatch = "band", children }) => (
   </span>
 )
 
-/** photo hero on black with the visible "AI-generated" label the team requires on concept renders.
- *  Pass `baked` when the image already carries its own label, so it is not shown twice. Children are overlays. */
+/** photo hero on black. The images are AI-generated; that is declared in README.md, not on screen.
+ *  `baked` is kept for compatibility and does nothing. Children are overlays. */
 const heroPosition = { center: "object-center", top: "object-top", bottom: "object-bottom" }
 export const Hero = ({ src, alt = "", size = "md", fit = "cover", position = "center", baked, className, children }) => (
   <div className={cn("relative shrink-0 overflow-hidden rounded-card bg-surface", size === "lg" ? "h-72" : size === "sm" ? "h-32" : "h-48", className)}>
     <img src={src} alt={alt} className={cn("size-full", fit === "contain" ? "object-contain" : "object-cover", heroPosition[position])} />
     {children}
-    {!baked && <span className="absolute right-3 bottom-3 rounded-full bg-background/70 px-2 py-0.5 text-xs text-muted">AI-generated</span>}
   </div>
 )
 

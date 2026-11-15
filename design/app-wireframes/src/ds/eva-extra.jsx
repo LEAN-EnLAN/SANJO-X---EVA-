@@ -6,13 +6,12 @@ import { Play } from "lucide-react"
 /** Eva's mascot (Codex kit, one image per state, as in the app): idle | hello | listening | thinking | speaking |
  *  happy | wink | concerned | alert | calm | sleeping | celebrate | care | reading | writing | sending |
  *  low-battery, plus face (the tab-bar avatar).
- *  AI-generated: pass `labelled` where it appears large; small avatars are covered by the page-level note. */
+ *  AI-generated art: declared in README.md, no on-screen label. `labelled` is kept for compatibility and does nothing. */
 const mascotSize = { xs: "size-8", sm: "size-10", md: "size-14", lg: "size-24", xl: "size-44", hero: "size-56" }
 export const EvaMascot = ({ mood = "idle", size = "md", labelled, glow, alt = "Eva, the health copilot", className }) => (
   <span className={cn("relative inline-grid shrink-0 place-items-center", mascotSize[size], className)}>
     {glow && <span className="absolute -inset-1/4 rounded-full bg-eva-glow" />}
     <img src={`img/eva/eva-${mood}.webp`} alt={alt} className="relative size-full object-contain" />
-    {labelled && <span className="absolute -right-2 bottom-1 rounded-full bg-background/80 px-2 py-0.5 text-xs text-muted">AI-generated</span>}
   </span>
 )
 
