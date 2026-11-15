@@ -89,6 +89,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .statement .row p{font-size:var(--t-label);line-height:1.1}
 .statement .row small{display:block;font-size:var(--t-util);color:var(--space-muted);margin-top:10px;line-height:1.3}
 @media (max-width:760px){.statement .row{grid-template-columns:1fr;margin-top:56px}}
+@media (max-width:760px){.solar .log{top:72px;padding:10px 12px;gap:8px;background:rgba(0,0,0,.72);border:1px solid #2a2a2a;max-width:calc(100% - 40px);font-size:14px}.solar .log li.old{display:none}.solar .meter{top:44px}}
 
 /* emergency station scene (pinned) */
 .xsec .stage{background:var(--space);color:var(--space-ink)}
@@ -1392,6 +1393,7 @@ add(y=>{const p=pinP(so,y); SP=p;
   SD=oc3(clamp((p-.29)/.07)); sst.style.setProperty('--d',SD);
   const fl=Math.round(2*Math.pow(1500,clamp((p-.26)/.44))); meter.textContent=tr('Proton flux')+' · '+fl.toLocaleString(I18.lang==='es'?'es-AR':'en-US')+' pfu'+(fl>=1000?' · '+tr('S3 strong'):fl>=100?' · S2':fl>=10?' · S1':'');
   slogItems.forEach(li=>li.classList.toggle('on',p>=+li.dataset.at));
+  {const on=slogItems.filter(li=>li.classList.contains('on'));slogItems.forEach(li=>li.classList.toggle('old',on.indexOf(li)>-1&&on.indexOf(li)<on.length-2));}
   nAck.textContent=Math.round(15*clamp((p-.35)/.08)); nIn.textContent=Math.round(15*clamp((p-.5)/.24));
   const hit=p>=.6; if(hit!==impact){impact=hit; alB.textContent=tr(hit?'Stay in the shelter':'Go to the shelter now'); alI.textContent=tr(hit?'particles hitting the hull now':'until the particles hit'); alS.textContent=tr(hit?'Stay inside. Your wristband is logging your dose.':'Drop everything. Follow the arrows on your wristband.')}
   const rem=hit?0:Math.round(1080*(1-clamp((p-.29)/.31))); if(rem!==lastRem){lastRem=rem;alT.textContent=String(rem/60|0).padStart(2,'0')+':'+String(rem%60).padStart(2,'0')}
