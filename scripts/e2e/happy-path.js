@@ -3,10 +3,13 @@
 // Usage: scripts/e2e/run.sh   (builds, starts `eva demo`, runs this, stops it)
 //   or:  BASE=http://127.0.0.1:18080 GROUND=http://127.0.0.1:18081 OUT=/tmp/eva-e2e node scripts/e2e/happy-path.js
 //
-// Story: open the app as Ana (4B), Leo (3B) and Tomás (1B), the crew dashboard and
-// the ground dashboard · ask Eva · log water and a mood · run an ECG · cardiac arrest
-// from the dev panel (Konami code) · Leo gets CPR, Tomás the AED · the case closes ·
-// every record reaches the ground, verified and acknowledged · export CSV, JSON, report.
+// Story: open the app as Ana (4B), Leo (3B) and Tomás (1B), the crew dashboard, the
+// medical station screen (/station) and the ground dashboard · ask Eva · log water and a
+// mood · run an ECG · cardiac arrest from the dev panel (Konami code) · three phones and
+// the station light up (compartment 01) · Leo gets CPR · the AED is taken at the station
+// (tap on 01) and "AED taken" reaches the dashboard · Tomás brings it · the case closes and
+// 01 clears · every record (station reports included) reaches the ground, verified and
+// acknowledged · export CSV, JSON, report.
 // Screenshots go to $OUT. Exit code 0 = pass.
 "use strict";
 const { chromium } = require("playwright");
@@ -78,6 +81,8 @@ async function dev(ctx, action, form) {
     leo: await browser.newContext(phone),
     tomas: await browser.newContext(phone),
     dash: await browser.newContext({ ...desk, acceptDownloads: true }),
+    // a tablet or second laptop mounted as the medical station, landscape
+    station: await browser.newContext({ viewport: { width: 1280, height: 800 } }),
     ground: await browser.newContext(desk),
   };
   const page = {};
@@ -95,19 +100,23 @@ async function dev(ctx, action, form) {
       await dev(ctx.dash, "profile", { profile: "lan" });
     });
 
-    await step("open the app as 4B, 3B, 1B, the crew /dash and the ground /dash", async () => {
+    await step("open the app as 4B, 3B, 1B, the crew /dash, the station /station and the ground /dash", async () => {
       await page.ana.goto(`${BASE}/app?seat=4B`);
       await page.leo.goto(`${BASE}/app?seat=3B`);
       await page.tomas.goto(`${BASE}/app?seat=1B`);
       await page.dash.goto(`${BASE}/dash`);
+      await page.station.goto(`${BASE}/station`);
       await page.ground.goto(`${GROUND}/dash`);
       await page.ana.getByText(/Good \w+,\s*Ana/).first().waitFor();
       await page.leo.getByText(/Good \w+,\s*Leo/).first().waitFor();
       await page.tomas.getByText(/Good \w+,\s*Tom/).first().waitFor();
       await page.dash.locator("#roster, [sse-swap=roster]").first().waitFor();
+      await page.station.locator("[data-station-hub]").getByText("Hub online").waitFor({ timeout: 10000 });
+      if ((await page.station.locator('[data-compartment]').count()) !== 12) throw new Error("the station shows 12 compartments");
       await page.ground.waitForLoadState("domcontentloaded");
       await new Promise((r) => setTimeout(r, 1500)); // SSE streams connect
-      for (const k of ["ana", "leo", "tomas", "dash", "ground"]) await shot(page[k], `open-${k}`);
+      await page.dash.locator("[data-station-status]").getByText("Online").waitFor({ timeout: 10000 });
+      for (const k of ["ana", "leo", "tomas", "dash", "station", "ground"]) await shot(page[k], `open-${k}`);
     });
 
     await step("ask Eva a question (Eva screen, typed)", async () => {
@@ -169,11 +178,15 @@ async function dev(ctx, action, form) {
       await until("the case opens", async () => (await api(ctx.dash, `${BASE}/api/state`)).cases.some((c) => c.open && c.seat === "4B"));
     });
 
-    await step("WOW: three phones change screens at once", async () => {
+    await step("WOW: three phones change screens and the station lights 01", async () => {
       await page.leo.getByText(/I'm going/).first().waitFor({ timeout: 15000 });
       await page.tomas.getByText(/Get the AED/).first().waitFor({ timeout: 15000 });
+      await page.station.locator('[data-compartment="1"][data-state="lit"]').waitFor({ timeout: 10000 });
+      await page.station.locator("[data-station-message]").getByText(/Take the AED/).waitFor({ timeout: 5000 });
+      const lit = await page.station.locator('[data-state="lit"]').count();
+      if (lit !== 1) throw new Error(`only compartment 01 should be lit, ${lit} are`);
       await page.ana.waitForURL(/emergency|app/, { timeout: 5000 }).catch(() => {});
-      for (const k of ["ana", "leo", "tomas", "dash"]) await shot(page[k], `emergency-${k}`);
+      for (const k of ["ana", "leo", "tomas", "dash", "station"]) await shot(page[k], `emergency-${k}`);
       const st = await api(ctx.dash, `${BASE}/api/state`);
       const c = st.cases.find((c) => c.open && c.seat === "4B");
       const cpr = c.helpers.find((h) => h.task === "CPR"), aed = c.helpers.find((h) => h.task === "AED");
@@ -185,6 +198,19 @@ async function dev(ctx, action, form) {
       await page.leo.getByRole("button", { name: /I'm going/ }).first().click();
       await page.leo.getByText(/CPR|110|push/i).first().waitFor({ timeout: 10000 });
       await shot(page.leo, "leo-cpr");
+    });
+
+    await step("station: tap 01 (door opened, AED taken) → the dashboard shows it", async () => {
+      await page.station.locator('[data-compartment="1"]').click();
+      await page.station.locator('[data-compartment="1"][data-state="taken"]').waitFor({ timeout: 5000 });
+      await until("AED taken on the case timeline", async () => {
+        const c = (await api(ctx.dash, `${BASE}/api/state`)).cases.find((c) => c.open && c.seat === "4B");
+        return c && c.steps.some((s) => /^AED taken at the station · \d\d:\d\d$/.test(s.title));
+      }, 10000);
+      await page.dash.locator("#case").getByText(/AED taken at the station · \d\d:\d\d/).waitFor({ timeout: 10000 });
+      await page.dash.locator("[data-station-last]").getByText(/AED taken from compartment 01/).waitFor({ timeout: 10000 });
+      await shot(page.station, "station-aed-taken");
+      await shot(page.dash, "dash-aed-taken");
     });
 
     await step("1B accepts (I have it) → brings the AED", async () => {
@@ -211,6 +237,8 @@ async function dev(ctx, action, form) {
       await panel.getByRole("button", { name: /Close case/ }).click();
       await until("case closed", async () => !(await api(ctx.dash, `${BASE}/api/state`)).cases.some((c) => c.open));
       await page.dash.keyboard.press("Escape");
+      // the case closed: compartment 01 clears on the station
+      await page.station.locator('[data-compartment="1"][data-state="idle"]').waitFor({ timeout: 10000 });
     });
 
     await step("every record reaches the ground: verified and acknowledged", async () => {
@@ -231,6 +259,14 @@ async function dev(ctx, action, form) {
       log(`      ship: ${ship.chain.records} records, ${ship.chain.signatures} signatures · acked ${st.chain.acked} · ground verified ${ground.mirror.verified}`);
       const g = await api(ctx.ground, `${GROUND}/api/state`);
       if (!g.cases.some((c) => c.seat === "4B" && !c.open)) throw new Error("the ground does not show the closed case");
+      // the station's "AED taken" is a signed ship record the ground acknowledged and shows on its timeline
+      const chain = await api(ctx.dash, `${BASE}/api/chain?limit=2000`);
+      const taken = chain.find((r) => r.kind === "station" && r.body.event === "item_taken" && r.body.compartment === 1);
+      if (!taken) throw new Error("no 'AED taken' station record on the ship's chain");
+      if (taken.state !== "acked") throw new Error(`the station's 'AED taken' record is ${taken.state}, not acknowledged by the ground`);
+      const gcase = g.cases.find((c) => c.seat === "4B");
+      if (!gcase.steps.some((s) => /^AED taken at the station/.test(s.title))) throw new Error("the ground's case timeline lacks 'AED taken at the station'");
+      log(`      station: 'AED taken' record #${taken.seq} acknowledged by the ground`);
       // fresh vitals on the ground again (the uplink sends a snapshot every 5 s; the
       // fast-forwards above made the last one look old), Ana's pulse back after the case
       await until("fresh vitals on the ground", async () => {

@@ -40,9 +40,9 @@ Smallest frame: 6 bytes (ping with a 1-byte payload). Unknown versions and types
 
 | class | value | types | behaviour |
 |---|---|---|---|
-| **alarm** | 0 | Alarm, alarm records | always leaves first, reliable |
-| **guidance** | 1 | Guidance, Text, case/message records | reliable |
-| **vitals** | 2 | Vitals | latest-wins, TTL 30 s, never retransmitted |
+| **alarm** | 0 | Alarm, alarm records, the station's red-button event | always leaves first, reliable |
+| **guidance** | 1 | Guidance, Text, case/message/station records, StationCmd, StationEvent | reliable |
+| **vitals** | 2 | Vitals, StationStatus | latest-wins, TTL (vitals 30 s, station status 10 s), never retransmitted |
 | **logs** | 3 | Record (other kinds) | reliable, waits behind everything else |
 
 Control frames (Hello, Welcome, Ping, Pong, Ack, Nack, Presence, Bye) bypass the queue.
@@ -58,14 +58,17 @@ Control frames (Hello, Welcome, Ping, Pong, Ack, Nack, Presence, Bye) bypass the
 | Ack | 4 | `uvar n` · first seq absolute · then gaps as `uvar` (10 consecutive seqs = 12 bytes) |
 | Nack | 5 | `uvar seq` · `u8 reason` (0 malformed, 1 need keyframe) · `uvar stream` |
 | Vitals | 6 | see §6 |
-| Alarm | 7 | `str subject` (seat) · `u8 code` (1 no pulse, 2 low SpO₂, 3 solar storm, 4 help request, 5 battery) · `str text` |
+| Alarm | 7 | `str subject` (seat) · `u8 code` (1 no pulse, 2 low SpO₂, 3 solar storm, 4 help request, 5 battery, 6 the medical station's red button) · `str text` |
 | Guidance | 8 | same as Text |
 | Record | 9 | `uvar chain_seq` · `uvar ts_ms` · `str kind` · `str subject` · `8 bytes hash prefix` · `bytes body` (JSON `{"body":…, "prev"?:hex}`) · [`bytes sig`] (optional, 64-byte Ed25519 signature over `"eva-record-v1\0" ‖ full SHA-256`; ADR-010) |
 | Text | 10 | `str from` · `str to` · `str text` |
 | Presence | 11 | `uvar n` · n × (`uvar id` · `u8 role` · `str name` · `uvar rtt_ms`) |
 | Bye | 12 | empty |
+| StationCmd | 13 | hub → station: `u8 op` · `u8 compartment` · `uvar case` · `str text` (§11) |
+| StationEvent | 14 | station → hub: `u8 event` · `u8 compartment` · `uvar t_s` · `uvar count` · `str subject` (§11) |
+| StationStatus | 15 | station → hub: `u8 battery` · `u8 flags` · `uvar lit` · `uvar open` · `uvar taken` · `uvar buffered` · `bytes items` (§11) |
 
-Roles: 0 hub, 1 ship, 2 ground, 3 app, 4 dash, 5 band.
+Roles: 0 hub, 1 ship, 2 ground, 3 app, 4 dash, 5 band, 6 station.
 
 Optional trailing fields (`[…]` above) are read only if bytes remain after the mandatory ones, so a v1 decoder that does not know them still works, and they cost nothing when absent. A present `pubkey` must be 32 bytes and a present `sig` 64 bytes, or the payload is rejected.
 
@@ -110,3 +113,44 @@ Frames with a `dst` other than 0 are relayed verbatim to that node. Each client 
 ## 10. Byte accounting
 
 `ByteStats` counts frames, bytes, payload bytes and retransmissions per type on both sides. Exposed in `/api/link`, the dashboard's sync card, the dev panel and `eva bench`; the table of typical sizes is `GET /api/protocol/sizes`. Measured sizes, throughput and per-profile delivery: [BENCHMARKS.md](BENCHMARKS.md).
+
+## 11. The medical station (types 13–15)
+
+The ship's medical station (12 compartments, an Eva screen, door and item sensors, a red button, a LoRa radio, a backup battery) is a **client of the hub** (ADR-011). It says `Hello` with role 6, gets a node id, answers the hub's pings like any node, and keeps one reliable session: the hub queues `StationCmd`s on it, the station queues `StationEvent`s. Code: `app/src/station.rs`.
+
+Compartments are numbered 1–12 as on the cabinet: 01 AED, 02 Breathing, 03 Diagnostics, 04 Ultrasound, 05 Wounds, 06 Restraint, 07 Oral meds, 08 Injectables (the crew's medical kit), 09 IV access, 10 Eyes & dental, 11 Airway, 12 Hygiene. Masks use one bit per compartment, bit 0 = compartment 1; anything above bit 11 is rejected.
+
+**StationCmd** (13, hub → station, guidance, reliable)
+
+| field | encoding | values |
+|---|---|---|
+| op | `u8` | 0 clear all lights, 1 light one, 2 clear one, 3 restock (demo reset: all idle and full) |
+| compartment | `u8` | 1–12; 0 only with ops 0 and 3 |
+| case | `uvar` | the case that asked for it, 0 = none |
+| text | `str` | what the Eva screen says ("Take the AED · Ana, seat 4B"); may be empty |
+
+Light 01 with "Take the AED", case 101: `01 01 65 0c 54 61 6b 65 20 74 68 65 20 41 45 44`, 16 bytes of payload, 23 on the wire (with the station's node id as `dst` and a two-byte seq).
+
+**StationEvent** (14, station → hub, reliable; guidance, the red button in the alarm class)
+
+| field | encoding | values |
+|---|---|---|
+| event | `u8` | 1 door opened, 2 door closed, 3 item taken, 4 red button, 5 online (back), 6 LoRa alarm heard, 7 lit by itself |
+| compartment | `u8` | 1–12, or 0 when not about one compartment |
+| t_s | `uvar` | the station's own clock, mission seconds: a buffered event keeps the time it happened |
+| count | `uvar` | items left (item events), events it buffered (online), else 0 |
+| subject | `str` | the seat for "LoRa alarm heard", else empty |
+
+"AED taken" at 13:58:47 on day 97 (t_s 8 344 727): `03 01 97 a9 fd 03 00 00`, 8 bytes of payload, 14 on the wire.
+
+**StationStatus** (15, station → hub, vitals class: latest-wins, never retransmitted). `u8 battery` (0–100) · `u8 flags` (1 standalone, 2 on backup battery) · `uvar lit` · `uvar open` · `uvar taken` (masks) · `uvar buffered` · `bytes items` (one count per compartment, at most 12). Sent on every change and at least every 10 s; 19 bytes of payload.
+
+**What the hub does with a report.** Every `StationEvent` becomes one hash-chained, Ed25519-signed record (kind `station`, the red button `station_alarm`), so it reaches the ground like any other record; the body carries `event`, `compartment`, `station_s`, `count` and, when the report adds a line to the case timeline, `case_step` (for example "AED taken at the station · 00:47"), which the ground mirrors. "AED taken" (event 3 in compartment 1) marks the case once, whether it comes from the item sensor or from the runner tapping "I have it". The red button is broadcast to every app and dashboard as an `Alarm` with code 6.
+
+**Hub down (fallback).** If the station hears nothing from the hub for 5 s (two missed heartbeats) it runs **standalone**: events wait in its send queue (store-and-forward, §7), a wristband's no-pulse `Alarm` heard on the air (LoRa broadcast, unreliable, CRC on) lights 01 and shows "Emergency · Take the AED" without the hub, and its red button goes on the air as an `Alarm` with code 6 to every wristband. When the hub's first frame arrives again it queues `online` with the number of buffered events, retransmits everything in flight at once (`SendQueue::retransmit_now`, the RTO backoff is reset), and the hub signs each event into the chain in the order it was queued, with the station time it happened. In the demo, the dev panel's **Hub down** stops the hub's relay, heartbeat and rules, and `AppState::air` stands in for the radio (apps and dashboards hear it through their sessions, as their wristbands would). Tests: `tests/station.rs`.
+
+| message | bytes on the wire |
+|---|---|
+| station: light 01 "Take the AED" | 23 |
+| station: AED taken | 14 |
+| station: status | 25 |

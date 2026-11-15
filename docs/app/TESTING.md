@@ -2,7 +2,7 @@
 
 ```bash
 cd app
-cargo test                       # 101 tests, ~10 s (debug build): unit, flows, break tests
+cargo test                       # 109 tests, ~10 s (debug build): unit, flows, station, break tests
 cargo test --test break_protocol -- --nocapture   # prints fuzz seeds and outage figures
 scripts/e2e/run.sh               # Playwright happy path in headless Chromium (from the repo root)
 EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture   # live Groq check, needs GROQ_API_KEY
@@ -11,16 +11,17 @@ EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture   # live Groq check, 
 
 | suite | file | what |
 |---|---|---|
-| unit | `src/**` `#[cfg(test)]` (69) | wire, frame, payload, delta, queue (RTO, dedup, purge), link profiles, chain (signatures, byte flips), mirror, mesh, reflex rules, tools, schema validator, offline intents, key redaction, TTS fallback |
+| unit | `src/**` `#[cfg(test)]` (73) | wire, frame, payload (incl. station messages: roundtrip, sizes, rejects), delta, queue (RTO, dedup, purge), link profiles, chain (signatures, byte flips), mirror, mesh, station device (light / tap / clear, standalone on a LoRa alarm), reflex rules, tools, schema validator, offline intents, key redaction, TTS fallback |
 | flows | `tests/flows.rs` | reflex → emergency with nearest helpers, tools on the chain, private journal text, pages, API, exports |
+| station | `tests/station.rs` | the medical station over a real WebSocket: 01 lights for the AED runner, a tap → "AED taken at the station · mm:ss" on the case (or the runner's "I have it", once), 01 clears on close; **hub down**: standalone after 3 s of silence, a band's LoRa alarm lights 01 by itself, the red button reaches a phone over the air, 5+ events buffered, uploaded in order when the hub returns, case dated back, chain verified on board and in a fresh ground mirror; `/station` and the dashboard tile |
 | signatures | `tests/signatures.rs` | key pair on first run (0600), every record signed, `eva verify` on a flipped byte and on a re-signed chain, ground mirror persisted and verified |
 | agent | `tests/agent.rs` | fake Groq server: prompt injection, schema validation of model tool calls, origin logged, TTS terms fallback, key never in logs / errors / chain / API, offline Now-Why-How-Next answers |
 | live | `tests/groq_live.rs` | real Groq: chat + tool call, injection, STT, TTS (or explicit fallback), vision. Skips without `EVA_LIVE_GROQ=1` |
-| break: protocol | `tests/break_protocol.rs` | fuzz, truncation, oversized, CRC, replay, duplicates, out of order, 10 min outage, clock skew |
+| break: protocol | `tests/break_protocol.rs` | fuzz (station messages and the station computer included), truncation, oversized, CRC, replay, duplicates, out of order, 10 min outage, clock skew |
 | break: HTTP | `tests/break_http.rs` | malformed and huge bodies on every POST, path traversal, idempotent outbox replays |
 | break: network | `tests/break_net.rs` | 50 clients connect/disconnect, slow SSE readers, oversized and garbage datagrams |
 | break: restart | `tests/break_restart.rs` | SIGKILL the real ship binary mid-case, then the ground; restart both |
-| end to end | `scripts/e2e/happy-path.js` | the whole demo story in five browser contexts (below) |
+| end to end | `scripts/e2e/happy-path.js` | the whole demo story in six browser contexts, the station screen included (below) |
 
 ## Break-test results
 
@@ -62,24 +63,26 @@ headers: { "content-type": it.type, "x-eva-replayed": "1", "x-eva-idem": it.idem
 
 ## End-to-end happy path (Playwright)
 
-`scripts/e2e/run.sh` builds the release binary, starts `eva demo --offline` on `127.0.0.1:18080` (ship) and `:18081` (ground) with a temporary data dir, runs `scripts/e2e/happy-path.js` headless, stops the demo and runs `eva verify` on what it left. Output (21 screenshots, the CSV / JSON / PDF exports, `results.json`, `server.log`, `verify.txt`) goes to `scripts/e2e/out/<timestamp>/` (git-ignored). `HEADED=1` shows the browser; `EVA_BIN=…` skips the build.
+`scripts/e2e/run.sh` builds the release binary, starts `eva demo --offline` on `127.0.0.1:18080` (ship) and `:18081` (ground) with a temporary data dir, runs `scripts/e2e/happy-path.js` headless, stops the demo and runs `eva verify` on what it left. Output (25 screenshots, the CSV / JSON / PDF exports, `results.json`, `server.log`, `verify.txt`) goes to `scripts/e2e/out/<timestamp>/` (git-ignored). `HEADED=1` shows the browser; `EVA_BIN=…` skips the build.
 
 | step | checks |
 |---|---|
 | demo is up | both nodes answer `/healthz`; uplink switched to the LAN profile so the run takes seconds |
-| open 4B, 3B, 1B, crew `/dash`, ground `/dash` | five browser contexts (three phones 390×844, two laptops) |
+| open 4B, 3B, 1B, crew `/dash`, `/station`, ground `/dash` | six browser contexts (three phones 390×844, two laptops, the station at 1280×800); the station shows 12 compartments and "Hub online", the dashboard tile "Online" |
 | ask Eva | typed question; answer in the Now / Why / How I decided / Next format |
 | log water | Eva chip "+1 glass" → +250 ml on the passenger |
 | log a mood | journal slider + a feeling → `log_mood` on the chain |
 | 30 s ECG | chip → recording → result "regular" after the 30 s (fast-forwarded) |
 | cardiac arrest | Konami code on the dashboard opens the dev panel → Cardiac arrest (4B) → +1 min |
-| wow: three phones switch | Leo's phone shows "I'm going", Tomás's "Get the AED", Ana's the emergency; CPR = 3B and AED = 1B |
-| 3B → CPR, 1B → AED | both accept; the case timeline reaches "AED attached, shock advised by the AED" |
-| case closes | dev panel → Close case |
-| records reach the ground | ship: no record Signed/Sent and acked == chain length; ground mirror (current epoch) == ship chain, every record verified (hash + signature); ground shows the closed case |
+| wow: three phones and the station | Leo's phone shows "I'm going", Tomás's "Get the AED", Ana's the emergency; CPR = 3B and AED = 1B; on `/station` only compartment 01 is lit and the Eva screen says "Take the AED" |
+| 3B → CPR | "I'm going" → CPR guidance |
+| station: tap 01 | 01 turns "Taken"; the case gets "AED taken at the station · mm:ss" (API and the dashboard's case card); the station tile's last event is "AED taken from compartment 01" |
+| 1B → AED | "I have it" (no second "AED taken" line); the case timeline reaches "AED attached, shock advised by the AED" |
+| case closes | dev panel → Close case; 01 goes back to idle on `/station` |
+| records reach the ground | ship: no record Signed/Sent and acked == chain length; ground mirror (current epoch) == ship chain, every record verified (hash + signature); ground shows the closed case; the station's "AED taken" record is *acked* and the ground's case timeline has "AED taken at the station" |
 | exports | CSV and JSON downloaded through the dashboard links (JSON says `verify.ok`, every record signed), report printed to PDF |
 
-Last run: **13/13 steps in 15 s**, 19 records signed on the ship, **19 mirrored and verified on the ground**, `eva verify` OK on the ship chain and the ground mirror. The step requires ground mirror == ship chain (count and verified), not just "some records verified".
+Last run: **14/14 steps in 16 s**, 22 records signed on the ship (station reports included), **22 mirrored and verified on the ground**, `eva verify` OK on the ship chain and the ground mirror. The step requires ground mirror == ship chain (count and verified), not just "some records verified".
 
 ## Known issues (open)
 
@@ -88,4 +91,5 @@ Last run: **13/13 steps in 15 s**, 19 records signed on the ship, **19 mirrored 
 - **App alarms over `/link`** (the Help button through the mesh) are not deduplicated by seq; a replay while the case is open is a no-op (the case already exists), after it closes it would reopen one.
 - **Groq TTS** needs the Orpheus terms accepted by an org admin; until then the voice is the browser's (explicit fallback, RUNNING.md).
 - **UI copy**: the app home says "Day 96 of 212 · to Mars"; ADR-002 says near space. For the UI owner.
-- **SSE weight**: each dashboard refresh re-renders six fragments (~111 KB/s per dashboard at 15 bands); fine on the ship LAN, heavy for a narrow ground link (use `/api/state` in CBOR there).
+- **Hub down is simulated in one process**: the toggle stops the hub's relay, heartbeat and rules, but the same binary still serves the pages and the dev panel, and `AppState::air` stands in for the LoRa radio. The station's fallback logic is the real one (`StationDevice`); the radio and the failure are not.
+- **SSE weight**: each dashboard refresh re-renders seven fragments (~111 KB/s per dashboard at 15 bands); fine on the ship LAN, heavy for a narrow ground link (use `/api/state` in CBOR there).
