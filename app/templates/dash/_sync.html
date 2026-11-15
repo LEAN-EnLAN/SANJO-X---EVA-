@@ -23,7 +23,7 @@
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="font-mono text-muted">{{ r.time }}</span>
       <span class="min-w-0 flex-1 truncate text-ink">{% if r.subject != "ship" %}{{ r.subject }} · {% endif %}{{ r.text }}</span>
-      <span class="inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(r.state_tone) }}">{{ r.state }}</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge {{ crate::web::ui::badge(r.state_tone) }}">{{ r.state }}</span>
     </li>
     {% endfor %}
   </ul>

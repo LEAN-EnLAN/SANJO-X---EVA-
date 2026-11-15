@@ -6,7 +6,7 @@
         <span class="flex min-w-0 flex-col leading-tight"><span class="truncate text-sm text-ink">{{ r.name }}</span><span class="text-xs text-muted">Seat {{ r.seat }}{% if r.suit %}<span class="min-[1400px]:hidden"> · suit mode</span>{% endif %}{% if r.stale %} · no data 30 s{% endif %}</span></span>
       </span>
     </div>
-    <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(r.status_tone) }}">{% if r.care %}<span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"><span class="absolute inset-0 animate-ping rounded-full bg-critical"></span></span>{% endif %}{{ r.status_label }}</span></div>
+    <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge {{ crate::web::ui::badge(r.status_tone) }}">{% if r.care %}<span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"><span class="absolute inset-0 animate-ping rounded-full bg-critical"></span></span>{% endif %}{{ r.status_label }}</span></div>
     <div class="w-52 shrink-0">
       <span class="flex items-center gap-3">
         <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums {{ crate::web::ui::text(r.hr_tone) }}">{{ r.hr }}{% if r.hr_unit %}<span class="ml-1 text-xs text-muted">bpm</span>{% endif %}</span><span class="truncate text-xs {% if r.care %}text-critical{% else %}text-muted{% endif %}">{{ r.hr_word }}</span></span></span>

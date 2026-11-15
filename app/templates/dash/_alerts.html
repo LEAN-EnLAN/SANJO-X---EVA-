@@ -28,7 +28,7 @@
       <span class="relative inline-flex size-2.5 shrink-0 rounded-full {{ crate::web::ui::dot(a.tone) }}">{% if a.tone == "critical" && a.state == "Open" %}<span class="absolute inset-0 animate-ping rounded-full bg-critical"></span>{% endif %}</span>
       <span class="w-32 truncate text-sm text-ink">{{ a.who }}</span>
       <span class="min-w-0 flex-1 truncate text-sm text-muted">{{ a.what }}</span>
-      <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(a.tone) }}">{{ a.state }}</span>
+      <span class="inline-flex items-center gap-1 badge {{ crate::web::ui::badge(a.tone) }}">{{ a.state }}</span>
     </div>
     {% endfor %}
   </div>

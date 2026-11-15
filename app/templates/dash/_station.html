@@ -2,7 +2,7 @@
   <header class="flex items-center justify-between gap-3">
     <h2 id="station-tile-h" class="flex items-center gap-3 text-base text-ink">{{ crate::web::ui::pic("aed", "size-10")|safe }}Medical station</h2>
     {% let (label, tone) = self.status() %}
-    <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(tone) }}" data-station-status><span class="relative inline-flex size-2.5 shrink-0 rounded-full {{ crate::web::ui::dot(tone) }}"></span>{{ label }}</span>
+    <span class="inline-flex items-center gap-1 badge {{ crate::web::ui::badge(tone) }}" data-station-status><span class="relative inline-flex size-2.5 shrink-0 rounded-full {{ crate::web::ui::dot(tone) }}"></span>{{ label }}</span>
   </header>
   <p class="text-xs text-muted">{% if ground %}Corridor B · reports arrive as signed ship records{% else %}Corridor B · 12 compartments · a client of this hub{% endif %}</p>
   {% if !ground %}

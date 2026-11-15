@@ -758,3 +758,10 @@ html[data-eva-mode="rules"] .w-eva::after { content: ""; position: absolute; top
 ::view-transition-new(root) { animation: 260ms 80ms both fade-in; }
 @keyframes fade-out { to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .chart-line, .chart-area, .chart-dot { animation: none; } }
+
+/* ---------- /dash and /station: lighter touch (tokens, fonts, cards, min 13 px text on the dashboard) ---------- */
+body[data-view="dash"] .text-xs { font-size: 0.8125rem; line-height: 1.125rem; }
+body[data-view="dash"] .text-\[0\.6875rem\] { font-size: 0.8125rem; }
+body[data-view="dash"] .rounded-card.border, body[data-view="station"] .rounded-card.border { border-color: transparent; background: var(--color-surface); box-shadow: var(--e1); }
+body[data-view="dash"] .rounded-tile.border, body[data-view="station"] .rounded-tile.border { border-color: transparent; box-shadow: var(--e1); }
+body[data-view="station"] [data-station-message] { font-family: var(--font-display); font-weight: 700; }
