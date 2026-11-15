@@ -52,7 +52,7 @@ One Rust binary (`eva`) serves everything: the astronaut PWA, the crew/ground da
 | `seed.rs` | demo data matching the wireframes (Ana 4B, Leo 3B, Tomás 1B, Priya, Diego, Kwame…) |
 | `clock.rs` | mission clock (day 96, 13:58 at start) with fast-forward |
 | `sim.rs` | simulated bands: healthy baseline + server-side scenario overlay; `eva sim` client |
-| `eva_agent/` | `reflex` (layer 1), `tools` (registry, refusal guard), `schema` (JSON-schema validator for tool args), `chat`, `offline` (intents + Now/Why/How/Next answers), `speech` (STT/TTS, browser-voice fallback), `vision`, `prompt`, `config` (one config per pipeline, key redaction), emergency flow and case timeline in `mod.rs` |
+| `eva_agent/` | `reflex` (layer 1), `guard` (topic guard, ADR-012: injection removal, keyword scope, Groq scope classifier + Prompt Guard, output check, per-seat rate limit), `tools` (registry, refusal guard), `schema` (JSON-schema validator for tool args), `chat`, `offline` (intents + Now/Why/How/Next answers), `speech` (STT/TTS, browser-voice fallback), `vision`, `prompt`, `config` (one config per pipeline, key redaction), emergency flow and case timeline in `mod.rs` |
 | `chain.rs` | hash-chained, Ed25519-signed record log, node keys, replay from JSONL, verify (records and files), sync states (ADR-010) |
 | `mesh.rs` | mesh registry: nodes, relay, hub heartbeat (ping + presence every 2 s; silent while "Hub down") |
 | `link.rs` | `/link`: one transport-agnostic session per client (`session`; WebSocket adapter `handle`, in-process `local_session`), every role incl. Station; drops everything while "Hub down"; forwards the simulated LoRa air to apps; ground-side chain `Mirror` (verifies hash + signature, pins ship keys, persisted to `mirror-<node>.jsonl`) |

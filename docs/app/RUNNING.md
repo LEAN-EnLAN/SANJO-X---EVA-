@@ -56,8 +56,13 @@ Each Eva pipeline has its own settings (model, base URL, on/off); all share `GRO
 | speech-to-text | `EVA_STT_MODEL` (`whisper-large-v3-turbo`) | `EVA_STT_BASE_URL` | `EVA_STT=off` |
 | text-to-speech | `EVA_TTS_MODEL` (`canopylabs/orpheus-v1-english`), `EVA_TTS_VOICE` (`hannah`) | `EVA_TTS_BASE_URL` | `EVA_TTS=browser` |
 | vision | `EVA_VISION_MODEL` (`qwen/qwen3.8-27b`) | `EVA_VISION_BASE_URL` | `EVA_VISION=off` |
+| topic guard classifier | `EVA_GUARD_MODEL` (`openai/gpt-oss-20b`), `EVA_GUARD_SAFETY_MODEL` (`meta-llama/llama-prompt-guard-2-22m`, `off` to skip), `EVA_GUARD_TIMEOUT_MS` (`1500`) | `EVA_GUARD_BASE_URL` | `EVA_GUARD=off` (local layers only) |
 
-`GROQ_BASE_URL` changes the default for all four. Live check (prints models and timings, never the key): `EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture` with the key in the environment.
+### Topic guard (ADR-012)
+
+Eva only talks about space and spaceflight, the mission, health, medicine and wellbeing, and the Eva system. Clear off-topic or abusive requests are refused on board with a short redirect ("I can help with your health and the mission. For anything else, ask the crew lead."). Prompt-injection clauses are removed before anything reaches Groq. Only ambiguous text goes to the small classifier (~0.2–0.5 s, 1.5 s timeout, cached 5 min). Chat is capped at 2,000 characters and voice at 30 s. Each seat may make `EVA_RATE_PER_MIN` (20) requests a minute per Groq-backed endpoint; over that, the answer is `429` with `Retry-After` and a friendly line, and a message with emergency wording is never limited. Every filtered request is a `guard` record on the chain (`GET /api/chain`), with no long text and no key. Offline, the same rules run without the classifier.
+
+`GROQ_BASE_URL` changes the default for every pipeline. Live check (prints models and timings, never the key): `EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture` with the key in the environment.
 
 ### The demo story
 
@@ -85,7 +90,7 @@ Other commands: `eva bench` (see [BENCHMARKS.md](BENCHMARKS.md)), `eva verify --
 
 Keys: on first run each node creates `data/keys/<node>.ed25519` (private, mode 0600) and `data/keys/<node>.pub`. The ground pins the ship's public key the first time the ship connects (`data/keys/peer-<ship>.pub`); delete that file to accept a new ship key. Back up the `.ed25519` file if you want to keep signing as the same node.
 
-Options: `--station` (ship role: one simulated medical station as a client of this hub; `eva demo` always has it), `--host 0.0.0.0` (default, LAN-visible), `--data <dir>` (chain files, node keys in `keys/`, the ground's mirror, certificates), `--name <node>`, `--tls`, `--tls-host <name>`, `--offline`. Env: `GROQ_API_KEY`, the pipeline settings above, `EVA_OFFLINE=1`, `RUST_LOG=eva=debug`.
+Options: `--station` (ship role: one simulated medical station as a client of this hub; `eva demo` always has it), `--host 0.0.0.0` (default, LAN-visible), `--data <dir>` (chain files, node keys in `keys/`, the ground's mirror, certificates), `--name <node>`, `--tls`, `--tls-host <name>`, `--offline`. Env: `GROQ_API_KEY`, the pipeline settings above, `EVA_RATE_PER_MIN`, `EVA_OFFLINE=1`, `RUST_LOG=eva=debug`.
 
 ## Phones on the LAN (install the PWA)
 
@@ -95,6 +100,8 @@ Options: `--station` (ship role: one simulated medical station as a client of th
 eva demo --tls                 # self-signed cert in data/certs/ for localhost + this machine's LAN IP
 # open https://<lan-ip>:8080/app on the phone, trust the certificate, then Share → Add to Home Screen
 ```
+
+Android phones can also use the native **Eva APK** instead of the PWA (hub address + seat picker, certificate pinning, mic/camera): [APK.md](APK.md).
 
 Smoother: [mkcert](https://github.com/FiloSottile/mkcert) — `mkcert -install`, create `data/certs/eva-cert.pem` and `eva-key.pem` for `localhost 127.0.0.1 <lan-ip>`, install mkcert's root CA on the phones; `--tls` reuses those files. Details: ADR-004.
 

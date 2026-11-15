@@ -37,3 +37,4 @@ Findings, case steps, tool calls and answers (model name, tools used, not the pr
 - Swapping Groq for an on-board model (MedGemma, per the team plan) = new struct implementing `ChatPipeline` / `VisionPipeline`; `SttPipeline` for MedASR.
 - Measured on 15/11 with the demo key: chat with one tool call ≈ 1.9 s; STT ≈ 0.2 s for 1 s of audio; vision (meal photo) ≈ 1–2 s.
 - The LLM sees a short live context (vitals, status, open case) and the last 8 turns, nothing from the private journal.
+- Topic guard (15/11): off-topic, abusive and injection requests are filtered before any pipeline, see ADR-012.

@@ -2,21 +2,22 @@
 
 ```bash
 cd app
-cargo test                       # 109 tests, ~10 s (debug build): unit, flows, station, break tests
+cargo test                       # 131 tests, ~10 s (debug build): unit, flows, station, guard, break tests
 cargo test --test break_protocol -- --nocapture   # prints fuzz seeds and outage figures
 scripts/e2e/run.sh               # Playwright happy path in headless Chromium (from the repo root)
-EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture   # live Groq check, needs GROQ_API_KEY
+EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture   # live Groq check + topic guard precision/recall, needs GROQ_API_KEY
 ./target/release/eva bench       # numbers: BENCHMARKS.md
 ```
 
 | suite | file | what |
 |---|---|---|
-| unit | `src/**` `#[cfg(test)]` (73) | wire, frame, payload (incl. station messages: roundtrip, sizes, rejects), delta, queue (RTO, dedup, purge), link profiles, chain (signatures, byte flips), mirror, mesh, station device (light / tap / clear, standalone on a LoRa alarm), reflex rules, tools, schema validator, offline intents, key redaction, TTS fallback |
+| unit | `src/**` `#[cfg(test)]` (83) | wire, frame, payload (incl. station messages: roundtrip, sizes, rejects), delta, queue (RTO, dedup, purge), link profiles, chain (signatures, byte flips), mirror, mesh, station device (light / tap / clear, standalone on a LoRa alarm), reflex rules, tools, schema validator, offline intents, key redaction, TTS fallback, topic guard (injection removal, keyword scope, classifier JSON, token bucket, output check, WAV length), prompt scope |
 | flows | `tests/flows.rs` | reflex → emergency with nearest helpers, tools on the chain, private journal text, pages, API, exports |
 | station | `tests/station.rs` | the medical station over a real WebSocket: 01 lights for the AED runner, a tap → "AED taken at the station · mm:ss" on the case (or the runner's "I have it", once), 01 clears on close; **hub down**: standalone after 3 s of silence, a band's LoRa alarm lights 01 by itself, the red button reaches a phone over the air, 5+ events buffered, uploaded in order when the hub returns, case dated back, chain verified on board and in a fresh ground mirror; `/station` and the dashboard tile |
 | signatures | `tests/signatures.rs` | key pair on first run (0600), every record signed, `eva verify` on a flipped byte and on a re-signed chain, ground mirror persisted and verified |
 | agent | `tests/agent.rs` | fake Groq server: prompt injection, schema validation of model tool calls, origin logged, TTS terms fallback, key never in logs / errors / chain / API, offline Now-Why-How-Next answers |
-| live | `tests/groq_live.rs` | real Groq: chat + tool call, injection, STT, TTS (or explicit fallback), vision. Skips without `EVA_LIVE_GROQ=1` |
+| guard | `tests/guard.rs` | topic guard (ADR-012) against a fake Groq: "write me a poem about football", "help me with my python homework", "who will win the election" get the redirect with no Groq call and no tool (no emergency case); in-scope requests reach the model, ambiguous ones the classifier; injections neutralised (the model never sees them; refused turns stay out of history; Prompt Guard score); classifier timeout → local fallback (fails closed when leaning off topic); verdict cache; 429 + `Retry-After` per seat, help never limited; offline scope; drifting / leaking replies replaced; vision `OFF_TOPIC` and off-topic questions; STT transcript neutralised, audio > 30 s refused; no key in logs or chain |
+| live | `tests/groq_live.rs` | real Groq: chat + tool call, injection, STT, TTS (or explicit fallback), vision; `live_topic_guard`: 10 in-scope + 10 off-topic prompts through the gate and through the classifier alone, prints precision, recall and latency. Skips without `EVA_LIVE_GROQ=1` |
 | break: protocol | `tests/break_protocol.rs` | fuzz (station messages and the station computer included), truncation, oversized, CRC, replay, duplicates, out of order, 10 min outage, clock skew |
 | break: HTTP | `tests/break_http.rs` | malformed and huge bodies on every POST, path traversal, idempotent outbox replays |
 | break: network | `tests/break_net.rs` | 50 clients connect/disconnect, slow SSE readers, oversized and garbage datagrams |
@@ -84,11 +85,16 @@ headers: { "content-type": it.type, "x-eva-replayed": "1", "x-eva-idem": it.idem
 
 Last run: **14/14 steps in 16 s**, 22 records signed on the ship (station reports included), **22 mirrored and verified on the ground**, `eva verify` OK on the ship chain and the ground mirror. The step requires ground mirror == ship chain (count and verified), not just "some records verified".
 
+## Topic guard (live, 15/11/2026)
+
+`live_topic_guard` with the demo key: the full gate (local pre-filter, then `openai/gpt-oss-20b` + Prompt Guard 2 for ambiguous text) scored **precision 1.00, recall 1.00** on 10 in-scope and 10 off-topic prompts (18 settled locally in < 1 ms, 2 by the classifier in 0.22–0.27 s). The classifier alone on all 20 also scored 1.00 / 1.00 (median 224 ms, p90 640 ms). The org's quota for `gpt-oss-20b` is 8K tokens a minute, so the test paces the classifier-only part; in the app, a quota error falls back to the local decision. Details: ADR-012.
+
 ## Known issues (open)
 
 - **Ship restart keeps the chain, not the live case card**: after a restart the ship's working set (cases, chats, scenarios) is re-seeded; the chain, its states and the ground's view are intact and everything is re-sent. Rebuilding the ship's open case from its chain (as the ground does) is a small next step (ADR-005: working set in memory).
 - **Ship key trust on first use**: the ground pins the first key it sees for a ship name. Pre-provision `peer-<ship>.pub` for real use (ADR-010).
 - **App alarms over `/link`** (the Help button through the mesh) are not deduplicated by seq; a replay while the case is open is a no-op (the case already exists), after it closes it would reopen one.
+- **Topic guard keywords are a heuristic**: mixed requests go to the classifier; with the classifier down, a mixed request that leans in scope reaches Eva's scoped prompt and output check (ADR-012). Rate limits are in memory and reset on restart.
 - **Groq TTS** needs the Orpheus terms accepted by an org admin; until then the voice is the browser's (explicit fallback, RUNNING.md).
 - **UI copy**: the app home says "Day 96 of 212 · to Mars"; ADR-002 says near space. For the UI owner.
 - **Hub down is simulated in one process**: the toggle stops the hub's relay, heartbeat and rules, but the same binary still serves the pages and the dev panel, and `AppState::air` stands in for the LoRa radio. The station's fallback logic is the real one (`StationDevice`); the radio and the failure are not.
