@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <script>document.documentElement.dataset.theme="dark"</script>
 <title>Eva by WearMeds</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -6,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="team-rail.css">
 <style>
-/* Layout: Two Create type on pure white / pure black, with theme-matched asset families. Our own scroll engine scrubs: cabin parallax hero, wristband orbit + exploded view, Case A/B scrollytelling, harness exploded view, layered solar alert, horizontal Earth→Mars link, Mars halftone arrival, product slabs, dealt parts grid, team rail, rising wordmark. */
+/* Layout: Two Create type on pure white / pure black, with theme-matched asset families. Our own scroll engine scrubs: cabin parallax hero, wristband orbit + exploded view with suit and ECG beats, Case A/B scrollytelling, emergency station, layered solar alert, horizontal Earth→Mars link, Mars halftone arrival, product slabs, dealt parts grid, team rail, rising wordmark. */
 :root{
   --canvas:#ffffff; --ink:#0c0c0c; --rule:#e3e1dd; --muted:rgba(12,12,12,.58);
   --space:#000000; --space-ink:#f4f3f0; --space-muted:rgba(244,243,240,.62); --space-rule:#2a2a2a;
@@ -82,35 +83,63 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .statement .row small{display:block;font-size:var(--t-util);color:var(--space-muted);margin-top:10px;line-height:1.3}
 @media (max-width:760px){.statement .row{grid-template-columns:1fr;margin-top:56px}}
 
-/* exploded scenes (wristband + harness) */
+/* exploded scenes (wristband + emergency station) */
 .xsec .stage{background:var(--space);color:var(--space-ink)}
 .xsec .head{position:absolute;left:20px;top:28px;z-index:6;max-width:min(560px,80vw);display:grid;gap:10px}
 .xsec .head .note{color:var(--space-muted);max-width:28em}
 .xsec .obj{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);z-index:3}
 .xsec .obj img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .xsec .part{--dx:0%;--dy:0%;--ds:0}
-.wsec{height:340svh}
+.wsec{height:600svh}
 .wsec .obj{width:min(76vh,52vw);aspect-ratio:1;top:55%;left:64%}
 .wsec .orb{opacity:0;will-change:opacity,filter,transform}
-.wsec .part{transform:translate(calc(var(--dx,0)*var(--e,0)),calc(var(--dy,0)*var(--e,0)))}
-.hsec{height:420svh}
-.hsec .obj{width:min(66vh,42vw);aspect-ratio:2/3;left:66%;top:53%;overflow:hidden}
-@media (max-width:760px){.hsec .obj{left:50%;top:60%}}
-.hsec .cam{position:absolute;inset:0;transform-origin:0 0;transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--zs,1));will-change:transform}
-.hsec .cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.hsec .s2{position:absolute;inset:0;z-index:2;opacity:calc(1 - var(--z,0))}
-.hsec .s2 img{width:100%;height:100%;object-fit:cover;transform:scale(calc(1 + .12*var(--z,0)))}
-.hsec .glow{opacity:0;transition:opacity .5s}
+.wsec .part{transform:translate(calc(var(--dx,0)*var(--e,0)),calc(var(--dy,0)*var(--e,0)));filter:brightness(var(--hb,1));transition:filter .45s var(--ease)}
+.wsec .bimg{position:absolute;left:63%;top:55%;width:min(54vw,96vh);aspect-ratio:8/5;z-index:4;pointer-events:none;opacity:var(--o,0);transform:translate(-50%,-50%) scale(calc(.97 + .03*var(--o,0)))}
+.wsec .bimg img{width:100%;height:100%;object-fit:cover;-webkit-mask-image:radial-gradient(ellipse 70% 72% at 50% 44%,#000 56%,transparent 100%);mask-image:radial-gradient(ellipse 70% 72% at 50% 44%,#000 56%,transparent 100%)}
+#bSuit{aspect-ratio:1400/665}
+#bEcg img{-webkit-mask-image:linear-gradient(180deg,transparent 2%,#000 34%,#000 80%,transparent);mask-image:linear-gradient(180deg,transparent 2%,#000 34%,#000 80%,transparent)}
+.hot{position:absolute;width:0;height:0;font-style:normal}
+.hot::before{content:"";position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:50%;background:var(--mark);box-shadow:0 0 0 4px rgba(255,216,74,.22),0 0 16px rgba(255,216,74,.6)}
+.hot span{position:absolute;left:14px;top:-12px;white-space:nowrap;font-size:13px;line-height:1;padding:6px 8px;background:#0c0c0c;color:#fff;border:1px solid #2a2a2a}
+.hot.l span{left:auto;right:14px}
+.wsec .beat{position:absolute;z-index:6;left:max(20px,env(safe-area-inset-left,0px));bottom:28px;width:min(440px,34vw);display:grid;gap:10px;border-top:1px solid var(--space-rule);padding-top:14px;opacity:var(--o,0);transform:translateY(calc(18px*(1 - var(--o,0))));pointer-events:none}
+.wsec .beat h3{font-size:var(--t-sec);line-height:1.05;letter-spacing:-.01em;text-wrap:balance}
+.wsec .beat p:not(.label){font-size:var(--t-util);line-height:1.3;color:var(--space-muted)}
+.wsec .beat .thumb{width:min(220px,62%);aspect-ratio:3/2;object-fit:cover;margin-bottom:6px}
+.esec{height:340svh}
+.esec .eobj{position:absolute;left:62%;top:56%;width:min(58vh,34vw);aspect-ratio:1;transform:translate(-50%,-50%);z-index:3}
+.esec .eobj img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;mix-blend-mode:lighten}
+.esec .stn{opacity:var(--s0,0);transform:translateX(calc(-22% * var(--d,0))) scale(calc(.86 + .14*var(--s0,0)));z-index:2}
+.esec .pads{opacity:var(--d,0);transform:translateX(calc(48% * var(--d,0))) translateY(calc(6% * var(--d,0))) rotate(calc(9deg * var(--d,0))) scale(calc(.62 + .1*var(--d,0)));z-index:1}
+.esec .halo{position:absolute;inset:-28%;border-radius:50%;z-index:0;transform:translateX(calc(-22% * var(--d,0)));background:radial-gradient(circle,rgba(70,230,140,.42),rgba(70,230,140,.12) 38%,transparent 66%);opacity:var(--l,0)}
+.esec.lit .halo{animation:halo 2.4s ease-in-out infinite}
+@keyframes halo{50%{filter:brightness(.6)}}
+.esec .head .mk{transition-duration:1.1s}
+.esec .head.in .mk{color:#0c0c0c}
+@media (prefers-reduced-motion:reduce){.esec.lit .halo{animation:none}}
 .ledger{position:absolute;z-index:5;left:max(20px,env(safe-area-inset-left,0px));bottom:28px;width:min(440px,34vw);display:grid}
 .lbl{display:grid;gap:2px;padding:11px 0;border-top:1px solid var(--space-rule);font-size:var(--t-util);line-height:1.2;color:var(--space-ink);opacity:calc(.28 + .72*var(--lo,0));transition:opacity .2s}
 .lbl small{color:var(--space-muted);font-size:.8em}
-.xsec .step{position:absolute;right:20px;top:28px;bottom:auto;z-index:6;font-size:var(--t-util);color:var(--space-muted);text-align:right;max-width:22em;line-height:1.3}
-@media (max-width:760px){.ledger{display:none}.wsec .obj{width:86vw;left:50%}.hsec .obj{width:62vw}}
+@media (max-width:760px){
+  .wsec .obj{width:86vw;left:50%;top:47%}
+  .wsec .bimg{left:50%;top:44%;width:96vw}
+  .wsec .beat{left:16px;right:16px;bottom:16px;width:auto;padding-top:12px;background:linear-gradient(transparent,#000 22px)}
+  .wsec .beat .thumb{display:none}
+  .ledger{left:16px;right:16px;bottom:14px;width:auto}
+  .lbl{padding:6px 0;font-size:14px}
+  .esec .eobj{left:44%;top:52%;width:54vw}
+  .hot span{font-size:11px;padding:4px 6px;top:-10px}
+  .hot.b span{left:-32px;top:12px}
+}
 
 /* pinned step scenes (Case A / B) */
 .storyp{height:420svh}
+.storyp.caseA{height:520svh}
 .storyp .stage{background:var(--canvas);color:var(--ink)}
-.storyp .sc{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:0% 50%}
+.caseA .scn{position:absolute;left:0;top:0;bottom:0;width:62%}
+.caseA .sc{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;opacity:0;transform:scale(1.04);transition:opacity .8s var(--ease),transform 1.4s var(--ease);-webkit-mask-image:linear-gradient(90deg,#000 72%,transparent);mask-image:linear-gradient(90deg,#000 72%,transparent)}
+.caseA .sc.on{opacity:1;transform:none}
+.caseA .sc.icn{object-fit:contain;padding:9% 16% 9% 12%}
 .storyp .ptxt{position:absolute;z-index:4;display:grid;gap:22px;align-content:center}
 .caseA .ptxt{right:max(20px,4vw);top:0;bottom:0;width:min(480px,36vw)}
 .caseB .ptxt{left:max(20px,env(safe-area-inset-left,0px));top:0;bottom:0;width:min(460px,34vw)}
@@ -122,30 +151,43 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .st p{font-size:var(--t-util);line-height:1.3;color:var(--muted)}
 .bar{height:1px;background:var(--rule);position:relative}
 .bar i{position:absolute;left:0;top:-1px;height:3px;width:100%;background:var(--ink);transform-origin:left;transform:scaleX(var(--sp,0))}
-.ping{position:absolute;z-index:3;left:0;top:0;transform:translate(var(--hx,0),var(--hy,0));opacity:var(--ho,0);transition:transform .7s cubic-bezier(.76,0,.24,1),opacity .4s;pointer-events:none}
+.ping{position:absolute;z-index:3;left:0;top:0;transform:translate(var(--qx,0),var(--qy,0));opacity:var(--ho,0);transition:transform .7s cubic-bezier(.76,0,.24,1),opacity .4s;pointer-events:none}
 .ping i{position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;border:2px solid var(--mark);box-shadow:0 0 18px rgba(255,216,74,.55)}
 .ping i::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--mark);animation:ping 1.8s ease-out infinite}
 @keyframes ping{to{transform:scale(2.4);opacity:0}}
-.ping span{position:absolute;left:24px;top:-12px;white-space:nowrap;font-size:13px;line-height:1;padding:6px 8px;background:#0c0c0c;color:#fff}
+.ping span{position:absolute;left:24px;top:-12px;white-space:nowrap;font-size:13px;line-height:1;padding:6px 8px;background:#0c0c0c;color:#fff;border:1px solid #2a2a2a}
 @media (prefers-reduced-motion:reduce){.ping i::after{animation:none}}
-.caseB .bdev{position:absolute;right:max(20px,3vw);top:50%;transform:translateY(-50%);width:min(60vw,980px);display:grid;grid-template-columns:1.55fr 1fr;gap:2vw;align-items:center}
+.caseB .bdev{position:absolute;right:max(20px,3vw);top:50%;transform:translateY(-50%);width:min(58vw,1000px)}
 .bdev .w{position:relative;aspect-ratio:3/2}
 .bdev .w img{width:100%;height:100%;object-fit:contain}
-.bdev .scr{position:absolute;left:27.8%;top:29.6%;width:48.8%;height:27.8%;border-radius:9% / 16%;display:flex;align-items:center;gap:6%;padding:0 6%;color:#fff;overflow:hidden}
-.bdev .scr .pict{flex:none;width:24%;aspect-ratio:1;border-radius:50%;border:2px solid #7fd4ff;display:grid;place-items:center;color:#7fd4ff;font-size:clamp(12px,1.6vw,26px)}
-.bdev .scr .tx{display:grid;gap:.35em;font-size:clamp(9px,1.1vw,17px);line-height:1.15}
-.bdev .scr small{font-size:.66em;letter-spacing:.08em;text-transform:uppercase;color:#7fd4ff}
-.bdev .scr span{transition:opacity .3s}
-.bdev .h{position:relative;aspect-ratio:2/3}
-.bdev .h img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.bdev .h .g1{opacity:0;transition:opacity .6s}
-.bdev .h[data-l="1"] .g1{opacity:1}.bdev .h[data-l="2"] .g1{opacity:.5}
+.bdev .scr{position:absolute;left:31.4%;top:31.2%;width:32.9%;height:23.4%;border-radius:3%/7%;background:radial-gradient(120% 140% at 50% 0%,#0b1420,#04070b 70%);box-shadow:inset 0 0 0 1px rgba(127,212,255,.12);display:flex;align-items:center;gap:6%;padding:0 6%;color:#fff;overflow:hidden;font-size:clamp(8px,1vw,15px);--ac:#7fd4ff}
+.bdev .scr[data-s="2"]{--ac:#5ee39a}.bdev .scr[data-s="3"]{--ac:#ff6a3d}
+.bdev .scr .ring{flex:none;width:21%;aspect-ratio:1;border-radius:50%;border:2px solid var(--ac);display:grid;place-items:center;font-size:1.3em;line-height:1;color:var(--ac);transition:color .4s,border-color .4s}
+.bdev .scr[data-s="1"] .ring{animation:beat 1s ease-in-out infinite}
+@keyframes beat{15%{transform:scale(1.08)}30%{transform:none}}
+.bdev .scr .col{flex:1;min-width:0;display:grid;gap:.4em}
+.bdev .scr .top{display:flex;justify-content:space-between;align-items:baseline;gap:.6em;white-space:nowrap}
+.bdev .scr small{font-size:.7em;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);transition:color .4s;overflow:hidden;text-overflow:ellipsis}
+.bdev .scr b{font-weight:400;font-size:.9em;font-variant-numeric:tabular-nums;color:var(--ac)}
+.bdev .scr svg{display:none;width:100%;height:1.9em;overflow:visible}
+.bdev .scr path{fill:none;stroke:var(--ac);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:100;stroke-dashoffset:100}
+.bdev .scr[data-s="1"] svg,.bdev .scr[data-s="2"] svg{display:block}
+.bdev .scr[data-s="1"] path{animation:trace 2.6s linear infinite}
+.bdev .scr[data-s="2"] path{stroke-dashoffset:0}
+@keyframes trace{to{stroke-dashoffset:0}}
+.bdev .scr .tx{font-size:1.05em;line-height:1.15;transition:opacity .3s}
+.bdev .pad{opacity:0;transition:opacity .4s}
+.bdev[data-s="0"] .pad{opacity:1}
+@media (prefers-reduced-motion:reduce){.bdev .scr[data-s="1"] path{animation:none;stroke-dashoffset:0}.bdev .scr .ring{animation:none!important}}
 @media (max-width:760px){
-  .caseA .sc{object-position:20% 50%;height:60%}
+  .caseA .scn{width:100%;bottom:auto;height:58%}
+  .caseA .sc{-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+  .caseA .sc.icn{padding:6% 18%}
   .caseA .ptxt,.caseB .ptxt{left:16px;right:16px;width:auto;top:auto;bottom:0;align-content:end;padding:56px 0 22px;background:linear-gradient(transparent,var(--canvas) 32%)}
   .sts{min-height:11.5em}
-  .caseB .bdev{left:16px;right:16px;width:auto;top:8%;transform:none;grid-template-columns:1fr;gap:0}
-  .caseB .bdev .h{display:none}
+  .caseB .bdev{left:0;right:0;width:auto;top:6%;transform:none;overflow:hidden}
+  .caseB .bdev .w{width:190%;margin-left:-43%}
+  .bdev .scr{font-size:clamp(9px,3vw,13px)}
 }
 
 /* Solar */
@@ -246,10 +288,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 @media (max-width:900px){.slab{position:relative;top:auto;grid-template-columns:1fr;padding-block:48px;transform:none;filter:none}}
 
 /* Dealt parts grid */
-.parts{display:grid;grid-template-columns:repeat(6,1fr);gap:20px;padding-block:40px 140px}
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding-block:40px 140px}
 .part-card{display:grid;gap:10px;transform:translate(calc(var(--x0,0)*(1 - var(--k,1))),calc(var(--y0,0)*(1 - var(--k,1)))) rotate(calc(var(--r0,0deg)*(1 - var(--k,1))))}
 .part-card .im{aspect-ratio:1;background:var(--canvas);border-top:1px solid var(--rule);position:relative}
-.part-card img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.14))}
+.part-card img{width:100%;height:100%;object-fit:contain}
+.edimg{width:100%;aspect-ratio:3/2;object-fit:cover}
 .part-card b{font-weight:400;font-size:var(--t-util)}
 .part-card span{font-size:14px;color:var(--muted)}
 @media (max-width:900px){.parts{grid-template-columns:repeat(2,1fr)}}
@@ -290,13 +333,13 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <div class="stage">
       <canvas id="heroSky" aria-hidden="true"></canvas>
       <div class="chips" aria-hidden="true">
-        <div class="chip" style="left:5%;top:9%"><img class="tl" src="a/chip-wristband-w.jpg" alt=""><img class="td" src="a/chip-wristband-b.jpg" alt=""></div>
-        <div class="chip" style="left:13%;top:60%"><img class="tl" src="a/chip-harness-w.jpg" alt=""><img class="td" src="a/chip-harness-b.jpg" alt=""></div>
+        <div class="chip" style="left:5%;top:9%"><img class="tl" src="a/chip-band.webp" alt=""><img class="td" src="a/chip-band.webp" alt=""></div>
+        <div class="chip" style="left:13%;top:60%"><img class="tl" src="a/ic-aed-station.webp" alt=""><img class="td" src="a/ic-aed-station.webp" alt=""></div>
         <div class="chip" style="right:6%;top:7%"><img class="tl" src="a/chip-mars-w.jpg" alt=""><img class="td" src="a/chip-mars-b.jpg" alt=""></div>
         <div class="chip" style="right:12%;top:58%"><img class="tl" src="a/chip-earth-w.jpg" alt=""><img class="td" src="a/chip-earth-b.jpg" alt=""></div>
         <div class="chip" style="left:38%;top:-3%"><img class="tl" src="a/chip-sun-w.jpg" alt=""><img class="td" src="a/chip-sun-b.jpg" alt=""></div>
-        <div class="chip" style="left:30%;bottom:-5%"><img class="tl" src="a/chip-vitals-w.jpg" alt=""><img class="td" src="a/chip-vitals-b.jpg" alt=""></div>
-        <div class="chip" style="right:30%;bottom:-4%"><img class="tl" src="a/chip-crew-w.jpg" alt=""><img class="td" src="a/chip-crew-b.jpg" alt=""></div>
+        <div class="chip" style="left:30%;bottom:-5%"><img class="tl" src="a/ic-heart.webp" alt=""><img class="td" src="a/ic-heart.webp" alt=""></div>
+        <div class="chip" style="right:30%;bottom:-4%"><img class="tl" src="a/ic-crew.webp" alt=""><img class="td" src="a/ic-crew.webp" alt=""></div>
       </div>
       <div class="ground" id="ground">
         <div class="cab"><img class="bg" src="a/cab-bg-b.jpg" alt="Calm spacecraft cabin with Mars in the window."><img class="mid" src="a/cab-mid-b.webp" alt=""><img class="fg" src="a/cab-fg-b.webp" alt=""></div>
@@ -311,75 +354,104 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <img class="stars" src="a/st2.jpg" alt="" aria-hidden="true">
     <p class="big" id="st" data-reveal>Fifteen passengers. <span class="mk">No doctor</span> on board. Earth up to <span class="mk">22 minutes</span> away.</p>
     <div class="row">
-      <p data-reveal>Wristband<small>Large flexible touch screen, alerts, voice and the help button.</small></p>
-      <p data-reveal>Chest harness<small>Non-invasive contact sensors, plus validated emergency modules.</small></p>
+      <p data-reveal>Wristband<small>The only thing anyone wears: a big screen on a sensor base, with alerts, voice, the help button and ECG on demand.</small></p>
+      <p data-reveal>Emergency station<small>An automatic defibrillator a short walk from every seat. The AED decides the shock.</small></p>
       <p data-reveal>Ship hub<small>Runs Eva offline. No internet, no Earth needed.</small></p>
     </div>
   </section>
 
-  <!-- 3 · Wristband orbit + exploded -->
+  <!-- 3 · Wristband orbit + exploded, then suit mode and ECG on demand (Blender renders) -->
   <section class="pinsec xsec wsec" id="wsec" aria-labelledby="wh">
     <div class="stage">
       <img class="stars" src="a/st1.jpg" alt="" aria-hidden="true">
       <div class="head"><p class="label" id="wh">Wristband</p><h2 class="prop">A screen big enough to follow under stress</h2></div>
-      <div class="obj">
-        <img class="orb" src="a/or-m60.webp" alt=""><img class="orb" src="a/or-m30.webp" alt=""><img class="orb" src="a/or-000.webp" alt="WearMeds wristband."><img class="orb" src="a/or-p30.webp" alt=""><img class="orb" src="a/or-p60.webp" alt="">
-        <img class="part" data-dy="12" src="a/wx1.webp" alt=""><img class="part" data-dy="0" src="a/wx2.webp" alt=""><img class="part" data-dy="-11" src="a/wx5.webp" alt=""><img class="part" data-dy="-21" src="a/wx3.webp" alt=""><img class="part" data-dy="25" src="a/wx4.webp" alt="">
+      <div class="obj" id="wobj">
+        <img class="orb" src="a/wr-or-m60.webp" alt=""><img class="orb" src="a/wr-or-m30.webp" alt=""><img class="orb" src="a/wr-or-000.webp" alt="WearMeds wristband: a rugged rectangular screen module on a navy strap."><img class="orb" src="a/wr-or-p30.webp" alt=""><img class="orb" src="a/wr-or-p60.webp" alt="">
+        <img class="part" data-dy="8" src="a/wr-x4.webp" alt="Sensor base with the strap and its own small battery."><img class="part" data-dy="1" src="a/wr-x3.webp" alt="Four magnet pairs and the spring pins."><img class="part" data-dy="-7.4" src="a/wr-x2.webp" alt="Screen interface shell with the main battery and board."><img class="part" data-dy="-17.2" src="a/wr-x1.webp" alt="Screen glass with the two metal ECG pads."><img class="part" data-dy="33.2" src="a/wr-x5.webp" alt="Skin-side optical, temperature and EDA sensor window.">
       </div>
-      <div class="ledger"><div class="lbl" data-at=".6">Flexible touch screen<small>Target: ≥100 mm active side</small></div><div class="lbl" data-at=".66">Battery and board<small>Firmware runs locally</small></div><div class="lbl" data-at=".72">Strap<small>Help button, voice, vibration</small></div><div class="lbl" data-at=".78">Sensor window<small>Non-invasive, on the skin</small></div></div>
+      <div class="ledger" id="wledger">
+        <div class="lbl" data-at=".44" data-hl="3">Two ECG pads<small>One finger of each hand, 30 s, on demand</small></div>
+        <div class="lbl" data-at=".48" data-hl="2,3">Screen + main battery<small>Help button, voice, vibration, LoRa</small></div>
+        <div class="lbl" data-at=".52" data-hl="1">Magnets + spring pins<small>The pins power the base when the parts are joined</small></div>
+        <div class="lbl" data-at=".56" data-hl="0">Sensor base + own battery<small>Accelerometer, gyroscope, own LoRa radio</small></div>
+        <div class="lbl" data-at=".6" data-hl="4">Optical, temperature and EDA window<small>Pulse, SpO₂, breathing estimate, skin temperature, EDA</small></div>
+      </div>
+      <div class="bimg" id="bSuit"><img src="a/wr-suit.webp" alt="Close-up render: the suit fabric sits between the two parts; the magnets hold and the spring pins stay apart."><i class="hot" style="left:19%;top:52.6%"><span>Magnets hold</span></i><i class="hot b" style="left:50.5%;top:55%"><span>Pins apart</span></i><i class="hot l" style="left:91%;top:47%"><span>Suit fabric</span></i></div>
+      <div class="bimg" id="bEcg"><img src="a/wr-ecg.webp" alt="Render: one finger of each hand rests on the two metal pads on top of the wristband."><i class="hot l" style="left:37.6%;top:42.6%"><span>Metal pad</span></i><i class="hot" style="left:61.8%;top:43%"><span>Metal pad</span></i></div>
+      <div class="beat" id="tSuit"><img class="thumb" src="a/wrist-suit.webp" alt="The wristband worn over a suit sleeve."><p class="label">Suit mode</p><h3>The suit goes between, the data keeps flowing</h3><p>With the suit fabric between the parts the magnets still hold. The spring pins no longer touch, so the base runs on its own battery and keeps sending by LoRa.</p></div>
+      <div class="beat" id="tEcg"><p class="label">ECG on demand</p><h3>One finger of each hand, 30 seconds</h3><p>Two metal pads on top. It works over the suit if the hands are bare. It is not continuous, and it never decides a shock.</p></div>
     </div>
   </section>
 
-  <!-- 4 · Case A (pinned, text in the scene's right negative space) -->
+  <!-- 4 · Case A (pinned, scenes on the left, text in the right negative space) -->
   <section class="pinsec storyp caseA" id="caseA" aria-labelledby="ca">
     <div class="stage">
-      <img class="sc tl" src="a/s4-w.jpg" alt="A passenger checks her wristband beside a seated passenger wearing the WearMeds harness, linked by a soft blue light.">
-      <img class="sc td" src="a/s4-b.jpg" alt="A passenger checks her wristband beside a seated passenger wearing the WearMeds harness, linked by a soft blue light.">
-      <div class="ping" id="hlA"><i></i><span id="hlT"></span></div>
+      <div class="scn">
+        <img class="sc on" src="a/wrist-sleep.webp" alt="A still arm on a dark blanket; the wristband screen has gone dim.">
+        <img class="sc" src="a/wrist-alert.webp" alt="A helper's wristband shows a red running figure and an arrow.">
+        <img class="sc icn" src="a/ic-aed-station.webp" alt="The ship's emergency station with its automatic defibrillator.">
+        <img class="sc" src="a/wrist-cpr.webp" alt="A helper does chest compressions on a training manikin; a ring on the wristband paces each push.">
+        <img class="sc icn" src="a/ic-aed-pads.webp" alt="AED pads in their sealed pack.">
+        <div class="ping" id="hlA"><i></i><span id="hlT"></span></div>
+      </div>
       <div class="ptxt">
         <p class="label" id="ca">Case A · Cannot act</p>
         <div class="sts">
-          <div class="st" data-pt="31.8,44.5" data-tag="Harness · no response"><span class="n">01 / 04</span><h3>The harness and wristband notice no response</h3><p>Eva cross-checks independent signals before it calls anyone. Stillness alone is not an emergency.</p></div>
-          <div class="st" data-pt="23.4,69.3" data-tag="Helper’s wristband"><span class="n">02 / 04</span><h3>Eva calls the nearest passenger</h3><p>Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.</p></div>
-          <div class="st" data-pt="27.6,56" data-tag="Linked · step 1 of 4"><span class="n">03 / 04</span><h3>One instruction at a time</h3><p>The helper follows big pictures, voice and short text on their own wrist, linked to the patient's harness.</p></div>
-          <div class="st" data-pt=""><span class="n">04 / 04</span><h3>Everyone else gets a quiet notice</h3><p>Every step, reading and decision goes into the log for the ship and for Earth.</p></div>
+          <div class="st" data-pt="37,43" data-tag="Passenger 07 · no pulse"><span class="n">01 / 05</span><h3>No pulse, no movement, no answer</h3><p>The wristband cross-checks independent signals before Eva calls anyone. Stillness alone is not an emergency.</p></div>
+          <div class="st" data-pt="38,45" data-tag="Helper 1 · go to seat 07"><span class="n">02 / 05</span><h3>The nearest trained passenger starts CPR</h3><p>Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.</p></div>
+          <div class="st" data-pt="58,21" data-tag="Station 2 · lit"><span class="n">03 / 05</span><h3>A second passenger brings the AED</h3><p>The nearest emergency station lights up, so the runner finds the defibrillator at a glance.</p></div>
+          <div class="st" data-pt="38,31" data-tag="Push · 110 per minute"><span class="n">04 / 05</span><h3>CPR, one step at a time</h3><p>Eva paces every compression on the helper's wrist with a ring, voice and vibration.</p></div>
+          <div class="st" data-pt="47,37" data-tag="AED · its own analysis"><span class="n">05 / 05</span><h3>The AED decides the shock</h3><p>It reads the rhythm through its own pads. Eva never does. Every step goes into the log for the ship and for Earth.</p></div>
         </div>
         <div class="bar"><i></i></div>
       </div>
     </div>
   </section>
 
-  <!-- 5 · Case B (pinned) -->
+  <!-- 5 · Case B (pinned): a guided ECG check on the wrist -->
   <section class="pinsec storyp caseB" id="caseB" aria-labelledby="cb">
     <div class="stage">
       <div class="ptxt">
         <p class="label" id="cb">Case B · Can act</p>
         <div class="sts">
-          <div class="st" data-ui="0" data-l="0"><span class="n">01 / 04</span><h3>Eva checks you can move and follow steps</h3><p>Being awake is not the same as being able to help yourself.</p></div>
-          <div class="st" data-ui="1" data-l="1"><span class="n">02 / 04</span><h3>The harness lights the item you need</h3><p>The wristband shows one action; a light on the harness points to the right compartment.</p></div>
-          <div class="st" data-ui="2" data-l="2"><span class="n">03 / 04</span><h3>Step by step, with voice and vibration</h3><p>Repeat and Get help stay on screen the whole time.</p></div>
-          <div class="st" data-ui="3" data-l="0"><span class="n">04 / 04</span><h3>If you can't, a passenger takes over</h3><p>Eva switches to Case A and calls the nearest helper.</p></div>
+          <div class="st"><span class="n">01 / 04</span><h3>Eva offers a quick ECG check</h3><p>A pulse that looks irregular, or you say you feel unwell. You are awake and able, so Eva guides you through it yourself.</p></div>
+          <div class="st"><span class="n">02 / 04</span><h3>One finger of each hand, 30 seconds</h3><p>Rest them on the two metal pads and keep still. It works over the suit if your hands are bare.</p></div>
+          <div class="st"><span class="n">03 / 04</span><h3>Regular rhythm · saved and sent to the hub</h3><p>The strip goes into your log and to the ship hub, ready for Earth. A check on demand, never continuous, never a shock decision.</p></div>
+          <div class="st"><span class="n">04 / 04</span><h3>If something looks wrong, a passenger comes</h3><p>Eva calls the nearest helper and switches to Case A if you stop responding.</p></div>
         </div>
         <div class="bar"><i></i></div>
       </div>
-      <div class="bdev">
-        <div class="w"><img src="a/wa1.webp" alt="WearMeds wristband on a forearm."><div class="scr" aria-live="polite"><div class="pict" id="uiP">?</div><div class="tx"><small id="uiK">Eva · Step 1 of 3</small><span id="uiT">Can you sit up? Tap Yes</span></div></div></div>
-        <div class="h" id="harness" data-l="0"><img class="tl shd" src="a/sh-harness.webp" alt=""><img src="a/hx0.webp" alt="WearMeds chest harness."><img class="g1 tl" src="a/gl1-w.webp" alt=""><img class="g1 td" src="a/gl1-b.webp" alt=""></div>
+      <div class="bdev" id="bdev" data-s="0">
+        <div class="w"><img src="a/wrist-ecg.webp" alt="One finger of each hand rests on the metal pads at both ends of the wristband during an ECG check.">
+          <i class="hot pad" style="left:31%;top:41.6%"></i><i class="hot pad" style="left:67.3%;top:41.6%"></i>
+          <div class="scr" id="scr" data-s="0" aria-live="polite">
+            <div class="ring" id="uiP" aria-hidden="true">♥︎</div>
+            <div class="col">
+              <div class="top"><small id="uiK">ECG check · 1 of 3</small><b id="uiS"></b></div>
+              <svg viewBox="0 0 240 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M0 24H18l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H72l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H126l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H180l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H240"/></svg>
+              <span class="tx" id="uiT">Touch both metal pads, one finger of each hand</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 6 · Harness: close-up, then a zoom into each component -->
-  <section class="pinsec xsec hsec" id="hsec" aria-labelledby="hh">
+  <!-- 6 · Emergency station: the ship's AED lights up, its pads slide out -->
+  <section class="pinsec xsec esec" id="esec" aria-labelledby="eh">
     <div class="stage">
       <img class="stars" src="a/st1.jpg" alt="" aria-hidden="true">
-      <div class="s2"><img src="a/s2-b.jpg" alt="A passenger presses the lit compartment on her WearMeds harness."></div>
-      <div class="head"><p class="label" id="hh">Harness</p><h2 class="prop">Sensors on the body, help within reach</h2><p class="note">Monitoring stays non-invasive. Emergency treatment comes from validated modules, never from a chat model.</p></div>
-      <div class="obj" id="hobj"><div class="cam" id="hcam">
-        <img src="a/hx0.webp" alt="WearMeds chest harness.">
-        <img class="glow gpads" src="a/gl2-b.webp" alt=""><img class="glow gcomp" src="a/gl1-b.webp" alt="">
-      </div></div>
-      <div class="ledger" id="hledger"><div class="lbl">Defibrillation pads<small>Validated rhythm analysis decides</small></div><div class="lbl">Core module<small>Sensors and the link to the wristband</small></div><div class="lbl">Injectable compartment<small>Route and drug still under study</small></div><div class="lbl">Status lights<small>Show the item to use</small></div></div>
+      <div class="head" id="ehead"><p class="label" id="eh">Emergency station</p><h2 class="prop">The AED <span class="mk">decides the shock</span></h2><p class="note">One automatic defibrillator per station, a short walk from every seat. The AED reads the heart and decides the shock. Eva guides the people.</p></div>
+      <div class="eobj" id="eobj">
+        <div class="halo"></div>
+        <img class="pads" src="a/ic-aed-pads.webp" alt="AED pads in their sealed pack.">
+        <img class="stn" src="a/ic-aed-station.webp" alt="The ship's emergency station with its automatic defibrillator.">
+      </div>
+      <div class="ledger" id="eledger">
+        <div class="lbl" data-at=".3">The station lights up<small>Eva sends the second helper straight to it</small></div>
+        <div class="lbl" data-at=".5">AED pads<small>The AED reads the rhythm through its own pads</small></div>
+        <div class="lbl" data-at=".7">Shock decision<small>Made by the AED. Eva guides, records and warns.</small></div>
+      </div>
     </div>
   </section>
 
@@ -420,10 +492,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <div class="track" id="track">
         <div class="tline" id="tline"><i></i><b></b></div>
         <div class="planet"><img src="a/pm-mars.webp" alt="Mars, where the ship is."><img class="atm" src="a/pm-mars-atmosphere.webp" alt=""></div>
-        <div class="packet"><b>12:01:04</b><span>No response · passenger 07</span></div>
-        <div class="packet"><b>12:01:05</b><span>Helper assigned · passenger 03</span></div>
-        <div class="packet"><b>ECG strip</b><span>Signed, chained, queued</span></div>
-        <div class="packet"><b>Step 2 done</b><span>Breathing checked</span></div>
+        <div class="packet"><b>12:01:04</b><span>No pulse · passenger 07</span></div>
+        <div class="packet"><b>12:01:05</b><span>CPR helper · passenger 03</span></div>
+        <div class="packet"><b>12:01:06</b><span>AED runner · passenger 11</span></div>
+        <div class="packet"><b>CPR 2:00</b><span>Signed, chained, queued</span></div>
         <div class="packet"><b>ACK</b><span>Received on Earth</span></div>
         <div class="planet"><img src="a/pe-earth.webp" alt="Earth."><img class="atm" src="a/pe-earth-atmosphere.webp" alt=""></div>
       </div>
@@ -441,9 +513,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <div class="ed" data-reveal>
       <p class="prop">Care that does not wait for a doctor</p>
       <div class="body">
+        <p>Far from Earth, a crew has to detect, diagnose and treat on its own: one-way radio delays can pass twenty minutes, and on the ISS the crew medical officer often has about 40 hours of medical training. NASA researchers argue for an on-board clinical decision support system that says what to do now, why, how it decided and what comes next. In their preliminary analysis of a 26-month mission, raising the crew's skill this way cut deaths by at least 34%.<sup><a class="u" href="#refs">1</a></sup> Eva brings that idea to passengers with no training at all.</p>
         <p>Around 70% of astronauts on six-to-twelve-month missions aboard the ISS show significant vision changes, and 85% of 71 astronauts reported at least one nasal or sinus problem. On a commercial flight to Mars most passengers will not be clinicians, and Earth may be twenty minutes away by radio.</p>
         <p>We built Eva on NASA's open Inspiration4 data (OSDR OSD-575 and OSD-569). Against each crew member's own baseline, the metabolic panel the day after landing showed 16 of 72 changes, against 7 with standard laboratory ranges.</p>
-        <p>Eva guides, records and warns. Shocks and injections belong to validated subsystems, never to a chat model.</p>
+        <p>Eva guides, records and warns. The AED decides the shock. Treatment decisions belong to validated devices, never to a chat model.</p>
       </div>
     </div>
   </section>
@@ -453,12 +526,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <div class="g"><div class="sh"><h2 id="kit">WearMeds</h2></div></div>
     <div class="slabs">
       <article class="slab g" data-slab>
-        <div><p class="name">Wristband</p><div class="specs"><div>Screen<span>Flexible touch, target ≥100 mm active side</span></div><div>Talks to<span>Ship hub over LoRa</span></div><div>Always on<span>Help button, voice, vibration</span></div></div></div>
-        <div class="pic"><img class="tl" src="a/plinth-w.jpg" alt="WearMeds wristband on a plinth."><img class="td" src="a/plinth-b.jpg" alt="WearMeds wristband on a plinth."></div>
+        <div><p class="name">Wristband</p><div class="specs"><div>Screen<span>Big flat screen, help button, voice, vibration</span></div><div>Modules<span>Sensing base, ECG pads, LoRa</span></div><div>Talks to<span>Ship hub over LoRa</span></div></div></div>
+        <div class="pic"><img src="a/wrist-hero.webp" alt="The WearMeds wristband worn on top of the wrist like a watch."></div>
       </article>
       <article class="slab dark g" data-slab>
-        <div><p class="name">Harness</p><div class="specs"><div>Sensors<span>Contact, non-invasive</span></div><div>Modules<span>Defibrillation, emergency injectable</span></div><div>Guides<span>Lights the item to use</span></div></div></div>
-        <div class="pic"><img src="a/fig1.webp" alt="A passenger wearing the WearMeds harness and wristband."></div>
+        <div><p class="name">AED station</p><div class="specs"><div>Treatment<span>The ship’s AED</span></div><div>Decides<span>The AED, through its own pads</span></div><div>Eva<span>Lights the station, guides the helpers</span></div></div></div>
+        <div class="pic"><img src="a/ic-aed-station.webp" alt="The ship’s emergency station with its automatic defibrillator."></div>
       </article>
       <article class="slab g" data-slab>
         <div><p class="name">Ship hub</p><div class="specs"><div>Runs<span>Eva's medical AI, offline</span></div><div>Keeps<span>The signed log of every step</span></div><div>Sends<span>Queued reports to Earth</span></div></div></div>
@@ -466,12 +539,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       </article>
     </div>
     <div class="g"><div class="parts" id="parts">
-      <div class="part-card"><div class="im"><img src="a/inv-screen.webp" alt=""></div><b>Screen</b><span>Wristband</span></div>
-      <div class="part-card"><div class="im"><img src="a/inv-board.webp" alt=""></div><b>Battery and board</b><span>Wristband</span></div>
-      <div class="part-card"><div class="im"><img src="a/inv-sensor.webp" alt=""></div><b>Sensor window</b><span>Wristband</span></div>
-      <div class="part-card"><div class="im"><img src="a/inv-pads.webp" alt=""></div><b>Defibrillation pads</b><span>Harness</span></div>
-      <div class="part-card"><div class="im"><img src="a/inv-core.webp" alt=""></div><b>Core module</b><span>Harness</span></div>
-      <div class="part-card"><div class="im"><img src="a/inv-inject.webp" alt=""></div><b>Injectable compartment</b><span>Harness</span></div>
+      <div class="part-card"><div class="im"><img src="a/band-interface.webp" alt=""></div><b>Screen interface</b><span>Big screen, main battery, help button</span></div>
+      <div class="part-card"><div class="im"><img src="a/band-base.webp" alt=""></div><b>Sensor base</b><span>On the skin, own battery</span></div>
+      <div class="part-card"><div class="im"><img src="a/ic-ecg-pads.webp" alt=""></div><b>ECG pads</b><span>On demand, 30 seconds</span></div>
+      <div class="part-card"><div class="im"><img src="a/ic-magnet.webp" alt=""></div><b>Magnets + spring pins</b><span>Join the two parts</span></div>
+      <div class="part-card"><div class="im"><img src="a/ic-battery.webp" alt=""></div><b>Two batteries</b><span>Main in the screen, small in the base</span></div>
+      <div class="part-card"><div class="im"><img src="a/ic-lora.webp" alt=""></div><b>LoRa radio</b><span>In both parts</span></div>
+      <div class="part-card"><div class="im"><img src="a/ic-ship-hub.webp" alt=""></div><b>Ship hub</b><span>Runs Eva offline</span></div>
+      <div class="part-card"><div class="im"><img src="a/ic-aed-station.webp" alt=""></div><b>AED station</b><span>The ship’s, decides the shock</span></div>
     </div></div>
   </section>
 
@@ -482,7 +557,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <p class="prop">Hardware once, Eva every mission</p>
       <div class="body">
         <p>Operators buy a WearMeds kit for each passenger and run Eva on the ship hub, licensed per mission.</p>
-        <p>Bands come in sizes and finishes, the harness takes new validated modules, and the same platform serves orbital stays, lunar bases and remote work on Earth.</p>
+        <p>Bands come in sizes and finishes, the sensor base takes new validated sensors, and Eva works with the AED the ship already carries. The same platform serves orbital stays, lunar bases and remote work on Earth.</p>
+        <img class="edimg" src="a/wrist-crew.webp" alt="Three passengers, each wearing a WearMeds wristband.">
       </div>
     </div>
   </section>
@@ -500,9 +576,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 </main>
 
 <footer class="foot g" id="foot">
-  <p class="notice" id="ai">All images are AI-generated concept art made with an OpenAI image model through Codex, from prompts by team Sanjo-X written with Claude. They contain no NASA insignia or branding. The 3D Sun is NASA's free model from NASA 3D Resources. Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device.</p>
+  <p class="notice" id="ai">AI-generated concept art, made with an OpenAI image model through Codex from prompts by team Sanjo-X written with Claude: the photoreal icons, the wristband photos (wrist scenes and band product shots), and the cabin, space and Mars scenes. Each carries a small AI-generated mark. The wristband orbit, exploded view and close-ups are 3D renders made in Blender. No image contains NASA insignia or branding. The 3D Sun is NASA's free model from NASA 3D Resources. Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device.</p>
+  <ol class="notice" id="refs" style="margin:0 0 24px;padding-left:1.2em"><li>Russell BK, Burian BK, Hilmers DC, Beard BL, Martin K, Pletcher DL, Easter B, Lehnhardt K, Levin D. The value of a spaceflight clinical decision support system for earth-independent medical operations. <i>npj Microgravity</i> 9, 46 (2023). <a class="u" href="https://doi.org/10.1038/s41526-023-00284-1">doi:10.1038/s41526-023-00284-1</a> · CC BY 4.0. Main source of this project.</li><li>NASA Open Science Data Repository: OSD-575 and OSD-569, Inspiration4 metabolic panel and blood count.</li><li>NASA DONKI and NOAA GOES space weather data.</li></ol>
   <div class="mark"><svg viewBox="0 0 1400 120" role="img" aria-label="Eva by WearMeds"><text x="0" y="104" textLength="1400" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="PP Neue Montreal, Inter, Arial, sans-serif" font-size="132">Eva by WearMeds</text></svg></div>
-  <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><ul><li><a class="u" href="#ai">AI notice</a></li><li><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/">Data sources</a></li></ul></div>
+  <div class="util"><span>© 2026 Sanjo-X · Space Apps Rosario</span><ul><li><a class="u" href="#ai">AI notice</a></li><li><a class="u" href="#refs">References</a></li><li><a class="u" href="https://ccmc.gsfc.nasa.gov/tools/DONKI/">Data sources</a></li></ul></div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -573,10 +650,12 @@ add(()=>{const lim=innerHeight*.88;for(const el of rev)if(!el.classList.contains
 /* labels helper for exploded scenes */
 function labels(stage,p){stage.querySelectorAll('.lbl').forEach(l=>l.style.setProperty('--lo',clamp((p-+l.dataset.at)/.06).toFixed(3)))}
 
-/* 3 · Wristband orbit + exploded */
-const ws=document.getElementById('wsec'), wst=ws.querySelector('.stage'), orbs=[...ws.querySelectorAll('.orb')], wparts=[...ws.querySelectorAll('.part')], wstep={set textContent(v){}};
+/* 3 · Wristband orbit + exploded, then two beats: suit mode and ECG on demand */
+const ws=document.getElementById('wsec'), wst=ws.querySelector('.stage'), wobj=document.getElementById('wobj'), wledger=document.getElementById('wledger'), orbs=[...ws.querySelectorAll('.orb')], wparts=[...ws.querySelectorAll('.part')];
+const wlbls=[...wledger.querySelectorAll('.lbl')].map(l=>({l,at:+l.dataset.at,hl:l.dataset.hl.split(',').map(Number)}));
+const bSuit=document.getElementById('bSuit'), bEcg=document.getElementById('bEcg'), tSuit=document.getElementById('tSuit'), tEcg=document.getElementById('tEcg');
 wparts.forEach(pp=>{pp.style.setProperty('--dy',(+pp.dataset.dy||0)+'%')});
-let orbitT=0, orbitPlaying=false, orbitDone=false, lastWP=0;
+let orbitT=0, orbitPlaying=false, orbitDone=false;
 function drawOrbit(){const o=orbitT*4, k=Math.min(3,Math.floor(o)), f=o-k, blur=(reduce?0:Math.sin(Math.PI*f)*7), dx=Math.sin(Math.PI*f)*2.2;
   orbs.forEach((im,i)=>{let a=0; if(i===k)a=1-f; else if(i===k+1)a=f; if(orbitT>=1)a=(i===2)?1:0;
     im.style.opacity=a.toFixed(3); im.style.filter=a>0&&a<1?`blur(${blur.toFixed(1)}px)`:'none'; im.style.transform=a>0&&a<1?`translateX(${(i===k?-dx:dx).toFixed(2)}%)`:'none'})}
@@ -584,16 +663,23 @@ function playOrbit(){if(orbitPlaying||orbitDone)return; if(reduce){orbitT=1;orbi
   orbitPlaying=true; const t0=performance.now(), D=2200;
   const step=now=>{const t=clamp((now-t0)/D); orbitT=io2(t); drawOrbit(); if(t<1&&!orbitDone)requestAnimationFrame(step); else {orbitPlaying=false; orbitDone=true; orbitT=1; drawOrbit(); req()}};
   requestAnimationFrame(step)}
-add(y=>{const p=pinP(ws,y); lastWP=p;
+// beat envelope: fades in over [a,a+w], holds, fades out over [b,b+w]
+const env=(p,a,b,w=.035)=>clamp((p-a)/w)*(1-clamp((p-b)/w));
+add(y=>{const p=pinP(ws,y);
   if(p>0.005&&!orbitDone)playOrbit();               // autoplay the turn as soon as the scene pins
   if(p<=0.001&&orbitDone){orbitDone=false;orbitT=0;drawOrbit()} // replay when scrolled back above
-  if(p>.36&&!orbitDone){orbitDone=true;orbitT=1;drawOrbit()}
-  const showParts=orbitDone&&p>.3, toParts=showParts?clamp((p-.3)/.06):0;
+  if(p>.22&&!orbitDone){orbitDone=true;orbitT=1;drawOrbit()}
+  const showParts=orbitDone&&p>.18, toParts=showParts?clamp((p-.18)/.04):0;
   if(showParts&&toParts>0)orbs.forEach(im=>{im.style.opacity=(+(im===orbs[2])*(1-toParts)).toFixed(3)});
-  const e=reduce?1:ic3(clamp((p-.4)/.3));
-  wparts.forEach(pp=>{pp.style.opacity=toParts.toFixed(3);pp.style.setProperty('--e',e.toFixed(3))});
-  labels(wst,p);
-  wstep.textContent=!orbitDone?'Turning':p<.36?'Assembled':'Exploded view';
+  const e=reduce?1:ic3(clamp((p-.24)/.2));
+  // while the ledger fills in, the newest label's layer stays bright and the rest dim
+  let act=-1; wlbls.forEach((o,i)=>{const lo=clamp((p-o.at)/.04); o.l.style.setProperty('--lo',lo.toFixed(3)); if(p>=o.at)act=i});
+  const focus=act>=0&&p<.64?wlbls[act].hl:null;
+  wparts.forEach((pp,i)=>{pp.style.opacity=(i===4?toParts*clamp((e-.3)*3):toParts).toFixed(3);pp.style.setProperty('--e',e.toFixed(3));pp.style.setProperty('--hb',focus&&!focus.includes(i)?.42:1)});
+  // stack and ledger hand over to the suit beat, then the ECG beat
+  const out=reduce?0:clamp((p-.65)/.035); wobj.style.opacity=(1-out).toFixed(3); wledger.style.opacity=(1-out).toFixed(3);
+  const os=reduce?0:env(p,.67,.8), oe=reduce?0:clamp((p-.82)/.035);
+  [bSuit,tSuit].forEach(el=>el.style.setProperty('--o',os.toFixed(3))); [bEcg,tEcg].forEach(el=>el.style.setProperty('--o',oe.toFixed(3)));
 });
 drawOrbit();
 
@@ -602,34 +688,29 @@ function steps(id,onStep){const sec=document.getElementById(id), st=sec.querySel
   add(y=>{const p=pinP(sec,y), n=sts.length; const i=Math.min(n-1,Math.floor(p*n*0.999)); bar.style.setProperty('--sp',p.toFixed(3));
     if(i!==cur){cur=i;sts.forEach((e,k)=>e.classList.toggle('on',k===i));onStep(i,sts[i],st)}});
   return ()=>{if(cur>=0)onStep(cur,sts[cur],st)}}
-const hlA=document.getElementById('hlA');
-function coverPt(stage,pt){const img=[...stage.querySelectorAll('.sc')].find(i=>i.offsetParent!==null&&i.naturalWidth); if(!img||!pt)return null;
-  const W=img.clientWidth,H=img.clientHeight,iw=img.naturalWidth,ih=img.naturalHeight,sc=Math.max(W/iw,H/ih);
-  const pos=getComputedStyle(img).objectPosition.split(' ').map(v=>parseFloat(v)/100); const ox=img.offsetLeft+(W-iw*sc)*pos[0], oy=img.offsetTop+(H-ih*sc)*pos[1];
+const hlA=document.getElementById('hlA'), hlT=document.getElementById('hlT');
+// maps a point given in % of an image's natural size to its box, for object-fit cover or contain (padding aware)
+function imgPt(img,pt){if(!img||!pt||!img.naturalWidth)return null; const cs=getComputedStyle(img), pl=parseFloat(cs.paddingLeft), pr=parseFloat(cs.paddingRight), ptp=parseFloat(cs.paddingTop), pb=parseFloat(cs.paddingBottom);
+  const W=img.clientWidth-pl-pr, H=img.clientHeight-ptp-pb, iw=img.naturalWidth, ih=img.naturalHeight, sc=cs.objectFit==='contain'?Math.min(W/iw,H/ih):Math.max(W/iw,H/ih);
+  const pos=cs.objectPosition.split(' ').map(v=>parseFloat(v)/100); const ox=img.offsetLeft+pl+(W-iw*sc)*pos[0], oy=img.offsetTop+ptp+(H-ih*sc)*pos[1];
   const [x,y]=pt.split(',').map(Number); return [ox+x/100*iw*sc, oy+y/100*ih*sc]}
-const hlT=document.getElementById('hlT');
-const redoA=steps('caseA',(i,st,stage)=>{const r=coverPt(stage,st.dataset.pt);
-  if(!r){hlA.style.setProperty('--ho',0);return} hlA.style.setProperty('--hx',r[0]+'px');hlA.style.setProperty('--hy',r[1]+'px');hlT.textContent=st.dataset.tag||'';hlA.style.setProperty('--ho',1)});
-onMeasure(redoA); document.querySelectorAll('#caseA .sc').forEach(i=>i.addEventListener('load',redoA));
-const UI=[["?","Eva · Step 1 of 3","Can you sit up? Tap Yes"],["→","Eva · Step 2 of 3","Open the lit compartment on your harness"],["1","Eva · Step 3 of 3","Follow the picture. Say Repeat anytime"],["!","Eva · Calling help","Passenger 03 is on the way"]];
-const uiP=document.getElementById('uiP'),uiK=document.getElementById('uiK'),uiT=document.getElementById('uiT'),harness=document.getElementById('harness');
-steps('caseB',(i,st)=>{const u=UI[Math.max(0,i)];uiT.style.opacity=0;setTimeout(()=>{uiP.textContent=u[0];uiK.textContent=u[1];uiT.textContent=u[2];uiT.style.opacity=1},reduce?0:180);harness.dataset.l=st?st.dataset.l:'0'});
+const scA=[...document.querySelectorAll('#caseA .sc')];
+const redoA=steps('caseA',(i,st)=>{scA.forEach((im,k)=>im.classList.toggle('on',k===i)); const r=imgPt(scA[i],st.dataset.pt);
+  if(!r){hlA.style.setProperty('--ho',0);return} hlA.style.setProperty('--qx',r[0]+'px');hlA.style.setProperty('--qy',r[1]+'px');hlT.textContent=st.dataset.tag||'';hlA.style.setProperty('--ho',1)});
+onMeasure(redoA); scA.forEach(i=>i.addEventListener('load',redoA));
+// Case B: guided ECG check on the wristband screen [key line, right-hand readout, main line, ring glyph]
+const UI=[["ECG check · 1 of 3","","Touch both metal pads, one finger of each hand","♥︎"],["Recording · 2 of 3","30 s","Keep still, breathe normally","♥︎"],["Regular rhythm","3 of 3","Saved and sent to the hub","✓"],["Eva · Calling help","","Passenger 03 is on the way","!"]];
+const caseB=document.getElementById('caseB'), bdev=document.getElementById('bdev'), scr=document.getElementById('scr'), uiK=document.getElementById('uiK'), uiS=document.getElementById('uiS'), uiT=document.getElementById('uiT'), uiP=document.getElementById('uiP'); let bState=0;
+steps('caseB',i=>{const u=UI[Math.max(0,i)]; bState=i; uiT.style.opacity=0; scr.dataset.s=bdev.dataset.s=String(Math.max(0,i));
+  setTimeout(()=>{uiK.textContent=u[0];uiS.textContent=u[1];uiT.textContent=u[2];uiP.textContent=u[3];uiT.style.opacity=1;req()},reduce?0:180)});
+// the 30 s countdown follows the scroll through step 2
+add(y=>{if(bState!==1)return; const p=pinP(caseB,y), t=clamp((p-.25)/.25); uiS.textContent=Math.max(1,Math.ceil(30*(1-t)))+' s'});
 
-/* 6 · Harness: zoom into each component (part centres measured on the shared canvas) */
-const hs=document.getElementById('hsec'), hstg=hs.querySelector('.stage'), hobj=document.getElementById('hobj'), hcam=document.getElementById('hcam'), hstep={set textContent(v){}};
-const hl=[...document.querySelectorAll('#hledger .lbl')], gPads=hs.querySelector('.gpads'), gComp=hs.querySelector('.gcomp');
-// [p, centreX, centreY, zoom] — centres in fractions of the 2:3 canvas
-const KF=[[.26,.5,.5,1],[.34,.24,.343,2.6],[.44,.24,.343,2.6],[.5,.358,.567,2.7],[.6,.358,.567,2.7],[.66,.74,.575,2.8],[.74,.74,.575,2.8],[.8,.5,.5,1.05],[.88,.5,.5,1.05],[.95,.5,.5,1]];
-const NAMES=['Assembled','Defibrillation pads','Core module','Injectable compartment','Status lights','Ready'];
-function camAt(p){if(p<=KF[0][0])return KF[0];for(let i=0;i<KF.length-1;i++){const a=KF[i],b=KF[i+1];if(p<=b[0]){const t=io2(clamp((p-a[0])/(b[0]-a[0])));return [p,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t,a[3]+(b[3]-a[3])*t]}}return KF[KF.length-1]}
-add(y=>{const p=pinP(hs,y); const z=reduce?1:io2(clamp((p-.06)/.18)); hstg.style.setProperty('--z',z.toFixed(3)); hobj.style.opacity=z.toFixed(3);
-  const [,cx,cy,zs]=reduce?[0,.5,.5,1]:camAt(p); const W=hobj.clientWidth,H=hobj.clientHeight;
-  hcam.style.setProperty('--zs',zs.toFixed(3)); hcam.style.setProperty('--tx',(W/2-cx*W*zs).toFixed(1)+'px'); hcam.style.setProperty('--ty',(H/2-cy*H*zs).toFixed(1)+'px');
-  const k=p<.3?-1:p<.47?0:p<.63?1:p<.77?2:p<.91?3:4;
-  hl.forEach((l,i)=>l.style.setProperty('--lo',(k===i||k===4)?1:0));
-  gPads.style.opacity=(k===0||k>=3)?1:0; gComp.style.opacity=(k===2||k>=3)?1:0;
-  hstep.textContent=p<.24?'Close-up':NAMES[k+1];
-});
+/* 6 · Emergency station: the station rises in, lights up, its pads slide out, then the line lands */
+const es=document.getElementById('esec'), est=es.querySelector('.stage'), eobj=document.getElementById('eobj'), ehead=document.getElementById('ehead');
+add(y=>{const p=pinP(es,y), s0=reduce?1:io2(clamp((p-.02)/.2)), l=reduce?1:clamp((p-.28)/.1), d=reduce?1:ic3(clamp((p-.46)/.2));
+  eobj.style.setProperty('--s0',s0.toFixed(3)); eobj.style.setProperty('--l',l.toFixed(3)); eobj.style.setProperty('--d',d.toFixed(3));
+  es.classList.toggle('lit',l>=1); labels(est,p); ehead.classList.toggle('in',p>.7)});
 
 /* 7 · Solar alert — hull-camera POV. The Sun sits dead ahead; its rays and a proton storm come straight at the lens.
    Scroll drives the story (calm → flare → alert → storm → explanation); the particles, hits and shake run in real time. */
@@ -771,8 +852,8 @@ add(y=>{const r=reduce?1:io2(clamp((y+V()-AT-.1*V())/(V()*.9)));ast.style.setPro
 /* 11 · Slabs + dealt parts */
 const slabs=[...document.querySelectorAll('[data-slab]')]; let SL=[]; onMeasure(()=>SL=slabs.map(s=>({s,top:docTop(s)})));
 add(y=>{const v=V(),wide=innerWidth>900;SL.forEach((o,i)=>{const n=SL[i+1];const p=(n&&wide&&!reduce)?clamp((y+v-n.top-.15*v)/(.9*v)):0;o.s.style.setProperty('--p',p.toFixed(3))})});
-const cards=[...document.querySelectorAll('.part-card')]; let PT=0; onMeasure(()=>{PT=docTop(document.getElementById('parts'));const cols=innerWidth>900?6:2;
-  cards.forEach((c,i)=>{const col=i%cols, mid=(cols-1)/2;c.style.setProperty('--x0',((mid-col)*(cols===6?9:30))+'vw');c.style.setProperty('--y0',(80+(i%2?40:0))+'px');c.style.setProperty('--r0',((col-mid)*3)+'deg')})});
+const cards=[...document.querySelectorAll('.part-card')]; let PT=0; onMeasure(()=>{PT=docTop(document.getElementById('parts'));const cols=innerWidth>900?4:2;
+  cards.forEach((c,i)=>{const col=i%cols, mid=(cols-1)/2;c.style.setProperty('--x0',((mid-col)*(cols===4?14:30))+'vw');c.style.setProperty('--y0',(80+(i%2?40:0))+'px');c.style.setProperty('--r0',((col-mid)*3)+'deg')})});
 add(y=>{const v=V();cards.forEach((c,i)=>{const k=reduce?1:oc3(clamp((y+v-PT-.05*v-.04*v*i)/(.5*v)));c.style.setProperty('--k',k.toFixed(3))})});
 
 /* wordmark */
