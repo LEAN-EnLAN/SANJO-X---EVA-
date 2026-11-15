@@ -4,20 +4,23 @@
 // - SSE (/sse), /link and /api GETs: network only (live data must not be stale).
 // - POSTs to journal / Eva tools / chat while offline: stored in IndexedDB and replayed
 //   when the page says it is back online (or on the next successful request).
-const CACHE = "eva-shell-v6";
+const CACHE = "eva-shell-v7";
 // screens of the astronaut app: cached as full pages (cold start offline) and as the
 // htmx fragments the tab bar swaps in (navigation offline)
 const SCREENS = ["/app", "/app/home", "/app/plan", "/app/eva", "/app/food", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/storm", "/app/about",
   "/app/vitals?k=heart", "/app/vitals?k=lungs", "/app/vitals?k=temperature", "/app/vitals?k=sleep", "/app/vitals?k=water"];
 const FRAG = "?fragment";
-// Codex art kit (AI-generated): 3D icons, Eva's states, detail heroes, splash
+// Codex art kit (AI-generated): 3D icons, Eva's states, detail heroes, splash, wristband renders
 const ICONS = ["aed", "aed-pads", "ack", "alert", "battery", "calcium", "crew", "earth", "earth-link", "ecg", "eda", "exercise", "export", "food",
   "heart", "hub", "interface", "journal", "logbook", "lora", "lungs", "magnet", "meal-breakfast", "meal-dinner", "meal-lunch", "meal-snack",
   "mood", "movement", "oxygen", "photo", "radiation", "reminder", "send", "sensor-base", "shelter", "sleep", "sun", "temperature", "video",
   "vitamin-d", "voice", "water", "wristband"];
 const EVA = ["idle", "hello", "listening", "thinking", "speaking", "happy", "wink", "concerned", "alert", "calm", "sleeping", "celebrate",
   "care", "reading", "writing", "sending", "low-battery", "face"];
-const HEROES = ["heart", "lungs", "temperature", "sleep", "water", "nutrition", "journal", "ecg", "radiation", "aed"];
+const HEROES = ["heart", "lungs", "temperature", "sleep", "water", "nutrition", "journal", "radiation", "aed"];
+// wristband v2 renders (Codex, AI-generated): home card, ECG hero, parts, suit mode, emergency thumbs, 360° turn
+const BAND = ["card", "ecg", "suit-mode", "cabin", "on-wrist", "parts-exploded", "parts-screen", "parts-base", "parts-contacts",
+  ...["000", "045", "090", "135", "180", "225", "270", "315"].map((a) => `spin-${a}`)];
 const SHELL = [
   "/app", "/app/plan", "/app/food", "/app/eva", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/about",
   "/dash", "/station", "/manifest.webmanifest",
@@ -26,10 +29,10 @@ const SHELL = [
   "/static/icons/icon-192.png", "/static/icons/icon-512.png", "/static/icons/icon-maskable-512.png",
   "/static/icons/apple-touch-icon.png", "/static/icons/favicon-32.png",
   "/static/img/splash.webp",
-  "/static/img/wrist/wrist-two-parts.webp", "/static/img/wrist/wrist-suit.webp", "/static/img/wrist/wrist-alert.webp", "/static/img/wrist/wrist-cpr.webp",
   ...ICONS.map((n) => `/static/img/icons/${n}.webp`),
   ...EVA.map((n) => `/static/img/eva/eva-${n}.webp`),
-  ...HEROES.map((n) => `/static/img/hero/${n}.webp`)
+  ...HEROES.map((n) => `/static/img/hero/${n}.webp`),
+  ...BAND.map((n) => `/static/img/band/${n}.webp`)
 ];
 const QUEUED = ["/api/journal", "/api/eva/tool", "/api/eva/chat", "/api/shelter", "/api/help"];
 

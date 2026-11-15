@@ -6,7 +6,7 @@
 <title>Eva · {{ c.first }}</title>
 </head>
 <body class="min-h-dvh bg-background text-ink antialiased" data-view="app" data-seat="{{ c.seat }}">
-<div id="splash" class="fixed inset-0 z-50 grid place-items-center bg-background" aria-hidden="true"><img src="/static/img/splash.webp" alt="" class="h-full max-h-dvh w-auto max-w-full object-contain" width="1024" height="1536" fetchpriority="high"><span class="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-full bg-background/80 px-2 py-0.5 text-xs text-muted">Eva by WearMeds · AI-generated</span></div>
+<div id="splash" class="fixed inset-0 z-50 grid place-items-center bg-background" aria-hidden="true"><img src="/static/img/splash.webp" alt="" class="h-full max-h-dvh w-auto max-w-full object-contain" width="1024" height="1536" fetchpriority="high"><span class="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-full bg-background/80 px-2 py-0.5 text-xs text-muted">Eva by WearMeds</span></div>
 <script>try{if(sessionStorage.getItem("eva-splash"))document.getElementById("splash").remove();else sessionStorage.setItem("eva-splash","1")}catch(e){}</script>
 <noscript><style>#splash{display:none}</style></noscript>
 <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-2xl" hx-ext="sse" sse-connect="/sse/app?seat={{ c.seat }}">

@@ -4,12 +4,26 @@
   <p class="text-xs uppercase tracking-label text-muted">Wristband</p>
   <span class="size-11"></span>
 </div>
-<div class="relative h-52 shrink-0 overflow-hidden rounded-card bg-surface">
-  <img src="/static/img/wrist/{% if suit %}wrist-suit{% else %}wrist-two-parts{% endif %}.webp" alt="{% if suit %}Screen part on the suit sleeve, sensor base under it on the wrist{% else %}The two parts of the wristband: screen on top, sensor base underneath{% endif %}" class="size-full object-cover" width="1200" height="800">
-  <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-xs text-ink"><span class="size-2 rounded-full {% if suit %}bg-info{% else %}bg-ok{% endif %}"></span>{% if suit %}Suit mode{% else %}Joined{% endif %}</span>
-  
+{# 360° turn: 8 turntable frames (Codex v2 renders, AI-generated; notice in README.md).
+   motion.js [data-spin]: drag or swipe turns it on the gentle spring; arrow buttons and keys
+   step 45°; reduced motion keeps one still frame and the arrows. #}
+<div class="relative shrink-0 overflow-hidden rounded-card bg-ink" data-spin="000,045,090,135,180,225,270,315">
+  <div class="relative isolate aspect-8/7 cursor-grab touch-pan-y select-none outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-inset active:cursor-grabbing motion-reduce:cursor-auto md:aspect-video" data-spin-stage role="slider" tabindex="0" aria-label="Turn the wristband" aria-valuemin="0" aria-valuemax="315" aria-valuenow="0" aria-valuetext="0°">
+    <img src="/static/img/band/spin-000.webp" alt="The wristband: screen part on the sensor base, four fabric straps" class="absolute inset-0 size-full object-contain" width="720" height="642" decoding="async" draggable="false" data-spin-frame>
+  </div>
+  <span class="pointer-events-none absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-xs text-ink"><span class="size-2 rounded-full {% if suit %}bg-info{% else %}bg-ok{% endif %}"></span>{% if suit %}Suit mode{% else %}Joined{% endif %}</span>
+  <span class="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-on-light/60 motion-reduce:hidden" style="opacity: var(--hint-o, 1)" data-spin-hint>Drag to turn</span>
+  <button type="button" class="press absolute bottom-2 left-2 inline-flex size-11 items-center justify-center rounded-full bg-background/85 text-ink" aria-label="Turn left" data-spin-step="-1">{{ crate::web::ui::ic("back", 18)|safe }}</button>
+  <button type="button" class="press absolute right-2 bottom-2 inline-flex size-11 items-center justify-center rounded-full bg-background/85 text-ink" aria-label="Turn right" data-spin-step="1">{{ crate::web::ui::ic("chevron", 18)|safe }}</button>
 </div>
 <h1 class="flex items-center gap-3 text-2xl leading-tight tracking-tight text-ink">{{ crate::web::ui::pic("magnet", "size-11")|safe }}{% if suit %}Your suit is between the parts.{% else %}Two parts, held by magnets.{% endif %}</h1>
+
+<section class="grid grid-cols-2 gap-x-2 gap-y-3" aria-label="The two parts">
+  <figure class="flex flex-col gap-2"><img src="/static/img/band/parts-exploded.webp" alt="The screen part lifting off the sensor base, two gold pins between them" class="block aspect-4/3 w-full rounded-tile bg-ink object-cover" width="560" height="420" loading="lazy" decoding="async"><figcaption class="text-sm text-ink">Lifts off<span class="block text-xs text-muted">Magnets hold the parts</span></figcaption></figure>
+  <figure class="flex flex-col gap-2"><img src="/static/img/band/parts-screen.webp" alt="The screen part on its own" class="block aspect-4/3 w-full rounded-tile bg-ink object-cover" width="560" height="420" loading="lazy" decoding="async"><figcaption class="text-sm text-ink">Screen part<span class="block text-xs text-muted">ECG pads · LoRa</span></figcaption></figure>
+  <figure class="flex flex-col gap-2"><img src="/static/img/band/parts-base.webp" alt="The sensor base from below: the light window that sits on the skin" class="block aspect-4/3 w-full rounded-tile bg-ink object-cover" width="560" height="420" loading="lazy" decoding="async"><figcaption class="text-sm text-ink">Sensor base<span class="block text-xs text-muted">Pulse, oxygen, skin</span></figcaption></figure>
+  <figure class="flex flex-col gap-2"><img src="/static/img/band/parts-contacts.webp" alt="Two gold pins on the screen part above the base's contact pads" class="block aspect-4/3 w-full rounded-tile bg-raised object-cover" width="560" height="420" loading="lazy" decoding="async"><figcaption class="text-sm text-ink">Pins touch<span class="block text-xs text-muted">The base charges</span></figcaption></figure>
+</section>
 
 <section class="grid grid-cols-5 gap-1 rounded-tile bg-surface px-2 py-3" aria-label="What the sensor base reads">
   <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("heart", "size-10")|safe }}Pulse</span>
@@ -36,6 +50,7 @@
 
 <section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5 py-4">
   <header class="flex items-center justify-between gap-3"><h2 class="text-base text-ink">Suit mode</h2><span class="text-xs {% if suit %}text-info{% else %}text-muted{% endif %}">{% if suit %}On now{% else %}Off · parts joined{% endif %}</span></header>
+  <img src="/static/img/band/suit-mode.webp" alt="The screen part on the suit sleeve, the sensor base under it on the wrist" class="block aspect-video w-full rounded-tile bg-raised object-cover" width="960" height="540" loading="lazy" decoding="async">
   <div class="flex flex-col gap-1">
     <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 justify-center">{{ crate::web::ui::pic("interface", "pic-bare size-12")|safe }}</span><p class="text-sm text-ink">Screen part<span class="block text-xs text-muted">ECG pads · LoRa</span></p></div>
     <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 flex-col items-center gap-1"><span class="flex w-16 justify-between"><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span></span><span class="h-5 w-full rounded-sm {% if suit %}bg-hatch-info{% else %}bg-hatch{% endif %}"></span></span><p class="text-sm {% if suit %}text-info{% else %}text-ink{% endif %}">Suit fabric<span class="block text-xs text-muted">Magnets hold · pins don't</span></p></div>

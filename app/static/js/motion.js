@@ -370,6 +370,80 @@
     });
   }
 
+  // ---- 360° turn of the wristband (/app/band, [data-spin]): 8 turntable frames, 45° apart.
+  // The angle is one spring measured in frames. Dragging tracks the finger 1:1 (a full turn is
+  // about 1.5 stage widths); on release the spring keeps the finger's velocity, coasts a little
+  // and settles on the nearest frame (gentle). Between two frames the next one fades in over the
+  // middle 40% of the step, so a turn reads as motion instead of a slideshow. Arrow buttons and
+  // ←/→ keys step one frame. Reduced motion: no dragging, the spring jumps, the arrows remain.
+  function mountSpin(root) {
+    (root || document).querySelectorAll("[data-spin]").forEach(function (el) {
+      if (el._spin) return;
+      var frames = el.getAttribute("data-spin").split(","), n = frames.length;
+      var stage = el.querySelector("[data-spin-stage]"), first = stage.querySelector("[data-spin-frame]");
+      var hint = el.querySelector("[data-spin-hint]"), imgs = [first], filled = false;
+      var src = function (k) { return "/static/img/band/spin-" + frames[k] + ".webp"; };
+      var mod = function (i) { return ((i % n) + n) % n; };
+      // the other frames load on first touch or once the screen has settled
+      function fill() {
+        if (filled) return; filled = true;
+        for (var k = 1; k < n; k++) {
+          var im = first.cloneNode(false);
+          im.setAttribute("src", src(k)); im.setAttribute("alt", ""); im.style.opacity = "0";
+          stage.appendChild(im); imgs.push(im);
+        }
+        draw(spin.x);
+      }
+      function draw(x) {
+        var i = Math.floor(x), f = x - i, a = mod(i), b = mod(i + 1);
+        var fb = Math.min(1, Math.max(0, (f - 0.3) / 0.4));
+        imgs.forEach(function (im, k) {
+          im.style.opacity = k === a ? "1" : k === b ? fb.toFixed(3) : "0";
+          im.style.zIndex = k === b ? "1" : "0";
+        });
+        var deg = mod(Math.round(x)) * (360 / n);
+        if (stage.getAttribute("aria-valuenow") !== String(deg)) { stage.setAttribute("aria-valuenow", deg); stage.setAttribute("aria-valuetext", deg + "°"); }
+      }
+      var spin = new Spring(0, "gentle", draw);
+      var hintO = hint ? varSpring(hint, "--hint-o", 1, "gentle") : null;
+      function used() { fill(); if (hintO) { hintO.set(0, "gentle"); hintO = null; } }
+      function step(d) { used(); spin.set(Math.round(spin.target) + d, "gentle"); }
+      el._spin = spin;
+
+      var down = null;
+      stage.addEventListener("pointerdown", function (e) {
+        if (reduced.matches || (e.pointerType === "mouse" && e.button !== 0)) return;
+        used();
+        down = { id: e.pointerId, x0: e.clientX, p0: spin.x, t: e.timeStamp, ppf: Math.max(24, stage.clientWidth * 1.5 / n) };
+        stage.setPointerCapture(e.pointerId);
+      });
+      stage.addEventListener("pointermove", function (e) {
+        if (!down || e.pointerId !== down.id) return;
+        var dt = (e.timeStamp - down.t) / 1000; down.t = e.timeStamp;
+        // drag right turns the near side to the right (frames count the other way)
+        spin.track(down.p0 - (e.clientX - down.x0) / down.ppf, dt);
+      });
+      function release(e) {
+        if (!down || e.pointerId !== down.id) return;
+        down = null;
+        var coast = Math.max(-2, Math.min(2, spin.v * 0.18));
+        spin.set(Math.round(spin.x + coast), "gentle");
+      }
+      stage.addEventListener("pointerup", release);
+      stage.addEventListener("pointercancel", release);
+      stage.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+        else if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+      });
+      el.querySelectorAll("[data-spin-step]").forEach(function (b) {
+        b.addEventListener("click", function () { step(parseInt(b.getAttribute("data-spin-step"), 10) || 1); });
+      });
+      setTimeout(fill, 1200);
+    });
+  }
+  document.addEventListener("DOMContentLoaded", function () { mountSpin(document); });
+  document.addEventListener("htmx:load", function (e) { mountSpin(e.target); });
+
   document.addEventListener("DOMContentLoaded", function () { syncTabs(); edgeSwipe(); grow(document, "push"); });
   window.EvaMotion.enter = enter; window.EvaMotion.expect = expect; window.EvaMotion.openSheet = openSheet; window.EvaMotion.closeSheet = closeSheet; window.EvaMotion.syncTabs = syncTabs;
 })();
