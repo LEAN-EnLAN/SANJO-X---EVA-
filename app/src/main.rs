@@ -110,6 +110,7 @@ fn build_node(args: &ServeArgs, clock: Arc<MissionClock>) -> anyhow::Result<Shar
         for p in state.world.write().expect("world").passengers.iter_mut() {
             p.last_ms = 0;
         }
+        eva::link::restore_ground(&state);
     }
     Ok(state)
 }
@@ -166,7 +167,7 @@ fn bench() {
                     let v = eva::protocol::delta::VitalsSample { hr: 70 + ((t / 1000 + s as u64) % 5) as u16, spo2: 98, resp: 14, skin_c10: 340, eda_c: 200, motion: 10, quality: 95, base_batt: 70, screen_batt: 70, flags: 8 };
                     a.send_vitals(t, s + 1, t / 1000, &v);
                 }
-                let r = payload::RecordMsg { chain_seq: records as u64, ts_ms: t, kind: "log".into(), subject: "ship".into(), hash8: [7; 8], body: br#"{"body":{"text":"daily log"}}"#.to_vec() };
+                let r = payload::RecordMsg { chain_seq: records as u64, ts_ms: t, kind: "log".into(), subject: "ship".into(), hash8: [7; 8], body: br#"{"body":{"text":"daily log"}}"#.to_vec(), sig: vec![0x5a; 64] };
                 a.send(MsgType::Record, r.encode(), None);
                 records += 1;
             }
@@ -205,6 +206,42 @@ fn bench() {
     }
 }
 
+/// `eva verify`: every chain file (hash chain + Ed25519 signatures, against
+/// the node's pinned public key) and every ground mirror. Returns false if
+/// anything was tampered with.
+fn verify_dir(data: &std::path::Path) -> anyhow::Result<bool> {
+    let keys = data.join("keys");
+    let mut all_ok = true;
+    let mut files: Vec<PathBuf> = std::fs::read_dir(data)?.flatten().map(|e| e.path()).filter(|p| p.extension().is_some_and(|e| e == "jsonl")).collect();
+    files.sort();
+    if files.is_empty() {
+        println!("no chain files in {}", data.display());
+    }
+    for path in files {
+        let name = path.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
+        if let Some(node) = name.strip_prefix("chain-").and_then(|n| n.strip_suffix(".jsonl")) {
+            let pinned = eva::chain::read_pub_file(&eva::chain::NodeKey::pub_path(&keys, node));
+            let r = eva::chain::verify_file(&path, pinned)?;
+            let head = &r.head[..16.min(r.head.len())];
+            if r.ok {
+                println!("{name}: OK · {} records · {} Ed25519 signatures valid · head {head}", r.records, r.signatures);
+            } else {
+                println!("{name}: TAMPERED · {} · first bad record {:?} · {} records", r.reason.clone().unwrap_or_default(), r.first_bad, r.records);
+            }
+            all_ok &= r.ok;
+        } else if name.starts_with("mirror-") && !name.contains(".epoch") {
+            let (n, ok, failed) = eva::link::verify_mirror_file(&path, &keys)?;
+            if failed.is_empty() {
+                println!("{name}: OK · {n} records from the ship · {ok} verified (hash chain + signature) · {} waiting for earlier records", n - ok);
+            } else {
+                println!("{name}: TAMPERED · {} record(s) failed: {}", failed.len(), failed.iter().map(|(s, why)| format!("#{s} {why}")).collect::<Vec<_>>().join(", "));
+                all_ok = false;
+            }
+        }
+    }
+    Ok(all_ok)
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt().with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "eva=info,tower_http=warn".into())).with_target(false).init();
@@ -237,20 +274,11 @@ async fn main() -> anyhow::Result<()> {
             Ok(())
         }
         Cmd::Verify { data } => {
-            let mut bad = false;
-            for entry in std::fs::read_dir(&data)? {
-                let path = entry?.path();
-                if path.extension().is_some_and(|e| e == "jsonl") {
-                    let c = eva::chain::Chain::open(&path, "verify")?;
-                    let r = c.verify();
-                    println!("{}: {} records · {} · head {}", path.display(), r.records, if r.ok { "OK".to_string() } else { format!("BROKEN at {:?}", r.first_bad) }, &r.head[..16]);
-                    bad |= !r.ok;
-                }
-            }
-            if bad {
+            if verify_dir(&data)? {
+                Ok(())
+            } else {
                 std::process::exit(1);
             }
-            Ok(())
         }
     }
 }

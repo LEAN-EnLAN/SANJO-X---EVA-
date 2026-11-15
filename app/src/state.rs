@@ -203,6 +203,8 @@ impl AppState {
         }
         let (tx, _) = broadcast::channel(256);
         let world = World::seeded(cfg.role, &cfg.node_name, now);
+        // the ground keeps its copy of the ship's chain on disk (survives restarts)
+        let mirror = if cfg.role == NodeRole::Ground { crate::link::Mirror::open(&cfg.data_dir.join(format!("mirror-{}.jsonl", cfg.node_name)), &cfg.data_dir.join("keys"))? } else { crate::link::Mirror::default() };
         let http = reqwest::Client::builder().timeout(std::time::Duration::from_secs(45)).build()?;
         Ok(Arc::new(AppState {
             cfg,
@@ -214,7 +216,7 @@ impl AppState {
             agent,
             http,
             peers: Mutex::new(HashMap::new()),
-            mirror: Mutex::new(crate::link::Mirror::default()),
+            mirror: Mutex::new(mirror),
             to_ship: Mutex::new(Vec::new()),
         }))
     }
@@ -262,7 +264,7 @@ impl AppState {
             *w = World::seeded(self.cfg.role, &self.cfg.node_name, now);
             w.link_profile = profile;
         }
-        *self.mirror.lock().expect("mirror") = crate::link::Mirror::default();
+        self.mirror.lock().expect("mirror").reset();
         self.emit(UiEvent::Reset);
     }
 }

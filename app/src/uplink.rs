@@ -44,7 +44,10 @@ pub fn priority_for(kind: &str) -> Priority {
 
 pub async fn run(state: Shared, peer: String) {
     let url = link_url(&peer);
-    let session = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_millis() as u64).unwrap_or(1);
+    let mut session = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_millis() as u64).unwrap_or(1);
+    let pubkey = state.chain.lock().expect("chain").public_key().to_vec();
+    // last record handed to the queue: if it changes or vanishes, the chain was reset
+    let mut last_queued: Option<(u64, String)> = None;
     let profile = state.world.read().expect("world").link_profile.clone();
     let mut up = LinkSim::new(profile.clone(), session ^ 0x55);
     let mut down = LinkSim::new(profile.clone(), session ^ 0xaa);
@@ -68,7 +71,7 @@ pub async fn run(state: Shared, peer: String) {
                 Ok(Ok((ws, _))) => {
                     let (mut s, r) = ws.split();
                     let name = format!("{} · ship", state.cfg.node_name);
-                    let hello = ep.queue.control(MsgType::Hello, Hello { role: Role::Ship, name, client_ms: session }.encode());
+                    let hello = ep.queue.control(MsgType::Hello, Hello { pubkey: pubkey.clone(), ..Hello::new(Role::Ship, name, session) }.encode());
                     if s.send(Message::Binary(hello.encode().into())).await.is_ok() {
                         tracing::info!("uplink: connected");
                         sink = Some(s);
@@ -92,10 +95,26 @@ pub async fn run(state: Shared, peer: String) {
                     ep.queue.crc = wanted.crc;
                 }
                 let p: LinkProfile = up.profile.clone();
-                // 2. new chain records → queue
+                // 2. new chain records → queue. Anything not yet acknowledged counts:
+                // after a restart, records left "Sent" by the old process go again
+                // (the ground drops duplicates).
                 {
                     let chain = state.chain.lock().expect("chain");
-                    let fresh: Vec<&crate::chain::Record> = chain.records.iter().filter(|r| r.state == SyncState::Signed && !queued.contains(&r.seq)).collect();
+                    let reset = last_queued.as_ref().is_some_and(|(seq, hash)| chain.records.get(*seq as usize).map(|r| &r.hash) != Some(hash));
+                    if reset {
+                        // demo reset: new session so the ground's receiver starts clean too
+                        tracing::info!("uplink: chain was reset; starting a new session");
+                        queued.clear();
+                        frame_to_chain.clear();
+                        anchor_sent = false;
+                        last_queued = None;
+                        ep = Endpoint::new(1).with_crc(up.profile.crc);
+                        session = session.wrapping_add(1);
+                        sink = None;
+                        stream = None;
+                        next_connect = 0;
+                    }
+                    let fresh: Vec<&crate::chain::Record> = chain.records.iter().filter(|r| r.state != SyncState::Acked && !queued.contains(&r.seq)).collect();
                     for r in fresh {
                         let mut wrapper = serde_json::json!({"body": r.body});
                         if !anchor_sent {
@@ -106,10 +125,11 @@ pub async fn run(state: Shared, peer: String) {
                         if let Ok(h) = hex::decode(&r.hash) {
                             hash8.copy_from_slice(&h[..8]);
                         }
-                        let msg = RecordMsg { chain_seq: r.seq, ts_ms: r.ts_ms, kind: r.kind.clone(), subject: r.subject.clone(), hash8, body: serde_json::to_vec(&wrapper).unwrap_or_default() };
+                        let msg = RecordMsg { chain_seq: r.seq, ts_ms: r.ts_ms, kind: r.kind.clone(), subject: r.subject.clone(), hash8, body: serde_json::to_vec(&wrapper).unwrap_or_default(), sig: hex::decode(&r.sig).unwrap_or_default() };
                         let seq = ep.queue.push_with(MsgType::Record, priority_for(&r.kind), msg.encode(), None, None);
                         frame_to_chain.insert(seq, r.seq);
                         queued.insert(r.seq);
+                        last_queued = Some((r.seq, r.hash.clone()));
                     }
                 }
                 // 3. vitals snapshot every 5 s (delta-encoded, latest-wins)

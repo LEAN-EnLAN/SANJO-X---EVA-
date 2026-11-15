@@ -199,8 +199,12 @@ pub fn message_size_table() -> Vec<(&'static str, usize, usize)> {
         ("alarm: no pulse", Frame::new(MsgType::Alarm, 124, 3, Alarm { subject: "4B".into(), code: alarm_code::NO_PULSE, text: String::new() }.encode())),
         ("guidance line", Frame::new(MsgType::Guidance, 125, 0, Text { from: "Eva".into(), to: "3B".into(), text: "Push hard and fast in the middle of the chest".into() }.encode())),
         (
-            "record (chain)",
-            Frame::new(MsgType::Record, 126, 1, RecordMsg { chain_seq: 812, ts_ms: 1_731_650_000_000, kind: "alarm".into(), subject: "4B".into(), hash8: [0xab; 8], body: br#"{"code":"no_pulse"}"#.to_vec() }.encode()).with_crc(),
+            "record (chain, unsigned)",
+            Frame::new(MsgType::Record, 126, 1, RecordMsg { chain_seq: 812, ts_ms: 1_731_650_000_000, kind: "alarm".into(), subject: "4B".into(), hash8: [0xab; 8], body: br#"{"code":"no_pulse"}"#.to_vec(), sig: vec![] }.encode()).with_crc(),
+        ),
+        (
+            "record (chain, Ed25519 signed)",
+            Frame::new(MsgType::Record, 127, 1, RecordMsg { chain_seq: 812, ts_ms: 1_731_650_000_000, kind: "alarm".into(), subject: "4B".into(), hash8: [0xab; 8], body: br#"{"code":"no_pulse"}"#.to_vec(), sig: vec![0xcd; 64] }.encode()).with_crc(),
         ),
     ];
     let mut out: Vec<(&'static str, usize, usize)> = rows.into_iter().map(|(n, f)| (n, f.wire_len(), f.payload.len())).collect();
@@ -228,7 +232,7 @@ mod tests {
         let mut record_seqs = Vec::new();
         for i in 0..40u64 {
             let body = format!(r#"{{"i":{i}}}"#).into_bytes();
-            let r = payload::RecordMsg { chain_seq: i, ts_ms: i, kind: "log".into(), subject: "ship".into(), hash8: [0; 8], body };
+            let r = payload::RecordMsg { chain_seq: i, ts_ms: i, kind: "log".into(), subject: "ship".into(), hash8: [0; 8], body, sig: vec![] };
             record_seqs.push(ship.send(MsgType::Record, r.encode(), None));
         }
         let alarm = ship.send(MsgType::Alarm, payload::Alarm { subject: "4B".into(), code: payload::alarm_code::NO_PULSE, text: String::new() }.encode(), None);
@@ -319,7 +323,9 @@ mod tests {
     #[test]
     fn size_table_is_small() {
         for (name, bytes, _) in message_size_table() {
-            if !name.contains("JSON") {
+            if name.contains("signed)") {
+                assert!(bytes <= 128, "{name} is {bytes} bytes");
+            } else if !name.contains("JSON") {
                 assert!(bytes <= 64, "{name} is {bytes} bytes");
             }
         }

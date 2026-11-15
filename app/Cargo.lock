@@ -625,6 +625,7 @@ dependencies = [
  "http-body-util",
  "rcgen",
  "reqwest",
+ "ring",
  "rust-embed",
  "rustls",
  "serde",

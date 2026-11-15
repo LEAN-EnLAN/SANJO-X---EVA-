@@ -46,16 +46,33 @@ pub struct Hello {
     pub role: Role,
     pub name: String,
     pub client_ms: u64,
+    /// optional trailing field: the sender's Ed25519 public key (32 bytes).
+    /// Ships send it so the ground can check record signatures; old
+    /// decoders ignore it, so the field is backward compatible.
+    pub pubkey: Vec<u8>,
 }
 impl Hello {
+    pub fn new(role: Role, name: impl Into<String>, client_ms: u64) -> Self {
+        Hello { role, name: name.into(), client_ms, pubkey: Vec::new() }
+    }
     pub fn encode(&self) -> Vec<u8> {
         let mut w = Writer::new();
         w.u8(self.role as u8).str(&self.name).uvar(self.client_ms);
+        if !self.pubkey.is_empty() {
+            w.bytes(&self.pubkey);
+        }
         w.finish()
     }
     pub fn decode(b: &[u8]) -> Result<Self, WireError> {
         let mut r = Reader::new(b);
-        Ok(Hello { role: Role::from_u8(r.u8()?)?, name: r.str()?.to_string(), client_ms: r.uvar()? })
+        let role = Role::from_u8(r.u8()?)?;
+        let name = r.str()?.to_string();
+        let client_ms = r.uvar()?;
+        let pubkey = if r.is_empty() { Vec::new() } else { r.bytes()?.to_vec() };
+        if !pubkey.is_empty() && pubkey.len() != 32 {
+            return Err(WireError::Invalid("public key length"));
+        }
+        Ok(Hello { role, name, client_ms, pubkey })
     }
 }
 
@@ -197,11 +214,17 @@ pub struct RecordMsg {
     pub subject: String,
     pub hash8: [u8; 8],
     pub body: Vec<u8>,
+    /// Ed25519 signature over the record's full hash (64 bytes; empty = unsigned).
+    /// Trailing and optional on the wire, so v1 decoders without it still work.
+    pub sig: Vec<u8>,
 }
 impl RecordMsg {
     pub fn encode(&self) -> Vec<u8> {
         let mut w = Writer::new();
         w.uvar(self.chain_seq).uvar(self.ts_ms).str(&self.kind).str(&self.subject).raw(&self.hash8).bytes(&self.body);
+        if !self.sig.is_empty() {
+            w.bytes(&self.sig);
+        }
         w.finish()
     }
     pub fn decode(b: &[u8]) -> Result<Self, WireError> {
@@ -213,7 +236,11 @@ impl RecordMsg {
         let mut hash8 = [0u8; 8];
         hash8.copy_from_slice(r.take(8)?);
         let body = r.bytes()?.to_vec();
-        Ok(RecordMsg { chain_seq, ts_ms, kind, subject, hash8, body })
+        let sig = if r.is_empty() { Vec::new() } else { r.bytes()?.to_vec() };
+        if !sig.is_empty() && sig.len() != 64 {
+            return Err(WireError::Invalid("signature length"));
+        }
+        Ok(RecordMsg { chain_seq, ts_ms, kind, subject, hash8, body, sig })
     }
 }
 
@@ -249,8 +276,11 @@ mod tests {
 
     #[test]
     fn hello_welcome_roundtrip() {
-        let h = Hello { role: Role::App, name: "Ana · 4B".into(), client_ms: 123_456 };
+        let h = Hello::new(Role::App, "Ana · 4B", 123_456);
         assert_eq!(Hello::decode(&h.encode()).unwrap(), h);
+        let k = Hello { pubkey: vec![7; 32], ..Hello::new(Role::Ship, "ship", 9) };
+        assert_eq!(Hello::decode(&k.encode()).unwrap(), k);
+        assert_eq!(k.encode().len(), Hello::new(Role::Ship, "ship", 9).encode().len() + 33, "the key adds 33 bytes");
         let w = Welcome { node_id: 42, server_ms: 9_999_999 };
         assert_eq!(Welcome::decode(&w.encode()).unwrap(), w);
     }
@@ -265,8 +295,11 @@ mod tests {
 
     #[test]
     fn record_alarm_text_presence_roundtrip() {
-        let r = RecordMsg { chain_seq: 7, ts_ms: 1_700_000_000_000, kind: "alarm".into(), subject: "4B".into(), hash8: [1, 2, 3, 4, 5, 6, 7, 8], body: br#"{"a":1}"#.to_vec() };
+        let r = RecordMsg { chain_seq: 7, ts_ms: 1_700_000_000_000, kind: "alarm".into(), subject: "4B".into(), hash8: [1, 2, 3, 4, 5, 6, 7, 8], body: br#"{"a":1}"#.to_vec(), sig: vec![] };
         assert_eq!(RecordMsg::decode(&r.encode()).unwrap(), r);
+        let signed = RecordMsg { sig: vec![9; 64], ..r.clone() };
+        assert_eq!(RecordMsg::decode(&signed.encode()).unwrap(), signed);
+        assert_eq!(signed.encode().len(), r.encode().len() + 65);
         let a = Alarm { subject: "4B".into(), code: alarm_code::NO_PULSE, text: "No pulse".into() };
         assert_eq!(Alarm::decode(&a.encode()).unwrap(), a);
         let t = Text { from: "Leo".into(), to: "*".into(), text: "On my way".into() };

@@ -18,13 +18,19 @@ use tokio::sync::mpsc;
 
 pub const HUB_ID: u32 = 0;
 
+/// Frames waiting for one client's WebSocket. A client that falls this far
+/// behind (frozen tab, dying Wi-Fi) loses frames instead of growing the hub's
+/// memory; vitals and presence are latest-wins and reliable frames are
+/// retransmitted by their sender.
+pub const OUTBOX: usize = 512;
+
 #[derive(Debug)]
 pub struct Node {
     pub id: u32,
     pub role: Role,
     pub name: String,
     pub seat: Option<String>,
-    pub tx: mpsc::UnboundedSender<Vec<u8>>,
+    pub tx: mpsc::Sender<Vec<u8>>,
     pub rtt: RttEstimator,
     pub connected_ms: u64,
     pub last_seen_ms: u64,
@@ -55,10 +61,12 @@ pub struct Mesh {
     next: AtomicU32,
     hub_seq: AtomicU32,
     pub relayed_frames: AtomicU32,
+    /// frames dropped because a client's outbox was full (slow client)
+    pub dropped_frames: AtomicU32,
 }
 
 impl Mesh {
-    pub fn register(&self, role: Role, name: String, seat: Option<String>, tx: mpsc::UnboundedSender<Vec<u8>>, now_ms: u64) -> u32 {
+    pub fn register(&self, role: Role, name: String, seat: Option<String>, tx: mpsc::Sender<Vec<u8>>, now_ms: u64) -> u32 {
         let id = self.next.fetch_add(1, Ordering::Relaxed) + 1;
         let node = Node { id, role, name, seat, tx, rtt: RttEstimator::default(), connected_ms: now_ms, last_seen_ms: now_ms, frames_in: 0, frames_out: 0, bytes_in: 0, bytes_out: 0 };
         self.nodes.lock().expect("mesh").insert(id, node);
@@ -89,7 +97,14 @@ impl Mesh {
             Some(n) => {
                 n.frames_out += 1;
                 n.bytes_out += bytes.len() as u64;
-                n.tx.send(bytes).is_ok()
+                match n.tx.try_send(bytes) {
+                    Ok(()) => true,
+                    Err(mpsc::error::TrySendError::Full(_)) => {
+                        self.dropped_frames.fetch_add(1, Ordering::Relaxed);
+                        true
+                    }
+                    Err(mpsc::error::TrySendError::Closed(_)) => false,
+                }
             }
             None => false,
         }
@@ -106,8 +121,12 @@ impl Mesh {
         for node in nodes.values_mut().filter(|x| x.id != except && roles.contains(&x.role)) {
             node.frames_out += 1;
             node.bytes_out += bytes.len() as u64;
-            if node.tx.send(bytes.to_vec()).is_ok() {
-                n += 1;
+            match node.tx.try_send(bytes.to_vec()) {
+                Ok(()) => n += 1,
+                Err(mpsc::error::TrySendError::Full(_)) => {
+                    self.dropped_frames.fetch_add(1, Ordering::Relaxed);
+                }
+                Err(_) => {}
             }
         }
         n
@@ -158,5 +177,30 @@ pub async fn run_heartbeat(state: crate::state::Shared) {
         let pres = payload::encode_presence(&state.mesh.presence());
         let f = Frame::new(MsgType::Presence, state.mesh.hub_seq(), HUB_ID, pres).encode();
         state.mesh.broadcast(&[Role::App, Role::Dash], HUB_ID, &f);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn slow_client_drops_frames_instead_of_growing_memory() {
+        let m = Mesh::default();
+        let (tx, mut rx) = mpsc::channel(OUTBOX);
+        let id = m.register(Role::App, "slow".into(), None, tx, 0);
+        for _ in 0..OUTBOX * 3 {
+            assert!(m.send_to(id, vec![0; 100]));
+        }
+        assert_eq!(m.dropped_frames.load(Ordering::Relaxed) as usize, OUTBOX * 2);
+        let mut got = 0;
+        while rx.try_recv().is_ok() {
+            got += 1;
+        }
+        assert_eq!(got, OUTBOX, "the outbox is bounded");
+        drop(rx);
+        assert!(!m.send_to(id, vec![1]), "a gone client is reported");
+        m.unregister(id);
+        assert_eq!(m.count(), 0);
     }
 }

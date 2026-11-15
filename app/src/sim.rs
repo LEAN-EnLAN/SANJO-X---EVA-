@@ -177,7 +177,7 @@ pub async fn run_remote(url: String, n: usize, interval_ms: u64) -> anyhow::Resu
         let (mut tx, mut rx) = ws.split();
         let mut ep = Endpoint::new(0);
         ep.vitals_ttl_ms = interval_ms * 3;
-        let hello = Hello { role: Role::Band, name: format!("sim gateway · {n} bands"), client_ms: started.elapsed().as_millis() as u64 };
+        let hello = Hello::new(Role::Band, format!("sim gateway · {n} bands"), started.elapsed().as_millis() as u64);
         let f = ep.queue.control(MsgType::Hello, hello.encode());
         if tx.send(Message::Binary(f.encode().into())).await.is_err() {
             continue;
