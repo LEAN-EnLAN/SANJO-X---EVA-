@@ -15,9 +15,14 @@
   "es": "Si a alguien se le para el corazón, no hay tiempo para esperar una respuesta de la Tierra."
  },
  {
+  "id": "03b_source",
+  "en": "NASA researchers say that crews far from Earth will need a system on board that tells them what to do now, why, and what comes next.",
+  "es": "Investigadores de la NASA dicen que, lejos de la Tierra, hace falta un sistema a bordo que diga qué hacer ahora, por qué, y qué sigue."
+ },
+ {
   "id": "04_meet",
-  "en": "That is why every passenger wears Eva: a wristband and a harness that work together.",
-  "es": "Por eso, cada pasajero usa a Eva: un brazalete y un arnés que trabajan juntos."
+  "en": "That is why every passenger wears Eva: one wristband that looks after them all the time.",
+  "es": "Por eso, cada pasajero usa a Eva: un brazalete que lo cuida todo el tiempo."
  },
  {
   "id": "05_band",
@@ -26,13 +31,13 @@
  },
  {
   "id": "06_helper",
-  "en": "When something goes wrong, Eva calls the closest person who knows how to help, right away.",
-  "es": "Cuando algo anda mal, Eva llama al instante a la persona más cercana que sabe ayudar."
+  "en": "When someone's pulse stops, Eva calls the closest person who knows how to help, and sends another to bring the defibrillator.",
+  "es": "Cuando a alguien se le para el pulso, Eva llama a la persona más cercana que sabe ayudar, y manda a otra a buscar el desfibrilador."
  },
  {
   "id": "07_cpr",
-  "en": "The screen shows each step, one at a time. The harness checks the heart, and gives the shock only if it is needed.",
-  "es": "La pantalla muestra cada paso, de a uno. El arnés revisa el corazón, y da la descarga solo si hace falta."
+  "en": "The wristband shows each step of the rescue, one at a time. The defibrillator checks the heart, and gives a shock only if it is needed.",
+  "es": "El brazalete muestra cada paso de la reanimación, de a uno. El desfibrilador revisa el corazón, y da la descarga solo si hace falta."
  },
  {
   "id": "08_sun",

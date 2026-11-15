@@ -12,7 +12,7 @@ config.background_color = "#000000"
 CORAL = "#FF6A3D"; CREAM = "#F4F3F0"; CYAN = "#7FD4FF"; AMBER = "#FFB347"; MUTED = "#8A8986"; RED = "#FF2A1F"; YEL = "#FFD84A"; GREEN = "#5BE38A"; SKIN = "#E9B38F"; SUIT = "#E7E5E0"
 FONT = "Inter"
 L = {
- "wristband": {"en": "Wristband", "es": "Brazalete"}, "harness": {"en": "Harness", "es": "Arnés"},
+ "wristband": {"en": "Wristband", "es": "Brazalete"}, "aed": {"en": "Defibrillator", "es": "Desfibrilador"}, "station": {"en": "Emergency station", "es": "Estación de emergencia"}, "always": {"en": "always watching", "es": "siempre atento"},
  "inner": {"en": "Inner part: sensors", "es": "Parte de adentro: sensores"}, "outer": {"en": "Outer part: screen + battery", "es": "Parte de afuera: pantalla + batería"},
  "magnets": {"en": "Magnets", "es": "Imanes"}, "suit": {"en": "Suit", "es": "Traje"}, "skin": {"en": "Skin", "es": "Piel"},
  "own": {"en": "own small battery", "es": "batería chica propia"},
@@ -20,9 +20,9 @@ L = {
  "s3": {"en": "Stand back", "es": "Alejate"}, "shelter": {"en": "SHELTER", "es": "REFUGIO"}, "toshelter": {"en": "Go to the shelter", "es": "Andá al refugio"},
  "tagline": {"en": "guides, records and warns", "es": "guía, registra y avisa"}, "by": {"en": "by WearMeds", "es": "de WearMeds"},
  "team": {"en": "Team Sanjo-X · NASA Space Apps Challenge 2026 · Rosario", "es": "Equipo Sanjo-X · NASA Space Apps Challenge 2026 · Rosario"},
- "only": {"en": "Shocks come only from validated medical devices.", "es": "Las descargas las dan solo dispositivos médicos validados."},
+ "only": {"en": "Eva guides. The defibrillator decides the shock.", "es": "Eva guía. La descarga la decide el desfibrilador."},
  "months": {"en": "7 months", "es": "7 meses"}, "nodoc": {"en": "no doctor", "es": "sin médico"}, "people": {"en": "15 people", "es": "15 personas"},
- "earth": {"en": "Earth", "es": "Tierra"}, "mars": {"en": "Mars", "es": "Marte"}, "upto": {"en": "up to 20 min", "es": "hasta 20 min"},
+ "earth": {"en": "Earth", "es": "Tierra"}, "now": {"en": "What to do now", "es": "Qué hacer ahora"}, "why": {"en": "Why", "es": "Por qué"}, "next": {"en": "What comes next", "es": "Qué sigue"}, "src": {"en": "Source: Russell et al., npj Microgravity 9:46 (2023)", "es": "Fuente: Russell et al., npj Microgravity 9:46 (2023)"}, "mars": {"en": "Mars", "es": "Marte"}, "upto": {"en": "up to 20 min", "es": "hasta 20 min"},
 }
 def tr(k): return L[k][LANG]
 def T(s, size=36, color=CREAM, **kw): return Text(s, font=FONT, font_size=size, color=color, **kw)
@@ -143,23 +143,37 @@ class N03_Collapse(Story):
         self.play(FadeIn(env), FadeIn(q)); self.play(Create(x), run_time=.5)
         self.hold()
 
+class N03b_Source(Story):
+    sid = "03b_source"
+    def construct(self):
+        self.add(stars())
+        page = RoundedRectangle(width=4.8, height=5.0, corner_radius=.15, fill_color=CREAM, fill_opacity=1, stroke_width=0).move_to(LEFT * 4 + UP * .9)
+        ttl = T("The value of a spaceflight\nclinical decision support system\nfor earth-independent\nmedical operations", 18, BLACK, line_spacing=.85).move_to(page.get_top() + DOWN * 1.0)
+        lines = VGroup(*[Rectangle(width=3.2 if k % 3 else 2.4, height=.07, fill_color="#9a9893", fill_opacity=1, stroke_width=0) for k in range(10)]).arrange(DOWN, buff=.17, aligned_edge=LEFT).next_to(ttl, DOWN, buff=.35).align_to(ttl, LEFT)
+        jl = T("npj Microgravity · 2023", 18, "#5a5955").move_to(page.get_bottom() + UP * .35)
+        self.play(FadeIn(page, shift=UP * .3), FadeIn(ttl), run_time=.7); self.play(LaggedStart(*[Create(l) for l in lines], lag_ratio=.05), FadeIn(jl), run_time=.8)
+        chips = VGroup(*[VGroup(RoundedRectangle(width=5.2, height=.9, corner_radius=.45, fill_color=c, fill_opacity=1, stroke_width=0), T(tr(k), 32, BLACK)) for k, c in (("now", CYAN), ("why", AMBER), ("next", GREEN))])
+        for c in chips: c[1].move_to(c[0])
+        chips.arrange(DOWN, buff=.35).move_to(RIGHT * 2.6 + UP * 1.0)
+        for c in chips: self.sfx("pro_pop_in_round", -12); self.play(FadeIn(c, shift=LEFT * .4), run_time=.45); self.wait(.25)
+        src = T(tr("src"), 22, MUTED).next_to(chips, DOWN, buff=.45)
+        self.play(FadeIn(src), run_time=.4)
+        self.hold()
+
 class N04_Meet(Story):
     sid = "04_meet"
     def construct(self):
-        p = person(CREAM, band=False, s=3.2).shift(UP * .5)
-        strap = VGroup(Line([-.75, 1.3, 0], [.15, -.2, 0]), Line([.75, 1.3, 0], [-.15, -.2, 0])).set_stroke("#3a3a40", 22).shift(UP * .3)
-        core = RoundedRectangle(width=.55, height=.55, corner_radius=.12, fill_color="#3a3a40", fill_opacity=1, stroke_width=0).move_to(UP * .2)
-        led = Circle(.09, fill_color=CORAL, fill_opacity=1, stroke_width=0).move_to(core)
-        band = RoundedRectangle(width=.62, height=.32, corner_radius=.1, fill_color="#1c1c20", fill_opacity=1, stroke_width=0).move_to([1.02, -.2, 0])
-        scr = RoundedRectangle(width=.46, height=.2, corner_radius=.05, fill_color=CYAN, fill_opacity=1, stroke_width=0).move_to(band)
+        p = person(CREAM, band=False, s=3.2).shift(UP * .5 + LEFT * 1.5)
+        band = RoundedRectangle(width=.66, height=.34, corner_radius=.08, fill_color="#1c1c20", fill_opacity=1, stroke_color="#2a3a5a", stroke_width=3).move_to(p.get_center() + RIGHT * .88 + DOWN * .2)
+        scr = RoundedRectangle(width=.46, height=.2, corner_radius=.04, fill_color=CYAN, fill_opacity=1, stroke_width=0).move_to(band)
         self.play(FadeIn(p, scale=.9), run_time=.7)
         self.sfx("pro_pop_in_round"); self.play(FadeIn(band, scale=.5), FadeIn(scr, scale=.5), run_time=.5)
-        wl = T(tr("wristband"), 32, CYAN).next_to(band, RIGHT, buff=.5); wa = Arrow(wl.get_left(), band.get_right(), buff=.1, color=CYAN, stroke_width=3)
+        wl = T(tr("wristband"), 36, CYAN).move_to(RIGHT * 3.6 + UP * 1.2); wa = Arrow(wl.get_left() + DOWN * .1, band.get_right(), buff=.15, color=CYAN, stroke_width=3)
         self.play(FadeIn(wl), GrowArrow(wa), run_time=.6)
-        self.sfx("pro_pop_in_round"); self.play(Create(strap), FadeIn(core), FadeIn(led), run_time=.8)
-        hl = T(tr("harness"), 32, CORAL).next_to(core, LEFT, buff=2.0); ha = Arrow(hl.get_right(), core.get_left(), buff=.1, color=CORAL, stroke_width=3)
-        self.play(FadeIn(hl), GrowArrow(ha), run_time=.6)
-        self.play(led.animate.scale(1.5).set_opacity(.6), rate_func=there_and_back, run_time=.6)
+        al = T(tr("always"), 28, MUTED).next_to(wl, DOWN, buff=.25)
+        beat = ecg(2.6).next_to(al, DOWN, buff=.35)
+        self.play(FadeIn(al), Create(beat), run_time=1.0)
+        for _ in range(2): self.play(scr.animate.set_opacity(.5), run_time=.25); self.play(scr.animate.set_opacity(1), run_time=.25)
         self.hold()
 
 class N05_Band(Story):
@@ -221,7 +235,15 @@ class N06_Helper(Story):
         gt = T(tr("go"), 26, BLACK); bub = VGroup(RoundedRectangle(width=gt.width + .5, height=.6, corner_radius=.2, fill_color=YEL, fill_opacity=1, stroke_width=0), gt)
         bub[1].move_to(bub[0]); bub.next_to(hp, UP, buff=.2)
         self.play(hp.animate.set_color(YEL).scale(1.3), FadeIn(bub, shift=UP * .1), run_time=.5)
-        self.play(hp.animate.move_to(vic.get_center() + LEFT * .55), bub.animate.shift(vic.get_center() + LEFT * .55 - hp.get_center()), run_time=1.3, rate_func=smooth)
+        self.play(hp.animate.move_to(vic.get_center() + LEFT * .55), bub.animate.shift(vic.get_center() + LEFT * .55 - hp.get_center()), run_time=1.1, rate_func=smooth)
+        st = VGroup(RoundedRectangle(width=1.0, height=.8, corner_radius=.12, fill_color=GREEN, fill_opacity=1, stroke_width=0), heart(WHITE, .25)).move_to(RIGHT * 5.1 + UP * 2.3); st[1].move_to(st[0])
+        sl = T(tr("station"), 22, GREEN).next_to(st, DOWN, buff=.12)
+        self.play(FadeIn(st, scale=.6), FadeIn(sl), Flash(st, color=GREEN), run_time=.6)
+        d2 = [np.linalg.norm(pts[i] - st.get_center()) if i not in (v, h) else 99 for i in range(15)]; h2 = int(np.argmin(d2)); hp2 = ppl[h2]
+        self.play(hp2.animate.set_color(YEL).scale(1.3), run_time=.3)
+        self.play(hp2.animate.move_to(st.get_left() + LEFT * .4), run_time=.7)
+        aed = st.copy().scale(.45)
+        self.play(aed.animate.move_to(vic.get_center() + RIGHT * .6), hp2.animate.move_to(vic.get_center() + RIGHT * 1.1), run_time=1.0, rate_func=smooth)
         self.hold()
 
 class N07_CPR(Story):
@@ -241,9 +263,9 @@ class N07_CPR(Story):
         self.sfx("pro_typing_key_soft"); self.play(ReplacementTransform(cur, steps[1]), run_time=.4); cur = steps[1]
         for _ in range(3): self.play(cur[0].animate.scale(1.15), run_time=.15); self.play(cur[0].animate.scale(1 / 1.15), run_time=.15)
         self.sfx("pro_typing_key_soft"); self.play(ReplacementTransform(cur, steps[2]), run_time=.4)
-        # harness checks and shocks
-        core = RoundedRectangle(width=1.4, height=1.4, corner_radius=.3, fill_color="#3a3a40", fill_opacity=1, stroke_width=0).move_to(RIGHT * 4.6 + UP * .7)
-        hl = T(tr("harness"), 28, CORAL).next_to(core, UP, buff=.2)
+        # the AED checks and shocks
+        core = RoundedRectangle(width=1.6, height=1.3, corner_radius=.25, fill_color=GREEN, fill_opacity=1, stroke_width=0).move_to(RIGHT * 4.6 + UP * .7)
+        hl = T(tr("aed"), 28, GREEN).next_to(core, UP, buff=.2)
         bolt = Polygon([0, .5, 0], [-.25, 0, 0], [0, 0, 0], [-.1, -.5, 0], [.25, .05, 0], [0, .05, 0], fill_color=YEL, fill_opacity=1, stroke_width=0).move_to(core)
         self.play(FadeIn(core), FadeIn(hl), run_time=.4)
         self.sfx("pro_impact_short", -6); self.play(FadeIn(bolt, scale=1.6), Flash(core, color=YEL, line_length=.4, num_lines=12), run_time=.5)
@@ -315,7 +337,7 @@ class N12_Close(Story):
         G = VGroup(wm, tg, by).shift(UP * .6 + LEFT * 2)
         self.sfx("logo_sting_soft_bloom", -6)
         self.play(FadeIn(wm, scale=.9), run_time=.8); self.play(FadeIn(tg, shift=UP * .1), FadeIn(by), run_time=.6)
-        only = T(tr("only"), 26, MUTED).to_edge(DOWN, buff=1.0); team = T(tr("team"), 22, MUTED).to_edge(DOWN, buff=.45)
-        self.play(FadeIn(only), FadeIn(team), run_time=.5)
+        only = T(tr("only"), 26, MUTED).to_edge(DOWN, buff=1.35); srcl = T(tr("src"), 20, MUTED).to_edge(DOWN, buff=.85); team = T(tr("team"), 20, MUTED).to_edge(DOWN, buff=.4)
+        self.play(FadeIn(only), FadeIn(srcl), FadeIn(team), run_time=.5)
         self.wait(max(1.5, self.d + 1.5 - self.renderer.time))
-        self.play(FadeOut(VGroup(G, only, team)), run_time=.8)
+        self.play(FadeOut(VGroup(G, only, srcl, team)), run_time=.8)
