@@ -38,7 +38,7 @@ work=$(mktemp -d "${TMPDIR:-/tmp}/eva-sb.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 say() { printf '\n== %s\n' "$*"; }
 sql() { "$here/sql.sh" -c "$1"; }
-sqlv() { sql "$1" | jq -r '.[0] | to_entries[0].value // empty'; }   # first column of first row
+sqlv() { sql "$1" | jq -r 'if type == "array" then ((.[0] // {}) | to_entries[0].value // empty) else empty end'; }   # first column of first row
 
 # ---------------------------------------------------------------- secrets file helpers
 touch "$SECRETS"; chmod 600 "$SECRETS"
@@ -181,7 +181,7 @@ print(json.dumps([{"name": "EVA_GROQ_API_KEY", "value": key}]))
 PY
 mgmt POST "/projects/$REF/secrets" --data @"$work/secrets.json" >/dev/null && echo "  EVA_GROQ_API_KEY set"
 rm -f "$work/secrets.json"
-(cd "$repo" && npx -y supabase@latest functions deploy eva-chat --project-ref "$REF" --no-verify-jwt --use-api 2>&1 | tail -n 2)
+(cd "$repo" && npx -y supabase@latest functions deploy eva-chat --project-ref "$REF" --no-verify-jwt --use-api --yes 2>&1 | tail -n 2)
 
 token_for() { # token_for SLUG → access token
   local V; V=$(tr '[:lower:]-' '[:upper:]_' <<<"$1"); local e="EVA_TEST_${V}_EMAIL" p="EVA_TEST_${V}_PASSWORD"
