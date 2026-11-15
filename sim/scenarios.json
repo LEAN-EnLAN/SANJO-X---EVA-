@@ -1,0 +1,1313 @@
+{
+ "version": 1,
+ "units": {
+  "t": "seconds from scenario start",
+  "deadline": "seconds, Eva must have done it by then"
+ },
+ "metrics": {
+  "first_instruction_s_max": 1,
+  "helper_assigned_s_max": 10,
+  "forbidden_actions_max": 0,
+  "log_complete": true
+ },
+ "scenarios": [
+  {
+   "id": "E1.1",
+   "case": "1",
+   "title": "Posible paro: sin pulso, sin movimiento y sin respuesta",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 17
+    },
+    {
+     "action": "light_station",
+     "target": "nearest_available_aed",
+     "deadline": 17
+    },
+    {
+     "action": "show_route",
+     "target": "aed_runner_to_station",
+     "deadline": 17
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Start CPR",
+     "deadline": 20
+    },
+    {
+     "action": "log",
+     "target": "chain",
+     "deadline": 20
+    }
+   ],
+   "forbidden": [
+    "deliver_shock",
+    "ai_shock_decision",
+    "general_alarm_single_sensor",
+    "delay_cpr_for_rhythm"
+   ]
+  },
+  {
+   "id": "E1.2",
+   "case": "1",
+   "title": "Ejercicio que ensucia la senal optica",
+   "events": [
+    {
+     "t": 0,
+     "signal": "activity",
+     "value": "exercise"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "high"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_quality",
+     "value": "low"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_rhythm",
+     "value": "irregular"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 142
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Confirm you are exercising",
+     "deadline": 5
+    }
+   ],
+   "forbidden": [
+    "general_alarm",
+    "request_wrist_ecg_in_motion"
+   ]
+  },
+  {
+   "id": "E1.3",
+   "case": "1",
+   "title": "El DEA de la estacion analiza el ritmo y decide la descarga",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 30,
+     "signal": "aed",
+     "value": "pads_attached"
+    },
+    {
+     "t": 32,
+     "signal": "aed",
+     "value": "analyzing"
+    },
+    {
+     "t": 40,
+     "signal": "aed",
+     "value": "shock_advised"
+    },
+    {
+     "t": 45,
+     "signal": "aed",
+     "value": "shock_delivered"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 17
+    },
+    {
+     "action": "light_station",
+     "target": "nearest_available_aed",
+     "deadline": 17
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Follow the AED voice prompts",
+     "deadline": 31
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Do not touch them",
+     "deadline": 33
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Start CPR",
+     "deadline": 47
+    },
+    {
+     "action": "log",
+     "target": "aed_events",
+     "deadline": 47
+    },
+    {
+     "action": "log",
+     "target": "chain",
+     "deadline": 47
+    }
+   ],
+   "forbidden": [
+    "deliver_shock",
+    "cancel_shock",
+    "delay_shock",
+    "ai_shock_decision",
+    "contradict_aed"
+   ]
+  },
+  {
+   "id": "E1.4",
+   "case": "1",
+   "title": "El mas cercano no confirma (estrategia A: una persona asignada)",
+   "events": [
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 17,
+     "signal": "helper_1",
+     "value": "no_ack"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 17
+    },
+    {
+     "action": "notify_info",
+     "target": "all_others",
+     "deadline": 17
+    },
+    {
+     "action": "reassign_helper",
+     "target": "second_nearest",
+     "deadline": 37
+    },
+    {
+     "action": "open_task",
+     "target": "all_nearby",
+     "deadline": 37
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 40
+    }
+   ],
+   "forbidden": [
+    "no_named_helper"
+   ]
+  },
+  {
+   "id": "E1.4b",
+   "case": "1",
+   "title": "Variante a comparar (estrategia B: aviso a todos los capacitados)",
+   "events": [
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 25,
+     "signal": "helper_3",
+     "value": "ack"
+    }
+   ],
+   "expect": [
+    {
+     "action": "open_task",
+     "target": "all_trained",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "first_ack",
+     "deadline": 26
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 20
+    }
+   ],
+   "forbidden": [
+    "no_named_helper",
+    "same_task_uncoordinated"
+   ]
+  },
+  {
+   "id": "E1.5",
+   "case": "1",
+   "title": "Paro durante alerta solar",
+   "events": [
+    {
+     "t": 0,
+     "signal": "onboard_protons_pfu",
+     "value": 40
+    },
+    {
+     "t": 0,
+     "signal": "shelter_order",
+     "value": "active"
+    },
+    {
+     "t": 60,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 60,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 60,
+     "signal": "wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 77
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 77
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 80
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Keep CPR going",
+     "deadline": 80
+    },
+    {
+     "action": "assign_helper",
+     "target": "second_helper_compression_relay",
+     "deadline": 120
+    },
+    {
+     "action": "log",
+     "target": "onboard_dose",
+     "deadline": 120
+    }
+   ],
+   "forbidden": [
+    "stop_cpr_for_alert",
+    "order_transfer_during_cpr",
+    "drop_aed_fetch_for_shelter"
+   ]
+  },
+  {
+   "id": "E3.1",
+   "case": "3A",
+   "title": "Despresurizacion de cabina declarada por la nave",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ship_cabin_alarm",
+     "value": "depressurization"
+    },
+    {
+     "t": 0,
+     "signal": "cabin_pressure_drop",
+     "value": "rapid"
+    }
+   ],
+   "expect": [
+    {
+     "action": "broadcast",
+     "target": "Put your oxygen mask on now",
+     "deadline": 1
+    },
+    {
+     "action": "broadcast",
+     "target": "Help anyone who could not",
+     "deadline": 20
+    },
+    {
+     "action": "log",
+     "target": "pressure_profile",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "wait_for_spo2",
+    "predictive_o2_trigger"
+   ]
+  },
+  {
+   "id": "E3.2",
+   "case": "3A",
+   "title": "Un sensor marca caida y la nave no declara alarma",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cabin_pressure_sensor_2",
+     "value": "drop"
+    },
+    {
+     "t": 0,
+     "signal": "cabin_pressure_sensor_1",
+     "value": "normal"
+    },
+    {
+     "t": 0,
+     "signal": "ship_cabin_alarm",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 10
+    },
+    {
+     "action": "log",
+     "target": "sensor_reading",
+     "deadline": 10
+    }
+   ],
+   "forbidden": [
+    "broadcast",
+    "general_alarm"
+   ]
+  },
+  {
+   "id": "E3.3",
+   "case": "3A",
+   "title": "SpO2 del brazalete no confiable",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ship_cabin_alarm",
+     "value": "none"
+    },
+    {
+     "t": 0,
+     "signal": "spo2_wrist",
+     "value": "low_quality"
+    },
+    {
+     "t": 0,
+     "signal": "skin_temp",
+     "value": "cold"
+    },
+    {
+     "t": 0,
+     "signal": "resp_rate",
+     "value": 14
+    },
+    {
+     "t": 5,
+     "signal": "wrist_response",
+     "value": "tap"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Adjust your wristband",
+     "deadline": 30
+    },
+    {
+     "action": "measure",
+     "target": "spo2_wrist_repeat",
+     "deadline": 60
+    }
+   ],
+   "forbidden": [
+    "general_alarm"
+   ]
+  },
+  {
+   "id": "E3.4",
+   "case": "3A",
+   "title": "Sintomas despues de la despresurizacion",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ship_cabin_alarm",
+     "value": "cleared"
+    },
+    {
+     "t": 10800,
+     "signal": "symptom",
+     "value": "joint_pain"
+    }
+   ],
+   "expect": [
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 10830
+    },
+    {
+     "action": "log",
+     "target": "pressure_profile",
+     "deadline": 10830
+    },
+    {
+     "action": "queue_earth",
+     "target": "report",
+     "deadline": 10830
+    }
+   ],
+   "forbidden": [
+    "decide_oxygen",
+    "decide_recompression",
+    "claim_bubbles"
+   ]
+  },
+  {
+   "id": "E3.5",
+   "case": "3B",
+   "title": "Erupcion en rayos X sin protones todavia a bordo",
+   "events": [
+    {
+     "t": 0,
+     "signal": "donki_flare",
+     "value": "X1.2"
+    },
+    {
+     "t": 0,
+     "signal": "onboard_protons_pfu",
+     "value": 2
+    },
+    {
+     "t": 1800,
+     "signal": "onboard_protons_pfu",
+     "value": 12
+    }
+   ],
+   "expect": [
+    {
+     "action": "broadcast",
+     "target": "Get ready: solar event",
+     "deadline": 10
+    },
+    {
+     "action": "broadcast",
+     "target": "Go to the shelter",
+     "deadline": 1801
+    }
+   ],
+   "forbidden": [
+    "shelter_before_criterion"
+   ]
+  },
+  {
+   "id": "E3.6",
+   "case": "3B",
+   "title": "Sin enlace con la Tierra durante un evento solar",
+   "events": [
+    {
+     "t": 0,
+     "signal": "earth_link",
+     "value": "down"
+    },
+    {
+     "t": 0,
+     "signal": "onboard_protons_pfu",
+     "value": 3
+    },
+    {
+     "t": 600,
+     "signal": "onboard_protons_pfu",
+     "value": 15
+    }
+   ],
+   "expect": [
+    {
+     "action": "broadcast",
+     "target": "Go to the shelter",
+     "deadline": 601
+    },
+    {
+     "action": "log",
+     "target": "shelter_time_per_passenger",
+     "deadline": 630
+    }
+   ],
+   "forbidden": [
+    "wait_for_earth_data"
+   ]
+  },
+  {
+   "id": "T1",
+   "case": "all",
+   "title": "Dos emergencias a la vez",
+   "events": [
+    {
+     "t": 0,
+     "signal": "p07_accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "p07_ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "p07_wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 5,
+     "signal": "p03_help_button",
+     "value": "pressed"
+    },
+    {
+     "t": 5,
+     "signal": "p03_accel",
+     "value": "still"
+    },
+    {
+     "t": 10,
+     "signal": "p03_wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest_to_p07",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest_to_p03_not_busy",
+     "deadline": 30
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "same_helper_two_tasks"
+   ]
+  },
+  {
+   "id": "T2",
+   "case": "all",
+   "title": "El ayudante confirma pero no avanza",
+   "events": [
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 12,
+     "signal": "helper_1",
+     "value": "ack"
+    },
+    {
+     "t": 40,
+     "signal": "helper_1_step",
+     "value": "no_progress"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Repeat current step",
+     "deadline": 42
+    },
+    {
+     "action": "assign_helper",
+     "target": "second_nearest",
+     "deadline": 60
+    }
+   ],
+   "forbidden": [
+    "multi_step_screen"
+   ]
+  },
+  {
+   "id": "T3",
+   "case": "all",
+   "title": "Bateria baja en la pulsera",
+   "events": [
+    {
+     "t": 0,
+     "signal": "battery_pct",
+     "value": 5
+    }
+   ],
+   "expect": [
+    {
+     "action": "mode",
+     "target": "minimal",
+     "deadline": 5
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "disable_response_check",
+    "disable_help_button",
+    "disable_pulse_loss_detection"
+   ]
+  },
+  {
+   "id": "T4",
+   "case": "all",
+   "title": "La capa de IA no responde",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ai_layer",
+     "value": "timeout"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    }
+   ],
+   "forbidden": [
+    "wait_for_ai"
+   ]
+  },
+  {
+   "id": "T5",
+   "case": "all",
+   "title": "Dias sin enlace con la Tierra",
+   "events": [
+    {
+     "t": 0,
+     "signal": "earth_link",
+     "value": "down"
+    },
+    {
+     "t": 100,
+     "signal": "ship_cabin_alarm",
+     "value": "depressurization"
+    },
+    {
+     "t": 86400,
+     "signal": "earth_link",
+     "value": "up"
+    }
+   ],
+   "expect": [
+    {
+     "action": "broadcast",
+     "target": "Put your oxygen mask on now",
+     "deadline": 101
+    },
+    {
+     "action": "queue_earth",
+     "target": "report",
+     "deadline": 160
+    },
+    {
+     "action": "send_earth",
+     "target": "queued_reports",
+     "deadline": 86460
+    }
+   ],
+   "forbidden": [
+    "wait_for_earth",
+    "drop_log"
+   ]
+  },
+  {
+   "id": "T6",
+   "case": "all",
+   "title": "Una sola senal anormal",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 145
+    },
+    {
+     "t": 0,
+     "signal": "activity",
+     "value": "rest"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_quality",
+     "value": "good"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 4,
+     "signal": "wrist_response",
+     "value": "tap_coherent"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 2
+    },
+    {
+     "action": "log",
+     "target": "event",
+     "deadline": 10
+    }
+   ],
+   "forbidden": [
+    "general_alarm",
+    "assign_helper"
+   ]
+  },
+  {
+   "id": "T7",
+   "case": "all",
+   "title": "El DEA falta o tiene poca bateria",
+   "events": [
+    {
+     "t": 0,
+     "signal": "station_selfcheck",
+     "value": "start"
+    },
+    {
+     "t": 1,
+     "signal": "station_a_aed",
+     "value": "missing"
+    },
+    {
+     "t": 1,
+     "signal": "station_b_aed_battery",
+     "value": "low"
+    }
+   ],
+   "expect": [
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 10
+    },
+    {
+     "action": "log",
+     "target": "station_status",
+     "deadline": 10
+    }
+   ],
+   "forbidden": [
+    "light_empty_station",
+    "send_helper_to_unavailable_aed"
+   ]
+  },
+  {
+   "id": "T8",
+   "case": "all",
+   "title": "Pasajero mayor que no habla ingles",
+   "events": [
+    {
+     "t": 0,
+     "signal": "profile_language",
+     "value": "es"
+    },
+    {
+     "t": 0,
+     "signal": "profile_age_group",
+     "value": "elderly"
+    },
+    {
+     "t": 0,
+     "signal": "help_button",
+     "value": "pressed"
+    },
+    {
+     "t": 6,
+     "signal": "voice_response",
+     "value": "si"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "¿Estás bien? Tocá o decí sí",
+     "deadline": 1
+    },
+    {
+     "action": "accept",
+     "target": "voice_response",
+     "deadline": 7
+    }
+   ],
+   "forbidden": [
+    "english_only_instructions",
+    "text_only_instructions"
+   ]
+  },
+  {
+   "id": "T9",
+   "case": "all",
+   "title": "Linea basal en adaptacion a la microgravedad",
+   "events": [
+    {
+     "t": 0,
+     "signal": "flight_day",
+     "value": 2
+    },
+    {
+     "t": 0,
+     "signal": "baseline_status",
+     "value": "adapting"
+    },
+    {
+     "t": 0,
+     "signal": "resting_hr_delta_pct",
+     "value": 15
+    },
+    {
+     "t": 600,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 600,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 600,
+     "signal": "wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "log",
+     "target": "baseline_adapting",
+     "deadline": 5
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 617
+    }
+   ],
+   "forbidden": [
+    "general_alarm_baseline_drift",
+    "wait_for_baseline"
+   ]
+  },
+  {
+   "id": "T10",
+   "case": "all",
+   "title": "Cae el hub o se pierde el enlace LoRa",
+   "events": [
+    {
+     "t": 0,
+     "signal": "hub",
+     "value": "down"
+    },
+    {
+     "t": 0,
+     "signal": "lora_link",
+     "value": "lost"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 300,
+     "signal": "hub",
+     "value": "up"
+    }
+   ],
+   "expect": [
+    {
+     "action": "local_alarm",
+     "target": "patient_wristband",
+     "deadline": 17
+    },
+    {
+     "action": "show",
+     "target": "preloaded_cpr_steps",
+     "deadline": 20
+    },
+    {
+     "action": "show",
+     "target": "preloaded_aed_station_route",
+     "deadline": 20
+    },
+    {
+     "action": "log",
+     "target": "local",
+     "deadline": 20
+    },
+    {
+     "action": "sync",
+     "target": "log",
+     "deadline": 330
+    }
+   ],
+   "forbidden": [
+    "assume_delivered_without_ack"
+   ]
+  },
+  {
+   "id": "T11",
+   "case": "all",
+   "title": "El asignado no esta cerca",
+   "events": [
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 20,
+     "signal": "helper_1",
+     "value": "not_near"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest_by_compartment",
+     "deadline": 17
+    },
+    {
+     "action": "reassign_helper",
+     "target": "second_nearest",
+     "deadline": 25
+    }
+   ],
+   "forbidden": [
+    "rssi_as_distance"
+   ]
+  },
+  {
+   "id": "T16",
+   "case": "all",
+   "title": "El DEA mas cercano esta en uso y el ayudante no llega a la otra estacion",
+   "events": [
+    {
+     "t": 0,
+     "signal": "station_a_aed",
+     "value": "in_use"
+    },
+    {
+     "t": 0,
+     "signal": "p07_ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "p07_accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "p07_wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 20,
+     "signal": "aed_runner_1",
+     "value": "cannot_reach"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest_to_p07",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner_station_b",
+     "deadline": 17
+    },
+    {
+     "action": "light_station",
+     "target": "station_b",
+     "deadline": 17
+    },
+    {
+     "action": "show_route",
+     "target": "aed_runner_to_station_b",
+     "deadline": 17
+    },
+    {
+     "action": "reassign_helper",
+     "target": "nearest_to_station_b",
+     "deadline": 30
+    },
+    {
+     "action": "prompt_helper",
+     "target": "AED on its way",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "send_helper_to_aed_in_use",
+    "take_aed_from_ongoing_resuscitation",
+    "stop_cpr_waiting_for_aed"
+   ]
+  },
+  {
+   "id": "T17",
+   "case": "all",
+   "title": "Perdida de pulso por mal contacto, la persona responde",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "ppg_quality",
+     "value": "poor_contact"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "moving"
+    },
+    {
+     "t": 3,
+     "signal": "wrist_response",
+     "value": "tap"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "prompt_self",
+     "target": "Adjust your wristband",
+     "deadline": 5
+    },
+    {
+     "action": "measure",
+     "target": "ppg_repeat",
+     "deadline": 30
+    },
+    {
+     "action": "log",
+     "target": "event",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "general_alarm",
+    "assign_helper"
+   ]
+  },
+  {
+   "id": "T17b",
+   "case": "all",
+   "title": "Perdida de pulso con mal contacto posible y sin respuesta: no se demora la RCP",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "ppg_quality",
+     "value": "poor_contact"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 17
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Start CPR",
+     "deadline": 20
+    }
+   ],
+   "forbidden": [
+    "delay_cpr_for_contact_check",
+    "deliver_shock"
+   ]
+  }
+ ]
+}
