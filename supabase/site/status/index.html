@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eva backend status</title>
+<meta name="description" content="Live status of Eva's Earth-side backend: acknowledged signed records per ship.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico">
+<style>
+  :root { --bg: #ffffff; --ink: #0c0c0c; --muted: #666462; --rule: #e3e1dd; --paper: #ffffff; --ok: #1d7a46; --warn: #a15c00; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #000000; --ink: #f4f3f1; --muted: #9b9996; --rule: #3d3d3d; --paper: #131313; --ok: #5bd08c; --warn: #f0b45a; }
+  }
+  :root[data-theme="dark"] { --bg: #000000; --ink: #f4f3f1; --muted: #9b9996; --rule: #3d3d3d; --paper: #131313; --ok: #5bd08c; --warn: #f0b45a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 6px; }
+  p.lead { color: var(--muted); margin: 0 0 28px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; padding: 4px 12px; border: 1px solid var(--rule); border-radius: 999px; margin-bottom: 24px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .live .dot { background: var(--ok); } .down .dot { background: var(--warn); }
+  .ship { background: var(--paper); border: 1px solid var(--rule); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .ship h2 { font-size: 18px; font-weight: 600; margin: 0 0 2px; }
+  .ship .id { color: var(--muted); font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
+  .stat .v { font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .stat .k { color: var(--muted); font-size: 13px; }
+  footer { color: var(--muted); font-size: 13px; margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 16px; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Eva backend status</h1>
+  <p class="lead">Earth-side mirror of the ship's Ed25519-signed record chain. Counts only: no health data leaves this page.</p>
+  <div id="state" class="pill"><span class="dot"></span><span id="state-text">Checking…</span></div>
+  <div id="ships"></div>
+  <footer>
+    Public aggregates from the <code>public_stats</code> view (Supabase, São Paulo), read with the public anon key.
+    Every record counted here was hashed, signed on board and acknowledged by the ground before it was mirrored.
+    Demo ships hold fictional data. <a href="/">Back to Eva</a>
+  </footer>
+</main>
+<script>
+(function () {
+  var state = document.getElementById("state"), text = document.getElementById("state-text"), list = document.getElementById("ships");
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function stat(v, k) { var s = el("div", "stat"); s.appendChild(el("div", "v", v)); s.appendChild(el("div", "k", k)); return s; }
+  function ago(iso) {
+    if (!iso) return "never";
+    var s = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 1000));
+    if (s < 90) return s + " s ago"; if (s < 5400) return Math.round(s / 60) + " min ago";
+    if (s < 172800) return Math.round(s / 3600) + " h ago"; return Math.round(s / 86400) + " days ago";
+  }
+  fetch("/api/status", { headers: { accept: "application/json" } })
+    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+    .then(function (res) {
+      if (!res.ok || !Array.isArray(res.j.ships)) throw new Error("down");
+      state.className = "pill live"; text.textContent = "Backend live · " + res.j.ships.length + " ship" + (res.j.ships.length === 1 ? "" : "s");
+      res.j.ships.forEach(function (s) {
+        var card = el("section", "ship");
+        card.appendChild(el("h2", null, s.display_name + (s.demo ? " · demo" : "")));
+        card.appendChild(el("div", "id", s.ship + " · epoch " + s.epoch));
+        var g = el("div", "grid");
+        g.appendChild(stat(String(s.acknowledged_records), "acknowledged signed records"));
+        g.appendChild(stat(String(s.open_cases) + " / " + String(s.total_cases), "open / total cases"));
+        g.appendChild(stat(String(s.passengers), "passenger summaries"));
+        g.appendChild(stat(s.station_mode || "unknown", "medical station"));
+        g.appendChild(stat(ago(s.last_ingest_at), "last record mirrored"));
+        card.appendChild(g); list.appendChild(card);
+      });
+    })
+    .catch(function () { state.className = "pill down"; text.textContent = "Backend unreachable right now"; });
+})();
+</script>
+</body>
+</html>
