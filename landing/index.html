@@ -205,19 +205,18 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .bdev .scr{font-size:clamp(9px,3vw,13px)}
 }
 
-/* wristband v2: pinned steps on a white studio stage (the interim reference images have a white background; swap band2-*.webp for renders) */
+/* wristband v2: pinned steps on a white studio stage (Codex renders band2-hero-white / exploded / base-alone, 1536 × 1024; hotspots in % of that frame) */
 .bandp{--canvas:#fdfdfc;--ink:#0c0c0c;--muted:rgba(12,12,12,.64);--rule:#dedbd6;--orange:#F28A1A}
 .storyp.bandp{height:560svh}
 .bandp .ptxt{left:max(20px,env(safe-area-inset-left,0px));top:0;bottom:0;width:min(420px,31vw)}
 .bandp .bview{position:absolute;right:max(20px,2vw);top:0;bottom:0;width:calc(100% - min(420px,31vw) - 80px);display:grid;place-items:center}
-.bfig{position:relative;width:min(100%,(100svh - 72px - 60px)*1.5);aspect-ratio:1400/933}
+.bfig{position:relative;width:min(100%,(100svh - 72px - 60px)*1.5);aspect-ratio:1536/1024}
 .bfig .bi,.bfig .bsuit{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(.985);transition:opacity .7s var(--ease),transform 1.1s var(--ease)}
 .bfig .on{opacity:1;transform:none}
 .bfig .hs{position:absolute;inset:0;opacity:0;transition:opacity .5s var(--ease) .2s;pointer-events:none}
 .bfig .hs.on{opacity:1}
 .bandp .hot::before{background:var(--orange);box-shadow:0 0 0 1px #0c0c0c,0 0 0 5px rgba(242,138,26,.25)}
 .bandp .hot span{background:#0c0c0c;color:#fff;border-color:#0c0c0c}
-.ecgpad{position:absolute;width:1.9%;aspect-ratio:1/2.1;border-radius:3px;background:linear-gradient(160deg,#f6f6f4,#a3a6a9 50%,#e3e4e2);box-shadow:inset 0 0 0 1px rgba(0,0,0,.5),0 1px 2px rgba(0,0,0,.4);translate:-50% -50%}
 .bscr{position:absolute;left:0;top:0;width:1400px;height:933px;transform-origin:0 0;transform:scale(var(--k,.5));pointer-events:none}
 .bscr .ui{position:absolute;left:0;top:0;width:640px;height:360px;transform-origin:0 0;transform:matrix3d(0.964534,-0.168372,0,-9.61881e-05,0.232334,0.534779,0,-0.000124389,0,0,1,0,308,287,0,1);color:#f4f3f0;padding:36px 48px;display:grid;grid-template-rows:auto 1fr auto;gap:8px;opacity:0;transition:opacity .5s var(--ease)}
 .bscr .ui.on{opacity:1}
@@ -227,12 +226,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .bscr .ui svg{align-self:center;width:100%;height:120px}
 .bscr .ui path{fill:none;stroke:#1fe5c4;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .bsuit text{font-family:var(--font)}
-.bfig .bi{mix-blend-mode:multiply}
+.bfig .bi{mix-blend-mode:multiply;filter:brightness(1.015)} /* lifts the renders' 253–254 backdrop to white so it melts into the stage */
 @media (max-width:760px){
   .storyp.bandp .ptxt{left:0;right:0;width:auto;top:auto;bottom:0;align-content:end;padding:40px max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(transparent,var(--canvas) 24%)}
   .bandp .bview{left:0;right:0;width:auto;top:56px;bottom:38%;padding:0 4px;place-items:center}
-  .bfig{width:118%;margin-left:-9%}
+  .bfig{width:100%;margin-left:0}
   .bandp .hot span{font-size:11px;padding:4px 6px;top:-10px}
+  /* phones: flip a label inward where it would run off the cropped frame */
+  .bandp .hot.ml span{left:auto;right:14px}.bandp .hot.mr span{left:14px;right:auto}
 }
 
 /* sensors record → Eva acts */
@@ -390,6 +391,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .slab .pic{position:relative;max-height:76svh;justify-self:center;width:100%;display:grid;place-items:center}
 .slab .pic img{max-height:72svh;width:auto;max-width:100%;object-fit:contain}
 .slab .pic .shd{position:absolute;inset:auto 0 0 0;margin:auto;opacity:.9}
+/* wristband turntable (8 renders): turns as the slab scrolls past, or by drag / arrow keys */
+.tt{position:relative;width:min(100%,64svh);aspect-ratio:1;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.tt:active{cursor:grabbing}
+.slab .pic .tt img{position:absolute;inset:0;width:100%;height:100%;max-height:none;max-width:none;object-fit:contain;opacity:0;mix-blend-mode:multiply;filter:brightness(1.015);pointer-events:none}
+.slab .pic .tt img.on{opacity:1}
+.tt-hint{margin-top:8px;font-size:13px;color:var(--muted)}
 @media (max-width:900px){.slab{position:relative;top:auto;grid-template-columns:1fr;padding-block:48px;transform:none;filter:none}}
 
 /* Dealt parts grid */
@@ -451,7 +458,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
       <canvas id="heroSky" aria-hidden="true"></canvas>
       <div class="chips" aria-hidden="true">
         <div class="chip" style="left:5%;top:9%"><img class="tl" src="a/ic-eva-orb.webp" alt=""><img class="td" src="a/ic-eva-orb.webp" alt=""></div>
-        <div class="chip" style="left:13%;top:60%"><img class="tl" src="a/ic-aed-station.webp" alt=""><img class="td" src="a/ic-aed-station.webp" alt=""></div>
+        <div class="chip" style="left:13%;top:60%"><img class="tl" src="a/band2-on-wrist.webp" alt="" style="object-position:62% 45%"><img class="td" src="a/band2-on-wrist.webp" alt="" style="object-position:62% 45%"></div>
         <div class="chip" style="right:6%;top:7%"><img class="tl" src="a/chip-mars-w.jpg" alt=""><img class="td" src="a/chip-mars-b.jpg" alt=""></div>
         <div class="chip" style="right:12%;top:58%"><img class="tl" src="a/chip-earth-w.jpg" alt=""><img class="td" src="a/chip-earth-b.jpg" alt=""></div>
         <div class="chip" style="left:38%;top:-3%"><img class="tl" src="a/chip-sun-w.jpg" alt=""><img class="td" src="a/chip-sun-b.jpg" alt=""></div>
@@ -526,9 +533,9 @@ html.lswap main,html.lswap .foot{opacity:.15}
   <section class="pinsec storyp bandp" id="wsec" aria-labelledby="wh">
     <div class="stage">
       <div class="bview"><div class="bfig" id="bfig">
-        <img class="bi on" src="a/band2-joined.webp" alt="The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.">
-        <img class="bi" src="a/band2-stacked.webp" alt="The screen module lifted above the sensor base, showing the spring contacts and the magnet seats between them.">
-        <img class="bi" src="a/band2-parts.webp" alt="The two modules side by side: the screen module seen from below, and the sensor base with its two straps through metal loops.">
+        <img class="bi on" src="a/band2-hero-white.webp" alt="The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.">
+        <img class="bi" src="a/band2-exploded.webp" alt="The screen module lifted above the sensor base: two spring contacts line up with the gold pads on the base, between the magnet seats.">
+        <img class="bi" src="a/band2-base-alone.webp" alt="The sensor base from above, with its contacts and magnet seats, and from below, with the optical pulse sensor and two steel skin electrodes.">
         <svg class="bsuit" viewBox="0 0 1400 933" role="img" aria-label="Suit mode cross-section: the suit sleeve sits between the screen module and the sensor base; the magnets hold, the contacts stay apart, and the base keeps sending by LoRa.">
           <rect x="250" y="250" width="900" height="120" fill="#3A3D42"/><rect x="290" y="262" width="820" height="34" fill="#050607"/><rect x="250" y="250" width="34" height="120" fill="#c4c6c8"/><rect x="1116" y="250" width="34" height="120" fill="#c4c6c8"/>
           <rect x="345" y="350" width="40" height="20" fill="#a6abb0"/><rect x="1015" y="350" width="40" height="20" fill="#a6abb0"/>
@@ -546,15 +553,14 @@ html.lswap main,html.lswap .foot{opacity:.15}
           <text x="700" y="630" font-size="34" text-anchor="middle">Skin · pulse, SpO₂, temperature, EDA</text>
           <text x="700" y="700" font-size="31" fill="#555" text-anchor="middle">ECG still works with bare fingers on the two pads</text>
         </svg>
-        <i class="ecgpad" style="left:23.2%;top:43%;rotate:-25deg" aria-hidden="true"></i><i class="ecgpad" style="left:77.7%;top:32%;rotate:-31deg" aria-hidden="true"></i>
-        <div class="bscr" id="bscr" aria-hidden="true">
+                <div class="bscr" id="bscr" aria-hidden="true">
           <div class="ui on" data-u="home"><div class="k"><span>EVA</span><span>08:42</span></div><div class="big">All good</div><div class="sub">Pulse 72 · SpO₂ 98% · 36.4 °C</div></div>
           <div class="ui" data-u="ecg"><div class="k"><span>EVA · ECG</span><span>24 s</span></div><svg viewBox="0 0 240 40" preserveAspectRatio="none"><path d="M0 24H18l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H72l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H126l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H180l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H240"/></svg><div class="sub">Keep still · one finger on each pad</div></div>
         </div>
-        <div class="hs on" data-k="0"><i class="hot" style="left:45.2%;top:22.3%"><span>Help button</span></i><i class="hot" style="left:57.1%;top:62%"><span>Base button</span></i><i class="hot" style="left:20.1%;top:48.8%"><span>Side button</span></i><i class="hot" style="left:66.1%;top:53.6%"><span>Speaker</span></i></div>
-        <div class="hs" data-k="1"><i class="hot" style="left:45.7%;top:24%"><span>Screen module</span></i><i class="hot l" style="left:51.4%;top:57.3%"><span>Spring contacts</span></i><i class="hot" style="left:22%;top:66%"><span>Sensor base</span></i></div>
-        <div class="hs" data-k="2"><i class="hot" style="left:23.6%;top:47.7%"><span>Screen module, underside</span></i><i class="hot" style="left:71.4%;top:47.2%"><span>Contacts</span></i><i class="hot l" style="left:86.8%;top:53.6%"><span>Magnet seat</span></i><i class="hot l" style="left:57.9%;top:32.2%"><span>Strap loop</span></i></div>
-        <div class="hs" data-k="4"><i class="hot l" style="left:23.2%;top:43%"><span>ECG pad</span></i><i class="hot" style="left:77.7%;top:32%"><span>ECG pad</span></i></div>
+        <div class="hs on" data-k="0"><i class="hot" style="left:45.5%;top:22.4%"><span>Help button</span></i><i class="hot" style="left:57%;top:61.9%"><span>Base button</span></i><i class="hot" style="left:19.6%;top:48%"><span>Side button</span></i><i class="hot" style="left:66.2%;top:53.8%"><span>Speaker</span></i></div>
+        <div class="hs" data-k="1"><i class="hot" style="left:50%;top:13%"><span>Screen module</span></i><i class="hot" style="left:54.7%;top:34.8%"><span>Spring contacts</span></i><i class="hot l" style="left:65%;top:54.8%"><span>Magnet seat</span></i><i class="hot" style="left:28%;top:62%"><span>Sensor base</span></i></div>
+        <div class="hs" data-k="2"><i class="hot" style="left:12.5%;top:38.8%"><span>Magnet seat</span></i><i class="hot ml" style="left:23.2%;top:46.5%"><span>Contacts</span></i><i class="hot" style="left:13.8%;top:65.4%"><span>Strap loop</span></i><i class="hot l" style="left:86.8%;top:43.8%"><span>EDA electrode</span></i><i class="hot ml" style="left:75.5%;top:50.6%"><span>Pulse and SpO₂ sensor</span></i></div>
+        <div class="hs" data-k="4"><i class="hot l mr" style="left:22.3%;top:41.3%"><span>ECG pad</span></i><i class="hot ml" style="left:77%;top:29.5%"><span>ECG pad</span></i></div>
       </div></div>
       <div class="ptxt">
         <p class="label" id="wh">Wristband</p>
@@ -816,7 +822,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
     <div class="slabs">
       <article class="slab studio g" data-slab>
         <div><p class="name">Wristband</p><div class="specs"><div>Modules<span>Screen on top, sensor base on the skin, magnets</span></div><div>Screen<span>Main battery, help button, voice, ECG pads</span></div><div>Talks to<span>Ship hub over LoRa, from both modules</span></div></div></div>
-        <div class="pic"><img src="a/band2-joined.webp" alt="The Eva wristband: a rugged graphite screen module on a sensor base with two fabric straps." loading="lazy"></div>
+        <div class="pic"><div class="tt" id="tt" tabindex="0" role="img" aria-label="The Eva wristband turning on a white studio stage. Drag it or use the arrow keys to turn it."><img src="a/band2-turntable-000.webp" alt="" loading="lazy" class="on"><img src="a/band2-turntable-045.webp" alt="" loading="lazy"><img src="a/band2-turntable-090.webp" alt="" loading="lazy"><img src="a/band2-turntable-135.webp" alt="" loading="lazy"><img src="a/band2-turntable-180.webp" alt="" loading="lazy"><img src="a/band2-turntable-225.webp" alt="" loading="lazy"><img src="a/band2-turntable-270.webp" alt="" loading="lazy"><img src="a/band2-turntable-315.webp" alt="" loading="lazy"></div><p class="tt-hint" aria-hidden="true">Drag to turn</p></div>
       </article>
       <article class="slab dark g" data-slab>
         <div><p class="name">Station</p><div class="specs"><div>Holds<span>12 compartments, the AED in 01</span></div><div>Eva<span>Lights 01 and says what to take</span></div><div>Decides<span>The AED, through its own pads</span></div></div></div>
@@ -847,7 +853,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
       <div class="body">
         <p>Operators buy a WearMeds kit for each passenger and run Eva on the ship hub, licensed per mission.</p>
         <p>Bands come in sizes and finishes, the sensor base takes new validated sensors, and Eva works with the AED the ship already carries. The same platform serves orbital stays, lunar bases and remote work on Earth.</p>
-        <img class="edimg" src="a/wrist-crew.webp" alt="Three passengers, each wearing a WearMeds wristband.">
+        <img class="edimg" src="a/band2-cabin.webp" alt="A passenger holds a handrail in the ship, wearing the Eva wristband." loading="lazy">
       </div>
     </div>
   </section>
@@ -938,8 +944,8 @@ const ES={
 "Eva guides, records and warns. The crew lead confirms, and the AED decides the shock.":"Eva guía, registra y alerta. El líder de la tripulación confirma y el DEA decide la descarga.",
 /* wristband v2 */
 "The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.":"La pulsera Eva: un módulo de pantalla robusto color grafito, con esquinas plateadas y botones naranjas, sobre dos correas de tela oscuras.",
-"The screen module lifted above the sensor base, showing the spring contacts and the magnet seats between them.":"El módulo de pantalla levantado sobre la base de sensores, con los contactos de resorte y los alojamientos de los imanes a la vista.",
-"The two modules side by side: the screen module seen from below, and the sensor base with its two straps through metal loops.":"Los dos módulos lado a lado: el módulo de pantalla visto desde abajo y la base de sensores con sus dos correas pasadas por pasadores metálicos.",
+"The screen module lifted above the sensor base: two spring contacts line up with the gold pads on the base, between the magnet seats.":"El módulo de pantalla levantado sobre la base de sensores: dos contactos de resorte se alinean con las placas doradas de la base, entre los alojamientos de los imanes.",
+"The sensor base from above, with its contacts and magnet seats, and from below, with the optical pulse sensor and two steel skin electrodes.":"La base de sensores vista desde arriba, con sus contactos y los alojamientos de los imanes, y desde abajo, con el sensor óptico de pulso y dos electrodos de acero para la piel.",
 "Suit mode cross-section: the suit sleeve sits between the screen module and the sensor base; the magnets hold, the contacts stay apart, and the base keeps sending by LoRa.":"Corte en modo traje: la manga del traje queda entre el módulo de pantalla y la base de sensores; los imanes sujetan, los contactos quedan separados y la base sigue enviando por LoRa.",
 "Screen module":"Módulo de pantalla","Main battery · help button · voice · ECG pads":"Batería principal · botón de ayuda · voz · placas de ECG",
 "Magnets":"Imanes","hold":"sujetan","Suit":"Manga","sleeve":"del traje",
@@ -952,6 +958,7 @@ const ES={
 "Help button":"Botón de ayuda","Base button":"Botón de la base","Side button":"Botón lateral","Speaker":"Parlante",
 "Spring contacts":"Contactos de resorte","Sensor base":"Base de sensores","Screen module, underside":"Módulo de pantalla, cara inferior",
 "Contacts":"Contactos","Magnet seat":"Alojamiento del imán","Strap loop":"Pasador de la correa","ECG pad":"Placa ECG",
+"Pulse and SpO₂ sensor":"Sensor de pulso y SpO₂","EDA electrode":"Electrodo EDA",
 "One band, two magnetic modules":"Una pulsera, dos módulos magnéticos",
 "A rugged screen module clicks onto a slim sensor base. Metal corner bumpers, a rubberised frame and orange buttons you can find without looking.":"Un módulo de pantalla robusto encastra sobre una base de sensores delgada. Esquinas metálicas, marco engomado y botones naranjas que se encuentran sin mirar.",
 "The screen module on top":"Arriba, el módulo de pantalla",
@@ -1071,7 +1078,7 @@ const ES={
 "Modules":"Módulos","Screen on top, sensor base on the skin, magnets":"Pantalla arriba, base de sensores en la piel, imanes",
 "Screen":"Pantalla","Main battery, help button, voice, ECG pads":"Batería principal, botón de ayuda, voz, placas de ECG",
 "Talks to":"Se comunica con","Ship hub over LoRa, from both modules":"El hub de la nave por LoRa, desde ambos módulos",
-"The Eva wristband: a rugged graphite screen module on a sensor base with two fabric straps.":"La pulsera Eva: un módulo de pantalla robusto color grafito sobre una base de sensores con dos correas de tela.",
+"The Eva wristband turning on a white studio stage. Drag it or use the arrow keys to turn it.":"La pulsera Eva girando en un estudio blanco. Arrastrala o usá las flechas para girarla.","Drag to turn":"Arrastrá para girar",
 "Station":"Estación","Holds":"Contiene","12 compartments, the AED in 01":"12 compartimientos, el DEA en el 01",
 "Lights 01 and says what to take":"Ilumina el 01 y dice qué retirar","Decides":"Decide","The AED, through its own pads":"El DEA, con sus propios parches",
 "The ship’s emergency station: 12 compartments, the AED in 01 lit teal.":"La estación de emergencia de la nave: 12 compartimientos, el DEA en el 01 iluminado en turquesa.",
@@ -1085,7 +1092,7 @@ const ES={
 "Business":"Negocio","Hardware once, Eva every mission":"El hardware, una vez; Eva, en cada misión",
 "Operators buy a WearMeds kit for each passenger and run Eva on the ship hub, licensed per mission.":"Los operadores compran un kit WearMeds por pasajero y corren Eva en el hub de la nave, con licencia por misión.",
 "Bands come in sizes and finishes, the sensor base takes new validated sensors, and Eva works with the AED the ship already carries. The same platform serves orbital stays, lunar bases and remote work on Earth.":"Las pulseras vienen en varios talles y terminaciones, la base de sensores admite nuevos sensores validados y Eva funciona con el DEA que la nave ya lleva. La misma plataforma sirve para estadías orbitales, bases lunares y trabajo remoto en la Tierra.",
-"Three passengers, each wearing a WearMeds wristband.":"Tres pasajeros, cada uno con una pulsera WearMeds.",
+"A passenger holds a handrail in the ship, wearing the Eva wristband.":"Un pasajero se sostiene de una baranda en la nave, con la pulsera Eva puesta.",
 "Team":"Equipo","Contact":"Contacto",
 "To see Eva working or to discuss a mission, start here:":"Para ver Eva en funcionamiento o hablar de una misión, empezá acá:",
 "Open the prototype":"Abrir el prototipo","Read the research":"Leer la investigación",
@@ -1217,11 +1224,11 @@ function steps(id,onStep){const sec=document.getElementById(id), st=sec.querySel
     if(i!==cur){cur=i;sts.forEach((e,k)=>e.classList.toggle('on',k===i));onStep(i,sts[i],st)}});
   return ()=>{if(cur>=0)onStep(cur,sts[cur],st)}}
 /* 5 · Wristband v2: each step shows one view (joined, stacked, parts, suit cross-section) and its hotspots; the Eva screen UI is fitted to the joined view's glass */
-const bfig=document.getElementById('bfig'), bscr=document.getElementById('bscr'), bviews=[...bfig.querySelectorAll('.bi,.bsuit')], bhs=[...bfig.querySelectorAll('.hs')], bui=[...bscr.querySelectorAll('.ui')], bpads=[...bfig.querySelectorAll('.ecgpad')];
+const bfig=document.getElementById('bfig'), bscr=document.getElementById('bscr'), bviews=[...bfig.querySelectorAll('.bi,.bsuit')], bhs=[...bfig.querySelectorAll('.hs')], bui=[...bscr.querySelectorAll('.ui')];
 onMeasure(()=>bscr.style.setProperty('--k',(bfig.clientWidth/1400).toFixed(4)));
 steps('wsec',(i,st)=>{const v=+st.dataset.v, u=st.dataset.u||'home';
   bviews.forEach((el,k)=>el.classList.toggle('on',k===v)); bhs.forEach(h=>h.classList.toggle('on',+h.dataset.k===i));
-  bui.forEach(el=>el.classList.toggle('on',v===0&&el.dataset.u===u)); bscr.style.transition="opacity .5s";bscr.style.opacity=v===0?1:0; bpads.forEach(pd=>pd.style.opacity=v===0?1:0)});
+  bui.forEach(el=>el.classList.toggle('on',v===0&&el.dataset.u===u)); bscr.style.transition="opacity .5s";bscr.style.opacity=v===0?1:0;});
 const hlA=document.getElementById('hlA'), hlT=document.getElementById('hlT');
 // maps a point given in % of an image's natural size to its box, for object-fit cover or contain (padding aware)
 function imgPt(img,pt){if(!img||!pt||!img.naturalWidth)return null; const cs=getComputedStyle(img), pl=parseFloat(cs.paddingLeft), pr=parseFloat(cs.paddingRight), ptp=parseFloat(cs.paddingTop), pb=parseFloat(cs.paddingBottom);
@@ -1392,6 +1399,16 @@ add(y=>{const v=V();cards.forEach((c,i)=>{const k=reduce?1:oc3(clamp((y+v-PT-.05
 /* wordmark */
 const mark=document.querySelector('.mark'); let MT=0; onMeasure(()=>MT=docTop(mark));
 add(y=>{const v=V();mark.style.setProperty('--w',(reduce?1:oc3(clamp((y+v-MT)/(mark.offsetHeight+v*.25)))).toFixed(3))});
+
+/* wristband turntable: one turn as the slab scrolls through the view, plus drag and arrow keys; reduced motion keeps frame 0 until the viewer turns it */
+{const tt=document.getElementById('tt'); if(tt){const fr=[...tt.querySelectorAll('img')], N=fr.length; let man=0, cur=0, TTop=0, drag=null;
+  const auto=()=>reduce?0:Math.floor(clamp((scrollY+V()-TTop)/(V()+tt.offsetHeight))*N*.999);
+  const show=()=>{const k=(((auto()+man)%N)+N)%N; if(k!==cur){fr[cur].classList.remove('on');fr[k].classList.add('on');cur=k}};
+  onMeasure(()=>TTop=docTop(tt)); add(show);
+  tt.addEventListener('pointerdown',e=>{drag={x:e.clientX,m:man};tt.setPointerCapture(e.pointerId)});
+  tt.addEventListener('pointermove',e=>{if(!drag)return; man=drag.m-Math.round((e.clientX-drag.x)/36); show()});
+  const end=()=>{drag=null}; tt.addEventListener('pointerup',end); tt.addEventListener('pointercancel',end);
+  tt.addEventListener('keydown',e=>{if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return; man+=e.key==='ArrowRight'?1:-1; show(); e.preventDefault()})}}
 
 /* team (re-mounted when the language changes) */
 const TEAM={
