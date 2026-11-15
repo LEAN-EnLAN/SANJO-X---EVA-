@@ -1,8 +1,8 @@
 {% import "app/_ui.html" as u %}
-<div class="flex items-center justify-between gap-3 pt-1">
-  <a {% call u::go("/app/plan", c.seat, "tab") %} aria-label="Today's plan" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("list", 18)|safe }}</a>
-  <p class="text-xs uppercase tracking-label text-muted">Food · today</p>
-  <button type="button" aria-label="Log a meal" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" onclick="document.getElementById('meal-text').focus()">{{ crate::web::ui::ic("plus", 18)|safe }}</button>
+<div class="navbar flex items-center justify-between gap-3">
+  <a {% call u::go("/app/plan", c.seat, "tab") %} aria-label="Today's plan" class="icon-btn press">{{ crate::web::ui::ic("list", 18)|safe }}</a>
+  <p class="text-h3 text-ink">Food · today</p>
+  <button type="button" aria-label="Log a meal" class="icon-btn press" onclick="document.getElementById('meal-text').focus()">{{ crate::web::ui::ic("plus", 18)|safe }}</button>
 </div>
 {% call u::hero("nutrition", "A ship meal tray: chicken with vegetables, fruit, a drink pouch and coffee", "Food today") %}
 <div class="flex items-center gap-5">
@@ -17,7 +17,7 @@
     {% for mc in macros %}
     <div class="flex flex-col gap-1.5">
       <div class="flex items-baseline justify-between gap-2"><p class="text-sm text-ink">{{ mc.label }}</p><p class="text-xs text-muted"><span class="text-ink">{{ mc.value }}</span> / {{ mc.goal }} g</p></div>
-      <div class="relative h-2 w-full overflow-hidden rounded-full bg-hatch"><div class="spring-w grow-w h-full rounded-full bg-info" id="macro-{{ loop.index }}" data-grow style="--pct: {{ mc.pct }}%"></div></div>
+      <div class="relative h-2 w-full overflow-hidden rounded-full bg-white/10"><div class="spring-w grow-w h-full rounded-full bg-info" id="macro-{{ loop.index }}" data-grow style="--pct: {{ mc.pct }}%"></div></div>
     </div>
     {% endfor %}
     <p class="text-xs text-muted">Estimated from {{ eaten }} kcal</p>
@@ -40,13 +40,13 @@
 <form class="flex flex-col gap-2 rounded-card bg-surface p-3" hx-post="/api/eva/tool" hx-target="#toast" data-tool-form data-tool="log_meal">
   <input type="hidden" name="seat" value="{{ c.seat }}"><input type="hidden" name="name" value="log_meal">
   <div class="flex gap-1.5 overflow-x-auto [scrollbar-width:none]" role="radiogroup" aria-label="Which meal">
-    {% for k in kinds %}<label class="cursor-pointer"><input type="radio" name="arg.kind" value="{{ k }}" class="peer sr-only" {% if self.is_now(k) %}checked{% endif %}><span class="inline-flex h-8 items-center rounded-full border border-line px-3 text-xs text-ink peer-checked:border-transparent peer-checked:bg-ink peer-checked:text-on-light peer-focus-visible:outline-2 peer-focus-visible:outline-info">{{ k }}</span></label>{% endfor %}
+    {% for k in kinds %}<label class="cursor-pointer"><input type="radio" name="arg.kind" value="{{ k }}" class="peer sr-only" {% if self.is_now(k) %}checked{% endif %}><span class="inline-flex h-10 items-center rounded-[20px] bg-white/6 px-4 text-label font-semibold text-ink peer-checked:bg-[color-mix(in_oklab,var(--tint)_22%,transparent)] peer-checked:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--tint)_60%,transparent)] peer-focus-visible:outline-2 peer-focus-visible:outline-info">{{ k }}</span></label>{% endfor %}
   </div>
   <div class="flex items-center gap-2">
     <label class="press inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-raised text-ink" aria-label="Log it from a photo">{{ crate::web::ui::ic("camera", 18)|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-meal data-seat="{{ c.seat }}"></label>
     <label class="sr-only" for="meal-text">What did you eat?</label>
     <input id="meal-text" name="arg.text" required maxlength="200" autocomplete="off" placeholder="What did you eat?" class="h-11 min-w-0 flex-1 rounded-full border border-line bg-background px-4 text-sm text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-info">
-    <button type="submit" aria-label="Log meal" class="press inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-ink text-on-light">{{ crate::web::ui::ic("check", 18)|safe }}</button>
+    <button type="submit" aria-label="Log meal" class="press inline-grid size-12 shrink-0 place-items-center rounded-full bg-grad-food text-on-light e2">{{ crate::web::ui::ic("check", 18)|safe }}</button>
   </div>
 </form>
 
@@ -65,13 +65,13 @@
 </section>
 
 <section class="flex flex-col gap-2">
-  <p class="text-xs uppercase tracking-label text-muted">Bones</p>
+  <p class="text-h3 text-ink">Bones</p>
   <div class="grid grid-cols-2 gap-2">
-    <div class="flex items-center gap-2.5 rounded-tile bg-surface px-2.5 py-2">
+    <div class="flex items-center gap-2.5 tile px-2.5 py-2">
       {{ crate::web::ui::pic("calcium", "size-10")|safe }}
       <span class="flex min-w-0 flex-col gap-0.5"><span class="flex items-center gap-2 text-sm text-ink"><span class="size-2 rounded-full bg-warn"></span>Calcium</span><span class="text-xs text-muted">Low · 620 / 1,000 mg</span></span>
     </div>
-    <div class="flex items-center gap-2.5 rounded-tile bg-surface px-2.5 py-2">
+    <div class="flex items-center gap-2.5 tile px-2.5 py-2">
       {{ crate::web::ui::pic("vitamin-d", "size-10")|safe }}
       <span class="flex min-w-0 flex-col gap-0.5"><span class="flex items-center gap-2 text-sm text-ink"><span class="size-2 rounded-full bg-ok"></span>Vitamin D</span><span class="text-xs text-muted">Taken · good</span></span>
     </div>

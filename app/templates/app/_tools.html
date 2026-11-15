@@ -2,7 +2,7 @@
 <div class="flex flex-col gap-5 pt-1">
   <div class="flex items-end justify-between gap-3">
     <div class="flex flex-col gap-1">
-      <p class="text-xs uppercase tracking-label text-muted">Same tools Eva uses</p>
+      <p class="text-h3 text-ink">Same tools Eva uses</p>
       <h2 class="text-2xl leading-none tracking-tight text-ink">Do it yourself</h2>
     </div>
     <button type="button" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink" aria-label="Close" data-sheet-close>{{ crate::web::ui::ic("x", 18)|safe }}</button>
@@ -23,12 +23,12 @@
       {% let art = crate::web::views::tool_art(f.name.as_str()) %}{% if art.is_empty() %}<span class="text-info" aria-hidden="true">{{ crate::web::ui::ic(f.icon, 18)|safe }}</span>{% else %}{{ crate::web::ui::pic(art, "size-8 -ml-1.5")|safe }}{% endif %}
       <label class="sr-only" for="tf-{{ f.name }}">{{ f.label }}</label>
       <input id="tf-{{ f.name }}" name="arg.{{ f.field }}" required maxlength="200" autocomplete="off" placeholder="{{ f.label }} · {{ f.placeholder }}" class="h-10 min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-muted focus-visible:outline-none">
-      <button type="submit" class="press inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-on-light" aria-label="{{ f.label }}">{{ crate::web::ui::ic("send", 15)|safe }}</button>
+      <button type="submit" class="press inline-grid size-10 shrink-0 place-items-center rounded-full bg-grad-eva text-on-light" aria-label="{{ f.label }}">{{ crate::web::ui::ic("send", 15)|safe }}</button>
     </form>
     {% endfor %}
   </div>
   <div class="flex flex-col gap-2">
-    <p class="text-xs uppercase tracking-label text-muted">Emergency</p>
+    <p class="text-h3 text-ink">Emergency</p>
     {% for b in emergency %}
     <button type="button" class="press flex items-center gap-3 rounded-tile border border-critical/40 bg-critical/10 px-3 py-3 text-left" {% call u::tool(b) %}>
       {% if b.art.is_empty() %}<span class="text-critical">{{ crate::web::ui::ic(b.icon, 20)|safe }}</span>{% else %}{{ crate::web::ui::pic(b.art, "size-10")|safe }}{% endif %}

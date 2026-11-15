@@ -171,7 +171,7 @@
 .glow { box-shadow: var(--e1), 0 12px 40px -8px color-mix(in oklab, var(--tint) 35%, transparent); }
 .text-grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .bg-grad { background: var(--grad); }
-.bg-grad-eva { background: var(--grad-eva); } .bg-grad-heart { background: var(--grad-heart); } .bg-grad-emergency { background: var(--grad-emergency); } .bg-grad-brand { background: var(--grad-brand); }
+.bg-grad-eva { background: var(--grad-eva); } .bg-grad-mood { background: var(--grad-mood); } .bg-grad-food { background: var(--grad-food); } .bg-grad-temp { background: var(--grad-temp); } .bg-grad-water { background: var(--grad-water); } .bg-grad-oxygen { background: var(--grad-oxygen); } .bg-grad-heart { background: var(--grad-heart); } .bg-grad-emergency { background: var(--grad-emergency); } .bg-grad-brand { background: var(--grad-brand); }
 .bg-tint-10 { background: color-mix(in oklab, var(--tint) 10%, var(--color-surface)); }
 .bg-tint-16 { background: color-mix(in oklab, var(--tint) 16%, transparent); }
 .text-tint { color: var(--tint); }
@@ -348,7 +348,7 @@ html[data-eva-mode="rules"] .tab-eva::after { content: ""; position: absolute; t
 .avatar { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: var(--grad-eva); color: var(--color-on-light); font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; }
 .link-pill { display: inline-flex; align-items: center; gap: 0.375rem; height: 2rem; padding: 0 0.75rem; border-radius: 999px; background: #FFFFFF0F; font-size: 0.75rem; font-weight: 600; color: var(--color-muted); }
 /* sub-screen nav bar: sticky with a fade to transparent */
-.navbar { position: sticky; top: 0; z-index: 20; margin: 0 -1.25rem; padding: 0.25rem 1.25rem 0.5rem; background: linear-gradient(#070A14 55%, transparent); }
+.navbar { position: relative; z-index: 20; padding-top: 0.25rem; }
 
 /* bottom sheet: --sheet-y is 0 (open) to 100 (closed), driven by a spring and the finger */
 .sheet-panel { transform: translateY(calc(var(--sheet-y, 100) * 1%)); border-radius: 2rem 2rem 0 0; background: var(--color-raised); box-shadow: var(--e3); will-change: transform; }
@@ -746,3 +746,15 @@ html[data-eva-mode="rules"] .w-eva::after { content: ""; position: absolute; top
 @media (prefers-reduced-motion: reduce) {
   .w-colon, .w-push, .w-breath-ring, .w-evaring { animation: none !important; }
 }
+
+/* vitals chart: the line draws left to right, then the area fades in; the live dot breathes */
+.chart-line { stroke-dasharray: 1; animation: chart-draw 700ms var(--ease-fade) both; }
+.chart-area { animation: fade-in 400ms 500ms var(--ease-fade) both; }
+@keyframes chart-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.chart-dot { animation: pulse-o 1.6s ease-in-out infinite; }
+::view-transition-group(vital-hero), ::view-transition-group(vital-value) { animation-duration: 420ms; animation-timing-function: var(--ease-spring-swift); }
+::view-transition-old(root) { animation: 180ms both fade-out; }
+::view-transition-new(root) { animation: 260ms 80ms both fade-in; }
+@keyframes fade-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .chart-line, .chart-area, .chart-dot { animation: none; } }

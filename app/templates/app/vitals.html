@@ -1,32 +1,46 @@
 {% import "app/_ui.html" as u %}
-<div class="flex items-center justify-between gap-3 pt-1">
-  <a {% call u::go("/app/home", c.seat, "back") %} aria-label="Back" data-back class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
-  <p class="text-xs uppercase tracking-label text-muted">{{ title }} · {% if kind == "sleep" %}last night{% else if kind == "water" %}today{% else %}live{% endif %}</p>
+<div class="navbar flex items-center justify-between gap-3">
+  <a {% call u::go("/app/home", c.seat, "back") %} aria-label="Back" data-back class="icon-btn press">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <p class="text-h3 text-ink">{{ title }} · {% if kind == "sleep" %}last night{% else if kind == "water" %}today{% else %}live{% endif %}</p>
   <span class="size-11"></span>
 </div>
-{% call u::hero(hero, hero_alt, title) %}
-<div class="flex flex-col gap-2">
-  <span class="inline-flex items-center gap-1 self-start rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(tone) }}">{{ word }}</span>
-  <h1 class="text-6xl leading-none tracking-tight text-ink tabular-nums">{{ value }}{% if !unit.is_empty() %}<span class="ml-2 text-xl text-muted">{{ unit }}</span>{% endif %}</h1>
-  <p class="text-sm text-muted">{{ usual }}</p>
-</div>
+<figure class="card-hero relative shrink-0 p-0" data-tint="{{ crate::web::pages::vital_tint(kind) }}">
+  <img src="/static/img/hero/{{ hero }}.webp" alt="{{ hero_alt }}" class="block aspect-4/3 w-full object-cover" width="1200" height="800" decoding="async" style="view-transition-name: vital-hero">
+  <span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,#070A14F0_100%)]" aria-hidden="true"></span>
+  <figcaption class="absolute right-6 bottom-5 left-6 flex flex-col gap-2">
+    <span class="badge badge-dot self-start {{ crate::web::ui::badge(tone) }}">{{ word }}</span>
+    <h1 class="flex items-baseline gap-2 text-ink"><span class="text-vital-xl" data-count="detail-{{ kind }}" style="view-transition-name: vital-value">{{ value }}</span>{% if !unit.is_empty() %}<span class="text-xl font-medium text-muted">{{ unit }}</span>{% endif %}</h1>
+    <p class="text-label text-muted">{{ title }} · {{ usual }}</p>
+  </figcaption>
+</figure>
 {% if let Some((pts, by, bh, lx, ly)) = chart %}
-<section class="rounded-card border border-line bg-surface p-5 py-4">
-  <header class="mb-2 flex items-center justify-between gap-3"><h2 class="text-base text-ink">Last 2 hours</h2><span class="flex items-center gap-2 text-xs text-muted"><span class="h-3 w-5 rounded-full bg-ok/20 ring-1 ring-ok/40"></span>Your usual</span></header>
-  <svg viewBox="0 0 320 72" class="h-20 w-full" preserveAspectRatio="none" aria-label="{{ title }} over the last 2 hours" role="img"><rect x="0" width="320" y="{{ by }}" height="{{ bh }}" rx="4" class="fill-ok/15"/><polyline points="{{ pts }}" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-ink"/><circle cx="{{ lx }}" cy="{{ ly }}" r="3.5" class="fill-info"/></svg>
+<section class="card flex flex-col gap-3" data-tint="{{ crate::web::pages::vital_tint(kind) }}">
+  <header class="flex items-center justify-between gap-3"><h2 class="text-h3 text-ink">Last 2 hours</h2><span class="flex items-center gap-2 text-caption text-muted"><span class="h-3 w-5 rounded bg-tint-16 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--tint)_40%,transparent)]"></span>Your usual</span></header>
+  <svg viewBox="0 0 320 72" class="h-[140px] w-full overflow-visible" preserveAspectRatio="none" aria-label="{{ title }} over the last 2 hours" role="img">
+    <defs>
+      <linearGradient id="vl-{{ kind }}" x1="0" x2="1"><stop offset="0" style="stop-color: color-mix(in oklab, var(--tint) 60%, #fff)"/><stop offset="1" style="stop-color: var(--tint)"/></linearGradient>
+      <linearGradient id="va-{{ kind }}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--tint); stop-opacity: .35"/><stop offset="1" style="stop-color: var(--tint); stop-opacity: 0"/></linearGradient>
+    </defs>
+    <line x1="0" x2="320" y1="18" y2="18" stroke="#FFFFFF0F" vector-effect="non-scaling-stroke"/><line x1="0" x2="320" y1="36" y2="36" stroke="#FFFFFF0F" vector-effect="non-scaling-stroke"/><line x1="0" x2="320" y1="54" y2="54" stroke="#FFFFFF0F" vector-effect="non-scaling-stroke"/>
+    <rect x="0" width="320" y="{{ by }}" height="{{ bh }}" style="fill: color-mix(in oklab, var(--tint) 10%, transparent)" stroke="color-mix(in oklab, var(--tint) 35%, transparent)" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+    <polygon points="0,72 {{ pts }} {{ lx }},72" fill="url(#va-{{ kind }})" class="chart-area"/>
+    <polyline points="{{ pts }}" fill="none" stroke="url(#vl-{{ kind }})" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" pathLength="1" class="chart-line"/>
+  </svg>
+  <div class="relative -mt-[146px] mb-0 h-[140px] pointer-events-none" aria-hidden="true"><span class="chart-dot absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" style="left: {{ lx / 3.2 }}%; top: {{ ly / 0.72 }}%; box-shadow: 0 0 0 4px color-mix(in oklab, var(--tint) 45%, transparent)"></span></div>
+  <p class="flex justify-between text-caption text-muted"><span>−2 h</span><span>−1 h</span><span>now</span></p>
 </section>
 {% endif %}
 {% if kind == "water" %}
 <section class="flex flex-col gap-2">
   <div class="flex gap-1.5" role="img" aria-label="Glasses of water today">
-    {% for full in glasses %}<span class="flex h-11 flex-1 flex-col justify-end overflow-hidden rounded-t-sm rounded-b-lg border border-line bg-hatch">{% if *full %}<span class="glass-fill h-4/5 bg-info"></span>{% endif %}</span>{% endfor %}
+    {% for full in glasses %}<span class="flex h-10 flex-1 flex-col justify-end overflow-hidden rounded-t-[6px] rounded-b-[10px] bg-white/8 shadow-[inset_0_0_0_1px_#FFFFFF1A]">{% if *full %}<span class="glass-fill h-4/5 bg-grad-water"></span>{% endif %}</span>{% endfor %}
   </div>
-  {% if let Some(b) = water %}<button type="button" class="press inline-flex h-12 items-center justify-center gap-2 rounded-full bg-info/15 text-sm text-info ring-1 ring-info/30" {% call u::tool(b) %}>{{ crate::web::ui::ic("glass", 16)|safe }}{{ b.label }} · {{ b.hint }}</button>{% endif %}
+  {% if let Some(b) = water %}<button type="button" class="btn-secondary press text-water" data-burst="water" data-burst-mini {% call u::tool(b) %}>{{ crate::web::ui::ic("glass", 16)|safe }}{{ b.label }} · {{ b.hint }}</button>{% endif %}
 </section>
 {% endif %}
-<div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
-  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">How</span><span>{{ why }}</span></div>
-  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Next</span><span>{{ next }}</span></div>
+<div class="rows">
+  <div class="row items-start">{{ crate::web::ui::pic("sensor-base", "size-7")|safe }}<p class="text-body text-ink"><strong class="font-semibold">How</strong> · {{ why }}</p></div>
+  <div class="row items-start">{{ crate::web::ui::pic("reminder", "size-7")|safe }}<p class="text-body text-ink"><strong class="font-semibold">Next</strong> · {{ next }}</p></div>
 </div>
-<a {% call u::go("/app/eva", c.seat, "push") %} class="press inline-flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-raised px-5 text-sm text-ink">{{ crate::web::ui::ic("chat", 16)|safe }}Ask Eva about it</a>
-<p class="text-center text-xs text-muted">Diagnostic support · the crew lead confirms</p>
+<a {% call u::go("/app/eva", c.seat, "push") %} class="btn-secondary press"><img src="/static/img/eva/eva-face.webp" alt="" class="size-6" width="512" height="512">Ask Eva about it</a>
+<p class="flex items-center justify-center gap-1.5 text-caption text-muted">{{ crate::web::ui::ic("shield", 16)|safe }}Diagnostic support · the crew lead confirms</p>

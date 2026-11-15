@@ -22,6 +22,7 @@ const EVA = ["idle", "hello", "listening", "thinking", "speaking", "happy", "win
 const HEROES = ["heart", "lungs", "temperature", "sleep", "water", "nutrition", "journal", "radiation", "aed"];
 // wristband v2 renders (Codex, AI-generated): home card, ECG hero, parts, suit mode, emergency thumbs, 360° turn
 const BAND = ["card", "ecg", "suit-mode", "cabin", "on-wrist", "parts-exploded", "parts-screen", "parts-base", "parts-contacts",
+  "gallery-band", "gallery-pins", "gallery-straps", "gallery-cabin",
   ...["000", "045", "090", "135", "180", "225", "270", "315"].map((a) => `spin-${a}`)];
 const SHELL = [
   "/app", "/app/plan", "/app/food", "/app/eva", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/about",
