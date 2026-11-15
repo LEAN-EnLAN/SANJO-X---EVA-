@@ -1,0 +1,1426 @@
+{
+  "kit": "Eva by WearMeds · Codex kit v2 · Sanjo-X · NASA Space Apps 2026",
+  "style_file": "STYLE.md",
+  "models": {
+    "sunburst": "gpt-image-2.5-sunburst",
+    "flare": "gpt-image-2.5-flare",
+    "orchestrator": "gpt-6.1-terra"
+  },
+  "api": {
+    "_note": "Check the current OpenAI Images API docs and fix these keys here (not in the prompts) if names or values changed.",
+    "common": {
+      "quality": "high",
+      "output_format": "png"
+    },
+    "generate_extra": {},
+    "edit_extra": {
+      "input_fidelity": "high"
+    }
+  },
+  "page_colors": {
+    "black": "#000000",
+    "white": "#FFFFFF"
+  },
+  "post": {
+    "edge_band": 0.06,
+    "edge_dev_max": 10,
+    "clamp": 6
+  },
+  "designs": {
+    "wristband": "Eva wristband: a wide forearm band (about 9 cm wide) in matte warm-white soft-touch polymer with a thin graphite inner edge, carrying a large flexible touch screen that curves around the top of the forearm (active area about 11 x 6 cm, long side along the arm), thin even bezel, one tiny green status LED at the near edge. The screen is pure black #000000, perfectly uniform, only a faint soft sheen, nothing displayed.",
+    "harness": "Eva harness: a slim modular body harness of matte warm-white and soft-grey technical webbing with rounded white polymer clips. Two shoulder straps and one torso strap meet at a flat rounded core module on the sternum (ECG and breathing sensors). Two thin defibrillation electrode pads sit in low-profile white pockets, one below the right collarbone and one on the left side below the ribs. A small sealed capsule-shaped compartment on the left torso strap holds an emergency autoinjector (closed, nothing visible inside). Each pad pocket and the compartment has a tiny pill-shaped status light, unlit. Calm, medical-grade, believable 2030s consumer design, not military, not sci-fi armor."
+  },
+  "cameras": {
+    "ORBIT": "85mm product lens, camera 20 degrees above the device. The band is closed in its worn oval shape as if on an invisible forearm; the forearm axis is horizontal; the screen is on top, facing up and toward the camera. Device yaw {yaw} degrees (0 = forearm axis parallel to the image plane; positive = right end turns toward the camera), rotating about a vertical axis through the screen centre. Centered, about 8% padding. The studio light stays fixed (key upper left) and does not rotate with the device.",
+    "WX": "Same rig as the orbit set at yaw 25 degrees: 85mm lens, camera 20 degrees above, band closed in its worn oval shape, forearm axis horizontal, screen on top. Every part is drawn exactly where it sits in the assembled device, same scale, perspective and light, so the layers stack back into the assembled image. Centered on the assembled device, about 8% padding.",
+    "WA": "70mm lens looking straight down the screen normal, so the curved screen reads as a nearly flat, front-facing rounded rectangle (easy to place HTML UI over it); a forearm crosses the frame horizontally, wrist toward the right, cropped by both side edges; device centered, about 10% padding top and bottom.",
+    "HX": "Ghost-mannequin product view: the harness as worn by an invisible adult torso (no body visible), torso turned 25 degrees to camera-right (front 3/4), camera at chest height, 85mm lens, centered, about 8% padding. Every part is drawn exactly where it sits in the assembled harness, same scale, perspective and light, so the layers stack back into the assembled image.",
+    "FIG": "Full body, front 3/4 (body turned 25 degrees to camera-right), camera at chest height, 70mm lens, centered, about 8% padding, feet visible.",
+    "PL": "Sphere centered, diameter 76% of the canvas width. Light comes from camera-left, 15 degrees above the horizon (the Sun is off-frame left). The day/night terminator crosses the disc at about 70% of its width from the left; the night side falls to black.",
+    "SUN": "Sun disc centered, diameter 50% of the canvas width, empty room around it.",
+    "SHIP": "Pure side elevation, nose pointing right, 135mm lens, ship horizontal and centered, about 8% padding."
+  },
+  "style": {
+    "scene-black": "Look: premium product photography, Apple-keynote clean, photoreal CGI, soft studio light: key from upper left (10 o'clock, 45 degrees), crisp white rim light on edges from behind right, no purple or coloured ambient light. The subject sits in a pool of light and everything falls off smoothly into pure #000000 toward all four edges (strong vignette); the outer 6% of the frame is pure #000000.",
+    "scene-white": "Look: premium product photography, Apple-keynote clean, photoreal CGI, high-key and airy: large soft key from upper left (10 o'clock, 45 degrees) plus overhead softbox, light materials, no coloured ambient light. The scene dissolves smoothly into pure #FFFFFF toward all four edges (soft white vignette); the outer 6% of the frame is pure #FFFFFF, no grey corners.",
+    "product-black": "Look: Apple-keynote product shot. Pure #000000 seamless background, no floor line, no gradient, no haze. Soft key from upper left (10 o'clock, 45 degrees) and crisp white rim light on the right and top edges; shadows fall into black.",
+    "product-white": "Look: Apple-keynote product shot. Pure #FFFFFF seamless background, no floor line, no grey gradient. Soft large key from upper left (10 o'clock, 45 degrees) plus overhead softbox, high-key; only a soft contact shadow directly under the object, no cast shadow on the background.",
+    "layer": "Isolated on a fully transparent background (alpha): no backdrop, no floor, no shadow, no glow unless asked. Same studio light as every Eva asset: soft key from upper left (10 o'clock, 45 degrees), gentle neutral rim light from the right. Whole object visible.",
+    "glow": "Only light, no hardware or solid objects. Fully transparent background; light falls off softly to zero alpha; no hard edges, no backdrop.",
+    "space-black": "Pure #000000 background, no gradient, no vignette, no haze, no nebula.",
+    "fullbleed": "Photoreal, premium, soft natural light from the left, no vignette, no coloured haze.",
+    "local": ""
+  },
+  "rules": "No text, letters, numbers or UI anywhere. No logos, insignia, flags, patches or brands. Device screens pure black #000000. No recognizable or visible faces. No needles, blood or gore.",
+  "sets": {
+    "wristband-orbit": "Crossfade turntable: OR-60, OR-30, OR0, OR+30, OR+60 (same camera, light fixed).",
+    "wristband-exploded": "Anchor WX0; parts WX1-WX4 stack back into WX0. Animate with CSS translate along the screen normal (up-left in image space), 0 to ~12% of width.",
+    "harness-exploded": "Anchor HX0; parts HX1-HX5 stack back into HX0. Animate parts outward from the core module with CSS translate/scale.",
+    "planets": "Earth, Mars, Sun with separate glow layers; light from the left on all.",
+    "space-fx": "Flare and particle layers, flow left to right (from the Sun toward the ship)."
+  },
+  "assets": [
+    {
+      "id": "OR0",
+      "base": "OR0",
+      "group": "wristband-orbit",
+      "set": "wristband-orbit",
+      "role": "frame",
+      "variant": "shared",
+      "file": "shared/wristband-orbit/or-000.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "wristband"
+      ],
+      "camera": "ORBIT",
+      "yaw": 0,
+      "refs": [
+        "ref/v1/layers/l1-wristband.png"
+      ],
+      "usage": "DESIGN MASTER for every wristband asset; turntable frame 0 deg; hero device. UI is composited on the curved black screen (warp UI to the curve).",
+      "prompt": "Design master for the Eva wristband: product render of the wristband described above. Use the reference image only for material and colour; the new band is much wider and its large screen curves with the forearm.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "OR-60",
+      "base": "OR-60",
+      "group": "wristband-orbit",
+      "set": "wristband-orbit",
+      "role": "frame",
+      "variant": "shared",
+      "file": "shared/wristband-orbit/or-m60.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "wristband"
+      ],
+      "camera": "ORBIT",
+      "yaw": -60,
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Turntable frame -60 deg; crossfade 120-200 ms between neighbours, optional slight translateX.",
+      "prompt": "The same Eva wristband as the reference image: identical design, materials, proportions, scale and studio lighting. Only the device yaw changes, to -60 degrees.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "OR-30",
+      "base": "OR-30",
+      "group": "wristband-orbit",
+      "set": "wristband-orbit",
+      "role": "frame",
+      "variant": "shared",
+      "file": "shared/wristband-orbit/or-m30.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "wristband"
+      ],
+      "camera": "ORBIT",
+      "yaw": -30,
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Turntable frame -30 deg; crossfade 120-200 ms between neighbours, optional slight translateX.",
+      "prompt": "The same Eva wristband as the reference image: identical design, materials, proportions, scale and studio lighting. Only the device yaw changes, to -30 degrees.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "OR+30",
+      "base": "OR+30",
+      "group": "wristband-orbit",
+      "set": "wristband-orbit",
+      "role": "frame",
+      "variant": "shared",
+      "file": "shared/wristband-orbit/or-p30.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "wristband"
+      ],
+      "camera": "ORBIT",
+      "yaw": 30,
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Turntable frame +30 deg; crossfade 120-200 ms between neighbours, optional slight translateX.",
+      "prompt": "The same Eva wristband as the reference image: identical design, materials, proportions, scale and studio lighting. Only the device yaw changes, to 30 degrees.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "OR+60",
+      "base": "OR+60",
+      "group": "wristband-orbit",
+      "set": "wristband-orbit",
+      "role": "frame",
+      "variant": "shared",
+      "file": "shared/wristband-orbit/or-p60.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "wristband"
+      ],
+      "camera": "ORBIT",
+      "yaw": 60,
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Turntable frame +60 deg; crossfade 120-200 ms between neighbours, optional slight translateX.",
+      "prompt": "The same Eva wristband as the reference image: identical design, materials, proportions, scale and studio lighting. Only the device yaw changes, to 60 degrees.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "WX0",
+      "base": "WX0",
+      "group": "wristband-exploded",
+      "set": "wristband-exploded",
+      "role": "anchor",
+      "variant": "shared",
+      "file": "shared/wristband-exploded/wx0-assembled.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "wristband"
+      ],
+      "camera": "WX",
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Assembled state and alignment anchor of the exploded wristband; start/end frame of the explode animation.",
+      "prompt": "The assembled Eva wristband, identical to the reference design. This image is the alignment anchor for an exploded-view set.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "WX1",
+      "base": "WX1",
+      "group": "wristband-exploded",
+      "set": "wristband-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/wristband-exploded/wx1-strap.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "WX",
+      "refs": [
+        "WX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on WX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva wristband in the reference image. Show ONLY the band: the soft-touch outer strap with its clasp, complete and unoccluded; screen, frame and sensor module removed (their seat is an empty recess). Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "WX2",
+      "base": "WX2",
+      "group": "wristband-exploded",
+      "set": "wristband-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/wristband-exploded/wx2-body.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "WX",
+      "refs": [
+        "WX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on WX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva wristband in the reference image. Show ONLY the device body: the thin curved white chassis that holds the screen, with its slim battery spine; no screen glass, no strap, no sensor module. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "WX3",
+      "base": "WX3",
+      "group": "wristband-exploded",
+      "set": "wristband-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/wristband-exploded/wx3-screen.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "WX",
+      "refs": [
+        "WX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on WX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva wristband in the reference image. Show ONLY the flexible screen: a thin curved glass/OLED sheet following the forearm curve, face pure black #000000, its thin edge catching a soft highlight. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "WX5",
+      "base": "WX5",
+      "group": "wristband-exploded",
+      "set": "wristband-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/wristband-exploded/wx5-battery-board.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "WX",
+      "refs": [
+        "WX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on WX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva wristband in the reference image. Show ONLY the internals: the thin curved flexible circuit board and slim battery spine that sit between the screen and the chassis, complete, in their assembled position. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "WX4",
+      "base": "WX4",
+      "group": "wristband-exploded",
+      "set": "wristband-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/wristband-exploded/wx4-sensor.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "WX",
+      "refs": [
+        "WX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on WX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva wristband in the reference image. Show ONLY the sensor module: the small rounded graphite pod on the inner (skin) side of the band with two tiny optical windows and two flat electrode contacts, normally hidden; shown complete and unoccluded in its assembled position. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "WA1",
+      "base": "WA1",
+      "group": "wristband",
+      "variant": "shared",
+      "file": "shared/wristband/wa1-on-forearm.png",
+      "size": "1536x1024",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "wristband"
+      ],
+      "camera": "WA",
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Device-on-arm layer for the 'how it works' section and UI demos on the curved screen.",
+      "prompt": "The Eva wristband from the reference worn on a forearm: plain soft-grey long sleeve pushed up, neutral medium skin tone, no jewellery, no tattoos, hand out of frame or cropped. The curved screen faces up toward the camera and is pure black.",
+      "model": "sunburst",
+      "target": "2400x1600"
+    },
+    {
+      "id": "PL-B",
+      "base": "PL",
+      "group": "wristband",
+      "variant": "black",
+      "file": "black/wristband/pl-wristband-plinth.png",
+      "size": "1024x1024",
+      "background": "#000000",
+      "style": "product-black",
+      "design": [
+        "wristband"
+      ],
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Product hero tile for the black page (opaque, edges pure #000).",
+      "prompt": "The Eva wristband from the reference, closed in its worn oval shape, resting on a low matte black cylindrical plinth; the plinth's top edge catches a fine rim light. Centered, wide negative space above.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "PL-W",
+      "base": "PL",
+      "group": "wristband",
+      "variant": "white",
+      "file": "white/wristband/pl-wristband-plinth.png",
+      "size": "1024x1024",
+      "background": "#FFFFFF",
+      "style": "product-white",
+      "design": [
+        "wristband"
+      ],
+      "refs": [
+        "OR0"
+      ],
+      "usage": "Product hero tile for the white page (opaque, edges pure #FFF).",
+      "prompt": "The Eva wristband from the reference, closed in its worn oval shape, resting on a low matte white cylindrical plinth with a soft contact shadow. Centered, wide negative space above.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "HX0",
+      "base": "HX0",
+      "group": "harness-exploded",
+      "set": "harness-exploded",
+      "role": "anchor",
+      "variant": "shared",
+      "file": "shared/harness-exploded/hx0-assembled.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "harness"
+      ],
+      "camera": "HX",
+      "usage": "DESIGN MASTER for every harness asset; isolated harness; anchor of the exploded set.",
+      "prompt": "Design master and exploded-set anchor: the Eva harness described above, assembled and isolated.",
+      "refs": [],
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "HX1",
+      "base": "HX1",
+      "group": "harness-exploded",
+      "set": "harness-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/harness-exploded/hx1-straps.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on HX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva harness in the reference image. Show ONLY the straps: both shoulder straps, the torso strap and the clips, complete and unoccluded; core module, pads, compartment and lights removed (empty mounting points visible). Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "HX2",
+      "base": "HX2",
+      "group": "harness-exploded",
+      "set": "harness-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/harness-exploded/hx2-defib-pads.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on HX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva harness in the reference image. Show ONLY the two defibrillation electrode pads in their low-profile white pockets, each in its exact assembled position; thin flat pads, a soft grey gel edge visible, a short flat lead tucked into each pocket. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "HX3",
+      "base": "HX3",
+      "group": "harness-exploded",
+      "set": "harness-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/harness-exploded/hx3-core-module.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on HX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva harness in the reference image. Show ONLY the core module: the flat rounded white polymer pod with a graphite rim and a soft-grey sensor face, in its exact sternum position. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "HX4",
+      "base": "HX4",
+      "group": "harness-exploded",
+      "set": "harness-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/harness-exploded/hx4-injectable-compartment.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on HX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva harness in the reference image. Show ONLY the injectable compartment: the small sealed capsule-shaped white housing with a graphite latch, closed, nothing visible inside, in its exact position on the left torso strap. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "HX5",
+      "base": "HX5",
+      "group": "harness-exploded",
+      "set": "harness-exploded",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/harness-exploded/hx5-status-lights.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "Exploded-view layer; stacks exactly on HX0 at translate(0,0).",
+      "prompt": "Exploded-view part of the Eva harness in the reference image. Show ONLY the status lights: the three tiny pill-shaped frosted white lenses (one on each pad pocket, one on the compartment), unlit, in their exact positions. Keep its exact pixel position, scale, perspective and light from the reference; everything else fully transparent.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "GL1-B",
+      "base": "GL1",
+      "group": "harness-glow",
+      "set": "harness-exploded",
+      "role": "glow",
+      "variant": "black",
+      "file": "black/harness-glow/gl1-compartment-lit.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "'Lit item' layer for the black page: Eva lights the injectable compartment. Stack over HX0 (or FIG1 if aligned), mix-blend-mode: screen, pulse opacity 0.4-1.",
+      "prompt": "Glow layer for a black page, aligned to the harness in the reference: only the warm amber light (#FFB547 core, #FFCB77 halo) of the status light on the injectable compartment switched on, plus a soft amber halo hugging the outline and spilling about 6% beyond it. No hardware visible.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "GL1-W",
+      "base": "GL1",
+      "group": "harness-glow",
+      "set": "harness-exploded",
+      "role": "glow",
+      "variant": "white",
+      "file": "white/harness-glow/gl1-compartment-lit.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "'Lit item' layer for the white page: Eva lights the injectable compartment. Stack over HX0, normal blend, pulse opacity 0.5-1.",
+      "prompt": "Glow layer for a white page, aligned to the harness in the reference: a tighter, saturated amber glow (#FF9F1C core, #FFB547 edge) on the status light of the injectable compartment and a thin luminous amber ring hugging the outline so it reads on white. No hardware visible.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "GL2-B",
+      "base": "GL2",
+      "group": "harness-glow",
+      "set": "harness-exploded",
+      "role": "glow",
+      "variant": "black",
+      "file": "black/harness-glow/gl2-pads-lit.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "'Lit item' layer for the black page: Eva lights both defibrillation pad pockets. Stack over HX0 (or FIG1 if aligned), mix-blend-mode: screen, pulse opacity 0.4-1.",
+      "prompt": "Glow layer for a black page, aligned to the harness in the reference: only the warm amber light (#FFB547 core, #FFCB77 halo) of the status light on both defibrillation pad pockets switched on, plus a soft amber halo hugging the outline and spilling about 6% beyond it. No hardware visible.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "GL2-W",
+      "base": "GL2",
+      "group": "harness-glow",
+      "set": "harness-exploded",
+      "role": "glow",
+      "variant": "white",
+      "file": "white/harness-glow/gl2-pads-lit.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "HX",
+      "refs": [
+        "HX0"
+      ],
+      "usage": "'Lit item' layer for the white page: Eva lights both defibrillation pad pockets. Stack over HX0, normal blend, pulse opacity 0.5-1.",
+      "prompt": "Glow layer for a white page, aligned to the harness in the reference: a tighter, saturated amber glow (#FF9F1C core, #FFB547 edge) on the status light of both defibrillation pad pockets and a thin luminous amber ring hugging the outline so it reads on white. No hardware visible.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "FIG1",
+      "base": "FIG1",
+      "group": "harness-figure",
+      "variant": "shared",
+      "file": "shared/figures/fig1-standing-harness.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "harness",
+        "wristband"
+      ],
+      "camera": "FIG",
+      "refs": [
+        "HX0",
+        "OR0"
+      ],
+      "usage": "Harness on a person (front 3/4) for the product and 'how it works' sections; replaces v1 L12.",
+      "prompt": "A faceless editorial figure: smooth featureless head (no eyes, nose or mouth), matte warm grey-white skin like a premium mannequin, simple soft hair shape, plain fitted charcoal long-sleeve top and trousers. Wearing the Eva harness (reference 1) over the top and the Eva wristband (reference 2) on the left forearm. Standing relaxed, arms slightly away from the body.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "FIG2",
+      "base": "FIG2",
+      "group": "harness-figure",
+      "variant": "shared",
+      "file": "shared/figures/fig2-seated-harness.png",
+      "size": "1024x1536",
+      "background": "transparent",
+      "style": "layer",
+      "design": [
+        "harness",
+        "wristband"
+      ],
+      "camera": "FIG",
+      "refs": [
+        "FIG1"
+      ],
+      "usage": "Passenger in distress for the bystander section and diagrams; replaces v1 L13.",
+      "prompt": "The same faceless figure as the reference (identical style, clothing, harness and wristband), now slumped in a simple light-grey passenger seat, head tilted down and away, arms limp. Harness lights unlit.",
+      "model": "sunburst",
+      "target": "1600x2400"
+    },
+    {
+      "id": "PE",
+      "base": "PE",
+      "group": "planets",
+      "set": "planets",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/planets/pe-earth.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "PL",
+      "refs": [
+        "ref/v1/layers/l11-earth.png"
+      ],
+      "usage": "Planet reveal: Earth disc (scale 0.9->1 + fade).",
+      "prompt": "Planet Earth, photoreal: blue oceans, white cloud swirls, no atmosphere halo (that is a separate layer). Use the reference only for surface look; relight it to the camera note.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "PE-G",
+      "base": "PE-G",
+      "group": "planets",
+      "set": "planets",
+      "role": "glow",
+      "variant": "shared",
+      "file": "shared/planets/pe-earth-atmosphere.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "PL",
+      "refs": [
+        "PE"
+      ],
+      "usage": "Earth atmosphere glow; stack on PE; mix-blend-mode: screen on black; on white use 40% opacity or omit.",
+      "prompt": "ONLY Earth's atmosphere glow for the planet in the reference: a thin soft blue rim (#7FB7FF) hugging the disc edge, strongest on the lit left limb, fading to nothing on the night side, plus a faint outer haze. The disc interior fully transparent. Same disc size and position as the reference.",
+      "model": "sunburst",
+      "target": "1600x1600"
+    },
+    {
+      "id": "PM",
+      "base": "PM",
+      "group": "planets",
+      "set": "planets",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/planets/pm-mars.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "PL",
+      "refs": [
+        "ref/v1/layers/l10-mars.png"
+      ],
+      "usage": "Planet reveal: Mars disc.",
+      "prompt": "Planet Mars, photoreal: rust-red surface, subtle craters and canyon system, faint polar cap, no atmosphere halo (separate layer). Use the reference only for surface look; relight it to the camera note.",
+      "model": "sunburst",
+      "target": "3000x3000"
+    },
+    {
+      "id": "PM-G",
+      "base": "PM-G",
+      "group": "planets",
+      "set": "planets",
+      "role": "glow",
+      "variant": "shared",
+      "file": "shared/planets/pm-mars-atmosphere.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "PL",
+      "refs": [
+        "PM"
+      ],
+      "usage": "Mars haze glow; stack on PM; screen blend on black.",
+      "prompt": "ONLY Mars's thin dusty atmosphere glow for the planet in the reference: a very thin peach-orange rim (#F2A27A) on the lit left limb fading to nothing on the night side. Disc interior fully transparent. Same disc size and position as the reference.",
+      "model": "sunburst",
+      "target": "3000x3000"
+    },
+    {
+      "id": "PS",
+      "base": "PS",
+      "group": "planets",
+      "set": "planets",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/planets/ps-sun.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "SUN",
+      "refs": [
+        "ref/v1/layers/l7-sun-flare.png"
+      ],
+      "usage": "Planet reveal / flare section: Sun disc.",
+      "prompt": "The Sun as a bright disc: warm white-yellow centre to amber edge, fine granulation, limb darkening. No corona, no flare (separate layers). Use the reference only for surface texture.",
+      "model": "sunburst",
+      "target": "2400x2400"
+    },
+    {
+      "id": "PS-G",
+      "base": "PS-G",
+      "group": "planets",
+      "set": "planets",
+      "role": "glow",
+      "variant": "shared",
+      "file": "shared/planets/ps-sun-corona.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "SUN",
+      "refs": [
+        "PS"
+      ],
+      "usage": "Sun corona; stack on PS; slow rotate + breathe (scale 1-1.04); screen blend on black, multiply-free normal blend at 70% on white.",
+      "prompt": "ONLY the Sun's corona for the disc in the reference: soft white-amber glow and fine streamer rays radiating outward; the disc area itself empty and transparent. Same disc size and position as the reference.",
+      "model": "sunburst",
+      "target": "2400x2400"
+    },
+    {
+      "id": "FL1",
+      "base": "FL1",
+      "group": "space-fx",
+      "set": "space-fx",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/space-fx/fl1-prominence-loop.png",
+      "size": "1536x1024",
+      "origin": "50% 100% (limb point, bottom centre)",
+      "background": "transparent",
+      "style": "layer",
+      "refs": [
+        "ref/v1/layers/l7-sun-flare.png"
+      ],
+      "usage": "Flare loop anchored at the limb point = bottom centre (transform-origin: 50% 100%); reveal with clip-path/scale, slow loop.",
+      "prompt": "Isolated solar prominence: a graceful arch of glowing amber-orange plasma rising from a short curved segment of the Sun's limb at the bottom centre of the frame (the limb segment cropped by the bottom edge), both feet of the arch within the middle third, fine filament texture, bright glowing edges.",
+      "model": "sunburst",
+      "target": "1600x1067"
+    },
+    {
+      "id": "FL2",
+      "base": "FL2",
+      "group": "space-fx",
+      "set": "space-fx",
+      "role": "part",
+      "variant": "shared",
+      "file": "shared/space-fx/fl2-ejection-streaks.png",
+      "size": "1536x1024",
+      "background": "transparent",
+      "style": "layer",
+      "usage": "Flare burst: scaleX 0.6->1 + fade out, once per alert.",
+      "prompt": "Isolated burst of fine radial plasma filaments and sparks spreading from a point at the left edge toward the right, amber to warm white, fading to transparent toward the right edge.",
+      "refs": [],
+      "model": "sunburst",
+      "target": "2400x1600"
+    },
+    {
+      "id": "PT1-B",
+      "base": "PT1",
+      "group": "space-fx",
+      "set": "space-fx",
+      "role": "part",
+      "variant": "black",
+      "file": "black/space-fx/pt1-particles-near.png",
+      "size": "1536x1024",
+      "background": "transparent",
+      "style": "layer",
+      "usage": "OPTIONAL (MOTION-SPEC draws particles in canvas): particle stream layer for the black page; translateX loop, two copies chained.",
+      "prompt": "For a black page: a dense stream of small glowing particles (warm white and pale amber, slight motion streaks) flowing left to right in a gentle S-curve across the canvas. Particles thin out to nothing near the left and right edges so copies can be chained.",
+      "refs": [],
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "PT1-W",
+      "base": "PT1",
+      "group": "space-fx",
+      "set": "space-fx",
+      "role": "part",
+      "variant": "white",
+      "file": "white/space-fx/pt1-particles-near.png",
+      "size": "1536x1024",
+      "background": "transparent",
+      "style": "layer",
+      "usage": "OPTIONAL (MOTION-SPEC draws particles in canvas): particle stream layer for the white page.",
+      "prompt": "For a white page: a dense stream of small soft-edged particles in deep amber (#C46A00) and graphite (#3A3A3C), slight motion streaks, flowing left to right in a gentle S-curve. Particles thin out to nothing near the left and right edges so copies can be chained.",
+      "refs": [],
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "SC1",
+      "base": "SC1",
+      "group": "spacecraft",
+      "variant": "shared",
+      "file": "shared/spacecraft/sc1-hull.png",
+      "size": "1536x1024",
+      "background": "transparent",
+      "style": "layer",
+      "camera": "SHIP",
+      "refs": [
+        "ref/v1/layers/l9-spacecraft.png"
+      ],
+      "usage": "Ship layer: slow drift translateX + 1-2px bob.",
+      "prompt": "A sleek commercial passenger spacecraft hull: matte white, soft rounded forms, a row of warm-lit round windows, engine nozzles at the left (tail) end unlit and dark. No markings. Keep the overall design of the reference but cleaner and more premium.",
+      "model": "sunburst",
+      "target": "2000x1333"
+    },
+    {
+      "id": "SC2",
+      "base": "SC2",
+      "group": "spacecraft",
+      "variant": "shared",
+      "file": "shared/spacecraft/sc2-engine-glow.png",
+      "size": "1536x1024",
+      "background": "transparent",
+      "style": "glow",
+      "camera": "SHIP",
+      "refs": [
+        "SC1"
+      ],
+      "usage": "Engine glow; stack on SC1; flicker opacity 0.8-1; screen blend on black, 60% on white.",
+      "prompt": "ONLY the engine glow for the ship in the reference: soft blue-white plasma glow and short plume at the exact nozzle positions, bright core fading to transparent toward the left. No hull.",
+      "model": "sunburst",
+      "target": "2000x1333"
+    },
+    {
+      "id": "S1-B",
+      "base": "S1",
+      "group": "scenes",
+      "variant": "black",
+      "file": "black/scenes/s1-cabin-hero.png",
+      "size": "1536x1024",
+      "background": "#000000",
+      "style": "scene-black",
+      "refs": [
+        "ref/v1/scenes/s1-cabin-hero.png",
+        "OR0"
+      ],
+      "watermark": true,
+      "usage": "Hero background behind the headline (black page)",
+      "prompt": "Landing hero. Inside a calm commercial passenger spacecraft cabin in transit to Mars, seen from behind and slightly to the side of one seated passenger: only the back of the head, a shoulder and the left forearm on the armrest are visible, head turned toward a large rounded window on the right showing a small Mars. The forearm wears the Eva wristband (reference 2) with its curved pure black screen facing up. Use reference 1 only for layout and drop its purple palette. Subject in the right 55% of the frame; left 45% empty for a headline.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S1-W",
+      "base": "S1",
+      "group": "scenes",
+      "variant": "white",
+      "file": "white/scenes/s1-cabin-hero.png",
+      "size": "1536x1024",
+      "background": "#FFFFFF",
+      "style": "scene-white",
+      "refs": [
+        "S1-B",
+        "OR0"
+      ],
+      "watermark": true,
+      "usage": "Hero background behind the headline (white page)",
+      "prompt": "Same composition, camera and subject as the reference, but a bright cabin: off-white upholstery, pale grey walls, soft daylight-like light; the window still shows dark space with a small Mars. Left 45% empty pure white for a headline.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S2-B",
+      "base": "S2",
+      "group": "scenes",
+      "variant": "black",
+      "file": "black/scenes/s2-harness-light.png",
+      "size": "1536x1024",
+      "background": "#000000",
+      "style": "scene-black",
+      "refs": [
+        "HX0"
+      ],
+      "watermark": true,
+      "usage": "Section: Eva lights the item to use (replaces v1 station scene) (black page)",
+      "prompt": "Close, calm shot in a dim passenger cabin: a passenger seen from the side and slightly behind (head turned away and cropped by the top edge, no face) wears the Eva harness (reference) over a charcoal top. The small status light on the injectable compartment on the left torso strap glows warm amber (#FFB547), the only colour accent; the passenger's own hand moves toward it. Subject in the right 55%; left 45% empty for a headline.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S2-W",
+      "base": "S2",
+      "group": "scenes",
+      "variant": "white",
+      "file": "white/scenes/s2-harness-light.png",
+      "size": "1536x1024",
+      "background": "#FFFFFF",
+      "style": "scene-white",
+      "refs": [
+        "S2-B",
+        "HX0"
+      ],
+      "watermark": true,
+      "usage": "Section: Eva lights the item to use (replaces v1 station scene) (white page)",
+      "prompt": "Same composition, camera and subject as the reference, high-key: light-grey top, bright soft cabin light; the amber compartment light still clearly glowing. Left 45% empty pure white for a headline.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S3-B",
+      "base": "S3",
+      "group": "scenes",
+      "variant": "black",
+      "file": "black/scenes/s3-solar-flare.png",
+      "size": "1536x1024",
+      "background": "#000000",
+      "style": "scene-black",
+      "refs": [
+        "ref/v1/scenes/s3-solar-flare.png",
+        "SC1"
+      ],
+      "watermark": true,
+      "usage": "Section: solar particle alert (black page)",
+      "prompt": "Stylized deep space: the Sun cropped by the left edge erupts a graceful flare; a soft stream of particles curves across the frame toward a small white passenger spacecraft (reference 2) in the right third. Elegant, not apocalyptic. Very sparse faint stars near the centre only. Use reference 1 only for layout and drop its purple palette. Top-centre band empty for a headline.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S3-W",
+      "base": "S3",
+      "group": "scenes",
+      "variant": "white",
+      "file": "white/scenes/s3-solar-flare.png",
+      "size": "1536x1024",
+      "background": "#FFFFFF",
+      "style": "scene-white",
+      "refs": [
+        "S3-B",
+        "SC1"
+      ],
+      "watermark": true,
+      "usage": "Section: solar particle alert (white page)",
+      "prompt": "Graphic high-key version of the reference: space is pure white with no stars; the Sun is a glowing amber-orange disc cropped by the left edge, flare and particle stream in amber and coral, the spacecraft light grey with clear shading. Same composition.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S4-B",
+      "base": "S4",
+      "group": "scenes",
+      "variant": "black",
+      "file": "black/scenes/s4-bystander-help.png",
+      "size": "1536x1024",
+      "background": "#000000",
+      "style": "scene-black",
+      "refs": [
+        "HX0",
+        "OR0"
+      ],
+      "watermark": true,
+      "usage": "Section: Eva guides the nearest passenger (black page)",
+      "prompt": "Inside the cabin, over the shoulder of a kneeling helper seen from behind (only back of head, shoulder and arm, no face) who looks at the Eva wristband (reference 2) on their own forearm, its curved screen pure black. In front of them a second passenger slumps in a seat, head down and turned away into shadow, wearing the Eva harness (reference 1); the status lights of both defibrillation pad pockets glow warm amber. A faint blue light trail links the wristband to the harness. Caring and calm, no gore. Subject in the left 55%; right 45% empty for text.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S4-W",
+      "base": "S4",
+      "group": "scenes",
+      "variant": "white",
+      "file": "white/scenes/s4-bystander-help.png",
+      "size": "1536x1024",
+      "background": "#FFFFFF",
+      "style": "scene-white",
+      "refs": [
+        "S4-B",
+        "OR0"
+      ],
+      "watermark": true,
+      "usage": "Section: Eva guides the nearest passenger (white page)",
+      "prompt": "Same composition, camera and subjects as the reference, high-key: light clothing and seats, bright soft cabin light; amber pad lights and the faint blue trail still visible. Right 45% empty pure white for text.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S5-B",
+      "base": "S5",
+      "group": "scenes",
+      "variant": "black",
+      "file": "black/scenes/s5-earth-mars-delay.png",
+      "size": "1536x1024",
+      "background": "#000000",
+      "style": "scene-black",
+      "refs": [
+        "PE",
+        "PM"
+      ],
+      "watermark": true,
+      "usage": "Section: Earth is up to 22 minutes away (SVG signal arc on top) (black page)",
+      "prompt": "Minimal composition: a small Earth (reference 1) in the left third and a small Mars (reference 2) in the right third on the same horizontal line, both lit from the left. Nothing between them: no line, no arc (the team draws the signal arc in SVG). Very sparse faint stars near the centre only. Huge negative space above and below.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "S5-W",
+      "base": "S5",
+      "group": "scenes",
+      "variant": "white",
+      "file": "white/scenes/s5-earth-mars-delay.png",
+      "size": "1536x1024",
+      "background": "#FFFFFF",
+      "style": "scene-white",
+      "refs": [
+        "S5-B",
+        "PM"
+      ],
+      "watermark": true,
+      "usage": "Section: Earth is up to 22 minutes away (SVG signal arc on top) (white page)",
+      "prompt": "Graphic high-key version of the reference: pure white space, no stars; the planets keep their natural colours with soft light shading, same positions. No line or arc between them.",
+      "model": "sunburst",
+      "target": "2880x1920"
+    },
+    {
+      "id": "CAB-BG-B",
+      "base": "CAB-BG",
+      "group": "cabin",
+      "variant": "black",
+      "file": "black/cabin/cab-bg.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "#000000",
+      "style": "scene-black",
+      "refs": [
+        "S1-B"
+      ],
+      "usage": "Hero full-bleed background, depth 1 (crop to 16:10; mobile: centre-right crop).",
+      "prompt": "Full-bleed background: an empty commercial passenger spacecraft cabin with no people and no foreground seats (seats are a separate layer): curved ceiling, soft indirect light coves, a large rounded window on the right showing a small distant Mars. Same cabin look as the reference. Calm empty area on the left 50% for a headline.",
+      "model": "sunburst"
+    },
+    {
+      "id": "CAB-BG-W",
+      "base": "CAB-BG",
+      "group": "cabin",
+      "variant": "white",
+      "file": "white/cabin/cab-bg.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "#FFFFFF",
+      "style": "scene-white",
+      "refs": [
+        "CAB-BG-B",
+        "S1-W"
+      ],
+      "usage": "Hero full-bleed background for the white page, depth 1.",
+      "prompt": "Same empty cabin, camera and composition as reference 1, high-key like reference 2: off-white surfaces, pale grey walls, soft daylight-like light; the window still shows dark space with a small Mars. Left 50% empty pure white.",
+      "model": "sunburst"
+    },
+    {
+      "id": "CAB-MID-B",
+      "base": "CAB-MID",
+      "group": "cabin",
+      "variant": "black",
+      "file": "black/cabin/cab-mid.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "transparent",
+      "style": "layer",
+      "refs": [
+        "CAB-BG-B",
+        "OR0"
+      ],
+      "usage": "Hero mid-ground parallax layer (seats + one passenger) over CAB-BG-B.",
+      "prompt": "Mid-ground parallax layer for the cabin in reference 1, same camera: one row of two soft upholstered passenger seats seen from behind in the right half of the frame; one seated passenger visible only as the back of the head and a shoulder, the left forearm on the armrest wearing the Eva wristband (reference 2, screen pure black). Lit for the dim cabin with a crisp rim light. Everything else transparent.",
+      "model": "sunburst"
+    },
+    {
+      "id": "CAB-MID-W",
+      "base": "CAB-MID",
+      "group": "cabin",
+      "variant": "white",
+      "file": "white/cabin/cab-mid.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "transparent",
+      "style": "layer",
+      "refs": [
+        "CAB-MID-B",
+        "CAB-BG-W"
+      ],
+      "usage": "Hero mid-ground parallax layer over CAB-BG-W.",
+      "prompt": "Same seats, passenger, pose and position as reference 1, relit high-key to match the bright cabin in reference 2: light upholstery, light-grey top, soft shadows. Everything else transparent.",
+      "model": "sunburst"
+    },
+    {
+      "id": "CAB-FG-B",
+      "base": "CAB-FG",
+      "group": "cabin",
+      "variant": "black",
+      "file": "black/cabin/cab-fg.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "transparent",
+      "style": "layer",
+      "refs": [
+        "CAB-BG-B"
+      ],
+      "usage": "Optional hero foreground (window rim / bulkhead edge) for the fastest parallax depth.",
+      "prompt": "Foreground parallax layer for the cabin in the reference: only the soft out-of-focus edge of a bulkhead along the left edge and the curved rim of a rounded window along the right edge, dark matte surfaces with a fine rim highlight. The centre of the frame fully transparent.",
+      "model": "sunburst"
+    },
+    {
+      "id": "CAB-FG-W",
+      "base": "CAB-FG",
+      "group": "cabin",
+      "variant": "white",
+      "file": "white/cabin/cab-fg.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "transparent",
+      "style": "layer",
+      "refs": [
+        "CAB-FG-B",
+        "CAB-BG-W"
+      ],
+      "usage": "Optional hero foreground for the white page.",
+      "prompt": "Same foreground shapes and positions as reference 1, relit high-key: off-white surfaces with soft grey shading, matching reference 2. The centre fully transparent.",
+      "model": "sunburst"
+    },
+    {
+      "id": "ST1-B",
+      "base": "ST1",
+      "group": "space-fx",
+      "variant": "black",
+      "file": "black/space-fx/st1-stars-sparse.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "#000000",
+      "style": "space-black",
+      "edge_lock": false,
+      "usage": "Star field, sparse depth (solar alert, planet reveal). Black page only; the white page uses no stars.",
+      "prompt": "A sparse star field: a few hundred tiny, sharp stars of varied brightness, mostly white with a few faintly warm, scattered evenly; no nebula, no galaxy band, no planets.",
+      "refs": [],
+      "model": "sunburst"
+    },
+    {
+      "id": "ST2-B",
+      "base": "ST2",
+      "group": "space-fx",
+      "variant": "black",
+      "file": "black/space-fx/st2-stars-fine.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "#000000",
+      "style": "space-black",
+      "edge_lock": false,
+      "usage": "Star field, fine depth (slower parallax). Black page only.",
+      "prompt": "A fine star field: thousands of very small, faint stars, a few slightly brighter, scattered evenly; no nebula, no galaxy band, no planets.",
+      "refs": [],
+      "model": "sunburst"
+    },
+    {
+      "id": "MS1",
+      "base": "MS1",
+      "group": "planets",
+      "variant": "shared",
+      "file": "shared/planets/ms1-mars-surface.png",
+      "size": "1536x1024",
+      "target": "2880x1800",
+      "background": "opaque",
+      "style": "fullbleed",
+      "refs": [
+        "PM"
+      ],
+      "watermark": true,
+      "usage": "Optional final fill of the planet reveal (Mars disc scales up into this surface).",
+      "prompt": "Full-bleed Mars surface close-up matching the colours of the planet in the reference: a vast rust-red plain with soft dunes, scattered small rocks and a distant crater rim under a pale butterscotch sky, low sun from the left, long soft shadows. No spacecraft, no people, no structures.",
+      "model": "sunburst"
+    },
+    {
+      "id": "SH-OR0",
+      "base": "SH-OR0",
+      "group": "shadows",
+      "variant": "white",
+      "file": "white/shadows/sh-wristband-orbit.png",
+      "size": "same as source",
+      "background": "transparent",
+      "style": "local",
+      "engine": "local-shadow",
+      "source": "OR0",
+      "shadow": "contact",
+      "model": "none",
+      "usage": "Under every orbit frame on the white page. Place under the source layer at the same coordinates.",
+      "prompt": "(local) Soft contact shadow built by generate.py from the alpha of OR0: neutral black, max ~45% opacity at the core, no model call.",
+      "refs": []
+    },
+    {
+      "id": "SH-WX0",
+      "base": "SH-WX0",
+      "group": "shadows",
+      "variant": "white",
+      "file": "white/shadows/sh-wristband-exploded.png",
+      "size": "same as source",
+      "background": "transparent",
+      "style": "local",
+      "engine": "local-shadow",
+      "source": "WX0",
+      "shadow": "contact",
+      "model": "none",
+      "usage": "Under the exploded wristband on white; fade to 50% and scale 1.1 as parts separate. Place under the source layer at the same coordinates.",
+      "prompt": "(local) Soft contact shadow built by generate.py from the alpha of WX0: neutral black, max ~45% opacity at the core, no model call.",
+      "refs": []
+    },
+    {
+      "id": "SH-HX0",
+      "base": "SH-HX0",
+      "group": "shadows",
+      "variant": "white",
+      "file": "white/shadows/sh-harness.png",
+      "size": "same as source",
+      "background": "transparent",
+      "style": "local",
+      "engine": "local-shadow",
+      "source": "HX0",
+      "shadow": "float",
+      "model": "none",
+      "usage": "Soft floating shadow under the isolated harness on white. Place under the source layer at the same coordinates.",
+      "prompt": "(local) Soft float shadow built by generate.py from the alpha of HX0: neutral black, max ~45% opacity at the core, no model call.",
+      "refs": []
+    },
+    {
+      "id": "SH-FIG1",
+      "base": "SH-FIG1",
+      "group": "shadows",
+      "variant": "white",
+      "file": "white/shadows/sh-fig1.png",
+      "size": "same as source",
+      "background": "transparent",
+      "style": "local",
+      "engine": "local-shadow",
+      "source": "FIG1",
+      "shadow": "contact",
+      "model": "none",
+      "usage": "Under FIG1 on white. Place under the source layer at the same coordinates.",
+      "prompt": "(local) Soft contact shadow built by generate.py from the alpha of FIG1: neutral black, max ~45% opacity at the core, no model call.",
+      "refs": []
+    },
+    {
+      "id": "SH-FIG2",
+      "base": "SH-FIG2",
+      "group": "shadows",
+      "variant": "white",
+      "file": "white/shadows/sh-fig2.png",
+      "size": "same as source",
+      "background": "transparent",
+      "style": "local",
+      "engine": "local-shadow",
+      "source": "FIG2",
+      "shadow": "contact",
+      "model": "none",
+      "usage": "Under FIG2 (seat) on white. Place under the source layer at the same coordinates.",
+      "prompt": "(local) Soft contact shadow built by generate.py from the alpha of FIG2: neutral black, max ~45% opacity at the core, no model call.",
+      "refs": []
+    }
+  ],
+  "derived": {
+    "_note": "Built locally by `generate.py --derive` from finished layers (no model call): page-colour squares with ~8% margin. Not counted as model assets.",
+    "margin": 0.08,
+    "items": [
+      {
+        "name": "chip-wristband",
+        "size": 1200,
+        "pages": {
+          "black": [
+            "OR0"
+          ],
+          "white": [
+            "SH-OR0",
+            "OR0"
+          ]
+        },
+        "usage": "Hero chip (R1+R2)"
+      },
+      {
+        "name": "chip-harness",
+        "size": 1200,
+        "pages": {
+          "black": [
+            "HX0"
+          ],
+          "white": [
+            "SH-HX0",
+            "HX0"
+          ]
+        },
+        "usage": "Hero chip"
+      },
+      {
+        "name": "chip-sun",
+        "size": 1200,
+        "pages": {
+          "black": [
+            "PS-G",
+            "PS"
+          ],
+          "white": [
+            "PS"
+          ]
+        },
+        "usage": "Hero chip"
+      },
+      {
+        "name": "chip-earth",
+        "size": 1200,
+        "pages": {
+          "black": [
+            "PE",
+            "PE-G"
+          ],
+          "white": [
+            "PE"
+          ]
+        },
+        "usage": "Hero chip"
+      },
+      {
+        "name": "chip-mars",
+        "size": 1200,
+        "pages": {
+          "black": [
+            "PM",
+            "PM-G"
+          ],
+          "white": [
+            "PM"
+          ]
+        },
+        "usage": "Hero chip"
+      },
+      {
+        "name": "chip-crew",
+        "size": 1200,
+        "pages": {
+          "black": [
+            "FIG1"
+          ],
+          "white": [
+            "SH-FIG1",
+            "FIG1"
+          ]
+        },
+        "usage": "Hero chip (faceless figure)"
+      },
+      {
+        "name": "chip-vitals",
+        "size": 1200,
+        "pages": {
+          "black": [
+            "WA1"
+          ],
+          "white": [
+            "WA1"
+          ]
+        },
+        "usage": "Hero chip (device on arm; UI added in HTML)"
+      },
+      {
+        "name": "inv-wristband",
+        "size": 1600,
+        "pages": {
+          "white": [
+            "SH-OR0",
+            "OR0"
+          ]
+        },
+        "usage": "Inventory slab (R3+R7)"
+      },
+      {
+        "name": "inv-harness",
+        "size": 1600,
+        "pages": {
+          "white": [
+            "SH-HX0",
+            "HX0"
+          ]
+        },
+        "usage": "Inventory slab"
+      },
+      {
+        "name": "inv-defib-pads",
+        "size": 1200,
+        "pages": {
+          "white": [
+            "HX2"
+          ]
+        },
+        "usage": "Inventory accessory"
+      },
+      {
+        "name": "inv-core-module",
+        "size": 1200,
+        "pages": {
+          "white": [
+            "HX3"
+          ]
+        },
+        "usage": "Inventory accessory"
+      },
+      {
+        "name": "inv-injectable",
+        "size": 1200,
+        "pages": {
+          "white": [
+            "HX4"
+          ]
+        },
+        "usage": "Inventory accessory"
+      }
+    ]
+  }
+}
