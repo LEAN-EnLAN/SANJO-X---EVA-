@@ -14,56 +14,8 @@
   {
    "id": "E1.1",
    "case": "1",
-   "title": "Electrodo suelto con pulso presente",
+   "title": "Posible paro: sin pulso, sin movimiento y sin respuesta",
    "events": [
-    {
-     "t": 0,
-     "signal": "ecg",
-     "value": "flat"
-    },
-    {
-     "t": 0,
-     "signal": "ecg_lead_impedance",
-     "value": "high"
-    },
-    {
-     "t": 0,
-     "signal": "ppg_pulse_bpm",
-     "value": 78
-    },
-    {
-     "t": 3,
-     "signal": "wrist_response",
-     "value": "tap"
-    }
-   ],
-   "expect": [
-    {
-     "action": "prompt_self",
-     "target": "Adjust your harness",
-     "deadline": 2
-    }
-   ],
-   "forbidden": [
-    "general_alarm",
-    "assign_helper"
-   ]
-  },
-  {
-   "id": "E1.1b",
-   "case": "1",
-   "title": "Asistolia real: ECG plano, sin pulso, sin respuesta",
-   "events": [
-    {
-     "t": 0,
-     "signal": "ecg",
-     "value": "flat"
-    },
-    {
-     "t": 0,
-     "signal": "ecg_lead_impedance",
-     "value": "normal"
-    },
     {
      "t": 0,
      "signal": "ppg_pulse_bpm",
@@ -73,6 +25,11 @@
      "t": 0,
      "signal": "accel",
      "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
     }
    ],
    "expect": [
@@ -84,6 +41,21 @@
     {
      "action": "assign_helper",
      "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 17
+    },
+    {
+     "action": "light_station",
+     "target": "nearest_available_aed",
+     "deadline": 17
+    },
+    {
+     "action": "show_route",
+     "target": "aed_runner_to_station",
      "deadline": 17
     },
     {
@@ -99,13 +71,15 @@
    ],
    "forbidden": [
     "deliver_shock",
-    "general_alarm_single_sensor"
+    "ai_shock_decision",
+    "general_alarm_single_sensor",
+    "delay_cpr_for_rhythm"
    ]
   },
   {
    "id": "E1.2",
    "case": "1",
-   "title": "Ejercicio que ensucia el ECG",
+   "title": "Ejercicio que ensucia la senal optica",
    "events": [
     {
      "t": 0,
@@ -119,8 +93,13 @@
     },
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "noisy_irregular"
+     "signal": "ppg_quality",
+     "value": "low"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_rhythm",
+     "value": "irregular"
     },
     {
      "t": 0,
@@ -136,24 +115,15 @@
     }
    ],
    "forbidden": [
-    "general_alarm"
+    "general_alarm",
+    "request_wrist_ecg_in_motion"
    ]
   },
   {
    "id": "E1.3",
    "case": "1",
-   "title": "Ritmo desfibrilable detectado por el subsistema del arnes",
+   "title": "El DEA de la estacion analiza el ritmo y decide la descarga",
    "events": [
-    {
-     "t": 0,
-     "signal": "ecg",
-     "value": "vf"
-    },
-    {
-     "t": 0,
-     "signal": "harness_defib",
-     "value": "shockable_detected"
-    },
     {
      "t": 0,
      "signal": "ppg_pulse_bpm",
@@ -161,12 +131,32 @@
     },
     {
      "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
      "signal": "wrist_response",
      "value": "none"
     },
     {
+     "t": 30,
+     "signal": "aed",
+     "value": "pads_attached"
+    },
+    {
+     "t": 32,
+     "signal": "aed",
+     "value": "analyzing"
+    },
+    {
      "t": 40,
-     "signal": "harness_defib",
+     "signal": "aed",
+     "value": "shock_advised"
+    },
+    {
+     "t": 45,
+     "signal": "aed",
      "value": "shock_delivered"
     }
    ],
@@ -174,29 +164,50 @@
     {
      "action": "assign_helper",
      "target": "nearest",
-     "deadline": 10
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 17
+    },
+    {
+     "action": "light_station",
+     "target": "nearest_available_aed",
+     "deadline": 17
     },
     {
      "action": "prompt_helper",
-     "target": "Do not touch them until the shock is done",
-     "deadline": 10
+     "target": "Follow the AED voice prompts",
+     "deadline": 31
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Do not touch them",
+     "deadline": 33
     },
     {
      "action": "prompt_helper",
      "target": "Start CPR",
-     "deadline": 42
+     "deadline": 47
+    },
+    {
+     "action": "log",
+     "target": "aed_events",
+     "deadline": 47
     },
     {
      "action": "log",
      "target": "chain",
-     "deadline": 42
+     "deadline": 47
     }
    ],
    "forbidden": [
     "deliver_shock",
     "cancel_shock",
     "delay_shock",
-    "ai_shock_decision"
+    "ai_shock_decision",
+    "contradict_aed"
    ]
   },
   {
@@ -206,8 +217,8 @@
    "events": [
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 0,
@@ -229,6 +240,11 @@
     {
      "action": "assign_helper",
      "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
      "deadline": 17
     },
     {
@@ -263,8 +279,8 @@
    "events": [
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 0,
@@ -321,8 +337,8 @@
     },
     {
      "t": 60,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 60,
@@ -342,6 +358,16 @@
      "deadline": 77
     },
     {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 77
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 80
+    },
+    {
      "action": "prompt_helper",
      "target": "Keep CPR going",
      "deadline": 80
@@ -359,7 +385,8 @@
    ],
    "forbidden": [
     "stop_cpr_for_alert",
-    "order_transfer_during_cpr"
+    "order_transfer_during_cpr",
+    "drop_aed_fetch_for_shelter"
    ]
   },
   {
@@ -605,8 +632,8 @@
    "events": [
     {
      "t": 0,
-     "signal": "p07_ecg",
-     "value": "flat"
+     "signal": "p07_accel",
+     "value": "still"
     },
     {
      "t": 0,
@@ -662,8 +689,8 @@
    "events": [
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 0,
@@ -733,7 +760,7 @@
    "forbidden": [
     "disable_response_check",
     "disable_help_button",
-    "disable_rhythm_analysis"
+    "disable_pulse_loss_detection"
    ]
   },
   {
@@ -748,8 +775,8 @@
     },
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 0,
@@ -833,8 +860,8 @@
     },
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "normal_sinus"
+     "signal": "ppg_quality",
+     "value": "good"
     },
     {
      "t": 0,
@@ -867,30 +894,25 @@
   {
    "id": "T7",
    "case": "all",
-   "title": "Falta el inyectable o un electrodo no hace contacto",
+   "title": "El DEA falta o tiene poca bateria",
    "events": [
     {
      "t": 0,
-     "signal": "harness_selfcheck",
+     "signal": "station_selfcheck",
      "value": "start"
     },
     {
      "t": 1,
-     "signal": "harness_injectable",
+     "signal": "station_a_aed",
      "value": "missing"
     },
     {
      "t": 1,
-     "signal": "harness_electrode_3",
-     "value": "no_contact"
+     "signal": "station_b_aed_battery",
+     "value": "low"
     }
    ],
    "expect": [
-    {
-     "action": "prompt_self",
-     "target": "Your harness needs attention",
-     "deadline": 5
-    },
     {
      "action": "notify",
      "target": "crew_lead",
@@ -898,13 +920,13 @@
     },
     {
      "action": "log",
-     "target": "selfcheck",
+     "target": "station_status",
      "deadline": 10
     }
    ],
    "forbidden": [
-    "point_to_other_passenger_item",
-    "light_empty_compartment"
+    "light_empty_station",
+    "send_helper_to_unavailable_aed"
    ]
   },
   {
@@ -972,8 +994,8 @@
     },
     {
      "t": 600,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 600,
@@ -1020,8 +1042,8 @@
     },
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 0,
@@ -1051,6 +1073,11 @@
      "deadline": 20
     },
     {
+     "action": "show",
+     "target": "preloaded_aed_station_route",
+     "deadline": 20
+    },
+    {
      "action": "log",
      "target": "local",
      "deadline": 20
@@ -1072,8 +1099,8 @@
    "events": [
     {
      "t": 0,
-     "signal": "ecg",
-     "value": "flat"
+     "signal": "accel",
+     "value": "still"
     },
     {
      "t": 0,
@@ -1105,6 +1132,181 @@
    ],
    "forbidden": [
     "rssi_as_distance"
+   ]
+  },
+  {
+   "id": "T16",
+   "case": "all",
+   "title": "El DEA mas cercano esta en uso y el ayudante no llega a la otra estacion",
+   "events": [
+    {
+     "t": 0,
+     "signal": "station_a_aed",
+     "value": "in_use"
+    },
+    {
+     "t": 0,
+     "signal": "p07_ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "p07_accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "p07_wrist_response",
+     "value": "none"
+    },
+    {
+     "t": 20,
+     "signal": "aed_runner_1",
+     "value": "cannot_reach"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest_to_p07",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner_station_b",
+     "deadline": 17
+    },
+    {
+     "action": "light_station",
+     "target": "station_b",
+     "deadline": 17
+    },
+    {
+     "action": "show_route",
+     "target": "aed_runner_to_station_b",
+     "deadline": 17
+    },
+    {
+     "action": "reassign_helper",
+     "target": "nearest_to_station_b",
+     "deadline": 30
+    },
+    {
+     "action": "prompt_helper",
+     "target": "AED on its way",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "send_helper_to_aed_in_use",
+    "take_aed_from_ongoing_resuscitation",
+    "stop_cpr_waiting_for_aed"
+   ]
+  },
+  {
+   "id": "T17",
+   "case": "all",
+   "title": "Perdida de pulso por mal contacto, la persona responde",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "ppg_quality",
+     "value": "poor_contact"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "moving"
+    },
+    {
+     "t": 3,
+     "signal": "wrist_response",
+     "value": "tap"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "prompt_self",
+     "target": "Adjust your wristband",
+     "deadline": 5
+    },
+    {
+     "action": "measure",
+     "target": "ppg_repeat",
+     "deadline": 30
+    },
+    {
+     "action": "log",
+     "target": "event",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "general_alarm",
+    "assign_helper"
+   ]
+  },
+  {
+   "id": "T17b",
+   "case": "all",
+   "title": "Perdida de pulso con mal contacto posible y sin respuesta: no se demora la RCP",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "ppg_quality",
+     "value": "poor_contact"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "aed_runner",
+     "deadline": 17
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Start CPR",
+     "deadline": 20
+    }
+   ],
+   "forbidden": [
+    "delay_cpr_for_contact_check",
+    "deliver_shock"
    ]
   }
  ]
