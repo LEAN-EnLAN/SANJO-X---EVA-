@@ -255,6 +255,9 @@
 
     var reduceMQ = global.matchMedia ? global.matchMedia('(prefers-reduced-motion: reduce)') : null;
     var reduced = !!(reduceMQ && reduceMQ.matches);
+    // cursor-driven motion (the brush nudge) only with a real hovering pointer; re-checked on every event
+    var fineMQ = global.matchMedia ? global.matchMedia('(hover: hover) and (pointer: fine)') : null;
+    function finePointer() { return !fineMQ || fineMQ.matches; }
     var carousel = false;
     var scale = 1;
     var alive = true;
@@ -520,7 +523,7 @@
     var pX = 0, pT = 0, pVX = 0;  // pointer velocity, px per ms
 
     on(stage, 'pointermove', function (e) {
-      if (e.pointerType !== 'mouse') return;
+      if (e.pointerType !== 'mouse' || !finePointer()) return;
       var now = e.timeStamp || global.performance.now();
       var dt = now - pT;
       if (pT && dt > 0 && dt < 120) pVX = pVX * 0.55 + ((e.clientX - pX) / dt) * 0.45;
@@ -534,7 +537,7 @@
       on(it.hanger, 'pointerenter', function (e) {
         if (e.pointerType !== 'mouse') return;
         // Brushing past nudges the badge in the pointer's direction.
-        impulse(i, clamp(-pVX * 26, -60, 60));
+        if (finePointer()) impulse(i, clamp(-pVX * 26, -60, 60));
         kick();
         clearTimeout(st.timer);
         st.timer = setTimeout(function () {
@@ -549,7 +552,7 @@
       on(it.hanger, 'pointerleave', function (e) {
         if (e.pointerType !== 'mouse') return;
         clearTimeout(st.timer);
-        if (!st.hover) impulse(i, clamp(-pVX * 14, -36, 36));
+        if (!st.hover && finePointer()) impulse(i, clamp(-pVX * 14, -36, 36));
         st.hover = false;
         refreshFront(i);
         kick();

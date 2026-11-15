@@ -89,7 +89,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .statement .row p{font-size:var(--t-label);line-height:1.1}
 .statement .row small{display:block;font-size:var(--t-util);color:var(--space-muted);margin-top:10px;line-height:1.3}
 @media (max-width:760px){.statement .row{grid-template-columns:1fr;margin-top:56px}}
-@media (max-width:760px){.solar .log{top:72px;padding:10px 12px;gap:8px;background:rgba(0,0,0,.72);border:1px solid #2a2a2a;max-width:calc(100% - 40px);font-size:14px}.solar .log li.old{display:none}.solar .meter{top:44px}}
 
 /* emergency station scene (pinned) */
 .xsec .stage{background:var(--space);color:var(--space-ink)}
@@ -129,11 +128,23 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .xsec .head{left:16px;right:16px;top:18px;gap:8px;max-width:none}
   .xsec .head .prop{font-size:28px}
   .xsec .head .note{display:none}
-  .sfig{left:16px;right:16px;width:auto;top:150px;transform:none}
   .sfig .tag{display:none}
-  .ledger{left:16px;right:16px;bottom:14px;width:auto}
-  .lbl{padding:6px 0;font-size:14px}
   .hot span{font-size:11px;padding:4px 6px;top:-10px}
+  /* phones: heading, photo and ledger stack in one column, so nothing sits on top of anything else */
+  .esec .stage{display:flex;flex-direction:column;justify-content:space-between;gap:14px;padding:16px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px))}
+  .esec .head,.esec .ledger{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto;max-width:none}
+  .esec .sfig{position:relative;left:auto;right:auto;top:auto;width:100%;transform:none;flex:none}
+  .esec .lbl{padding:6px 0;font-size:14px}
+  .esec .hot::before{left:-7px;top:-7px;width:14px;height:14px}
+  .esec .hot span{font-size:12px;padding:4px 6px;top:-11px}
+  .esec .h-item span{top:-6px}
+  .esec .h-btn span{left:14px;right:auto} /* to the right: on the left it would cover the Eva screen */
+}
+@media (max-width:760px) and (max-height:820px){
+  .esec .lbl small{display:none}.esec .lbl.cur small{display:block}
+}
+@media (max-width:760px) and (max-height:680px){
+  .esec .head .prop{font-size:23px}.esec .stage{gap:10px}.esec .lbl{padding:5px 0;font-size:13px}
 }
 
 /* station legend: the twelve compartments in English */
@@ -246,52 +257,48 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .bscr .ui svg{align-self:center;width:100%;height:120px}
 .bscr .ui path{fill:none;stroke:#1fe5c4;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .bfig .bi{mix-blend-mode:multiply;filter:brightness(1.015)} /* lifts the renders' 253–254 backdrop to white so it melts into the stage */
-/* suit mode: an isometric exploded stack in CSS 3D. It starts flat, exactly over the base in the previous step's render
-   (body centre 25.4% / 49%, body width 44.9% of the frame), then turns to an isometric view and the layers part.
-   --bw is the figure width in px (set from JS); B = base body width. Layer images are cut so their bodies centre at the given %. */
-.bfig .bsuit3{position:absolute;inset:0;opacity:0;transition:opacity .35s var(--ease);pointer-events:none;--bk:.36;--B:calc(var(--bw,900) * var(--bk) * 1px)}
-.bfig .bsuit3.on{opacity:1}
-.s3-stack{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
-  transform:translate(calc(var(--bw,900) * -.246px),calc(var(--bw,900) * -.0067px)) scale(calc(.449 / var(--bk))) rotateX(0deg) rotateZ(0deg);
-  transition:transform 1.1s var(--ease)}
-.s3-l{position:absolute;left:0;top:0;transform-style:preserve-3d;transform:translateZ(0) translate(-50.7%,-48.9%);transition:transform 1.1s var(--ease)}
-.s3-l img{display:block;width:100%;height:auto;position:relative}
-.s3-l img.x{position:absolute;left:0;top:0;transform:translateZ(calc(var(--B) * var(--d) * -.011));filter:brightness(.42) contrast(1.1)} /* stacked darker copies give each part its thickness */
-.s3-base{width:calc(var(--B) * 1.058)}
-.s3-sleeve{width:calc(var(--B) * 1.058);aspect-ratio:960/947;opacity:0;transition:transform 1.1s var(--ease),opacity .5s var(--ease)}
-.s3-scr{width:calc(var(--B) * 1.027);transform:translateZ(0) translate(-50.3%,-50%)}
-/* the suit sleeve: a cream woven fabric plane, wider than the band along the arm, soft at the cut edges */
-.s3-fab{position:absolute;left:-34%;right:-34%;top:19%;bottom:19%;border-radius:4% / 7%;
-  background:repeating-linear-gradient(90deg,rgba(120,104,78,.13) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(120,104,78,.11) 0 1px,transparent 1px 3px),linear-gradient(180deg,#efe9dc,#e2d9c6 55%,#d9cfba);
-  box-shadow:inset 0 0 0 1px rgba(120,104,78,.18);
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
-.s3-fab::after{content:"";position:absolute;left:0;right:0;top:9%;border-top:1.5px dashed rgba(120,104,78,.45)}
-.s3-mag{position:absolute;width:7%;aspect-ratio:1;margin:-3.5% 0 0 -3.5%;border-radius:50%;border:2px dashed var(--orange);background:rgba(242,138,26,.12)}
-.s3-a{position:absolute;width:0;height:0}
-.bsuit3.open .s3-stack{transform:translate(0,calc(var(--bw,900) * .012px)) scale(1) rotateX(57deg) rotateZ(-45deg)}
-.bsuit3.open .s3-scr{transform:translateZ(calc(var(--B) * .46)) translate(-50.3%,-50%);transition-delay:.08s}
-.bsuit3.open .s3-sleeve{opacity:1;transform:translateZ(calc(var(--B) * .04)) translate(-50.7%,-48.9%);transition-delay:.16s}
-.bsuit3.open .s3-base{transform:translateZ(calc(var(--B) * -.36)) translate(-50.7%,-48.9%);transition-delay:.24s}
-/* labels: page hotspot style, pinned by thin leaders once the stack has settled */
-.s3-lead{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.s3-lead path{fill:none;stroke:#0c0c0c;stroke-width:1}
-.s3-lead circle{fill:var(--orange);stroke:#0c0c0c;stroke-width:1}
-.s3-lead text{font:600 10px var(--font);fill:#0c0c0c;text-anchor:middle;dominant-baseline:central}
-.s3-lora{position:absolute;left:0;top:0;width:clamp(22px,3.2%,36px);overflow:visible}
-.s3-lora path{fill:none;stroke:var(--net);stroke-width:2.4;stroke-linecap:round}
-.s3-lead,.s3-lora,.s3-tags{opacity:0;transition:opacity .35s var(--ease)}
-.bsuit3.set .s3-lead,.bsuit3.set .s3-lora,.bsuit3.set .s3-tags{opacity:1}
-.s3-tags{list-style:none;position:absolute;inset:0}
-.s3-tags li{position:absolute;left:0;top:0;max-width:var(--tw,200px);display:grid;gap:3px;font-size:13px;line-height:1.2;padding:6px 8px;background:#0c0c0c;color:#fff}
-.s3-tags b{font-weight:400}
-.s3-tags small{font-size:11.5px;color:rgba(255,255,255,.7)}
-/* narrow figures: a bigger stack, numbered dots and a legend under it */
-.bsuit3.leg{--bk:.42}
-.bsuit3.leg .s3-tags{inset:auto 0 auto 0;top:calc(100% + 8px);display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
-.bsuit3.leg .s3-tags li{position:static;max-width:none;background:none;color:var(--ink);padding:0 0 0 20px;font-size:11.5px;line-height:1.2;transform:none!important;position:relative}
-.bsuit3.leg .s3-tags li::before{content:attr(data-n);position:absolute;left:0;top:0;width:15px;height:15px;border-radius:50%;background:var(--orange);color:#0c0c0c;font-size:10px;line-height:15px;text-align:center;box-shadow:0 0 0 1px #0c0c0c}
-.bsuit3.leg .s3-tags small{display:none}
-@media (prefers-reduced-motion:reduce){.s3-stack,.s3-l,.s3-lead,.s3-lora,.s3-tags{transition:none!important}}
+/* suit mode: the real exploded render split in layers (a/suit-*.webp, same 1536 × 1024 frame, render scaled .95 and lowered 40 px).
+   On step 4 the sleeve band slides into the gap along the render's horizontals (slope −0.065) while the screen module lifts 17 px. */
+.bfig .bsuit{position:absolute;inset:0;opacity:0;transition:opacity .5s var(--ease);pointer-events:none}
+.bfig .bsuit.on{opacity:1}
+.su-pic{position:absolute;inset:0;overflow:hidden}
+.su-pic img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.su-base,.su-scr{mix-blend-mode:multiply;filter:brightness(1.015)}
+.su-sleeve{opacity:0;transform:translate(-34%,3.3%);transition:transform .7s cubic-bezier(.16,1,.3,1),opacity .35s var(--ease)}
+.su-scr{transition:transform .7s cubic-bezier(.16,1,.3,1)}
+.su-shade{opacity:0;transition:opacity .4s var(--ease)}
+.bsuit.open .su-sleeve{opacity:1;transform:none;transition-delay:.2s,.2s}
+.bsuit.open .su-scr{transform:translateY(-1.66%);transition-delay:.2s}
+.bsuit.open .su-shade{opacity:1;transition-delay:.55s}
+.su-tags,.su-lora{position:absolute;opacity:0;transition:opacity .3s var(--ease)}
+.su-tags{inset:0}
+.bsuit.open .su-tags,.bsuit.open .su-lora{opacity:1;transition-delay:.85s}
+.su-tags .hot span{display:grid;gap:3px;white-space:nowrap;line-height:1.1}
+.su-tags .hot b{font-weight:400}
+.su-tags .hot small{font-size:.85em;color:rgba(255,255,255,.72)}
+.su-lora{left:17.6%;top:59.4%;width:2.6%;overflow:visible}
+.su-lora path{fill:none;stroke:var(--net);stroke-width:2.6;stroke-linecap:round}
+.bsuit.open .su-lora path{animation:suWave 1.8s ease-out infinite}
+.su-lora path:nth-child(2){animation-delay:.2s!important}.su-lora path:nth-child(3){animation-delay:.4s!important}
+@keyframes suWave{0%,100%{opacity:.25}35%{opacity:1}}
+.su-foot{position:absolute;left:0;right:0;top:calc(100% + 4px);opacity:0;transition:opacity .3s var(--ease)}
+.bsuit.open .su-foot{opacity:1;transition-delay:.85s}
+.su-cap{text-align:center;font-size:14px;line-height:1.3;color:var(--muted)}
+.su-leg{display:none}
+/* phones: the labels would run off the frame, so numbered dots and a three-line legend under the figure (the figure moves up to make room) */
+@media (max-width:760px){
+  .bandp .bfig{transition:transform .5s var(--ease)}
+  .bandp .bview.suit .bfig{transform:translateY(calc(var(--su-up,0px) * -1))}
+  .su-tags .hot span{display:none}
+  .su-tags .hot::before,.su-leg li::before{width:18px;height:18px;left:-9px;top:-9px}
+  .su-tags .hot::after{content:attr(data-n);position:absolute;left:-9px;top:-9px;width:18px;font:600 10px/18px var(--font);text-align:center;color:#0c0c0c}
+  .su-foot{top:calc(100% + 2px);padding:0 4px;display:grid;gap:8px}
+  .su-leg{display:grid;gap:5px;list-style:none;counter-reset:su;font-size:12.5px;line-height:1.25;color:var(--ink)}
+  .su-leg li{position:relative;padding-left:26px;counter-increment:su}
+  .su-leg li::before{content:counter(su);position:absolute;left:0;top:-1px;border-radius:50%;background:var(--orange);color:#0c0c0c;font:600 10px/18px var(--font);text-align:center;box-shadow:0 0 0 1px #0c0c0c}
+  .su-cap{font-size:12.5px;text-align:left;padding-left:26px}
+}
+@media (prefers-reduced-motion:reduce){.su-pic img,.su-tags,.su-lora,.su-foot,.bandp .bfig{transition:none!important}.su-lora path{animation:none!important;opacity:1}}
 @media (max-width:760px){
   .storyp.bandp .ptxt{left:0;right:0;width:auto;top:auto;bottom:0;align-content:end;padding:40px max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(transparent,var(--canvas) 24%)}
   .bandp .bview{left:0;right:0;width:auto;top:56px;bottom:38%;padding:0 4px;place-items:center}
@@ -451,6 +458,30 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 @keyframes alBlink{50%{opacity:0}}
 @keyframes alVig{50%{opacity:calc(var(--d,0)*.35)}}
 @media (prefers-reduced-motion:reduce){.solar .alert,.solar .alert *,.solar .alvig{animation:none!important}}
+.solar .log li.m{display:none}
+/* phones: the Sun is the hero. The page header slides away while the scene is pinned (html.navhide), the stage fills the screen,
+   the HUD keeps its corners and the timer, one short status line at a time, and a compact alert at the bottom. */
+.nav{transition:transform .3s var(--ease)}
+@media (max-width:760px){
+  html.navhide .nav{transform:translateY(-100%)}
+  .solar .stage{top:0;height:100svh}
+  .solar .hud .bar{left:18px;top:16px;font-size:11px}
+  .solar .hud .bar span:first-child,.solar .meter{display:none}
+  .solar .log{top:42px;left:16px;padding:8px 12px;gap:0;background:rgba(0,0,0,.6);border:1px solid #2a2a2a;max-width:calc(100% - 32px);font-size:15px}
+  .solar .log li{padding-left:0;border-left:0}
+  .solar .log li:not(.m),.solar .log li.old,.solar .log li:not(.on){display:none}
+  .solar .log:not(:has(li.m.on)){display:none}
+  .solar .log li.m.on:not(.old){display:block}
+  .solar .txt{top:42px;left:16px;max-width:calc(100% - 32px);padding:16px 18px 18px}
+  .solar .alert{left:12px;right:12px;bottom:14px;width:auto;gap:8px;padding:0 0 14px}
+  .solar .alert .al-tape{height:9px}
+  .solar .alert .al-top,.solar .alert > span{display:none}
+  .solar .alert b{padding:0 16px;font-size:clamp(26px,8vw,34px)}
+  .solar .alert .al-count{padding:0 16px}
+  .solar .alert .al-count strong{font-size:24px}
+  .solar .alert .al-count i{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){.nav{transition:none}}
 /* Earth link */
 .link-sec .stage{background:var(--space);color:var(--space-ink)}
 .link-sec .head{position:absolute;left:20px;top:28px;right:20px;display:flex;justify-content:space-between;gap:20px;z-index:4}
@@ -638,22 +669,15 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <img class="bi on" src="a/band2-hero-white.webp" alt="The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.">
         <img class="bi" src="a/band2-exploded.webp" alt="The screen module lifted above the sensor base: two spring contacts line up with the gold pads on the base, between the magnet seats.">
         <img class="bi" src="a/band2-base-alone.webp" alt="The sensor base from above, with its contacts and magnet seats, and from below, with the optical pulse sensor and two steel skin electrodes.">
-        <div class="bsuit3" id="bsuit3" role="img" aria-label="Suit mode, exploded: the suit sleeve sits between the screen module and the sensor base; the magnets hold through the fabric, the spring contacts stay apart, and the base keeps sending by LoRa.">
-          <div class="s3-stack">
-            <div class="s3-l s3-base"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:1"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:2"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:3"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:4"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:5"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:6"><img src="a/suit-layer-base.webp" alt="" width="960" height="947"><i class="s3-a" data-l="cont" style="left:52%;top:45.4%"></i><i class="s3-a" data-l="base" style="left:6%;top:48%"></i><i class="s3-a" data-l="skin" style="left:66%;top:73%"></i><i class="s3-a" data-l="lora" style="left:97%;top:72%"></i></div>
-            <div class="s3-l s3-sleeve"><div class="s3-fab"></div><i class="s3-mag" style="left:23.5%;top:34.3%"></i><i class="s3-mag" style="left:80.5%;top:34.3%"></i><i class="s3-mag" style="left:24%;top:55.8%"></i><i class="s3-mag" style="left:81%;top:55.8%"></i><i class="s3-a" data-l="sleeve" style="left:118%;top:44%"></i><i class="s3-a" data-l="mag" style="left:24%;top:55.8%"></i></div>
-            <div class="s3-l s3-scr"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:1"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:2"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:3"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:4"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:5"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:6"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:7"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:8"><img src="a/suit-layer-screen.webp" alt="" width="960" height="507"><i class="s3-a" data-l="scr" style="left:22%;top:16%"></i></div>
+        <div class="bsuit" id="bsuit" role="img" aria-label="Suit mode, exploded: the suit sleeve sits between the screen module and the sensor base. The magnets hold through the fabric, the contacts part, and the base keeps sending by LoRa on its own battery.">
+          <div class="su-pic"><img class="su-base" src="a/suit-base.webp" alt="" width="1536" height="1024"><img class="su-shade" src="a/suit-shade.webp" alt=""><img class="su-sleeve" src="a/suit-sleeve.webp" alt=""><img class="su-scr" src="a/suit-screen.webp" alt=""></div>
+          <svg class="su-lora" viewBox="0 0 40 48" aria-hidden="true"><path d="M34 14a14 14 0 0 0 0 20M26 7a24 24 0 0 0 0 34M18 0a34 34 0 0 0 0 48"/></svg>
+          <div class="su-tags" aria-hidden="true">
+            <i class="hot l" data-n="1" style="left:30.1%;top:13.4%"><span><b>Screen module</b><small>outside the sleeve</small></span></i>
+            <i class="hot ml" data-n="2" style="left:75.2%;top:40.4%"><span><b>Suit sleeve</b></span></i>
+            <i class="hot ml" data-n="3" style="left:69.1%;top:58.7%"><span><b>Sensor base</b><small>on the skin, own battery + LoRa</small></span></i>
           </div>
-          <svg class="s3-lead" aria-hidden="true"></svg>
-          <svg class="s3-lora" viewBox="0 0 40 48" aria-hidden="true"><path d="M6 14a14 14 0 0 1 0 20M14 7a24 24 0 0 1 0 34M22 0a34 34 0 0 1 0 48"/></svg>
-          <ol class="s3-tags" aria-hidden="true">
-            <li data-l="scr" data-n="1" data-side="l"><b>Screen module</b><small>Main battery · help button · voice · ECG pads</small></li>
-            <li data-l="mag" data-n="2" data-side="l"><b>Magnets hold through the fabric</b></li>
-            <li data-l="base" data-n="3" data-side="l"><b>Sensor base</b><small>Own battery · LoRa keeps sending</small></li>
-            <li data-l="sleeve" data-n="4" data-side="r"><b>Suit sleeve</b></li>
-            <li data-l="cont" data-n="5" data-side="r"><b>Spring contacts apart</b></li>
-            <li data-l="skin" data-n="6" data-side="r"><b>Skin</b><small>Pulse, SpO₂, temperature, EDA</small></li>
-          </ol>
+          <div class="su-foot"><ol class="su-leg" aria-hidden="true"><li>Screen module · outside the sleeve</li><li>Suit sleeve</li><li>Sensor base · on the skin, own battery + LoRa</li></ol><p class="su-cap">Magnets hold through the fabric; the contacts part.</p></div>
         </div>
                 <div class="bscr" id="bscr" aria-hidden="true">
           <div class="ui on" data-u="home"><div class="k"><span>EVA</span><span>08:42</span></div><div class="big">All good</div><div class="sub">Pulse 72 · SpO₂ 98% · 36.4 °C</div></div>
@@ -830,6 +854,8 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <li data-at=".29">Every wristband alerted · <span id="nAck">0</span>/15 acknowledged</li>
         <li data-at=".43">The route to the storm shelter lights up on every wrist · <span id="nIn">0</span>/15 inside</li>
         <li data-at=".76">All 15 sheltered before the particles arrive · dose logged per passenger</li>
+        <li data-at=".16" class="m red">X-ray flare · particles in ~18 min</li>
+        <li data-at=".29" class="m">Everyone alerted</li>
       </ol>
       <button class="ascii-t" id="asciiBtn" type="button" aria-pressed="false" hidden>+ ASCII</button>
       <p class="drag" id="sunHint">Drag the Sun</p>
@@ -985,10 +1011,10 @@ const ES={
 "The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.":"La pulsera Eva: un módulo de pantalla robusto color grafito, con esquinas plateadas y botones naranjas, sobre dos correas de tela oscuras.",
 "The screen module lifted above the sensor base: two spring contacts line up with the gold pads on the base, between the magnet seats.":"El módulo de pantalla levantado sobre la base de sensores: dos contactos de resorte se alinean con las placas doradas de la base, entre los alojamientos de los imanes.",
 "The sensor base from above, with its contacts and magnet seats, and from below, with the optical pulse sensor and two steel skin electrodes.":"La base de sensores vista desde arriba, con sus contactos y los alojamientos de los imanes, y desde abajo, con el sensor óptico de pulso y dos electrodos de acero para la piel.",
-"Suit mode, exploded: the suit sleeve sits between the screen module and the sensor base; the magnets hold through the fabric, the spring contacts stay apart, and the base keeps sending by LoRa.":"Modo traje, en despiece: la manga del traje queda entre el módulo de pantalla y la base de sensores; los imanes sujetan a través de la tela, los contactos de resorte quedan separados y la base sigue enviando por LoRa.",
-"Magnets hold through the fabric":"Los imanes sujetan a través de la tela","Suit sleeve":"Manga del traje","Spring contacts apart":"Contactos de resorte separados",
-"Own battery · LoRa keeps sending":"Batería propia · LoRa sigue enviando","Skin":"Piel","Pulse, SpO₂, temperature, EDA":"Pulso, SpO₂, temperatura, EDA",
-"Screen module":"Módulo de pantalla","Main battery · help button · voice · ECG pads":"Batería principal · botón de ayuda · voz · placas de ECG",
+"Suit mode, exploded: the suit sleeve sits between the screen module and the sensor base. The magnets hold through the fabric, the contacts part, and the base keeps sending by LoRa on its own battery.":"Modo traje, en despiece: la manga del traje queda entre el módulo de pantalla y la base de sensores. Los imanes sujetan a través de la tela, los contactos se separan y la base sigue enviando por LoRa con su propia batería.",
+"Suit sleeve":"Manga del traje","outside the sleeve":"fuera de la manga","on the skin, own battery + LoRa":"sobre la piel, batería propia + LoRa",
+"Magnets hold through the fabric; the contacts part.":"Los imanes sujetan a través de la tela; los contactos se separan.",
+"Screen module":"Módulo de pantalla","Screen module · outside the sleeve":"Módulo de pantalla · fuera de la manga","Sensor base · on the skin, own battery + LoRa":"Base de sensores · sobre la piel, batería propia + LoRa",
 "All good":"Todo bien","Pulse 72 · SpO₂ 98% · 36.4 °C":"Pulso 72 · SpO₂ 98% · 36,4 °C",
 "Keep still · one finger on each pad":"Sin moverte · un dedo en cada placa",
 "Help button":"Botón de ayuda","Base button":"Botón de la base","Side button":"Botón lateral","Speaker":"Parlante",
@@ -1071,6 +1097,7 @@ const ES={
 "Hull cam 02 · forward":"Cámara de casco 02 · proa",
 "Eva watches NASA DONKI and NOAA GOES":"Eva vigila NASA DONKI y NOAA GOES",
 "X-ray flare seen · the particles are about 18 minutes behind":"Fulguración de rayos X detectada · las partículas llegan unos 18 minutos después",
+"X-ray flare · particles in ~18 min":"Fulguración de rayos X · partículas en ~18 min","Everyone alerted":"Todos alertados",
 "Every wristband alerted ·":"Alerta en todas las pulseras ·","/15 acknowledged":"/15 confirmaron",
 "The route to the storm shelter lights up on every wrist ·":"La ruta al refugio se ilumina en cada muñeca ·","/15 inside":"/15 adentro",
 "All 15 sheltered before the particles arrive · dose logged per passenger":"Los 15 a resguardo antes de que lleguen las partículas · dosis registrada por pasajero",
@@ -1183,8 +1210,8 @@ function frame(){ticking=false;const y=scrollY;for(const s of scenes)s(y)}
 function req(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
 addEventListener('scroll',req,{passive:true});
 /* pinned progress helper */
-function pinP(sec,y){const st=sec.querySelector('.stage');const len=sec.offsetHeight-st.offsetHeight;return reduce?1:clamp((y-sec._top+NAV)/(len||1))}
-const pins=[...document.querySelectorAll('.pinsec')]; onMeasure(()=>pins.forEach(s=>s._top=docTop(s)));
+function pinP(sec,y){const st=sec.querySelector('.stage');const len=sec.offsetHeight-st.offsetHeight;return reduce?1:clamp((y-sec._top+(sec._nav??NAV))/(len||1))}
+const pins=[...document.querySelectorAll('.pinsec')]; onMeasure(()=>pins.forEach(s=>{s._top=docTop(s); s._nav=parseFloat(getComputedStyle(s.querySelector('.stage')).top)||0}));
 
 /* 1 · Hero */
 const hero=document.getElementById('hero'), hst=hero.querySelector('.stage'), ground=document.getElementById('ground'), copy=document.getElementById('heroCopy');
@@ -1203,7 +1230,9 @@ add(y=>{const p=pinP(hero,y), s=reduce?1:io2(clamp((p-.02)/.45)), k=reduce?1:cla
 /* hero deep space: a starfield in three depths that slides against the cursor (near stars move most) and drifts slowly outward,
    while the chips stay put and surface like meteors: each fades in out of blur, holds, and fades away on its own clock */
 let mx=0,my=0,heroOn=true,skyRun=false,skyLast=0;
-addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;mx=e.clientX/innerWidth*2-1;my=e.clientY/innerHeight*2-1},{passive:true});
+/* cursor parallax only with a real hovering pointer (never on touch screens) and never with reduced motion; re-checked when the input changes */
+const fineMQ=matchMedia('(hover: hover) and (pointer: fine)'); let fineP=fineMQ.matches&&!reduce;
+addEventListener('pointermove',e=>{if(!fineP||e.pointerType==='touch')return;mx=e.clientX/innerWidth*2-1;my=e.clientY/innerHeight*2-1},{passive:true});
 const sky=document.getElementById('heroSky'), kx=sky.getContext('2d'); let skyStars=[], skyW=0, skyH=0, skyRGB='12,12,12';
 function skySize(){const r=Math.min(2,devicePixelRatio||1);skyW=sky.clientWidth;skyH=sky.clientHeight;sky.width=skyW*r;sky.height=skyH*r;kx.setTransform(r,0,0,r,0,0);
   skyRGB=getComputedStyle(document.documentElement).getPropertyValue('--star').trim()||'12,12,12';
@@ -1225,7 +1254,8 @@ add(y=>{heroOn=pinP(hero,y)<.9; if(heroOn&&!skyRun){skyRun=true;requestAnimation
 let pmx=0,pmy=0,pRun=false; const rootS=document.documentElement.style;
 function pTick(){pmx+=(mx-pmx)*.07;pmy+=(my-pmy)*.07;rootS.setProperty('--pmx',pmx.toFixed(4));rootS.setProperty('--pmy',pmy.toFixed(4));
   if(Math.abs(mx-pmx)>.001||Math.abs(my-pmy)>.001)requestAnimationFrame(pTick);else pRun=false}
-if(!reduce)addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;if(!pRun){pRun=true;requestAnimationFrame(pTick)}},{passive:true});
+addEventListener('pointermove',e=>{if(!fineP||e.pointerType==='touch')return;if(!pRun){pRun=true;requestAnimationFrame(pTick)}},{passive:true});
+fineMQ.addEventListener('change',()=>{fineP=fineMQ.matches&&!reduce; if(!fineP){mx=0;my=0;if(!pRun){pRun=true;requestAnimationFrame(pTick)}}});
 
 /* reveals */
 const rev=[...document.querySelectorAll('[data-reveal]')];
@@ -1241,27 +1271,13 @@ function steps(id,onStep){const sec=document.getElementById(id), st=sec.querySel
     if(i!==cur){cur=i;sts.forEach((e,k)=>e.classList.toggle('on',k===i));onStep(i,sts[i],st)}});
   return ()=>{if(cur>=0)onStep(cur,sts[cur],st)}}
 /* 5 · Wristband v2: each step shows one view (joined, stacked, parts, suit cross-section) and its hotspots; the Eva screen UI is fitted to the joined view's glass */
-const bfig=document.getElementById('bfig'), bscr=document.getElementById('bscr'), bviews=[...bfig.querySelectorAll('.bi,.bsuit3')], bhs=[...bfig.querySelectorAll('.hs')], bui=[...bscr.querySelectorAll('.ui')];
+const bfig=document.getElementById('bfig'), bscr=document.getElementById('bscr'), bviews=[...bfig.querySelectorAll('.bi,.bsuit')], bhs=[...bfig.querySelectorAll('.hs')], bui=[...bscr.querySelectorAll('.ui')];
 onMeasure(()=>bscr.style.setProperty('--k',(bfig.clientWidth/1400).toFixed(4)));
-/* suit mode: open the isometric stack on step 4 (and close it on the way back); labels pin once the layers settle */
-const s3=document.getElementById('bsuit3'), s3lead=s3.querySelector('.s3-lead'), s3lora=s3.querySelector('.s3-lora'), s3tags=[...s3.querySelectorAll('.s3-tags li')], s3last=s3.querySelector('.s3-base'); let s3t=0;
-function s3place(){if(!s3.classList.contains('open'))return; const R=s3.getBoundingClientRect(), W=R.width, H=R.height, leg=s3.classList.contains('leg'), NS='http://www.w3.org/2000/svg';
-  const at=k=>{const r=s3.querySelector('.s3-a[data-l="'+k+'"]').getBoundingClientRect();return [r.left-R.left,r.top-R.top]};
-  let svg=''; const lo=at('lora'); s3lora.style.transform=`translate(${(lo[0]+6).toFixed(1)}px,${(lo[1]-s3lora.getBoundingClientRect().height/2).toFixed(1)}px)`;
-  const side={l:[],r:[]}; s3tags.forEach(t=>{const [x,y]=at(t.dataset.l); side[t.dataset.side].push({t,x,y,h:leg?0:t.offsetHeight,w:leg?0:t.offsetWidth})});
-  for(const k of ['l','r']){const L=side[k].sort((a,b)=>a.y-b.y); let prev=-1e9; const gap=8;
-    // spread the labels so they never overlap, then pull the column back inside the figure
-    L.forEach(o=>{o.ty=Math.max(o.y-o.h/2,prev+gap);prev=o.ty+o.h}); const over=prev-(H-4); if(over>0)for(let i=L.length-1,lim=H-4;i>=0;i--){const o=L[i];o.ty=Math.min(o.ty,lim-o.h);lim=o.ty-gap}
-    L.forEach(o=>{o.ty=Math.max(4,o.ty); if(leg){svg+=`<circle cx="${o.x.toFixed(1)}" cy="${o.y.toFixed(1)}" r="8"/><text x="${o.x.toFixed(1)}" y="${o.y.toFixed(1)}">${o.t.dataset.n}</text>`;return}
-      const tx=k==='l'?0:W-o.w, ex=k==='l'?o.w:W-o.w, my=o.ty+o.h/2, bx=k==='l'?ex+14:ex-14;
-      o.t.style.transform=`translate(${tx.toFixed(1)}px,${o.ty.toFixed(1)}px)`;
-      svg+=`<path d="M${o.x.toFixed(1)} ${o.y.toFixed(1)}L${bx.toFixed(1)} ${my.toFixed(1)}H${ex.toFixed(1)}"/><circle cx="${o.x.toFixed(1)}" cy="${o.y.toFixed(1)}" r="4.5"/>`})}
-  s3lead.innerHTML=svg}
-function s3open(on){clearTimeout(s3t); s3.classList.toggle('open',on); if(!on){s3.classList.remove('set');return}
-  s3t=setTimeout(()=>{s3place();s3.classList.add('set')},reduce?0:1250)}
-onMeasure(()=>{const w=bfig.clientWidth; s3.style.setProperty('--bw',w); s3.classList.toggle('leg',w<640); s3.style.setProperty('--tw',Math.max(120,Math.min(210,w*.24))+'px'); requestAnimationFrame(s3place)});
+const bsuit=document.getElementById('bsuit'), bview=bfig.parentElement;
+/* phones: how far the figure moves up in suit mode so the legend fits under it */
+onMeasure(()=>bview.style.setProperty('--su-up',Math.max(0,bview.offsetTop+bfig.offsetTop-14)+'px'));
 steps('wsec',(i,st)=>{const v=+st.dataset.v, u=st.dataset.u||'home';
-  bviews.forEach((el,k)=>el.classList.toggle('on',k===v)); s3open(v===3); bhs.forEach(h=>h.classList.toggle('on',+h.dataset.k===i));
+  bviews.forEach((el,k)=>el.classList.toggle('on',k===v)); bsuit.classList.toggle('open',v===3); bview.classList.toggle('suit',v===3); bhs.forEach(h=>h.classList.toggle('on',+h.dataset.k===i));
   bui.forEach(el=>el.classList.toggle('on',v===0&&el.dataset.u===u)); bscr.style.transition="opacity .5s";bscr.style.opacity=v===0?1:0;});
 const hlA=document.getElementById('hlA'), hlT=document.getElementById('hlT');
 // maps a point given in % of an image's natural size to its box, for object-fit cover or contain (padding aware)
@@ -1317,7 +1333,8 @@ const KDOTS=[
     e.addEventListener('click',()=>{pinned=pinned===k?-1:k;hl(pinned)})})}
 /* 8 · Emergency station: the ledger fills in and the station state follows it (labels, screen, compartment 01, door, AED taken, red button) */
 const es=document.getElementById('esec'), est=es.querySelector('.stage'), ehead=document.getElementById('ehead'), eat=[...es.querySelectorAll('.lbl')].map(l=>+l.dataset.at);
-add(y=>{const p=pinP(es,y); let k=0; eat.forEach((a,i)=>{if(p>=a)k=i+1}); if(es.dataset.s!==String(k))es.dataset.s=String(k);
+const elbl=[...es.querySelectorAll('.lbl')];
+add(y=>{const p=pinP(es,y); let k=0; eat.forEach((a,i)=>{if(p>=a)k=i+1}); if(es.dataset.s!==String(k)){es.dataset.s=String(k); elbl.forEach((l,i)=>l.classList.toggle('cur',i===Math.max(0,k-1)))}
   labels(est,p); ehead.classList.toggle('in',p>.6)});
 
 /* 7 · Solar alert — hull-camera POV. The Sun sits dead ahead; its rays and a proton storm come straight at the lens.
@@ -1329,8 +1346,8 @@ const srand=(()=>{let a=1234567;return()=>{a=(a*1664525+1013904223)>>>0;return a
 const beams=Array.from({length:60},(_,i)=>({a:i/60*TAU+srand()*.08,w:.004+srand()*.014,l:.55+srand()*.45,o:.4+srand()*.6,f:srand()*6}));
 function solarMeasure(){const r=Math.min(2,devicePixelRatio||1);[sc,fx].forEach(c=>{c.width=c.clientWidth*r;c.height=c.clientHeight*r});g.setTransform(r,0,0,r,0,0);fg.setTransform(r,0,0,r,0,0);
   const w=sc.clientWidth,h=sc.clientHeight,narrow=w<760;
-  const R=narrow?Math.min(w*.24,h*.15):Math.min(h*.17,w*.13);
-  SG={w,h,R,cx:w*.5,cy:narrow?h*.42:h*.46};
+  const R=narrow?Math.min(w*.27,h*.16):Math.min(h*.17,w*.13);
+  SG={w,h,R,cx:w*.5,cy:narrow?h*.41:h*.46};
   if(!sStars.length)for(let i=0;i<320;i++)sStars.push({x:srand(),y:srand(),z:.2+srand()*.8,t:srand()*6.28})}
 onMeasure(solarMeasure);
 function solarFrame(now){const t=now/1000, Gm=SG; if(!Gm){sRun=false;return}
@@ -1386,14 +1403,15 @@ function solarFrame(now){const t=now/1000, Gm=SG; if(!Gm){sRun=false;return}
   if(window.sun3d)sun3d.render(t,F);
   if(window.asciiOn)asciiDraw();
   if(sVis)requestAnimationFrame(solarFrame); else {sRun=false;sLast=0}}
-let lastRem=-1, impact=null;
+let lastRem=-1, impact=null; const phoneMQ=matchMedia('(max-width: 760px)');
 add(y=>{const p=pinP(so,y); SP=p;
   SF=Math.pow(Math.max(0,1-Math.abs(p-.19)/.04),1.5);
   SI=.03+.07*clamp((p-.2)/.1)+.9*io2(clamp((p-.56)/.14));
   SD=oc3(clamp((p-.29)/.07)); sst.style.setProperty('--d',SD);
   const fl=Math.round(2*Math.pow(1500,clamp((p-.26)/.44))); meter.textContent=tr('Proton flux')+' · '+fl.toLocaleString(I18.lang==='es'?'es-AR':'en-US')+' pfu'+(fl>=1000?' · '+tr('S3 strong'):fl>=100?' · S2':fl>=10?' · S1':'');
   slogItems.forEach(li=>li.classList.toggle('on',p>=+li.dataset.at));
-  {const on=slogItems.filter(li=>li.classList.contains('on'));slogItems.forEach(li=>li.classList.toggle('old',on.indexOf(li)>-1&&on.indexOf(li)<on.length-2));}
+  {const on=slogItems.filter(li=>li.classList.contains('m')&&li.classList.contains('on'));slogItems.forEach(li=>li.classList.toggle('old',on.indexOf(li)>-1&&on.indexOf(li)<on.length-1));}
+  {const len=so.offsetHeight-sst.offsetHeight; document.documentElement.classList.toggle('navhide',phoneMQ.matches&&y>=so._top-NAV&&y<so._top+len);}
   nAck.textContent=Math.round(15*clamp((p-.35)/.08)); nIn.textContent=Math.round(15*clamp((p-.5)/.24));
   const hit=p>=.6; if(hit!==impact){impact=hit; alB.textContent=tr(hit?'Stay in the shelter':'Go to the shelter now'); alI.textContent=tr(hit?'particles hitting the hull now':'until the particles hit'); alS.textContent=tr(hit?'Stay inside. Your wristband is logging your dose.':'Drop everything. Follow the arrows on your wristband.')}
   const rem=hit?0:Math.round(1080*(1-clamp((p-.29)/.31))); if(rem!==lastRem){lastRem=rem;alT.textContent=String(rem/60|0).padStart(2,'0')+':'+String(rem%60).padStart(2,'0')}
