@@ -63,7 +63,14 @@ pub struct Mesh {
     pub relayed_frames: AtomicU32,
     /// frames dropped because a client's outbox was full (slow client)
     pub dropped_frames: AtomicU32,
+    /// real ms of the last page refresh triggered by band vitals (rate limit)
+    pub last_vitals_refresh_ms: std::sync::atomic::AtomicU64,
 }
+
+/// Band vitals refresh open pages at most this often (the 1 Hz server tick
+/// still runs Eva's rules); keeps vitals-in → dashboard latency in
+/// milliseconds instead of up to one tick.
+pub const VITALS_REFRESH_MS: u64 = 200;
 
 impl Mesh {
     pub fn register(&self, role: Role, name: String, seat: Option<String>, tx: mpsc::Sender<Vec<u8>>, now_ms: u64) -> u32 {

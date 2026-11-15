@@ -201,6 +201,7 @@ fn ack(state: &Shared, id: u32, f: &Frame) {
 /// Ship sessions (on the ground) and band gateways: reliable endpoint.
 fn on_endpoint_datagram(state: &Shared, id: u32, role: Role, e: &mut Endpoint, b: &[u8]) {
     let now_real = state.clock.real_ms();
+    let mut vitals_in = false;
     for ev in e.incoming(now_real, b) {
         match ev {
             Delivered::Vitals { sample, .. } => {
@@ -208,6 +209,7 @@ fn on_endpoint_datagram(state: &Shared, id: u32, role: Role, e: &mut Endpoint, b
                 let mut w = state.world.write().expect("world");
                 if let Some(p) = w.by_stream_mut(sample.stream) {
                     crate::sim::ingest(p, sample.sample, now);
+                    vitals_in = true;
                 }
             }
             Delivered::Frame(f) if role == Role::Ship => match f.kind {
@@ -226,6 +228,14 @@ fn on_endpoint_datagram(state: &Shared, id: u32, role: Role, e: &mut Endpoint, b
             },
             Delivered::Rtt(r) => state.mesh.rtt_sample(id, r),
             _ => {}
+        }
+    }
+    // fresh band vitals: refresh open pages now (rate-limited) instead of at the next tick
+    if vitals_in && role == Role::Band {
+        use std::sync::atomic::Ordering;
+        let last = state.mesh.last_vitals_refresh_ms.load(Ordering::Relaxed);
+        if now_real >= last + crate::mesh::VITALS_REFRESH_MS && state.mesh.last_vitals_refresh_ms.compare_exchange(last, now_real, Ordering::Relaxed, Ordering::Relaxed).is_ok() {
+            state.emit(UiEvent::Tick);
         }
     }
     if role == Role::Ship {

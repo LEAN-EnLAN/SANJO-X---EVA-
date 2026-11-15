@@ -24,11 +24,16 @@ pub struct RttEstimator {
     pub last_ms: f64,
     pub min_rto_ms: u64,
     pub max_rto_ms: u64,
+    /// RFC 6298 §5.5: after a retransmission timeout the RTO itself doubles
+    /// (exponent here) and stays backed off until a valid sample arrives.
+    /// Without this, a link slower than the initial 1 s RTO retransmits every
+    /// frame, and Karn's rule then forbids every sample: the estimator never learns.
+    pub backoff: u32,
 }
 
 impl Default for RttEstimator {
     fn default() -> Self {
-        Self { srtt_ms: 0.0, rttvar_ms: 0.0, samples: 0, last_ms: 0.0, min_rto_ms: 200, max_rto_ms: 60_000 }
+        Self { srtt_ms: 0.0, rttvar_ms: 0.0, samples: 0, last_ms: 0.0, min_rto_ms: 200, max_rto_ms: 60_000, backoff: 0 }
     }
 }
 
@@ -44,13 +49,19 @@ impl RttEstimator {
             self.srtt_ms = 0.875 * self.srtt_ms + 0.125 * rtt_ms;
         }
         self.samples += 1;
+        self.backoff = 0;
     }
-    /// Retransmission timeout. 1 s before the first sample (RFC 6298 section 2.1).
+    /// Retransmission timeout. 1 s before the first sample (RFC 6298 section 2.1),
+    /// doubled for each backoff step.
     pub fn rto_ms(&self) -> u64 {
-        if self.samples == 0 {
-            return 1_000;
+        let base = if self.samples == 0 { 1_000 } else { (self.srtt_ms + (4.0 * self.rttvar_ms).max(10.0)) as u64 };
+        base.saturating_mul(1u64 << self.backoff.min(8)).clamp(self.min_rto_ms, self.max_rto_ms)
+    }
+    /// A retransmission timer expired.
+    pub fn on_timeout(&mut self) {
+        if self.rto_ms() < self.max_rto_ms {
+            self.backoff += 1;
         }
-        ((self.srtt_ms + (4.0 * self.rttvar_ms).max(10.0)) as u64).clamp(self.min_rto_ms, self.max_rto_ms)
     }
 }
 
@@ -163,7 +174,6 @@ impl SendQueue {
     pub fn poll(&mut self, now_ms: u64, budget: usize) -> Vec<Frame> {
         let mut out = Vec::new();
         let mut left = budget;
-        let rto = self.rtt.rto_ms();
         for prio in Priority::ALL {
             // 1. due retransmits of this class
             let due: Vec<u32> = self
@@ -172,6 +182,10 @@ impl SendQueue {
                 .filter(|(_, i)| i.frame.prio == prio && i.deadline_ms <= now_ms)
                 .map(|(s, _)| *s)
                 .collect();
+            if !due.is_empty() {
+                self.rtt.on_timeout();
+            }
+            let rto = self.rtt.rto_ms();
             for seq in due {
                 let inf = self.inflight.get_mut(&seq).expect("inflight");
                 let len = inf.frame.wire_len();
@@ -181,7 +195,8 @@ impl SendQueue {
                 left -= len;
                 inf.retries += 1;
                 inf.frame.flags |= FLAG_RETX;
-                let backoff = rto.saturating_mul(1u64 << inf.retries.min(6)).min(self.rtt.max_rto_ms);
+                // the estimator is already backed off; each retry of this frame doubles again
+                let backoff = rto.saturating_mul(1u64 << inf.retries.saturating_sub(1).min(6)).min(self.rtt.max_rto_ms);
                 inf.deadline_ms = now_ms + backoff;
                 self.sent.record(&inf.frame, len);
                 out.push(inf.frame.clone());
@@ -324,6 +339,32 @@ mod tests {
         assert_eq!(q.on_ack(&[s], 2_100), vec![s]);
         assert!(q.is_idle());
         assert_eq!(q.rtt.samples, 0, "Karn: no RTT sample from a retransmitted frame");
+        assert_eq!(q.rtt.rto_ms(), 2_000, "RFC 6298 5.5: the RTO stays backed off until a valid sample");
+    }
+
+    #[test]
+    fn slow_link_learns_its_rtt_instead_of_retransmitting_forever() {
+        // RTT 2.5 s, longer than the initial 1 s RTO; a new frame every second
+        let mut q = SendQueue::new(1);
+        let rtt = 2_500u64;
+        let mut first_sent: std::collections::HashMap<u32, u64> = Default::default();
+        let mut retx = 0;
+        for t in (0..120_000u64).step_by(100) {
+            if t % 1_000 == 0 {
+                q.push(MsgType::Record, vec![0; 20], None);
+            }
+            for f in q.poll(t, 10_000) {
+                if f.is_retransmit() {
+                    retx += 1;
+                }
+                first_sent.entry(f.seq).or_insert(t);
+            }
+            let due: Vec<u32> = first_sent.iter().filter(|(_, at)| **at + rtt == t).map(|(s, _)| *s).collect();
+            q.on_ack(&due, t);
+        }
+        assert!(q.rtt.samples > 50, "clean samples once the RTO backed off: {}", q.rtt.samples);
+        assert!(retx < 20, "{retx} retransmissions for 120 frames");
+        assert!(q.rtt.rto_ms() >= rtt);
     }
 
     #[test]

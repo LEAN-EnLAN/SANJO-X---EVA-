@@ -1,6 +1,7 @@
 //! Eva by WearMeds: library crate behind the `eva` binary.
 //! Module map: see `docs/app/ARCHITECTURE.md`.
 
+pub mod bench;
 pub mod chain;
 pub mod clock;
 pub mod eva_agent;

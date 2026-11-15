@@ -85,8 +85,16 @@ enum Cmd {
         #[arg(long)]
         offline: bool,
     },
-    /// Print Eva Link message sizes and a simulated run over each link profile
-    Bench,
+    /// Benchmarks: bytes per message (Eva Link vs JSON vs CBOR), codec throughput,
+    /// delivery per link profile, cold start, and a live server run (15 bands + 3 dashboards)
+    Bench {
+        /// seconds of the live server run
+        #[arg(long, default_value_t = 30)]
+        server_secs: u64,
+        /// skip the process-level parts (cold start, live server)
+        #[arg(long)]
+        quick: bool,
+    },
     /// Verify the hash chain files in a data directory
     Verify {
         #[arg(long, default_value = "data")]
@@ -141,69 +149,6 @@ async fn run_node(args: ServeArgs, state: Shared) -> anyhow::Result<()> {
         axum::serve(listener, app).await?;
     }
     Ok(())
-}
-
-fn bench() {
-    use eva::protocol::profile::{LinkProfile, LinkSim};
-    use eva::protocol::{frame::MsgType, payload, Delivered, Endpoint};
-    println!("Eva Link v{} · bytes per message\n", eva::protocol::frame::VERSION);
-    println!("{:<34} {:>7} {:>9}", "message", "bytes", "payload");
-    for (n, b, p) in eva::protocol::message_size_table() {
-        println!("{n:<34} {b:>7} {p:>9}");
-    }
-    println!("\nSimulated 10 min: 15 bands at 1 Hz (vitals, latest-wins) + 1 record/s + 1 alarm, per profile\n");
-    println!("{:<26} {:>9} {:>10} {:>10} {:>12} {:>12}", "profile", "records", "acked", "alarm ms", "bytes up", "B/record");
-    for p in LinkProfile::all() {
-        let mut up = LinkSim::new(p.clone(), 1);
-        let mut down = LinkSim::new(p.clone(), 2);
-        let mut a = Endpoint::new(1).with_crc(p.crc);
-        let mut b = Endpoint::new(0).with_crc(p.crc);
-        let (mut acked, mut records, mut alarm_at) = (0usize, 0usize, None);
-        let mut alarm_seq = 0;
-        let mut tokens = 0usize;
-        for t in (0..600_000u64).step_by(100) {
-            if t % 1000 == 0 {
-                for s in 0..15u32 {
-                    let v = eva::protocol::delta::VitalsSample { hr: 70 + ((t / 1000 + s as u64) % 5) as u16, spo2: 98, resp: 14, skin_c10: 340, eda_c: 200, motion: 10, quality: 95, base_batt: 70, screen_batt: 70, flags: 8 };
-                    a.send_vitals(t, s + 1, t / 1000, &v);
-                }
-                let r = payload::RecordMsg { chain_seq: records as u64, ts_ms: t, kind: "log".into(), subject: "ship".into(), hash8: [7; 8], body: br#"{"body":{"text":"daily log"}}"#.to_vec(), sig: vec![0x5a; 64] };
-                a.send(MsgType::Record, r.encode(), None);
-                records += 1;
-            }
-            if t == 30_000 {
-                alarm_seq = a.send(MsgType::Alarm, payload::Alarm { subject: "4B".into(), code: 1, text: String::new() }.encode(), None);
-            }
-            if p.is_up(t) {
-                tokens = (tokens + p.budget(100)).min(p.mtu.max(256) * 4);
-                for d in a.outgoing(t, tokens, p.mtu.max(64)) {
-                    tokens = tokens.saturating_sub(d.len());
-                    up.send(t, d);
-                }
-                for d in b.outgoing(t, usize::MAX, p.mtu.max(64)) {
-                    down.send(t, d);
-                }
-            }
-            for d in up.recv(t) {
-                for ev in b.incoming(t, &d) {
-                    if let Delivered::Frame(f) = ev {
-                        if f.kind == MsgType::Alarm && alarm_at.is_none() {
-                            alarm_at = Some(t - 30_000);
-                        }
-                    }
-                }
-            }
-            for d in down.recv(t) {
-                for ev in a.incoming(t, &d) {
-                    if let Delivered::Acked(s) = ev {
-                        acked += s.iter().filter(|x| **x != alarm_seq).count();
-                    }
-                }
-            }
-        }
-        let bytes = up.sent_bytes;
-        println!("{:<26} {:>9} {:>10} {:>10} {:>12} {:>12}", p.label, records, acked, alarm_at.map(|v| v.to_string()).unwrap_or_else(|| "queued".into()), bytes, if acked > 0 { (bytes as usize / acked).to_string() } else { "-".into() });
-    }
 }
 
 /// `eva verify`: every chain file (hash chain + Ed25519 signatures, against
@@ -269,8 +214,8 @@ async fn main() -> anyhow::Result<()> {
             g.abort();
             s
         }
-        Cmd::Bench => {
-            bench();
+        Cmd::Bench { server_secs, quick } => {
+            eva::bench::run(server_secs, quick).await;
             Ok(())
         }
         Cmd::Verify { data } => {
