@@ -142,47 +142,78 @@ h1{margin:0;font-weight:400;font-size:var(--t-display);line-height:1;letter-spac
 .tog{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .tog:hover{color:var(--ink)}
 
-/* folders */
-.folders{padding-top:34px;display:grid;gap:26px}
-.folder{position:relative;padding-top:15px}
-.folder .tab{position:absolute;left:0;top:0;width:190px;height:16px;color:var(--rule-hi);pointer-events:none;transition:color .4s,transform .4s var(--out)}
-.folder .tab path{fill:none;stroke:currentColor;stroke-width:1;vector-effect:non-scaling-stroke}
-.folder.open .tab{color:var(--teal)}
-.folder:not(.open):hover .tab{transform:translateY(-3px)}
-.fh{width:100%;display:grid;grid-template-columns:auto 1fr auto auto;align-items:baseline;gap:14px;text-align:left;padding:14px 0 16px;border-top:1px solid var(--rule-hi)}
-.fh .ix{font-size:13px;letter-spacing:.08em;color:var(--orange)}
-.fh .nm{font-size:var(--t-sec);line-height:1.02;letter-spacing:-.01em}
-.fh .hint{font-size:14px;color:var(--muted);text-align:right}
-.fh .pm{position:relative;width:18px;height:18px;align-self:center}
-.fh .pm::before,.fh .pm::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--ink);transition:transform .4s var(--out)}
-.fh .pm::after{transform:rotate(90deg)}
-.folder.open .fh .pm::after{transform:rotate(0)}
-@media (max-width:600px){.fh{grid-template-columns:auto 1fr auto}.fh .hint{grid-column:2/3;text-align:left;margin-top:-6px}.fh .pm{grid-row:1;grid-column:3}}
-.folder.none{opacity:.38}
-.fbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--ease)}
-.folder.open .fbody{grid-template-rows:1fr}
-.fbody>div{overflow:hidden;min-height:0}
-.cards{list-style:none;margin:0;padding:4px 0 26px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:0 24px}
-.card{padding:16px 0 18px;border-top:1px solid var(--rule);opacity:0;transform:translateY(14px);transition:opacity .45s var(--out),transform .45s var(--out)}
-.folder.open .card{opacity:1;transform:none;transition-delay:calc(var(--i,0) * 35ms + 120ms)}
-.card[hidden]{display:none}
-.badges{display:flex;flex-wrap:wrap;gap:6px 14px;min-height:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.badges span{display:inline-flex;align-items:center;gap:6px}
-.card h3{margin:8px 0 0;font-weight:400;font-size:clamp(18px,1.6vw,22px);line-height:1.15;letter-spacing:-.01em}
-.card h3 a{transition:color .3s}
-.card h3 a:hover,.card h3 a:focus-visible{color:var(--teal)}
-.card h3 .ar{margin-left:5px}
-.card .one{margin:6px 0 0;color:var(--muted);font-size:15px}
-.card .meta{margin:8px 0 0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
-.more{margin-top:10px;font-size:13px;color:var(--teal);display:inline-flex;gap:8px;align-items:center}
-.more::after{content:"+";transition:transform .3s var(--out)}
-.more[aria-expanded="true"]::after{transform:rotate(45deg)}
-.use{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
-.use.on{grid-template-rows:1fr}
-.use>p{overflow:hidden;margin:0;min-height:0}
-.use>p span{display:block;margin-top:8px;padding-left:12px;border-left:1px solid var(--teal);font-size:15px;line-height:1.35}
-mark{background:none;color:var(--teal)}
-.empty{margin:0;padding:6px 0 22px;color:var(--muted)}
+/* folders: the original component (painted back, glass front, file stack) */
+#sources{overflow-x:clip}
+.grid{list-style:none;margin:0;padding:60px var(--gr) 0 var(--gl);display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:72px 20px;
+  --paper:#131313;--paper-ink:#f4f3f1;--paper-muted:#a3a19d;--paper-rule:#2e2e2e;--paper-line:rgba(255,255,255,.06);--paper-hover:#1c1c1c;
+  --glass-hi:rgba(0,0,0,.62);--glass:rgba(0,0,0,.36);--glass-edge:rgba(255,255,255,.22);--glass-line:rgba(255,255,255,.12);--glass-ink:#f7f6f4;--glass-muted:rgba(247,246,244,.70);
+  --shadow:rgba(0,0,0,.7);--art-filter:brightness(.8) saturate(1.05);
+  --stage-h:400px;--fs-label:clamp(20px,2.315vw,33.3px);--fe:cubic-bezier(.2,.8,.2,1);--fileh:176px;--fstep:50px}
+.folder{position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .4s}
+.folder.is-open{z-index:20}
+.folder.is-dim{opacity:.32}
+.stage{position:relative;height:var(--stage-h);transition:height .7s var(--fe)}
+.folder.is-open .stage{height:max(var(--stage-h),calc(6px + (var(--n) - 1) * var(--fstep) + var(--fileh) + 130px))}
+.folder.in .stage{animation:rise .9s var(--fe) both}
+.folder.in .files{animation:deal 1s var(--fe) .12s both}
+@keyframes rise{from{transform:translateY(40px)}to{transform:none}}
+@keyframes deal{from{transform:translateY(70px)}to{transform:none}}
+.tilt{position:absolute;inset:0;--mx:0;--my:0;transform:perspective(1400px) rotateX(calc(var(--my) * -3deg)) rotateY(calc(var(--mx) * 4deg));transition:transform .5s var(--fe)}
+.folder:has(.front:focus-visible) .stage{outline:2px solid var(--teal);outline-offset:8px}
+.back{position:absolute;left:0;right:0;top:36px;bottom:0;overflow:hidden;clip-path:polygon(0 0,36% 0,calc(36% + 26px) 26px,100% 26px,100% 100%,0 100%);background:var(--rule)}
+.back canvas{position:absolute;inset:-12px;width:calc(100% + 24px);height:calc(100% + 24px);display:block;filter:var(--art-filter);transform:translate(calc(var(--mx) * -8px),calc(var(--my) * -8px));transition:transform .5s var(--fe)}
+.back-index{position:absolute;left:14px;top:5px;z-index:1;font-size:14px;line-height:1;letter-spacing:.02em;color:#fff;mix-blend-mode:difference}
+.files{list-style:none;margin:0;padding:0;position:absolute;inset:0;z-index:2;--peek:min(9px,calc(60px / var(--n)));transition:z-index 0s linear 0s}
+.folder.is-open .files{z-index:4;transition:z-index 0s linear .16s}
+.files li{display:contents}
+.file{position:absolute;left:8%;top:0;width:84%;height:var(--fileh);display:flex;flex-direction:column;padding:11px 14px 0;overflow:hidden;cursor:default;
+  background-color:var(--paper);background-image:repeating-linear-gradient(180deg,transparent 0 13px,var(--paper-line) 13px 14px);background-size:100% 70px;background-position:0 66px;background-repeat:repeat-x;
+  color:var(--paper-ink);border:1px solid var(--paper-rule);box-shadow:0 10px 28px -12px var(--shadow);
+  --c:calc(var(--i) - (var(--n) - 1) / 2);--tx:calc(var(--c) * 20px / var(--n));--ty:calc(62px + var(--i) * var(--peek));--tr:calc(var(--c) * 4.4deg / var(--n));
+  transform:translate3d(var(--tx),var(--ty),0) rotate(var(--tr));transform-origin:50% 100%;
+  transition:transform .7s var(--fe) calc(var(--i) * 28ms),background-color .2s,opacity .3s,box-shadow .3s}
+.folder:not(.is-open):hover .file,.folder:not(.is-open):focus-within .file{--ty:calc(44px + var(--i) * min(13px,calc(90px / var(--n))));--tr:calc(var(--c) * 7.2deg / var(--n))}
+.folder.is-open .file{--tx:calc(-9.5% + var(--i) * 3px);--ty:calc(6px + var(--i) * var(--fstep));--tr:calc(var(--c) * -3.2deg / var(--n));cursor:pointer}
+.folder.is-open .file.is-lift,.folder.is-open .file:focus-within{z-index:30;--tx:calc(-9.5% + var(--i) * 3px + 18px);--tr:0deg;background-color:var(--paper-hover);box-shadow:0 26px 50px -14px var(--shadow);transition-delay:0s}
+@media (hover:hover) and (pointer:fine){.folder.is-open .file:hover{z-index:30;--tx:calc(-9.5% + var(--i) * 3px + 18px);--tr:0deg;background-color:var(--paper-hover);box-shadow:0 26px 50px -14px var(--shadow);transition-delay:0s}}
+.file.is-miss{opacity:.28}
+.file-top{display:flex;align-items:baseline;gap:10px}
+.file-title{flex:1;min-width:0;font-size:17px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+a.file-title:hover,a.file-title:focus-visible{color:var(--teal)}
+a.file-title:focus-visible{outline-offset:2px}
+.file-arrow{font-size:17px;line-height:1;transition:transform .3s var(--fe)}
+.file:hover .file-arrow,.file:focus-within .file-arrow{transform:translate(2px,-2px)}
+.file-meta{display:flex;justify-content:space-between;gap:10px;margin-top:5px;font-size:12.5px;line-height:1.2;color:var(--paper-muted);white-space:nowrap}
+.file-meta span:first-child{overflow:hidden;text-overflow:ellipsis}
+.file-state{text-transform:uppercase;letter-spacing:.04em}
+.file-state.ch{color:var(--orange)}
+.file-state.eva{color:var(--teal)}
+.file-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:14px;font-size:14px;line-height:1.3}
+.file-eva{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-top:8px;padding-left:10px;border-left:1px solid var(--teal);font-size:13px;line-height:1.3;color:var(--paper-muted)}
+.file-eva b{font-weight:400;color:var(--teal)}
+.file mark{background:none;color:var(--teal)}
+.front{-webkit-appearance:none;appearance:none;position:absolute;left:0;right:0;bottom:0;z-index:3;height:252px;width:100%;margin:0;border:0;border-radius:0;padding:42px 22px 20px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;font:inherit;color:var(--glass-ink);
+  background:linear-gradient(180deg,var(--glass-hi) 0%,var(--glass) 70%);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);
+  box-shadow:inset 0 1px 0 var(--glass-edge),inset 0 0 0 1px var(--glass-line);clip-path:polygon(0 24px,58% 24px,calc(58% + 24px) 0,100% 0,100% 100%,0 100%);
+  transform-origin:50% 100%;transform:perspective(1000px) rotateX(var(--fx,0deg));transition:transform .75s var(--fe);cursor:pointer}
+.front:focus-visible{outline:none}
+.folder:not(.is-open):hover .front,.folder:not(.is-open):focus-within .front{--fx:-16deg}
+.folder.is-open .front{--fx:-62deg;transition-duration:.85s}
+.front-plus{position:absolute;right:18px;top:3px;font-size:24px;line-height:1;transition:transform .5s var(--fe)}
+.folder.is-open .front-plus{transform:rotate(45deg)}
+.front-label{display:block;font-size:var(--fs-label);line-height:1.1;text-transform:uppercase;padding-right:10px}
+.front-foot{display:block}
+.front-meta{display:block;font-size:17px;line-height:1.2}
+.front-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--glass-line);font-size:12.5px;line-height:1;letter-spacing:.04em;text-transform:uppercase;color:var(--glass-muted)}
+.pips{display:inline-flex;flex-wrap:wrap;gap:4px}
+.pip{width:10px;height:10px;border:1px solid currentColor}
+.pip.on{background:var(--glass-ink);border-color:var(--glass-ink)}
+.caption{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;padding-top:10px;border-top:1px solid var(--rule);font-size:var(--t-util);line-height:1.1}
+.caption .hint{text-transform:uppercase;color:var(--muted)}
+.folder:hover .caption .hint,.folder.is-hit .caption .hint{color:var(--ink)}
+.folder.is-hit .caption{border-top-color:var(--teal)}
+@media (max-width:700px){.grid{--stage-h:390px;padding-top:40px;gap:56px 20px}}
+@media (prefers-reduced-motion:reduce){.tilt,.back canvas{transform:none!important}}
 .note{margin:22px 0 0;color:var(--muted);font-size:14px;max-width:52em}
 
 /* decisions */
@@ -278,11 +309,10 @@ footer{margin-top:clamp(80px,10vw,140px);padding:0 var(--gr) 32px var(--gl);bord
         <button type="button" class="chip" id="fStar" aria-pressed="false"><span class="dot star" aria-hidden="true"></span><span data-i18n="chipStar">Challenge page</span></button>
         <button type="button" class="chip" id="fEva" aria-pressed="false"><span class="dot eva" aria-hidden="true"></span><span data-i18n="chipEva">Linked to Eva</span></button>
       </div>
-      <button type="button" class="tog" id="toggleAll">Open all</button>
       <span class="count" id="rcount" aria-live="polite"></span>
     </div>
-    <div class="folders pad" id="folders"></div>
-    <p class="note pad" data-i18n="srcNote">Sources marked “Challenge page” are listed on the Resources tab of the official challenge page. Team working notes are listed by title only.</p>
+    <ul class="grid" id="grid"></ul>
+    <p class="note pad" data-i18n="srcNote">Open a folder, then hover, focus or tap a file to read it. Files marked “Challenge page” are listed on the Resources tab of the official challenge page. Team working notes are listed by title only.</p>
   </section>
 
   <section class="sec" id="decisions" aria-labelledby="dec-h">
@@ -332,9 +362,12 @@ footer{margin-top:clamp(80px,10vw,140px);padding:0 var(--gr) 32px var(--gl);bord
     sourcesH: ["Sources", "Fuentes"], searchL: ["Search sources", "Buscar fuentes"],
     searchP: ["Search: radiation, OSDR, CPR…", "Buscar: radiación, OSDR, RCP…"],
     filters: ["Filters", "Filtros"], chipStar: ["Challenge page", "Página del desafío"], chipEva: ["Linked to Eva", "Vinculadas a Eva"],
-    openAll: ["Open all", "Abrir todas"], closeAll: ["Close all", "Cerrar todas"],
-    srcNote: ["Sources marked “Challenge page” are listed on the Resources tab of the official challenge page. Team working notes are listed by title only.",
-              "Las fuentes marcadas «Página del desafío» figuran en la pestaña Resources de la página oficial del desafío. Las notas de trabajo del equipo se listan solo por título."],
+    fOpen: ["+ Open", "+ Abrir"], fClose: ["× Close", "× Cerrar"], stDone: ["Verified 15 Nov", "Verificadas 15/11"], stLive: ["Live", "En vivo"],
+    nSrc: ["sources", "fuentes"], nLinked: ["linked to Eva", "vinculadas a Eva"], nMatch: ["matches", "coincidencias"], nMatch1: ["match", "coincidencia"],
+    stCh: ["○ Challenge page", "○ Página del desafío"], stUse: ["● Used by Eva", "● Usada por Eva"], stRef: ["○ Informs Eva", "○ Informa a Eva"], stInt: ["Internal", "Interno"],
+    eUse: ["Used by Eva · ", "Usada por Eva · "], eRef: ["Informs Eva · ", "Informa a Eva · "], eTitles: ["Titles · ", "Títulos · "], filesOf: ["files", "archivos"], newTab: ["opens in a new tab", "se abre en una pestaña nueva"],
+    srcNote: ["Open a folder, then hover, focus or tap a file to read it. Files marked “Challenge page” are listed on the Resources tab of the official challenge page. Team working notes are listed by title only.",
+              "Abrí una carpeta y pasá, enfocá o tocá un archivo para leerlo. Los marcados «Página del desafío» figuran en la pestaña Resources de la página oficial del desafío. Las notas de trabajo del equipo se listan solo por título."],
     decH: ["Decisions", "Decisiones"], decA: ["Latest first · Rosario time", "Recientes primero · hora de Rosario"],
     fn1: ['Challenge resources come from the Resources tab of the official 2026 challenge page, <a class="u" href="https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/" target="_blank" rel="noopener noreferrer">spaceappschallenge.org/2026/challenges/health-monitoring-software</a>, read on 15 Nov 2026. That page notes that NASA does not endorse non-U.S. Government entities.',
           'Los recursos del desafío vienen de la pestaña Resources de la página oficial del desafío 2026, <a class="u" href="https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/" target="_blank" rel="noopener noreferrer">spaceappschallenge.org/2026/challenges/health-monitoring-software</a>, consultada el 15/11/2026. Esa página aclara que la NASA no respalda a entidades ajenas al Gobierno de EE. UU.'],
@@ -355,12 +388,12 @@ footer{margin-top:clamp(80px,10vw,140px);padding:0 var(--gr) 32px var(--gl);bord
   var RUSSELL = "https://doi.org/10.1038/s41526-023-00284-1";
   var AHA = "https://olis.oregonlegislature.gov/liz/2013R1/Downloads/CommitteeMeetingDocument/4759";
   var FOLDERS = [
-    { id: "challenge", n: { en: "Challenge resources", es: "Recursos del desafío" }, h: { en: "NASA HRP · CSA", es: "HRP de la NASA · CSA" } },
-    { id: "data", n: { en: "NASA data", es: "Datos de la NASA" }, h: { en: "OSDR · NLSP · HHP", es: "OSDR · NLSP · HHP" } },
-    { id: "science", n: { en: "Health science & standards", es: "Ciencia y normas de salud" }, h: { en: "Russell 2023 · IMM · NASA-STD-3001", es: "Russell 2023 · IMM · NASA-STD-3001" } },
-    { id: "weather", n: { en: "Space weather", es: "Clima espacial" }, h: { en: "DONKI · GOES · HESPERIA", es: "DONKI · GOES · HESPERIA" } },
-    { id: "prior", n: { en: "Prior work", es: "Trabajos previos" }, h: { en: "Ames · ARCHeR · JPL", es: "Ames · ARCHeR · JPL" } },
-    { id: "build", n: { en: "Our build", es: "Lo que construimos" }, h: { en: "Live links · code", es: "Enlaces en vivo · código" } }
+    { id: "challenge", seed: 29, status: "done", palette: ["#1c1030", "#5a2d9c", "#c18bff", "#ffe9a8"], n: { en: "Challenge resources", es: "Recursos del desafío" }, h: { en: "NASA HRP · CSA", es: "HRP de la NASA · CSA" } },
+    { id: "data", seed: 53, status: "done", palette: ["#050816", "#1b2a8f", "#3fa7ff", "#ff6f61"], n: { en: "NASA data", es: "Datos de la NASA" }, h: { en: "OSDR · NLSP · HHP", es: "OSDR · NLSP · HHP" } },
+    { id: "science", seed: 47, status: "done", palette: ["#2a0a1c", "#a3205e", "#ff7fae", "#ffe3ec"], n: { en: "Health science & standards", es: "Ciencia y normas de salud" }, h: { en: "Russell 2023 · IMM · NASA-STD-3001", es: "Russell 2023 · IMM · NASA-STD-3001" } },
+    { id: "weather", seed: 37, status: "done", palette: ["#3a0a0a", "#b3261e", "#ff7a3d", "#ffe1b8"], n: { en: "Space weather", es: "Clima espacial" }, h: { en: "DONKI · GOES · HESPERIA", es: "DONKI · GOES · HESPERIA" } },
+    { id: "prior", seed: 59, status: "done", palette: ["#2a1a05", "#a85d00", "#ffb347", "#fff1d6"], n: { en: "Prior work", es: "Trabajos previos" }, h: { en: "Ames · ARCHeR · JPL", es: "Ames · ARCHeR · JPL" } },
+    { id: "build", seed: 23, status: "live", palette: ["#06343a", "#0f8b8d", "#7fd6c2", "#f3e6c4"], n: { en: "Our build", es: "Lo que construimos" }, h: { en: "Live links · code", es: "Enlaces en vivo · código" } }
   ];
   var SRC = [
     /* Challenge resources */
@@ -700,93 +733,239 @@ footer{margin-top:clamp(80px,10vw,140px);padding:0 var(--gr) 32px var(--gl);bord
     if (!reduce.matches && !quiet) { void fpanel.offsetWidth; fpanel.classList.add("run"); }
   }
 
-  /* ---------- folders ---------- */
-  var openState = {}; FOLDERS.forEach(function (f, i) { openState[f.id] = i === 0; });
-  var savedState = null;
-  var q = document.getElementById("q"), fStar = document.getElementById("fStar"), fEva = document.getElementById("fEva"), toggleAll = document.getElementById("toggleAll");
-  var host = document.getElementById("folders");
-  var TAB = '<svg class="tab" viewBox="0 0 190 16" aria-hidden="true"><path d="M0.5 16 V0.5 H168 L183.5 16"/></svg>';
-
-  function renderFolders() {
-    host.innerHTML = "";
-    FOLDERS.forEach(function (f, fi) {
-      var items = SRC.filter(function (s) { return s.f === f.id; });
-      var sec = el("section", "folder" + (openState[f.id] ? " open" : ""));
-      sec.dataset.id = f.id;
-      var bid = "fb-" + f.id, hid = "fh-" + f.id;
-      var btn = el("button", "fh", '<span class="ix">' + pad(fi + 1) + '</span><span class="nm">' + esc(L(f.n)) + '</span><span class="hint"><span class="cnt"></span> · ' + esc(L(f.h)) + '</span><span class="pm" aria-hidden="true"></span>');
-      btn.type = "button"; btn.id = hid; btn.setAttribute("aria-expanded", openState[f.id] ? "true" : "false"); btn.setAttribute("aria-controls", bid);
-      btn.addEventListener("click", function () { setOpen(f.id, !openState[f.id]); });
-      sec.appendChild(btn);
-      sec.insertAdjacentHTML("beforeend", TAB);
-      var body = el("div", "fbody"); body.id = bid; body.setAttribute("role", "region"); body.setAttribute("aria-labelledby", hid);
-      var inner = el("div"), ul = el("ul", "cards");
-      items.forEach(function (s, i) { var li = el("li", "card"); li.style.setProperty("--i", i); li._s = s; ul.appendChild(li); });
-      inner.appendChild(ul); inner.appendChild(el("p", "empty", esc(t("noMatch")))); body.appendChild(inner); sec.appendChild(body);
-      if (!openState[f.id]) body.setAttribute("inert", "");
-      host.appendChild(sec);
-    });
-    filter();
+  /* ---------- folders: the original component ---------- */
+  var fineMQ = window.matchMedia("(hover: hover) and (pointer: fine)");
+  var reduceMQ = reduce;
+  /* ---------- Abstract art painter: value noise + fbm + two domain-warp passes ---------- */
+  function hash2(x, y, s) {
+    var h = (Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(s, 1442695041)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967295;
+  }
+  function vnoise(x, y, s) {
+    var xi = Math.floor(x), yi = Math.floor(y);
+    var xf = x - xi, yf = y - yi;
+    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    var a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s);
+    var c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+  function fbm(x, y, s) {
+    var sum = 0, amp = 0.5, f = 1;
+    for (var o = 0; o < 5; o++) {
+      sum += amp * vnoise(x * f, y * f, s + o * 31);
+      f *= 2.03; amp *= 0.5;
+      // rotate the lattice a little each octave to hide grid alignment
+      var nx = x * 0.8 - y * 0.6, ny = x * 0.6 + y * 0.8; x = nx; y = ny;
+    }
+    return sum / 0.97;
+  }
+  function hexToRgb(h) {
+    var n = parseInt(h.slice(1), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
+  function ramp(stops, t) {
+    var seg = t * (stops.length - 1);
+    var i = Math.min(stops.length - 2, Math.floor(seg));
+    var k = seg - i, a = stops[i], b = stops[i + 1];
+    return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
   }
 
-  function cardHTML(s, qq) {
-    var b = [];
-    if (s.ch) b.push('<span><span class="dot star" aria-hidden="true"></span>' + esc(t("bStar")) + "</span>");
-    if (s.e && !s.internal) b.push('<span><span class="dot ' + (s.r ? "star" : "eva") + '" aria-hidden="true"' + (s.r ? ' style="border-color:var(--teal)"' : "") + '></span>' + esc(t(s.r ? "bRef" : "bEva")) + "</span>");
-    if (s.internal) b.push("<span>" + esc(t("bInternal")) + "</span>");
-    var title = hi(L(s.t), qq);
-    var h = s.u ? '<a href="' + esc(s.u) + '"' + (ext(s.u) ? ' target="_blank" rel="noopener noreferrer"' : "") + ">" + title + '<span class="ar" aria-hidden="true">↗</span></a>' : title;
-    var html = '<div class="badges">' + b.join("") + "</div><h3>" + h + '</h3><p class="one">' + hi(L(s.d), qq) + '</p><p class="meta">' + esc(L(s.m)) + "</p>";
-    if (s.e) html += '<button type="button" class="more" aria-expanded="false">' + esc(t(s.internal ? "titles" : (s.r ? "howRef" : "howEva"))) + '</button><div class="use"><p><span>' + hi(L(s.e), qq) + "</span></p></div>";
+  var artCache = new Map();
+  function paintArt(seed, palette) {
+    var key = seed + ":" + palette.join(",");
+    if (artCache.has(key)) return artCache.get(key);
+    var W = 240, H = 190;
+    var c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    var ctx = c.getContext("2d");
+    var img = ctx.createImageData(W, H);
+    var data = img.data;
+    var stops = palette.map(hexToRgb);
+    var ox = hash2(seed, 1, 7) * 50, oy = hash2(seed, 2, 7) * 50;
+    var sc = 2.2 + hash2(seed, 3, 7) * 1.4;
+    var p = 0;
+    for (var y = 0; y < H; y++) {
+      for (var x = 0; x < W; x++) {
+        var px = ox + (x / W) * sc * (W / H), py = oy + (y / H) * sc;
+        // first warp
+        var qx = fbm(px, py, seed);
+        var qy = fbm(px + 5.2, py + 1.3, seed);
+        // second warp
+        var rx = fbm(px + 3.8 * qx + 1.7, py + 3.8 * qy + 9.2, seed + 3);
+        var ry = fbm(px + 3.8 * qx + 8.3, py + 3.8 * qy + 2.8, seed + 3);
+        var f = fbm(px + 3.8 * rx, py + 3.8 * ry, seed + 5);
+        var t = clamp01((f - 0.26) / 0.52);
+        t = t * t * (3 - 2 * t);
+        var ql = clamp01((Math.sqrt(qx * qx + qy * qy) - 0.45) / 0.55);
+        var col = ramp(stops, clamp01(t * 0.82 + ql * 0.18));
+        var hl = clamp01((rx - 0.55) * 2.4) * 0.45;
+        var top = stops[stops.length - 1];
+        var shade = 0.8 + 0.3 * f;
+        var grain = (hash2(x, y, seed + 9) - 0.5) * 7;
+        data[p++] = Math.min(255, (col[0] + (top[0] - col[0]) * hl) * shade + grain);
+        data[p++] = Math.min(255, (col[1] + (top[1] - col[1]) * hl) * shade + grain);
+        data[p++] = Math.min(255, (col[2] + (top[2] - col[2]) * hl) * shade + grain);
+        data[p++] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    artCache.set(key, c);
+    return c;
+  }
+
+  var grid = document.getElementById("grid");
+  var q = document.getElementById("q"), fStar = document.getElementById("fStar"), fEva = document.getElementById("fEva");
+  var folders = [], current = null, built = false;
+
+  function fileHTML(s, qq) {
+    var ext = ext_(s.u), title = hi(L(s.t), qq);
+    var head = s.u
+      ? '<a class="file-title" href="' + esc(s.u) + '"' + (ext ? ' target="_blank" rel="noopener noreferrer" aria-label="' + esc(L(s.t) + " (" + t("newTab") + ")") + '"' : "") + ">" + title + "</a>"
+      : '<span class="file-title">' + title + "</span>";
+    var arrow = s.u ? (ext ? "↗" : "→") : "";
+    var st = "", cls = "";
+    if (s.ch) { st = t("stCh"); cls = " ch"; }
+    else if (s.internal) st = t("stInt");
+    else if (s.e) { st = t(s.r ? "stRef" : "stUse"); cls = " eva"; }
+    var html = '<span class="file-top">' + head + '<span class="file-arrow" aria-hidden="true">' + arrow + "</span></span>" +
+      '<span class="file-meta"><span>' + esc(L(s.m)) + '</span><span class="file-state' + cls + '">' + esc(st) + "</span></span>" +
+      '<span class="file-desc">' + hi(L(s.d), qq) + "</span>";
+    if (s.e) html += '<span class="file-eva"><b>' + esc(t(s.internal ? "eTitles" : (s.r ? "eRef" : "eUse"))) + "</b>" + hi(L(s.e), qq) + "</span>";
     return html;
   }
+  function ext_(u) { return ext(u); }
 
-  function setOpen(id, on) {
-    openState[id] = on;
-    var sec = host.querySelector('.folder[data-id="' + id + '"]');
-    if (!sec) return;
-    sec.classList.toggle("open", on);
-    sec.querySelector(".fh").setAttribute("aria-expanded", on ? "true" : "false");
-    var body = sec.querySelector(".fbody");
-    if (on) body.removeAttribute("inert"); else body.setAttribute("inert", "");
-    syncToggleAll();
+  function buildFolders() {
+    var wasOpen = current ? current.id : null;
+    grid.innerHTML = ""; folders = []; current = null;
+    FOLDERS.forEach(function (f, idx) {
+      var items = SRC.filter(function (s) { return s.f === f.id; });
+      var n = items.length, linked = items.filter(function (s) { return s.e && !s.internal; }).length;
+      var id = "folder-" + f.id;
+      var li = el("li", "folder"); li.dataset.status = f.status; li.style.setProperty("--n", n);
+      var stage = el("div", "stage"), tilt = el("div", "tilt");
+      var back = el("div", "back"); back.setAttribute("aria-hidden", "true");
+      var canvas = document.createElement("canvas"); canvas.width = 240; canvas.height = 190;
+      back.appendChild(canvas); back.appendChild(el("span", "back-index", pad(idx + 1)));
+      var btn = el("button", "front"); btn.type = "button";
+      btn.setAttribute("aria-expanded", "false"); btn.setAttribute("aria-controls", id + "-files");
+      var plus = el("span", "front-plus", "+"); plus.setAttribute("aria-hidden", "true");
+      var label = el("span", "front-label", esc(L(f.n)));
+      var foot = el("span", "front-foot"), meta = el("span", "front-meta");
+      var row = el("span", "front-row"), pips = el("span", "pips");
+      pips.setAttribute("role", "img"); pips.setAttribute("aria-label", linked + " " + t("of") + " " + n + " " + t("nLinked"));
+      items.forEach(function (s) { pips.appendChild(el("span", "pip" + (s.e && !s.internal ? " on" : ""))); });
+      row.appendChild(pips); row.appendChild(el("span", "front-status", esc(t(f.status === "live" ? "stLive" : "stDone"))));
+      foot.appendChild(meta); foot.appendChild(row);
+      btn.appendChild(plus); btn.appendChild(label); btn.appendChild(foot);
+      var list = el("ul", "files"); list.id = id + "-files"; list.setAttribute("aria-label", L(f.n) + " · " + t("filesOf")); list.inert = true;
+      var files = [];
+      items.forEach(function (s, i) {
+        var item = el("li"), a = el("div", "file" + (s.u ? "" : " is-internal"));
+        a.style.setProperty("--i", i); a._s = s; files.push(a);
+        item.appendChild(a); list.appendChild(item);
+      });
+      tilt.appendChild(back); tilt.appendChild(btn); tilt.appendChild(list); stage.appendChild(tilt);
+      var cap = el("div", "caption"); cap.setAttribute("aria-hidden", "true");
+      cap.appendChild(el("span", null, pad(idx + 1) + " · " + esc(L(f.h))));
+      var hint = el("span", "hint", esc(t("fOpen"))); cap.appendChild(hint);
+      li.appendChild(stage); li.appendChild(cap); grid.appendChild(li);
+      var F = { id: f.id, el: li, btn: btn, list: list, hint: hint, tilt: tilt, canvas: canvas, data: f, meta: meta, files: files, n: n, linked: linked, hits: n };
+      folders.push(F);
+      bindFolder(F);
+    });
+    // paint art once per folder, staggered across frames
+    var queue = folders.slice();
+    (function next() { var F = queue.shift(); if (!F) return; F.canvas.getContext("2d").drawImage(paintArt(F.data.seed, F.data.palette), 0, 0); requestAnimationFrame(next); })();
+    // entrance when scrolled into view (transform only, never hidden)
+    if (!built && !reduceMQ.matches && "IntersectionObserver" in window) {
+      var vh = window.innerHeight;
+      var io = new IntersectionObserver(function (entries) { entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }); }, { threshold: 0.12 });
+      folders.forEach(function (F, i) {
+        var r = F.el.getBoundingClientRect();
+        if (r.top < vh && r.bottom > 0) { F.el.querySelector(".stage").style.animationDelay = (i % 3) * 90 + "ms"; F.el.classList.add("in"); }
+        else io.observe(F.el);
+      });
+    }
+    built = true;
+    filter(true);
+    if (wasOpen) folders.forEach(function (F) { if (F.id === wasOpen) setOpen(F, true); });
   }
-  function syncToggleAll() { toggleAll.textContent = FOLDERS.every(function (f) { return openState[f.id]; }) ? t("closeAll") : t("openAll"); }
-  toggleAll.addEventListener("click", function () {
-    var all = FOLDERS.every(function (f) { return openState[f.id]; });
-    FOLDERS.forEach(function (f) { setOpen(f.id, !all); });
+
+  function setOpen(F, open) {
+    F.el.classList.toggle("is-open", open);
+    F.btn.setAttribute("aria-expanded", open ? "true" : "false");
+    F.list.inert = !open;
+    F.hint.textContent = open ? t("fClose") : t("fOpen");
+    if (!open) F.files.forEach(function (a) { a.classList.remove("is-lift"); });
+    if (open) current = F;
+    else if (current === F) current = null;
+  }
+  function toggle(F) {
+    var willOpen = !F.el.classList.contains("is-open");
+    if (willOpen && current && current !== F) setOpen(current, false);
+    setOpen(F, willOpen);
+  }
+  function bindFolder(F) {
+    F.el.addEventListener("click", function (e) {
+      if (e.target.closest("a")) return;
+      var file = e.target.closest(".file");
+      if (file && F.el.classList.contains("is-open")) {
+        var on = !file.classList.contains("is-lift");
+        F.files.forEach(function (a) { a.classList.remove("is-lift"); });
+        file.classList.toggle("is-lift", on);
+        return;
+      }
+      toggle(F);
+    });
+    // pointer parallax
+    var raf = 0, mx = 0, my = 0;
+    F.el.addEventListener("pointermove", function (e) {
+      if (reduceMQ.matches || !fineMQ.matches) return;
+      var r = F.el.getBoundingClientRect();
+      mx = ((e.clientX - r.left) / r.width) * 2 - 1;
+      my = ((e.clientY - r.top) / r.height) * 2 - 1;
+      if (!raf) raf = requestAnimationFrame(function () { raf = 0; F.tilt.style.setProperty("--mx", mx.toFixed(3)); F.tilt.style.setProperty("--my", my.toFixed(3)); });
+    });
+    F.el.addEventListener("pointerleave", function () { F.tilt.style.setProperty("--mx", 0); F.tilt.style.setProperty("--my", 0); });
+  }
+  document.addEventListener("click", function (e) {
+    if (current && !current.el.contains(e.target) && !e.target.closest(".bar")) setOpen(current, false);
   });
-  host.addEventListener("click", function (e) {
-    var m = e.target.closest(".more"); if (!m) return;
-    var on = m.getAttribute("aria-expanded") !== "true";
-    m.setAttribute("aria-expanded", on ? "true" : "false"); m.nextElementSibling.classList.toggle("on", on);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && current && document.activeElement !== q) { var F = current; setOpen(F, false); F.btn.focus(); }
   });
 
-  function filter() {
+  function filter(quiet) {
     var qq = fold(q.value.trim()), star = fStar.getAttribute("aria-pressed") === "true", eva = fEva.getAttribute("aria-pressed") === "true";
-    var active = !!(qq || star || eva), shown = 0;
-    if (active && !savedState) savedState = Object.assign({}, openState);
-    host.querySelectorAll(".folder").forEach(function (sec) {
+    var active = !!(qq || star || eva), shown = 0, hit = [];
+    folders.forEach(function (F) {
       var n = 0;
-      sec.querySelectorAll(".card").forEach(function (li) {
-        var s = li._s;
+      F.files.forEach(function (a) {
+        var s = a._s;
         var hay = fold([s.t.en, s.t.es, s.d.en, s.d.es, L(s.m), s.e ? s.e.en + " " + s.e.es : "", s.u || ""].join(" "));
         var ok = (!qq || hay.indexOf(qq) >= 0) && (!star || s.ch) && (!eva || (s.e && !s.internal));
-        li.hidden = !ok;
-        if (ok) { n++; li.innerHTML = cardHTML(s, qq); }
+        if (ok) n++;
+        a.classList.toggle("is-miss", active && !ok);
+        a.innerHTML = fileHTML(s, ok ? qq : "");
       });
-      shown += n;
-      sec.querySelector(".cnt").textContent = pad(n);
-      sec.querySelector(".empty").style.display = n ? "none" : "";
-      sec.classList.toggle("none", active && n === 0);
-      if (active) setOpen(sec.dataset.id, n > 0);
+      F.hits = n; shown += n;
+      F.el.classList.toggle("is-dim", active && n === 0);
+      F.el.classList.toggle("is-hit", active && n > 0);
+      F.meta.textContent = active ? (n + " " + t(n === 1 ? "nMatch1" : "nMatch")) : (F.n + " " + t("nSrc") + " · " + F.linked + " " + t("nLinked"));
+      if (n) hit.push(F);
     });
-    if (!active && savedState) { var st = savedState; savedState = null; FOLDERS.forEach(function (f) { setOpen(f.id, st[f.id]); }); }
+    if (active && !quiet) {
+      if (hit.length === 1 && current !== hit[0]) { if (current) setOpen(current, false); setOpen(hit[0], true); }
+      else if (current && current.hits === 0) setOpen(current, false);
+    }
     document.getElementById("rcount").textContent = active ? (shown + " " + t("of") + " " + SRC.length + " " + t("shown")) : (SRC.length + " " + t("sources"));
     document.getElementById("fcount").textContent = pad(FOLDERS.length) + " " + t("folders");
-    syncToggleAll();
   }
-  q.addEventListener("input", filter);
+  q.addEventListener("input", function () { filter(); });
   q.addEventListener("keydown", function (e) { if (e.key === "Escape") { q.value = ""; filter(); } });
   [fStar, fEva].forEach(function (b) { b.addEventListener("click", function () { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); filter(); }); });
 
@@ -809,7 +988,7 @@ footer{margin-top:clamp(80px,10vw,140px);padding:0 var(--gr) 32px var(--gl);bord
     renderStats(STATS, document.getElementById("stats"), "tip-s");
     renderStats(BSTATS, document.getElementById("bstats"), "tip-b");
     renderFlowTabs();
-    renderFolders();
+    buildFolders();
     renderDec();
   }
   document.querySelectorAll(".lpick button").forEach(function (b) {
