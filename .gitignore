@@ -2,3 +2,12 @@ target/
 .DS_Store
 *.pyc
 __pycache__/
+
+# secrets: never commit
+.env
+.env.*
+*.env
+# app runtime data and dev certs
+app/data/
+app/certs/
+app/node_modules/
