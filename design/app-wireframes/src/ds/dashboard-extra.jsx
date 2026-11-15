@@ -115,8 +115,9 @@ const dotHalo = { ok: "fill-ok/15", warn: "fill-warn/20", critical: "fill-critic
  * top-down deck plan of the ship. Geometry in a 1000x420 viewBox.
  * rooms: [{ x, y, w, h, label, kind: "room" | "shelter" }]
  * people: [{ id, x, y, tone, label, ring }]   hub: { x, y, label }
+ * stations: [{ x, y, label, ly }] emergency stations with an AED, drawn as a heart with a lightning bolt
  */
-export const DeckPlan = ({ rooms, people, hub, labels = [] }) => (
+export const DeckPlan = ({ rooms, people, hub, labels = [], stations = [] }) => (
   <svg viewBox="0 0 1000 420" className="h-auto w-full" role="img" aria-label="Ship deck plan">
     <defs>
       <pattern id="deck-hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2" height="9" className="fill-info/50" /></pattern>
@@ -132,6 +133,15 @@ export const DeckPlan = ({ rooms, people, hub, labels = [] }) => (
     ))}
     {/* faint LoRa mesh lines from each wearable to the hub */}
     {people.map(p => <line key={`m-${p.id}`} x1={hub.x} y1={hub.y} x2={p.x} y2={p.y} className={p.tone === "critical" ? "stroke-critical/40" : "stroke-ink/10"} strokeWidth="1" strokeDasharray={p.tone === "critical" ? undefined : "2 5"} />)}
+    {/* emergency stations with an AED */}
+    {stations.map(st => (
+      <g key={st.label}>
+        <rect x={st.x - 15} y={st.y - 15} width="30" height="30" rx="8" className="fill-ink stroke-surface" strokeWidth="3" />
+        <path d={`M ${st.x} ${st.y + 11} C ${st.x - 18} ${st.y} ${st.x - 13} ${st.y - 13} ${st.x} ${st.y - 6} C ${st.x + 13} ${st.y - 13} ${st.x + 18} ${st.y} ${st.x} ${st.y + 11} Z`} className="fill-on-light" />
+        <path d={`M ${st.x + 2} ${st.y - 7} L ${st.x - 4} ${st.y + 1} L ${st.x + 1} ${st.y + 1} L ${st.x - 2} ${st.y + 8} L ${st.x + 5} ${st.y - 1} L ${st.x} ${st.y - 1} Z`} className="fill-ink" />
+        <text x={st.x} y={st.ly ?? st.y + 40} textAnchor="middle" className="fill-ink text-base">{st.label}</text>
+      </g>
+    ))}
     {/* hub */}
     <g>
       <circle cx={hub.x} cy={hub.y} r="26" className="fill-ink/10" />

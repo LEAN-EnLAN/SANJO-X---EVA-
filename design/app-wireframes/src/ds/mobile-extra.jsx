@@ -121,14 +121,14 @@ const Layer = ({ graphic, title, read, accent }) => (
 )
 export const SuitDiagram = () => (
   <div className="flex flex-col gap-3">
-    <Layer title="Outer part" read="Screen and big battery" graphic={
+    <Layer title="Screen part" read="ECG pads, battery, LoRa" graphic={
       <span className="flex h-10 w-full items-center justify-center rounded-tile border border-line bg-elevated"><span className="h-4 w-16 rounded-sm bg-background" /></span>
     } />
     <Layer accent title="Suit fabric" read="Magnets hold, pins don't" graphic={<>
       <span className="flex w-20 justify-between"><span className="h-3 w-0.5 bg-muted" /><span className="h-3 w-0.5 bg-muted" /><span className="h-3 w-0.5 bg-muted" /></span>
       <span className="h-5 w-full rounded-sm bg-hatch-info" />
     </>} />
-    <Layer title="Inner sensor part" read="Own small battery" graphic={
+    <Layer title="Sensor base" read="Own battery and LoRa" graphic={
       <span className="flex h-7 w-24 items-center justify-center gap-1.5 rounded-full border border-line bg-raised"><span className="size-2 rounded-full bg-muted" /><span className="size-2 rounded-full bg-muted" /></span>
     } />
     <Layer title="Your skin" read="Light reads your pulse" graphic={<span className="h-2 w-full rounded-full bg-faint" />} />

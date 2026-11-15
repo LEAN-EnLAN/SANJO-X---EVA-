@@ -28,7 +28,7 @@ const CaseCard = () => (
     <CardHeader>
       <div className="flex items-center gap-3">
         <Avatar name="Ana Ruiz" tone="critical" />
-        <div className="flex flex-col"><CardTitle>Ana Ruiz · seat 4B</CardTitle><Body muted>Case 0414 · heart rhythm · opened 14:02 ship time · history: no heart disease</Body></div>
+        <div className="flex flex-col"><CardTitle>Ana Ruiz · seat 4B</CardTitle><Body muted>Case 0414 · no pulse at wrist · opened 14:02 ship time · no heart history</Body></div>
       </div>
       <Badge tone="critical"><StatusDot tone="critical" pulse />Open on the ship</Badge>
     </CardHeader>
@@ -50,21 +50,22 @@ const Composer = () => (
       <Eyebrow>To</Eyebrow>
       <InfoChip tone="info">Mara · crew lead</InfoChip>
       <InfoChip tone="info">Leo · helper</InfoChip>
+      <InfoChip tone="info">Tomás · AED</InfoChip>
     </div>
     <div className="flex flex-col gap-2">
       <Eyebrow>Last from the ship</Eyebrow>
       <div className="flex items-start gap-3 rounded-tile bg-raised p-3">
         <Avatar name="Mara Okoye" size="sm" />
         <div className="flex min-w-0 flex-col gap-0.5">
-          <p className="text-sm text-ink">Ana collapsed in the galley. Leo is with her, harness on. Eva is guiding.</p>
+          <p className="text-sm text-ink">Ana collapsed in the galley, no pulse. Leo is doing CPR, Tomás brought the AED. Eva is guiding.</p>
           <p className="font-mono text-xs text-muted">ship 14:03:50 · received 14:16:30</p>
         </div>
       </div>
     </div>
-    <TextBox>Mara, Leo: you did the right thing. Keep the harness on Ana. Check her breathing every 2 minutes and send me her next heart strip.</TextBox>
+    <TextBox>Mara, Leo, Tomás: you did the right thing. Keep CPR going and follow the AED's voice. Check her breathing every 2 minutes and send me the AED log.</TextBox>
     <div className="flex flex-wrap gap-2">
-      <Button size="sm" variant="secondary">Keep harness on</Button>
-      <Button size="sm" variant="secondary">Send next strip</Button>
+      <Button size="sm" variant="secondary">Follow the AED</Button>
+      <Button size="sm" variant="secondary">Send AED log</Button>
       <Button size="sm" variant="secondary">Rest in med bay</Button>
     </div>
     <div className="mt-auto flex items-center gap-4 rounded-tile bg-raised p-4">
@@ -85,16 +86,16 @@ const WristEcg = () => (
     <CardHeader>
       <div className="flex items-center gap-3">
         <Avatar name="Priya Nair" tone="warn" />
-        <div className="flex flex-col"><CardTitle>Priya Nair · seat 4A · wrist ECG, 30 s</CardTitle><Body muted>Ship time 12:40:10 · received 12:52:50 · finger on the band, sitting still</Body></div>
+        <div className="flex flex-col"><CardTitle>Priya Nair · seat 4A · wrist ECG, 30 s</CardTitle><Body muted>Ship time 12:40:10 · received 12:52:50 · one finger of each hand on the two metal pads, sitting still</Body></div>
       </div>
-      <div className="flex items-center gap-2"><Badge>1-lead · not a 12-lead ECG</Badge><Badge tone="warn">Irregular, review</Badge></div>
+      <div className="flex items-center gap-2"><Badge>1-lead wrist ECG (two pads) · not a 12-lead ECG</Badge><Badge tone="warn">Irregular, review</Badge></div>
     </CardHeader>
     <div className="rounded-tile bg-raised px-4 pt-4 pb-2"><EcgStrip rr={priyaRR} tone="ink" /></div>
     <div className="mt-4 grid grid-cols-12 items-center gap-5">
       <div className="col-span-3 flex flex-col"><span className="text-sm text-ink">Pulse 58–108, uneven</span><span className="text-xs text-muted">Gaps between beats keep changing</span></div>
-      <div className="col-span-5 flex flex-col"><span className="text-sm text-ink">A wrist check, not continuous</span><span className="text-xs text-muted">Never used alone for a shock: the harness chest electrodes decide</span></div>
+      <div className="col-span-5 flex flex-col"><span className="text-sm text-ink">A wrist check on demand, not continuous</span><span className="text-xs text-muted">Shocks are decided by the AED, never by Eva</span></div>
       <div className="col-span-4 flex justify-end gap-2">
-        <Button size="sm" variant="outline">Ask for a chest ECG</Button>
+        <Button size="sm" variant="outline">Ask for a repeat check</Button>
         <Button size="sm">Mark reviewed</Button>
       </div>
     </div>

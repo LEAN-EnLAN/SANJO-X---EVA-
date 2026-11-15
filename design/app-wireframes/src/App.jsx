@@ -70,7 +70,7 @@ export default function App() {
       <Section id="system" eyebrow="Design system" title="One system, enforced by a linter" intro="Tokens live in theme.css; components live in @/ds; @shadcn/lint rejects raw colours, made-up values, inline styles and restyled components.">
         <DesignSystem />
       </Section>
-      <footer className="border-t border-line px-6 py-10 text-xs text-muted lg:px-12">Wireframes, not medical software. Product images are AI-generated concept art from the team's kit. Eva guides, records and warns; shocks and injections come only from validated devices.</footer>
+      <footer className="border-t border-line px-6 py-10 text-xs text-muted lg:px-12">Wireframes, not medical software. Product images are AI-generated concept art from the team's kit. Eva guides, records and warns. Shocks are decided by the AED at the ship's emergency station, never by Eva.</footer>
     </main>
   )
 }

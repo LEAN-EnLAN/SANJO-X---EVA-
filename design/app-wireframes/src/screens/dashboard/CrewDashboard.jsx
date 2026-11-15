@@ -1,6 +1,6 @@
 import { Avatar, Badge, Bars, Body, Button, Card, CardHeader, CardTitle, Eyebrow, HalfGauge, Headline, IconTile, PillSelect, Ring, Segmented, SplitBar, Stat, StatusDot } from "@/ds"
 import { AppWindow, DataTable, DeckPlan, InfoChip, Legend, MiniMeter, Pipeline, Readout } from "@/ds/dashboard-extra"
-import { Users, Siren, Satellite, Radiation, Magnet, Shirt, Sparkles, ArrowUpRight, Phone, Timer, MapPin } from "lucide-react"
+import { Users, Siren, Satellite, Radiation, Magnet, Shirt, Sparkles, ArrowUpRight, Phone, Timer, MapPin, Zap } from "lucide-react"
 import { Citation, Rail, TopBar } from "./shared"
 import { crewLead, roster, syncQueue, weekAlerts, weekLabels } from "./data"
 
@@ -8,12 +8,13 @@ import { crewLead, roster, syncQueue, weekAlerts, weekLabels } from "./data"
 const statusBadge = {
   care: { tone: "critical", label: "In care" },
   helping: { tone: "info", label: "Helping Ana" },
+  aed: { tone: "info", label: "Brought the AED" },
   ok: { tone: "ok", label: "Normal" },
   battery: { tone: "warn", label: "Battery low" },
   suit: { tone: "neutral", label: "Suit drill" },
   ecg: { tone: "warn", label: "ECG review" },
 }
-const avatarTone = { care: "critical", helping: "info", ok: "neutral", battery: "warn", suit: "neutral", ecg: "warn" }
+const avatarTone = { care: "critical", helping: "info", aed: "info", ok: "neutral", battery: "warn", suit: "neutral", ecg: "warn" }
 const queueBadge = { saved: { tone: "neutral", label: "Saved" }, sent: { tone: "info", label: "Sent" }, ack: { tone: "ok", label: "Acknowledged" } }
 
 /* ---------- KPI card ---------- */
@@ -46,11 +47,11 @@ const rows = roster.map(p => {
       seat: <span className="font-mono text-xs text-muted">{p.seat}</span>,
       who: <span className="flex items-center gap-3"><Avatar name={p.name} tone={avatarTone[p.status]} size="sm" /><span className="text-sm text-ink">{p.name}</span></span>,
       status: <Badge tone={b.tone}>{care && <StatusDot tone="critical" pulse />}{b.label}</Badge>,
-      hr: <Readout value={p.hr} tone={care ? "critical" : "ink"} />,
-      spo2: <Readout value={`${p.spo2}%`} tone={care ? "critical" : "ink"} />,
+      hr: p.hr == null ? <Readout value="No pulse" tone="critical" /> : <Readout value={p.hr} tone={care ? "critical" : "ink"} />,
+      spo2: <Readout value={p.spo2 == null ? "—" : `${p.spo2}%`} tone={care ? "critical" : "ink"} />,
       skin: <Readout value={p.skin.toFixed(1)} />,
       ecg: !p.ecg
-        ? <span className="text-xs text-faint">Not in suit mode</span>
+        ? <span className="text-xs text-faint">None today</span>
         : p.ecg.result === "regular"
           ? <span className="text-xs text-muted"><span className="font-mono">{p.ecg.t}</span> · regular</span>
           : <span className="text-xs text-warn"><span className="font-mono">{p.ecg.t}</span> · irregular, review</span>,
@@ -81,17 +82,17 @@ const Roster = () => (
 
 /* ---------- Eva assistant ---------- */
 const caseSteps = [
-  { t: "14:02", label: "Heart rhythm alert", tone: "critical" },
-  { t: "14:03", label: "Helper Leo arrived", tone: "info" },
-  { t: "14:04", label: "Harness advised a shock", tone: "critical" },
+  { t: "14:02", label: "No pulse at wrist", tone: "critical" },
+  { t: "14:03", label: "Leo arrived, CPR", tone: "info" },
+  { t: "14:04", label: "AED attached, shock advised by AED", tone: "critical" },
 ]
 
 // Eva explains itself: what to do now · why · how Eva decided · what comes next
 const evaPlan = [
-  { k: "What to do now", v: "Keep everyone clear of Ana. Let the harness work." },
-  { k: "Why", v: "Her chest ECG shows a fast, irregular rhythm and she is not responding." },
-  { k: "How Eva decided", v: "Harness chest ECG + no movement on her band. Her history: no heart disease." },
-  { k: "What comes next", v: "Check her breathing. Then rest in the med bay." },
+  { k: "What to do now", v: "Keep CPR going. Stand clear when the AED says so." },
+  { k: "Why", v: "Ana's heart is not pumping. CPR and the AED give her the best chance." },
+  { k: "How Eva decided", v: "Wristband: no pulse, no movement, no answer. Her history: no heart disease." },
+  { k: "What comes next", v: "Follow the AED's voice. Then check breathing and move her to the med bay." },
 ]
 
 const EvaCard = () => (
@@ -144,8 +145,8 @@ const EvaCard = () => (
       <Badge tone="warn">Review</Badge>
     </div>
     <div className="mt-4 flex items-center gap-3">
-      <IconTile src="img/chip-harness-b.jpg" alt="Chest harness" size="sm" />
-      <Body muted>Shocks and injections come only from the harness, a validated device. Eva guides, records and warns.</Body>
+      <IconTile size="sm"><Zap size={20} className="text-ink" /></IconTile>
+      <Body muted>Shocks are decided by the AED at the emergency station, never by Eva. The AED reads the heart through its own pads. Eva guides, records and warns.</Body>
     </div>
   </Card>
 )
@@ -176,14 +177,14 @@ const Triage = () => (
 
 /* ---------- supplies with stowage ---------- */
 const supplies = [
-  { name: "Defibrillation pads", count: "14/15", where: "Harness front pocket", src: "img/inv-pads.webp", used: "1 used · Ana · 14:04" },
-  { name: "Injectors", count: "15/15", where: "Harness side pocket", src: "img/inv-inject.webp" },
+  { name: "AEDs", count: "2/2", where: "At stations · corridor B, corridor D", icon: Zap, used: "Corridor B's AED is with Ana · 14:04" },
+  { name: "AED pads", count: "5/6", where: "Emergency station · corridor B", icon: Zap, used: "1 set used · Ana · 14:04" },
   { name: "Spare sensor parts", count: "6/6", where: "Med bay · drawer B2", src: "img/inv-sensor.webp" },
   { name: "Spare band screens", count: "4/4", where: "Med bay · drawer B3", src: "img/inv-screen.webp" },
 ]
 const SupplyRow = ({ s }) => (
   <li className={s.used ? "flex items-center gap-3 rounded-tile border border-info/40 bg-info/5 p-2.5" : "flex items-center gap-3 rounded-tile bg-raised p-2.5"}>
-    <IconTile src={s.src} alt="" size="sm" />
+    {s.icon ? <IconTile size="sm"><s.icon size={20} className="text-ink" /></IconTile> : <IconTile src={s.src} alt="" size="sm" />}
     <div className="flex min-w-0 flex-1 flex-col">
       <span className="flex items-baseline gap-2 text-sm text-ink">{s.name}<span className="tabular-nums text-muted">{s.count}</span></span>
       <span className="flex items-center gap-1 text-xs text-muted"><MapPin size={12} />{s.where}</span>
@@ -195,7 +196,7 @@ const SuppliesCard = () => (
   <Card>
     <CardHeader>
       <div className="flex flex-col gap-1"><CardTitle>Supplies</CardTitle><Body muted>What is left, and where it is stowed</Body></div>
-      <Badge>Restock 1 · pads</Badge>
+      <Badge>Restock 1 · AED pads</Badge>
     </CardHeader>
     <ul className="grid grid-cols-2 gap-2">{supplies.map(s => <SupplyRow key={s.name} s={s} />)}</ul>
   </Card>
@@ -232,16 +233,21 @@ const rooms = [
   { x: 860, y: 160, w: 80, h: 100, label: "Bridge" },
 ]
 const people = [
-  { id: "1A", x: 170, y: 120, tone: "ok" }, { id: "1B", x: 250, y: 155, tone: "ok" }, { id: "3A", x: 330, y: 110, tone: "ok" }, { id: "4A", x: 405, y: 160, tone: "ok" },
+  { id: "1A", x: 170, y: 120, tone: "ok" }, { id: "1B", x: 636, y: 168, tone: "info" }, { id: "3A", x: 330, y: 110, tone: "ok" }, { id: "4A", x: 405, y: 160, tone: "ok" },
   { id: "5A", x: 175, y: 295, tone: "warn" }, { id: "5B", x: 255, y: 270, tone: "ok" }, { id: "6A", x: 340, y: 315, tone: "ok" }, { id: "7A", x: 410, y: 280, tone: "ok" },
   { id: "4B", x: 615, y: 128, tone: "critical" }, { id: "3B", x: 535, y: 150, tone: "info" },
-  { id: "7B", x: 750, y: 130, tone: "ok" },
+  { id: "7B", x: 805, y: 112, tone: "ok" },
   { id: "2A", x: 720, y: 290, tone: "ok" }, { id: "2B", x: 770, y: 310, tone: "ok" }, { id: "6B", x: 800, y: 270, tone: "ok" },
   { id: "8A", x: 900, y: 225, tone: "ok" },
 ]
+const stations = [
+  { x: 465, y: 290, ly: 373, label: "AED · B" },
+  { x: 665, y: 290, ly: 373, label: "AED · D" },
+]
 const deckLabels = [
   { x: 555, y: 66, w: 120, text: "Ana · 4B", tone: "critical" },
-  { x: 470, y: 184, w: 130, text: "Leo · helper" },
+  { x: 470, y: 184, w: 120, text: "Leo · CPR" },
+  { x: 658, y: 170, w: 150, text: "Tomás · AED" },
 ]
 
 const Deck = () => (
@@ -250,10 +256,10 @@ const Deck = () => (
       <div className="flex flex-col gap-1"><CardTitle>Deck plan</CardTitle><Body muted>Where everyone is, from their band's mesh signal</Body></div>
       <Badge tone="ok"><StatusDot tone="ok" />Mesh 15/15</Badge>
     </CardHeader>
-    <DeckPlan rooms={rooms} people={people} hub={{ x: 72, y: 210, label: "Hub" }} labels={deckLabels} />
-    <div className="mt-3 flex items-center justify-between">
+    <DeckPlan rooms={rooms} people={people} hub={{ x: 72, y: 210, label: "Hub" }} labels={deckLabels} stations={stations} />
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-y-2">
       <Legend items={[{ label: "OK", tone: "ok" }, { label: "Low battery", tone: "warn" }, { label: "Helper", tone: "info" }, { label: "In care", tone: "critical" }, { label: "Storm shelter", hatched: true }]} />
-      <span className="text-xs text-faint">Dotted lines · LoRa mesh to the hub</span>
+      <span className="flex items-center gap-2 text-xs text-faint"><Zap size={13} className="text-ink" />AED at emergency station · dotted lines: LoRa mesh to the hub</span>
     </div>
   </Card>
 )
@@ -287,7 +293,7 @@ const BandsCard = () => (
         { label: "Battery low (Diego, 14%)", tone: "warn", value: 1 },
       ]} />
     </div>
-    <p className="text-xs text-faint">Each band reads pulse and rhythm, oxygen and breathing at rest, skin temperature, skin response (EDA), movement and sleep.</p>
+    <p className="text-xs text-faint">Each band watches all the time: optical pulse (uneven rhythm, loss of pulse), SpO₂, breathing estimate, skin temperature, EDA and movement. ECG is a 30 s check on demand. Both parts have their own battery and LoRa radio, so the sensor base keeps reporting if the screen is off.</p>
   </Card>
 )
 
@@ -358,7 +364,7 @@ export function CrewDashboard() {
 
             <div className="grid grid-cols-4 gap-5">
               <Kpi icon={Users} label="Passengers OK" value="14" unit="/ 15" delta="−1 since 14:02" deltaTone="neutral" hint="Ana is in care" />
-              <Kpi icon={Siren} label="Open alerts" value="1" delta="Heart rhythm" deltaTone="critical" hint="Helper on scene" />
+              <Kpi icon={Siren} label="Open alerts" value="1" delta="No pulse" deltaTone="critical" hint="CPR · AED attached" />
               <Kpi icon={Satellite} label="Earth delay" value="12" unit="min 40 s" delta="+9 s today" deltaTone="neutral" hint="Reply ≈ 25 min" />
               <Kpi icon={Radiation} label="Cabin dose today" value="98" unit="% of plan" delta="As expected" deltaTone="ok" hint="No shelter needed" />
             </div>

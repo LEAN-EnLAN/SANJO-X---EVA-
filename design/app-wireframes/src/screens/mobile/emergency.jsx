@@ -1,10 +1,10 @@
 import { Phone, Button, Badge, Progress, StatusDot } from "@/ds"
 import { Label, StepBars, BeatRing, StepRow, WhyNext, Stowed } from "@/ds/mobile-extra"
-import { ArrowUpLeft } from "lucide-react"
+import { ArrowUpLeft, Zap } from "lucide-react"
 
 export function Helper() {
   return (
-    <Phone tone="critical" number="09" caption="Emergency, helper. The closest passenger is asked first: where to go, why, what comes next, and where the pads are. Two answers only; if they can't, Eva asks the next person.">
+    <Phone tone="critical" number="09" caption="Emergency, first helper. Eva asks the closest trained passenger to go to Ana and a second helper to bring the AED from the emergency station. Where to go, why, what comes next, and where the AED is. Two answers only; if they can't, Eva asks the next person.">
       <div className="flex items-center justify-between pt-2">
         <p className="text-xs uppercase tracking-label text-ink">Emergency · near you</p>
         <span className="grid size-11 place-items-center rounded-full bg-background/20 text-sm text-ink">AR</span>
@@ -17,8 +17,8 @@ export function Helper() {
         <span className="grid size-12 shrink-0 place-items-center rounded-full bg-ink text-on-light"><ArrowUpLeft size={24} /></span>
         <p className="text-base text-ink">Go back 2 rows. She is on your left.</p>
       </div>
-      <WhyNext onCritical why="Her heart rhythm looks wrong and she doesn't answer" next="Eva guides you step by step when you reach her" how="Harness ECG, no reply to voice" />
-      <Stowed onCritical item="Defibrillation pads" place="harness front pocket" light="blinking" />
+      <WhyNext onCritical why="Her wristband finds no pulse. She doesn't move or answer." next="Eva guides CPR on your wristband. Tomás brings the AED." how="Wristband: no pulse, no movement, no answer" />
+      <Stowed onCritical item="AED" place="emergency station, corridor B" light="light is blinking" />
       <div className="mt-auto flex flex-col gap-3">
         <Button size="xl" className="w-full">I'm going</Button>
         <Button variant="secondary" size="lg" className="w-full">I can't</Button>
@@ -29,7 +29,7 @@ export function Helper() {
 
 export function Cpr() {
   return (
-    <Phone number="10" caption="CPR, step 2 of 4. Only what the helper needs now: the instruction, the beat, feedback on the pushes, and why and what comes next. The harness does the heart checks and any shock.">
+    <Phone number="10" caption="CPR, step 2 of 4. Only what the helper needs now: the instruction, the beat, feedback on the pushes, and why and what comes next. The AED reads the heart through its own pads and decides any shock; Eva never does.">
       <div className="flex items-center justify-between pt-2">
         <Badge tone="critical">Emergency · Ana, 4B</Badge>
         <span className="text-xs text-muted">Step 2 of 4</span>
@@ -44,7 +44,11 @@ export function Cpr() {
         <p className="flex-1 text-sm text-ink">Good depth · keep going</p>
         <span className="text-xs text-muted">108/min</span>
       </div>
-      <WhyNext why="No pulse detected by the harness" next="The harness checks the heart in 0:40 · don't touch then" how="Harness ECG, no reply" />
+      <div className="flex items-center gap-3 rounded-tile bg-info/10 px-4 py-3">
+        <Zap size={18} className="shrink-0 text-info" />
+        <p className="flex-1 text-sm text-ink">AED attached by Tomás<span className="block text-xs text-muted">The AED checks the heart and tells you if a shock is needed</span></p>
+      </div>
+      <WhyNext why="Her heart is not pumping. Your pushes move the blood." next="In 0:40: AED is checking the heart · don't touch" how="Wristband: no pulse, no movement, no answer" />
     </Phone>
   )
 }

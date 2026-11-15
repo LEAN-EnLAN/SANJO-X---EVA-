@@ -4,10 +4,10 @@ import { ChevronLeft, Info, X } from "lucide-react"
 
 export function EcgCheck() {
   return (
-    <Phone number="03b" caption="ECG check. A 30-second, one-lead check: a finger of the other hand on the wristband's top pad. No needles, no shocks. Eva asks for it, it never runs on its own.">
+    <Phone number="03b" caption="ECG check. A 30-second, one-lead check on demand: one finger of each hand on the two metal pads on top of the wristband's screen part. It doesn't need the wrist skin, so it works over the suit if the hands are bare. Eva asks for it; it never runs on its own.">
       <PhoneTop left={<IconButton label="Stop"><X size={18} /></IconButton>} title="ECG check" right={<IconButton label="How it works"><Info size={18} /></IconButton>} />
       <div className="flex flex-col gap-2">
-        <p className="text-3xl leading-tight tracking-tight text-ink">Touch the metal pad with a finger of your other hand</p>
+        <p className="text-3xl leading-tight tracking-tight text-ink">Touch both metal pads, one finger of each hand</p>
         <p className="text-base text-muted">Stay still · 30 s</p>
       </div>
       <div className="flex justify-center py-2">
@@ -26,7 +26,7 @@ export function EcgCheck() {
         <Sparkline data={ecgTrace(5)} tone="ink" height={64} />
       </Card>
       <div className="mt-auto">
-        <WhyNext why="Your pulse was uneven twice this morning" next="The hub reads the trace · result in about 1 min" how="Wrist pulse rhythm, at rest" />
+        <WhyNext why="Your pulse was uneven twice this morning" next="The hub reads the trace · result in about 1 min" how="Optical pulse at the wrist, at rest" />
       </div>
     </Phone>
   )
@@ -43,7 +43,7 @@ export function EcgResult() {
       </div>
       <Card className="py-4">
         <Sparkline data={ecgTrace(5)} tone="ink" height={64} />
-        <p className="mt-3 text-xs text-muted">Today 10:04 · wrist, one lead, 30 s</p>
+        <p className="mt-3 text-xs text-muted">Today 10:04 · wristband, two pads, one lead, 30 s</p>
       </Card>
       <div className="flex items-center gap-3">
         <StatusDot tone="info" />
@@ -55,7 +55,7 @@ export function EcgResult() {
       </div>
       <div className="mt-auto flex flex-col gap-1.5 rounded-tile bg-surface px-4 py-3">
         <Label>Good to know</Label>
-        <Body muted>This check does not replace a hospital ECG. It only works while you are awake and still. In an emergency, the harness watches the heart.</Body>
+        <Body muted>This check does not replace a hospital ECG. It only works while you are still. It never decides a shock: in an emergency, the AED from the emergency station checks the heart.</Body>
       </div>
     </Phone>
   )

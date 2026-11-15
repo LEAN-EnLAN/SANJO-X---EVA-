@@ -1,13 +1,13 @@
 import { Phone, Headline, Body, Button, IconButton, Card, CardHeader, CardTitle, Badge, StatusDot, Progress, Sparkline, ListRow, IconTile, Check, Segmented } from "@/ds"
 import { PhoneTop, Label, Reading, Tile, Hero, Legend } from "@/ds/mobile-extra"
-import { Check as CheckIcon, Bell, LayoutGrid, ChevronLeft, Info, HeartPulse, Droplet, ArrowRight, Moon, Utensils, Wind, CalendarDays, Plus, Dumbbell, Sun, MessageCircle } from "lucide-react"
+import { Check as CheckIcon, Bell, LayoutGrid, ChevronLeft, Info, HeartPulse, Droplet, ArrowRight, Moon, Utensils, Wind, CalendarDays, Plus, Dumbbell, Sun, MessageCircle, Zap } from "lucide-react"
 import { Tabs } from "./shared"
 
 export function Welcome() {
   return (
     <Phone number="01" caption="Welcome. One promise, one button. The round check confirms the band is paired before the trip starts.">
       <PhoneTop left={<Label>Eva by WearMeds</Label>} right={<Badge>Offline ready</Badge>} />
-      <Hero src="img/s4-b.jpg" alt="A passenger wearing the harness and wristband" size="lg" />
+      <Hero src="img/chip-vitals-b.jpg" alt="A passenger wearing the Eva wristband" size="lg" />
       <h1 className="mt-2 text-5xl leading-none tracking-tight text-ink">Care for the whole trip to Mars.</h1>
       <Body muted>Eva guides you, keeps your health log and warns you early. It works on board, even when Earth is far away.</Body>
       <div className="flex flex-wrap gap-2">
@@ -17,14 +17,14 @@ export function Welcome() {
         <Button size="lg" className="flex-1">Get started</Button>
         <IconButton tone="light" size="lg" label="Wristband paired"><CheckIcon size={22} strokeWidth={2.5} /></IconButton>
       </div>
-      <p className="text-center text-xs text-faint">Wristband paired · harness paired</p>
+      <p className="text-center text-xs text-faint">Wristband paired · sensor base and screen</p>
     </Phone>
   )
 }
 
 export function Home() {
   return (
-    <Phone number="02" caption="Home. A friendly greeting, one card that answers &quot;am I OK?&quot;, and the state of both parts of the wristband." tabbar={<Tabs active="Home" />}>
+    <Phone number="02" caption="Home. A friendly greeting, one card that answers &quot;am I OK?&quot;, and the state of both parts of the wristband. Each part has its own battery and LoRa radio." tabbar={<Tabs active="Home" />}>
       <PhoneTop left={<IconButton label="Menu"><LayoutGrid size={18} /></IconButton>} right={<IconButton label="Alerts"><Bell size={18} /></IconButton>} />
       <div className="flex flex-col gap-1">
         <Label>Day 94 of 212 · on the way</Label>
@@ -52,7 +52,7 @@ export function Home() {
             <Progress value={64} tone="ink" marker={false} />
           </div>
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-xs"><span className="text-ink">Sensor battery · 100%</span><span className="text-muted">charging from screen</span></div>
+            <div className="flex justify-between text-xs"><span className="text-ink">Sensor battery · 100%</span><span className="text-muted">keeps sending to the hub</span></div>
             <Progress value={100} tone="ink" marker={false} />
           </div>
         </div>
@@ -80,7 +80,7 @@ export function HomeGrid() {
         <Tile icon={Droplet} label="Water" read="1.2 of 2 L" tone="warn" />
         <Tile src="img/chip-sun-b.jpg" label="Radiation" read="Low today" />
         <Tile icon={Utensils} label="Food" read="1,640 kcal" />
-        <Tile src="img/chip-harness-b.jpg" label="Harness" read="Ready" />
+        <Tile icon={Zap} label="Station" read="AED · corridor B" />
         <Tile src="img/chip-crew-b.jpg" label="Crew" read="15 · all fine" />
         <Tile src="img/chip-earth-b.jpg" label="Earth link" read="14 min away" />
       </div>
@@ -114,7 +114,7 @@ export function Heart() {
         <Label>What to do</Label>
         <Body>Nothing. Keep your day as planned. Eva tells you if it changes.</Body>
       </div>
-      <p className="mt-auto text-xs text-faint">Inner sensor · light through the skin · 1 min ago</p>
+      <p className="mt-auto text-xs text-faint">Wristband sensor base · light through the skin · 1 min ago</p>
     </Phone>
   )
 }

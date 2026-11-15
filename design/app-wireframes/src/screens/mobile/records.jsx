@@ -44,7 +44,7 @@ export function Logbook() {
 
 export function SuitMode() {
   return (
-    <Phone number="08" caption="Suit mode. The suit fabric sits between the two parts: the magnets still hold, the pins don't touch, so the sensors run on their own small battery.">
+    <Phone number="08" caption="Suit mode. The suit fabric sits between the two parts: the magnets still hold, the pins don't touch, so the sensor base runs on its own battery and keeps sending to the hub over its own LoRa radio.">
       <PhoneTop left={<IconButton label="Back"><ChevronLeft size={20} /></IconButton>} title="Wristband" right={<IconButton label="How it works"><Info size={18} /></IconButton>} />
       <div className="flex flex-col gap-2">
         <Badge tone="info" className="self-start">Suit mode</Badge>
@@ -67,8 +67,8 @@ export function SuitMode() {
         <StepRow n="2" title="Re-join before the battery reaches 10%" read="Eva warns you about 1 h before" />
       </div>
       <div className="mt-auto flex items-center gap-3 rounded-tile bg-surface px-4 py-3">
-        <StatusDot tone="neutral" />
-        <p className="text-sm text-ink">Wrist ECG unavailable<span className="block text-xs text-muted">Back when the parts are re-joined</span></p>
+        <StatusDot tone="ok" />
+        <p className="text-sm text-ink">Wrist ECG available<span className="block text-xs text-muted">Bare hands on the two metal pads</span></p>
       </div>
     </Phone>
   )
