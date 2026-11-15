@@ -2,6 +2,7 @@
 
 pub mod api;
 pub mod export;
+pub mod idem;
 pub mod pages;
 pub mod sse;
 pub mod ui;
@@ -55,6 +56,11 @@ async fn healthz() -> &'static str {
     "ok"
 }
 
+/// Largest body for forms and JSON posts.
+pub const BODY_LIMIT: usize = 64 * 1024;
+/// Largest body for `/api/eva/stt` and `/api/eva/vision` (audio, up to 3 photos).
+pub const MEDIA_BODY_LIMIT: usize = 26 * 1024 * 1024;
+
 pub fn router(state: Shared) -> Router {
     Router::new()
         .route("/", get(pages::root))
@@ -85,9 +91,9 @@ pub fn router(state: Shared) -> Router {
         .route("/api/tools", get(api::tools_json))
         .route("/api/eva/chat", post(api::eva_chat))
         .route("/api/eva/tool", post(api::eva_tool))
-        .route("/api/eva/stt", post(api::eva_stt))
+        .route("/api/eva/stt", post(api::eva_stt).layer(axum::extract::DefaultBodyLimit::max(MEDIA_BODY_LIMIT)))
         .route("/api/eva/tts", post(api::eva_tts))
-        .route("/api/eva/vision", post(api::eva_vision))
+        .route("/api/eva/vision", post(api::eva_vision).layer(axum::extract::DefaultBodyLimit::max(MEDIA_BODY_LIMIT)))
         .route("/api/journal", post(api::journal_post))
         .route("/api/help", post(api::help_post))
         .route("/api/shelter", post(api::shelter_post))
@@ -104,7 +110,9 @@ pub fn router(state: Shared) -> Router {
         .route("/manifest.webmanifest", get(manifest))
         .route("/sw.js", get(service_worker))
         .route("/healthz", get(healthz))
-        .layer(axum::extract::DefaultBodyLimit::max(26 * 1024 * 1024))
+        // forms and JSON are small; only voice and photo uploads may be large
+        .layer(axum::extract::DefaultBodyLimit::max(BODY_LIMIT))
+        .layer(axum::middleware::from_fn_with_state(state.clone(), idem::layer))
         .layer(CompressionLayer::new())
         .with_state(state)
 }

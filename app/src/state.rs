@@ -185,6 +185,8 @@ pub struct AppState {
     pub mirror: Mutex<crate::link::Mirror>,
     /// ground side: messages typed on the ground for the ship
     pub to_ship: Mutex<Vec<String>>,
+    /// answers to idempotent POSTs (PWA outbox replays), see `web::idem`
+    pub idem: crate::web::idem::IdemCache,
 }
 
 pub type Shared = Arc<AppState>;
@@ -218,6 +220,7 @@ impl AppState {
             peers: Mutex::new(HashMap::new()),
             mirror: Mutex::new(mirror),
             to_ship: Mutex::new(Vec::new()),
+            idem: Default::default(),
         }))
     }
 
