@@ -212,6 +212,12 @@ Formato de cada edge case: situación, qué hace Eva, qué nunca hace y criterio
 - **Qué pasa:** el sensado multionda funciona mejor en el dedo (por transmisión). En la muñeca se mide por reflexión, con más ruido por movimiento, frío o poca perfusión.
 - **Cómo responde Eva:** cada medición viaja con un índice de calidad de señal. Con calidad baja, Eva no dispara alarmas con ese dato solo: lo cruza con el ECG del arnés y los datos de la nave, y pide quedarse quieto o ajustar la banda.
 
+### T15 · ECG de muñeca: pedirlo bien y saber cuándo no sirve
+
+- **Qué pasa:** Eva quiere un registro de ECG de una derivación (por ejemplo, el pulso óptico se volvió irregular) y la persona tiene que tocar el electrodo exterior con un dedo de la otra mano, quieta, unos 30 segundos.
+- **Cómo responde Eva:** lo pide solo si la persona está consciente y puede colaborar, con una instrucción por paso y una cuenta regresiva. Si el contacto es malo o hay movimiento, lo dice y repite. El registro va al hub con su índice de calidad. Si la persona no responde, usa los electrodos del arnés. Con el traje entre las dos partes, el ECG de muñeca no está disponible y la pantalla lo dice.
+- **Límite:** una derivación no reemplaza un ECG de 12 ni descarta un infarto, y nunca es la única señal para el desfibrilador.
+
 ## La simulación de desarrollo
 
 - Los escenarios están en `sim/scenarios.json`, en la rama `fase2/03-04-casos-variables`. Cada uno trae las señales en el tiempo, lo que Eva tiene que hacer y antes de cuándo, y lo que no puede hacer.
