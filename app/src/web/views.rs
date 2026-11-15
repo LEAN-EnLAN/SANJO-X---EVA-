@@ -1205,10 +1205,12 @@ pub struct DashPage {
     pub sync: String,
     pub mesh: String,
     pub alerts: String,
+    pub station: String,
     pub mood: &'static str,
     pub art: &'static str,
     pub node: String,
     pub storm: bool,
+    pub hub_down: bool,
 }
 
 // ---------------------------------------------------------------- dev panel
@@ -1224,6 +1226,8 @@ pub struct DevPanel {
     pub flash: String,
     pub role: &'static str,
     pub agent_mode: &'static str,
+    pub hub_down: bool,
+    pub station: bool,
 }
 
 // ---------------------------------------------------------------- export
@@ -1245,5 +1249,174 @@ pub struct ReportPage {
 impl ReportPage {
     pub fn t(&self, ms: impl ui::Val<u64>) -> String {
         clock::stamp(ms.val())
+    }
+}
+
+// ---------------------------------------------------------------- medical station
+
+/// One compartment card on `/station`.
+pub struct CellView {
+    pub n: u8,
+    pub nn: String,
+    pub label: &'static str,
+    pub contents: &'static str,
+    pub state: &'static str,
+    pub chip: &'static str,
+    pub items: u8,
+    pub full: u8,
+    pub icon: String,
+    pub aria: String,
+}
+
+impl CellView {
+    pub fn new(c: &crate::station::Compartment) -> Option<Self> {
+        let d = crate::station::def(c.n)?;
+        let icon = match d.icon {
+            crate::station::Icon::Pic(name) => ui::pic(name, "size-14 lg:size-16"),
+            crate::station::Icon::Line(name) => format!(r#"<span class="inline-grid size-14 shrink-0 place-items-center rounded-full bg-raised text-ink ring-1 ring-line lg:size-16" aria-hidden="true">{}</span>"#, ui::ic(name, 30)),
+        };
+        let chip = match c.state {
+            crate::station::Door::Lit => "Take now",
+            crate::station::Door::Open => "Door open",
+            crate::station::Door::Taken => "Taken",
+            crate::station::Door::Idle => "",
+        };
+        let state_words = match c.state {
+            crate::station::Door::Lit => "lit, take this now",
+            crate::station::Door::Open => "door open",
+            crate::station::Door::Taken => "item taken",
+            crate::station::Door::Idle => "closed",
+        };
+        Some(CellView {
+            n: c.n,
+            nn: format!("{:02}", c.n),
+            label: d.label,
+            contents: d.contents,
+            state: c.state.name(),
+            chip,
+            items: c.items,
+            full: d.full,
+            icon,
+            aria: format!("Compartment {:02}, {}: {}, {} of {} in. Tap to open the door and take one.", c.n, d.label, state_words, c.items, d.full),
+        })
+    }
+    pub fn pct(&self) -> u32 {
+        if self.full == 0 { 0 } else { self.items as u32 * 100 / self.full as u32 }
+    }
+}
+
+#[derive(Template)]
+#[template(path = "station/_grid.html")]
+pub struct StationGrid {
+    pub cells: Vec<CellView>,
+}
+
+impl StationGrid {
+    pub fn build(state: &Shared) -> Option<Self> {
+        let h = state.station_device.get()?;
+        let snap = h.snapshot();
+        Some(StationGrid { cells: snap.comps.iter().filter_map(CellView::new).collect() })
+    }
+}
+
+#[derive(Template)]
+#[template(path = "station/_strip.html")]
+pub struct StationStrip {
+    pub present: bool,
+    pub eyebrow: String,
+    pub urgent: bool,
+    pub headline: String,
+    pub sub: String,
+    pub mood: &'static str,
+    pub art: &'static str,
+    pub mode: &'static str,
+    pub standalone: bool,
+    pub node: Option<u32>,
+    pub battery: u8,
+    pub buffered: usize,
+    pub last: String,
+}
+
+impl StationStrip {
+    pub fn build(state: &Shared) -> Self {
+        let Some(h) = state.station_device.get() else {
+            return StationStrip { present: false, eyebrow: "Eva · medical station".into(), urgent: false, headline: "No station on this node".into(), sub: "Run eva demo, or eva serve --station, on the ship hub.".into(), mood: "idle", art: "idle", mode: "Offline", standalone: false, node: None, battery: 0, buffered: 0, last: String::new() };
+        };
+        let s = h.snapshot();
+        let parts: Vec<&str> = s.message.split(" · ").collect();
+        let body: &[&str] = if parts.first() == Some(&"Emergency") && parts.len() > 1 { &parts[1..] } else { &parts };
+        let headline = body.first().copied().unwrap_or("").to_string();
+        let sub = body.get(1..).map(|p| p.join(" · ")).unwrap_or_default();
+        let urgent = s.emergency;
+        let eyebrow = if urgent { "Emergency · Eva".to_string() } else { "Eva · medical station · corridor B".to_string() };
+        let mood = if s.emergency { EvaMood::Alert } else if s.standalone { EvaMood::Concerned } else { EvaMood::Idle };
+        let last = s.last_event.as_ref().map(|(t, txt)| format!("{} · {}", clock::hhmmss(*t), txt)).unwrap_or_default();
+        StationStrip { present: true, eyebrow, urgent, headline, sub, mood: mood.name(), art: mood.art(), mode: s.mode, standalone: s.standalone, node: s.node_id, battery: s.battery, buffered: s.buffered, last }
+    }
+}
+
+#[derive(Template)]
+#[template(path = "station/page.html")]
+pub struct StationPage {
+    pub strip: String,
+    pub grid: String,
+}
+
+/// The station tile on the dashboard (the hub's view, from the station's reports).
+#[derive(Template)]
+#[template(path = "dash/_station.html")]
+pub struct StationTile {
+    pub ground: bool,
+    pub online: bool,
+    pub hub_down: bool,
+    pub standalone: bool,
+    pub battery: Option<u8>,
+    pub buffered: u32,
+    pub uploaded: u32,
+    pub events: u32,
+    pub last_time: String,
+    pub last_text: String,
+    /// (number, state) per compartment, as last reported
+    pub cells: Vec<(String, &'static str)>,
+}
+
+impl StationTile {
+    pub fn build(state: &Shared) -> Self {
+        let w = state.world.read().expect("world");
+        let v = &w.station;
+        let bit = |n: u8, m: u16| m & (1 << (n - 1)) != 0;
+        let cells = (1..=12u8)
+            .map(|n| {
+                let st = if bit(n, v.taken) { "taken" } else if bit(n, v.open) { "open" } else if bit(n, v.lit) { "lit" } else { "idle" };
+                (format!("{n:02}"), st)
+            })
+            .collect();
+        let (last_time, last_text) = v.last_event.as_ref().map(|(t, s)| (clock::hhmmss(*t), s.clone())).unwrap_or_default();
+        StationTile {
+            ground: w.role == NodeRole::Ground,
+            online: v.node.is_some(),
+            hub_down: state.is_hub_down(),
+            standalone: v.standalone,
+            battery: v.battery,
+            buffered: v.buffered,
+            uploaded: v.uploaded,
+            events: v.events,
+            last_time,
+            last_text,
+            cells,
+        }
+    }
+    pub fn status(&self) -> (&'static str, &'static str) {
+        if self.ground {
+            ("Via the ship", "info")
+        } else if self.hub_down {
+            ("Hub down · simulated", "critical")
+        } else if !self.online {
+            ("Offline", "warn")
+        } else if self.standalone {
+            ("Standalone", "warn")
+        } else {
+            ("Online", "ok")
+        }
     }
 }

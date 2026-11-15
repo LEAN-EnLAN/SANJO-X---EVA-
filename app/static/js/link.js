@@ -5,9 +5,12 @@
 (function () {
   "use strict";
   var VERSION = 1, FLAG_DST = 1, FLAG_ACK = 2, FLAG_REL = 16, FLAG_CRC = 8;
-  var T = { HELLO: 0, WELCOME: 1, PING: 2, PONG: 3, ACK: 4, NACK: 5, VITALS: 6, ALARM: 7, GUIDANCE: 8, RECORD: 9, TEXT: 10, PRESENCE: 11, BYE: 12 };
-  var ROLE = { hub: 0, ship: 1, ground: 2, app: 3, dash: 4, band: 5 };
-  var ROLE_NAME = ["hub", "ship", "ground", "app", "dash", "band"];
+  var T = { HELLO: 0, WELCOME: 1, PING: 2, PONG: 3, ACK: 4, NACK: 5, VITALS: 6, ALARM: 7, GUIDANCE: 8, RECORD: 9, TEXT: 10, PRESENCE: 11, BYE: 12,
+    STATION_CMD: 13, STATION_EVENT: 14, STATION_STATUS: 15 };
+  var ROLE = { hub: 0, ship: 1, ground: 2, app: 3, dash: 4, band: 5, station: 6 };
+  var ROLE_NAME = ["hub", "ship", "ground", "app", "dash", "band", "station"];
+  // alarm codes (PROTOCOL.md §5): 1 no pulse … 6 the medical station's red button
+  var ALARM = { 1: "No pulse", 2: "Low oxygen", 3: "Solar storm", 4: "Help requested", 5: "Battery", 6: "Emergency button" };
   var enc = new TextEncoder(), dec = new TextDecoder();
 
   // ---- wire helpers (LEB128 varints, length-prefixed strings)
@@ -94,6 +97,15 @@
         for (var i = 0; i < n; i++) nodes.push({ id: r.uvar(), role: ROLE_NAME[r.u8()] || "?", name: r.str(), rtt: r.uvar() });
         link.nodes = nodes; status(); break;
       }
+      case T.ALARM: {
+        // from the hub (relay) or straight off the air (LoRa) while the hub is down
+        var subject = r.str(), code = r.u8(), text = r.str();
+        var line = text || ((ALARM[code] || "Alarm") + (subject ? " · " + subject : ""));
+        if (window.Eva) window.Eva.toast(line, "bad");
+        document.dispatchEvent(new CustomEvent("eva:alarm", { detail: { subject: subject, code: code, text: line } }));
+        if (navigator.vibrate) try { navigator.vibrate([200, 100, 200]); } catch (e) {}
+        break;
+      }
       case T.TEXT: {
         var from = r.str(), to = r.str(), text = r.str();
         if (window.Eva) window.Eva.toast(from + ": " + text);
@@ -134,6 +146,7 @@
     send(frame(T.TEXT, payload, to, true));
   }
 
-  document.addEventListener("DOMContentLoaded", connect);
+  // the medical station's screen is not a mesh node of its own: the station computer is
+  document.addEventListener("DOMContentLoaded", function () { if (document.body.getAttribute("data-view") !== "station") connect(); });
   window.EvaLink = { link: link, pingAll: pingAll, sendText: sendText, frame: frame, decodeAll: decodeAll, T: T };
 })();

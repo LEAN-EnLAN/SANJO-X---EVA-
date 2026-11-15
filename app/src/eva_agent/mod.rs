@@ -34,6 +34,12 @@ fn dist(a: (f32, f32), b: (f32, f32)) -> f32 {
 
 /// Called after every vitals tick (in-process sim or remote bands).
 pub fn on_tick(state: &Shared) {
+    if state.is_hub_down() {
+        // the hub's rules are down (dev panel "Hub down"); the bands' own rule
+        // still raises a no-pulse alarm, broadcast over LoRa to the station
+        crate::station::band_lora_alarms(state);
+        return;
+    }
     let now = state.now();
     let mut emergencies: Vec<(String, String)> = Vec::new();
     let mut logs: Vec<(String, String, serde_json::Value)> = Vec::new();
@@ -168,6 +174,8 @@ pub fn open_emergency(state: &Shared, seat: &str, reason: &str, kind: &str) -> O
         state.set_mood(Some(&h.seat), EvaMood::Alert);
         state.world.write().expect("world").chats.push(ChatMsg { ts_ms: now, seat: h.seat.clone(), from: "eva".into(), label: Some("What to do now".into()), text: if h.task == "AED" { format!("Get the AED from the emergency station, corridor B, and bring it to {} in seat {}.", case.name, case.seat) } else { format!("{} needs help in seat {}. Go now. I'll guide CPR on your band.", case.name, case.seat) } });
     }
+    // the medical station lights compartment 01 for the AED runner
+    crate::station::on_case_opened(state, &case);
     state.emit(UiEvent::Emergency { seat: seat.to_string() });
     Some(case)
 }
@@ -192,6 +200,11 @@ pub fn assign_aed_runner(state: &Shared, seat: &str) -> Option<Helper> {
     if let Some(p) = w.passenger_mut(&h.seat) {
         p.scenario = Scenario::Helping;
     }
+    let case = w.cases.iter().find(|c| c.open && c.seat == seat).map(|c| (c.id, c.name.split(' ').next().unwrap_or("").to_string()));
+    drop(w);
+    if let Some((id, first)) = case {
+        crate::station::light(state, crate::station::AED, &format!("Take the AED · {first}, seat {seat}"), id);
+    }
     Some(h)
 }
 
@@ -214,6 +227,17 @@ pub fn helper_answer(state: &Shared, helper_seat: &str, going: bool) {
         state.log("case", &seat, json!({"text": title, "case": id}));
         if !going {
             let _ = assign_aed_runner(state, &seat);
+        }
+    }
+    // the AED runner tapped "I have it": the AED left the station
+    let runner = going && state.world.read().expect("world").helper_task(helper_seat).is_some_and(|(_, h)| h.task == "AED");
+    if runner {
+        let name = state.world.read().expect("world").passenger(helper_seat).map(|p| p.first_name().to_string());
+        if let Some(title) = crate::station::aed_taken(state, "runner", now, name.as_deref()) {
+            let case = state.world.read().expect("world").helper_task(helper_seat).map(|(c, _)| (c.seat.clone(), c.id));
+            if let Some((seat, id)) = case {
+                state.log("case", &seat, json!({"text": title, "case": id, "source": "runner"}));
+            }
         }
     }
     // the CPR helper gets a calm Eva while she counts the pushes; the AED runner stays on alert
@@ -286,6 +310,7 @@ pub fn close_case(state: &Shared, seat: &str) {
         }
     }
     state.log("case", seat, json!({"text": "Case closed by the crew lead"}));
+    crate::station::on_case_closed(state);
     state.set_mood(None, EvaMood::Idle);
     for s in std::iter::once(seat.to_string()).chain(stood_down) {
         state.set_mood(Some(&s), EvaMood::Idle);

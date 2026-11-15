@@ -24,7 +24,9 @@
     <div class="grid grid-cols-2 gap-2">
       <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-warn/40 bg-warn/10 px-4 text-sm text-warn" hx-post="/api/dev/storm">{{ crate::web::ui::ic("sun", 16)|safe }}Solar storm</button>
       <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/storm_end">End storm</button>
+      <button class="press col-span-2 inline-flex h-11 items-center justify-center gap-2 rounded-full px-4 text-sm {% if hub_down %}bg-critical-deep text-ink{% else %}border border-line bg-raised text-ink{% endif %}" hx-post="/api/dev/hub_down" aria-pressed="{% if hub_down %}true{% else %}false{% endif %}">{{ crate::web::ui::ic("radio", 16)|safe }}{% if hub_down %}Hub down · tap to bring it back{% else %}Hub down{% endif %}</button>
     </div>
+    <p class="text-xs text-muted">Hub down stops the relay and the hub's rules. Wristband alarms reach the {% if station %}medical station{% else %}station{% endif %} over LoRa; the station runs standalone and uploads its buffer when the hub returns.</p>
     <p class="mt-2 text-xs uppercase tracking-label text-muted">Uplink profile</p>
     <div class="grid grid-cols-2 gap-2">
       {% for (name, label, on) in profiles %}

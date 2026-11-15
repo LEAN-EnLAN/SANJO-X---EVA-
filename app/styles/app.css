@@ -28,6 +28,8 @@
   --color-on-light: #0c0c0c;
   /* deep red for full-bleed emergency surfaces: ink text on it stays above 4.5:1 */
   --color-critical-deep: #b81d12;
+  /* the medical station's light strip: a lit compartment glows this teal (BRIEF-V2) */
+  --color-station: #1fe5c4;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -251,3 +253,22 @@ body:has(#screen [data-focus]) nav[aria-label="Main"] { display: none; }
 /* screens slide in from the side; clip (not hidden: no scroll container, sticky still works) so the
    moving screen never widens the page and mobile browsers never zoom the layout out */
 body[data-view="app"] { overflow-x: clip; }
+
+/* ---------- medical station (/station) ----------
+   A lit compartment glows teal and pulses on the bouncy spring (it overshoots, then settles,
+   then goes again), like a light strip asking to be opened. Reduced motion: a static highlight. */
+.station-lit {
+  border-color: var(--color-station);
+  background-color: color-mix(in oklab, var(--color-station) 12%, var(--color-surface));
+  box-shadow: 0 0 0 2px var(--color-station), 0 0 24px color-mix(in oklab, var(--color-station) 40%, transparent);
+  animation: station-pulse calc(var(--dur-spring-bouncy) * 1.5) var(--ease-spring-bouncy) infinite alternate;
+}
+@keyframes station-pulse {
+  from { box-shadow: 0 0 0 2px var(--color-station), 0 0 10px color-mix(in oklab, var(--color-station) 25%, transparent); }
+  to { box-shadow: 0 0 0 4px var(--color-station), 0 0 48px color-mix(in oklab, var(--color-station) 65%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .station-lit { animation: none; box-shadow: 0 0 0 4px var(--color-station), 0 0 24px color-mix(in oklab, var(--color-station) 45%, transparent); }
+}
+/* the station screen fills a landscape tablet: no page scroll when it fits */
+body[data-view="station"] { overflow-x: clip; }

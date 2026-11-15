@@ -260,12 +260,22 @@ pub async fn dash(State(state): State<Shared>) -> Response {
         sync: render(&SyncCard::build(&state)),
         mesh: render(&MeshCard::build(&state)),
         alerts: render(&AlertsCard::build(&state)),
+        station: render(&StationTile::build(&state)),
         mood,
         art,
         node: state.cfg.node_name.clone(),
         storm,
+        hub_down: state.is_hub_down(),
     };
     Html(render(&p)).into_response()
+}
+
+/// `/station`: the medical station's own screen, full screen and landscape-first,
+/// for a tablet or a second laptop mounted as the station.
+pub async fn station(State(state): State<Shared>) -> Response {
+    let strip = render(&StationStrip::build(&state));
+    let grid = StationGrid::build(&state).map(|g| render(&g)).unwrap_or_default();
+    Html(render(&StationPage { strip, grid })).into_response()
 }
 
 pub async fn root() -> Redirect {

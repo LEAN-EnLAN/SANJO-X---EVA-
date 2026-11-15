@@ -425,6 +425,8 @@ pub fn dev_panel_html(state: &Shared, flash: &str) -> String {
         flash: flash.to_string(),
         role: state.cfg.role.name(),
         agent_mode: state.agent.mode_label(),
+        hub_down: state.is_hub_down(),
+        station: state.station_device.get().is_some(),
     })
 }
 
@@ -532,6 +534,30 @@ pub async fn dev_action(State(state): State<Shared>, Path(action): Path<String>,
             state.clock.fast_forward(m * 60_000);
             format!("Clock moved forward {m} min.")
         }
+        "hub_down" => {
+            use std::sync::atomic::Ordering;
+            let down = !state.hub_down.load(Ordering::Relaxed);
+            if down {
+                state.world.write().expect("world").hub_down_since = Some(now);
+                state.hub_down.store(true, Ordering::Relaxed);
+                "Hub down (simulated): no relay, no hub rules. Wristband alarms reach the station over LoRa; the station runs on its own.".into()
+            } else {
+                state.hub_down.store(false, Ordering::Relaxed);
+                let since = {
+                    let mut w = state.world.write().expect("world");
+                    w.band_lora.clear();
+                    w.hub_down_since.take()
+                };
+                let secs = since.map(|s| now.saturating_sub(s) / 1000).unwrap_or(0);
+                state.log("link", "ship", json!({"text": format!("Hub back after a simulated outage of {secs} s")}));
+                // ping every client now, so the station notices the hub at once and uploads its buffer
+                let real = state.clock.real_ms();
+                for id in state.mesh.ids() {
+                    state.mesh.send_frame(id, crate::protocol::frame::MsgType::Ping, crate::protocol::payload::encode_time(real));
+                }
+                format!("Hub back after {secs} s. Clients reconnect; the station uploads what it buffered.")
+            }
+        }
         "reset" => {
             state.reset();
             "Demo reset.".into()
@@ -540,4 +566,31 @@ pub async fn dev_action(State(state): State<Shared>, Path(action): Path<String>,
     };
     state.emit(UiEvent::Tick);
     Html(dev_panel_html(&state, &flash))
+}
+
+// ---------------------------------------------------------------- medical station screen
+
+#[derive(Deserialize)]
+pub struct TapForm {
+    pub n: u8,
+}
+
+/// `/station`: a tap on a compartment simulates "door opened, item taken".
+/// Answers with the grid, plus the Eva strip out of band.
+pub async fn station_tap(State(state): State<Shared>, axum::Form(f): axum::Form<TapForm>) -> Response {
+    let Some(h) = state.station_device.get() else { return (StatusCode::NOT_FOUND, "no station on this node").into_response() };
+    if !(1..=12).contains(&f.n) {
+        return (StatusCode::BAD_REQUEST, "compartment 1 to 12").into_response();
+    }
+    h.tap(f.n);
+    let grid = StationGrid::build(&state).map(|g| render(&g)).unwrap_or_default();
+    let strip = render(&StationStrip::build(&state));
+    Html(format!(r#"{grid}<div id="station-strip" hx-swap-oob="innerHTML">{strip}</div>"#)).into_response()
+}
+
+/// `/station`: the red emergency button.
+pub async fn station_button(State(state): State<Shared>) -> Response {
+    let Some(h) = state.station_device.get() else { return (StatusCode::NOT_FOUND, "no station on this node").into_response() };
+    h.press_button();
+    Html(render(&StationStrip::build(&state))).into_response()
 }

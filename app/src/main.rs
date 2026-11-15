@@ -4,7 +4,7 @@
 //! eva serve --role ship --port 8080 --sim 15 --peer http://127.0.0.1:8081
 //! eva serve --role ground --port 8081
 //! eva sim --target ws://127.0.0.1:8080/link --n 15
-//! eva demo            # ship :8080 (+15 simulated bands) and ground :8081 in one process
+//! eva demo            # ship :8080 (+15 simulated bands, 1 medical station) and ground :8081 in one process
 //! eva bench           # Eva Link bytes per message and a simulated near-space run
 //! eva verify          # check the hash chain files in ./data
 //! ```
@@ -55,6 +55,9 @@ struct ServeArgs {
     /// never call the Groq API even if GROQ_API_KEY is set
     #[arg(long)]
     offline: bool,
+    /// run one simulated medical station as a client of this hub (ship role; its screen is /station)
+    #[arg(long)]
+    station: bool,
 }
 
 #[derive(Subcommand)]
@@ -133,10 +136,13 @@ async fn run_node(args: ServeArgs, state: Shared) -> anyhow::Result<()> {
     if let (NodeRole::Ship, Some(peer)) = (args.role, args.peer.clone()) {
         tokio::spawn(eva::uplink::run(state.clone(), peer));
     }
+    if args.role == NodeRole::Ship && args.station {
+        eva::station::spawn_local(&state);
+    }
     let app = eva::web::router(state.clone());
     let addr: SocketAddr = format!("{}:{}", args.host, args.port).parse()?;
     let scheme = if args.tls { "https" } else { "http" };
-    tracing::info!("{} node '{}' on {scheme}://{addr}  ·  /app  /dash  /link  /api/state  ·  Eva: {}", args.role.name(), state.cfg.node_name, state.agent.mode_label());
+    tracing::info!("{} node '{}' on {scheme}://{addr}  ·  /app  /dash{}  /link  /api/state  ·  Eva: {}", args.role.name(), state.cfg.node_name, if args.station && args.role == NodeRole::Ship { "  /station" } else { "" }, state.agent.mode_label());
     if let Some(ip) = eva::tls::lan_ip() {
         tracing::info!("on the LAN: {scheme}://{ip}:{}/app", args.port);
     }
@@ -203,13 +209,13 @@ async fn main() -> anyhow::Result<()> {
             let c = clock();
             let scheme = if tls { "https" } else { "http" };
             // the ground stays plain HTTP inside the demo process; the ship (the PWA host) gets --tls
-            let ground = ServeArgs { role: NodeRole::Ground, port: ground_port, host: host.clone(), peer: None, sim: 0, data: data.clone(), name: Some("ground".into()), tls: false, tls_hosts: vec![], offline };
-            let ship = ServeArgs { role: NodeRole::Ship, port, host, peer: Some(format!("http://127.0.0.1:{ground_port}")), sim: 15, data, name: Some("ship".into()), tls, tls_hosts: vec![], offline };
+            let ground = ServeArgs { role: NodeRole::Ground, port: ground_port, host: host.clone(), peer: None, sim: 0, data: data.clone(), name: Some("ground".into()), tls: false, tls_hosts: vec![], offline, station: false };
+            let ship = ServeArgs { role: NodeRole::Ship, port, host, peer: Some(format!("http://127.0.0.1:{ground_port}")), sim: 15, data, name: Some("ship".into()), tls, tls_hosts: vec![], offline, station: true };
             let gs = build_node(&ground, c.clone())?;
             let ss = build_node(&ship, c)?;
             let g = tokio::spawn(run_node(ground, gs));
             tokio::time::sleep(std::time::Duration::from_millis(300)).await;
-            tracing::info!("demo: open {scheme}://localhost:{port}/app (astronaut), {scheme}://localhost:{port}/dash (crew), http://localhost:{ground_port}/dash (ground)");
+            tracing::info!("demo: open {scheme}://localhost:{port}/app (astronaut), {scheme}://localhost:{port}/dash (crew), {scheme}://localhost:{port}/station (medical station), http://localhost:{ground_port}/dash (ground)");
             let s = run_node(ship, ss).await;
             g.abort();
             s

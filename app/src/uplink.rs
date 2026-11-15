@@ -36,8 +36,8 @@ fn link_url(peer: &str) -> String {
 
 pub fn priority_for(kind: &str) -> Priority {
     match kind {
-        "alarm" => Priority::Alarm,
-        "case" | "guidance" | "message" => Priority::Guidance,
+        "alarm" | "station_alarm" => Priority::Alarm,
+        "case" | "guidance" | "message" | "station" => Priority::Guidance,
         _ => Priority::Logs,
     }
 }

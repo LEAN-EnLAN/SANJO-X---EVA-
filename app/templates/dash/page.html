@@ -15,6 +15,7 @@
     <a href="#case" title="Cases" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("heart", 19)|safe }}</a>
     <a href="#alerts" title="Alerts" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("siren", 19)|safe }}</a>
     <a href="#sync" title="Ground link" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("satellite", 19)|safe }}</a>
+    <a href="#station" title="Medical station" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("zap", 19)|safe }}</a>
     <a href="#mesh" title="Mesh" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("radio", 19)|safe }}</a>
     <a href="/export/report" target="_blank" title="Records report" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("file", 19)|safe }}</a>
     <a href="#about" title="About &amp; credits" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink" onclick="document.getElementById('about').open=true">{{ crate::web::ui::ic("info", 19)|safe }}</a>
@@ -50,7 +51,7 @@
             {% call m::eva(mood, art, "size-12") %}
             <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status>{% if mood == "alert" %}Guiding a case{% else %}Watching the crew{% endif %}</span></span>
           </a>
-          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{% if ground %}{{ crate::web::ui::pic("earth", "size-7")|safe }}{% else %}{{ crate::web::ui::pic("hub", "size-7")|safe }}{% endif %}{% if ground %}Ground node · mirror{% else %}Hub online · offline-ready{% endif %}</span>
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{% if ground %}{{ crate::web::ui::pic("earth", "size-7")|safe }}{% else %}{{ crate::web::ui::pic("hub", "size-7")|safe }}{% endif %}{% if ground %}Ground node · mirror{% else if hub_down %}Hub down · simulated{% else %}Hub online · offline-ready{% endif %}</span>
           <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{{ crate::web::ui::pic("lora", "size-7")|safe }}Eva Link mesh · <span data-mesh-count>live</span></span>
           {% if storm %}<span class="inline-flex h-9 items-center gap-2 rounded-full border border-warn/40 bg-warn/10 pr-3.5 pl-1.5 text-xs text-warn">{{ crate::web::ui::pic("sun", "size-7")|safe }}Solar storm · shelter</span>{% endif %}
         </div>
@@ -75,6 +76,7 @@
             </form>
           </section>
           {% endif %}
+          <div id="station" sse-swap="station">{{ station|safe }}</div>
           <div id="mesh" sse-swap="mesh">{{ mesh|safe }}</div>
         </div>
       </div>

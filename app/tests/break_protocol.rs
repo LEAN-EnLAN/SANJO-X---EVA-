@@ -6,14 +6,14 @@ use eva::chain::Chain;
 use eva::link::{Inserted, Mirror};
 use eva::protocol::delta::{DeltaDecoder, DeltaEncoder, VitalsSample};
 use eva::protocol::frame::{decode_batch, encode_batch, Frame, MsgType};
-use eva::protocol::payload::{self, Alarm, Hello, RecordMsg, Role, Text, Welcome};
+use eva::protocol::payload::{self, station_ev, station_op, Alarm, Hello, RecordMsg, Role, StationCmd, StationEvent, StationStatus, Text, Welcome};
 use eva::protocol::profile::{LinkProfile, LinkSim, Rng};
 use eva::protocol::wire::WireError;
 use eva::protocol::{Delivered, Endpoint};
 use serde_json::json;
 
 /// Every decoder in the crate, fed the same bytes. Must never panic.
-fn feed_everything(b: &[u8], ep: &mut Endpoint, dec: &mut DeltaDecoder, mirror: &mut Mirror) {
+fn feed_everything(b: &[u8], ep: &mut Endpoint, dec: &mut DeltaDecoder, mirror: &mut Mirror, station: &mut eva::station::StationDevice) {
     let _ = decode_batch(b);
     let _ = Frame::decode(b);
     let _ = Hello::decode(b);
@@ -24,6 +24,17 @@ fn feed_everything(b: &[u8], ep: &mut Endpoint, dec: &mut DeltaDecoder, mirror: 
     let _ = Alarm::decode(b);
     let _ = Text::decode(b);
     let _ = payload::decode_presence(b);
+    let _ = StationCmd::decode(b);
+    let _ = StationEvent::decode(b);
+    let _ = StationStatus::decode(b);
+    // the station computer and the hub's station handling see the same bytes
+    station.on_datagram(1_000, 1, b);
+    station.on_air(b, 1);
+    if let Ok(f) = Frame::decode(b) {
+        if let Ok(c) = StationCmd::decode(&f.payload) {
+            station.on_cmd(&c);
+        }
+    }
     let _ = dec.decode(b);
     let _ = ep.incoming(1_000, b);
     let _ = ep.outgoing(1_000, 10_000, 1_024);
@@ -48,6 +59,11 @@ fn valid_corpus() -> Vec<Vec<u8>> {
         Frame::new(MsgType::Record, 7, 1, rec.encode()).with_crc(),
         Frame::new(MsgType::Presence, 8, 0, payload::encode_presence(&[payload::PresenceEntry { id: 1, role: Role::Dash, name: "Mara".into(), rtt_ms: 3 }])),
         Frame::new(MsgType::Nack, 9, 0, payload::encode_nack(4, payload::NackReason::NeedKeyframe, 4)),
+        Frame::new(MsgType::StationCmd, 10, 0, StationCmd::light(1, "Take the AED · Ana, seat 4B", 101).encode()).to(7),
+        Frame::new(MsgType::StationCmd, 11, 0, StationCmd::all(station_op::RESTOCK).encode()).to(7),
+        Frame::new(MsgType::StationEvent, 12, 7, StationEvent { event: station_ev::ITEM_TAKEN, compartment: 1, t_s: 8_344_727, count: 0, subject: String::new() }.encode()),
+        Frame::new(MsgType::StationEvent, 13, 7, StationEvent { event: station_ev::ALARM_HEARD, compartment: 1, t_s: 8_344_700, count: 0, subject: "4B".into() }.encode()),
+        Frame::new(MsgType::StationStatus, 14, 7, StationStatus { battery: 96, flags: 1, lit: 1, open: 0, taken: 1, buffered: 3, items: vec![0, 3, 5, 1, 6, 2, 8, 6, 4, 2, 4, 6] }.encode()),
     ];
     let mut out: Vec<Vec<u8>> = frames.iter().map(|f| f.encode()).collect();
     out.push(encode_batch(&frames));
@@ -59,6 +75,7 @@ fn fuzz_decoders_never_panic() {
     let mut ep = Endpoint::new(0).with_crc(true);
     let mut dec = DeltaDecoder::new();
     let mut mirror = Mirror::default();
+    let mut station = eva::station::StationDevice::new();
     let corpus = valid_corpus();
     let seed = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_nanos() as u64).unwrap_or(7);
     for (round, seed) in [0xE7A_F022u64, seed].into_iter().enumerate() {
@@ -73,7 +90,7 @@ fn fuzz_decoders_never_panic() {
                     b[0] = (1 << 5) | (b[0] & 0x1f);
                 }
                 if b.len() > 1 && rng.range(1) == 0 {
-                    b[1] = (b[1] & 0x60) | (rng.range(12) as u8);
+                    b[1] = (b[1] & 0x60) | (rng.range(15) as u8);
                 }
                 b
             } else {
@@ -94,7 +111,12 @@ fn fuzz_decoders_never_panic() {
                 }
                 b
             };
-            feed_everything(&b, &mut ep, &mut dec, &mut mirror);
+            feed_everything(&b, &mut ep, &mut dec, &mut mirror, &mut station);
+            // keep the station's buffer bounded like a real one: drain what it would send
+            if i % 1024 == 0 {
+                station.connected = true;
+                let _ = station.tick(1_000);
+            }
         }
         println!("fuzz round {round}: seed {seed:#x}, {n} inputs, {} corrupt datagrams counted", ep.corrupt);
     }

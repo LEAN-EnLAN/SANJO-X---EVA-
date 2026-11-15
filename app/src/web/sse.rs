@@ -56,6 +56,7 @@ fn dash_events(state: &Shared, e: UiEvent) -> Vec<Event> {
     match e {
         UiEvent::Eva { seat: None, mood } => vec![ev("eva", mood.name().to_string())],
         UiEvent::Eva { .. } | UiEvent::Chat { .. } | UiEvent::Navigate { .. } => Vec::new(),
+        UiEvent::Station { .. } => Vec::new(),
         _ => vec![
             ev("kpis", render(&KpiStrip::build(state))),
             ev("roster", render(&RosterCard::build(state))),
@@ -63,8 +64,31 @@ fn dash_events(state: &Shared, e: UiEvent) -> Vec<Event> {
             ev("sync", render(&SyncCard::build(state))),
             ev("mesh", render(&MeshCard::build(state))),
             ev("alerts", render(&AlertsCard::build(state))),
+            ev("station", render(&StationTile::build(state))),
         ],
     }
+}
+
+/// The station screen: the Eva strip on every change, the grid when compartments changed.
+fn station_events(state: &Shared, e: UiEvent) -> Vec<Event> {
+    let strip = || ev("strip", render(&StationStrip::build(state)));
+    let grid = || StationGrid::build(state).map(|g| ev("grid", render(&g)));
+    match e {
+        UiEvent::Station { grid: true } | UiEvent::Reset => std::iter::once(strip()).chain(grid()).collect(),
+        UiEvent::Station { grid: false } => vec![strip()],
+        _ => Vec::new(),
+    }
+}
+
+pub async fn station_sse(State(state): State<Shared>) -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
+    let rx = state.tx.subscribe();
+    let s = BroadcastStream::new(rx)
+        .map(move |e| {
+            let evs = station_events(&state, e.unwrap_or(UiEvent::Station { grid: true }));
+            stream::iter(evs.into_iter().map(Ok))
+        })
+        .flatten();
+    Sse::new(s).keep_alive(KeepAlive::default())
 }
 
 pub async fn app_sse(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Sse<impl Stream<Item = Result<Event, Infallible>>> {

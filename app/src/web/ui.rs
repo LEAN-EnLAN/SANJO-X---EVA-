@@ -207,6 +207,13 @@ pub fn ic(name: &str, size: u32) -> String {
         "share" => r#"<path d="M12 4v11M7.5 8.5L12 4l4.5 4.5M5 13v6h14v-6"/>"#,
         "speaker" => r#"<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>"#,
         "stop" => r#"<rect x="7" y="7" width="10" height="10" rx="2"/>"#,
+        // medical station compartments (own drawings)
+        "probe" => r#"<path d="M9 3h6l1 7a4 4 0 0 1-8 0z"/><path d="M12 14v3a4 4 0 0 0 4 4h3"/><path d="M10 7h4"/>"#,
+        "bandage" => r#"<rect x="2.5" y="8" width="19" height="8" rx="4" transform="rotate(-35 12 12)"/><path d="M10.5 10.5h.01M13.5 13.5h.01M13.5 10.5h.01M10.5 13.5h.01"/>"#,
+        "strap" => r#"<rect x="3" y="8" width="18" height="8" rx="2"/><rect x="9" y="6" width="6" height="12" rx="1.5"/><path d="M11 12h2"/>"#,
+        "syringe" => r#"<path d="M18 2l4 4M20 4l-3 3M17 7L8 16l-3-3 9-9z"/><path d="M5 13l-3 3 1 1M8 16l-3 3-1-1M11 7l1.5 1.5M8.5 9.5L10 11"/>"#,
+        "airway" => r#"<path d="M6 4h12"/><path d="M9 4v5a6 6 0 0 0 6 6h0a3 3 0 0 1 3 3v2"/><path d="M15 4v5"/><path d="M15 20h6"/>"#,
+        "drip" => r#"<path d="M8 3h8v7a4 4 0 0 1-8 0z"/><path d="M8 7h8M12 14v3M12 17a3 3 0 0 0 3 3h4"/>"#,
         _ => r#"<circle cx="12" cy="12" r="8"/>"#,
     };
     format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0">{body}</svg>"#)

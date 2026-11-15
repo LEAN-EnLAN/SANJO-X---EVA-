@@ -1,10 +1,10 @@
 // Eva service worker: offline shell + queued posts.
 // - Static assets: cache first (they are embedded in the binary and versioned by CACHE).
-// - Pages (/app, /dash): network first, cached copy when offline.
+// - Pages (/app, /dash, /station): network first, cached copy when offline.
 // - SSE (/sse), /link and /api GETs: network only (live data must not be stale).
 // - POSTs to journal / Eva tools / chat while offline: stored in IndexedDB and replayed
 //   when the page says it is back online (or on the next successful request).
-const CACHE = "eva-shell-v5";
+const CACHE = "eva-shell-v6";
 // screens of the astronaut app: cached as full pages (cold start offline) and as the
 // htmx fragments the tab bar swaps in (navigation offline)
 const SCREENS = ["/app", "/app/home", "/app/plan", "/app/eva", "/app/food", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/storm", "/app/about",
@@ -20,7 +20,7 @@ const EVA = ["idle", "hello", "listening", "thinking", "speaking", "happy", "win
 const HEROES = ["heart", "lungs", "temperature", "sleep", "water", "nutrition", "journal", "ecg", "radiation", "aed"];
 const SHELL = [
   "/app", "/app/plan", "/app/food", "/app/eva", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/about",
-  "/dash", "/manifest.webmanifest",
+  "/dash", "/station", "/manifest.webmanifest",
   "/static/css/app.css", "/static/js/htmx.min.js", "/static/js/htmx-sse.js",
   "/static/js/motion.js", "/static/js/eva.js", "/static/js/link.js",
   "/static/icons/icon-192.png", "/static/icons/icon-512.png", "/static/icons/icon-maskable-512.png",

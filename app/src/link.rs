@@ -8,6 +8,9 @@
 //!   that node; pings to the hub are answered; text is broadcast to the mesh.
 //! * `Band` (a simulated band gateway): delta-encoded vitals are decoded and
 //!   applied to the passengers.
+//! * `Station` (the ship's medical station): station events are signed into
+//!   the chain and change the case timeline; station commands go back on the
+//!   session's reliable endpoint (`station.rs`).
 //! * `Ship` (on a ground node): records of the ship's chain arrive, are
 //!   verified against the hash chain **and the ship's Ed25519 signature**,
 //!   mirrored to disk, and acknowledged.
@@ -47,34 +50,65 @@ pub fn origin_of(name: &str) -> String {
     name.split(" · ").next().unwrap_or("ship").to_string()
 }
 
+/// WebSocket transport: one binary message = one datagram. The session itself
+/// ([`session`]) only sees datagram channels, so the same code serves
+/// in-process clients ([`local_session`], e.g. the simulated medical station).
 async fn handle(socket: WebSocket, state: Shared, seat: Option<String>) {
     let (mut sink, mut stream) = socket.split();
-    // 1. Hello within 10 s
-    let hello = match tokio::time::timeout(std::time::Duration::from_secs(10), stream.next()).await {
-        Ok(Some(Ok(Message::Binary(b)))) => decode_batch(&b).ok().and_then(|fs| fs.into_iter().find(|f| f.kind == MsgType::Hello)).and_then(|f| Hello::decode(&f.payload).ok()),
-        _ => None,
-    };
-    let Some(hello) = hello else {
-        let _ = sink.close().await;
-        return;
-    };
+    let (in_tx, in_rx) = mpsc::channel::<Vec<u8>>(64);
     // bounded: a slow client loses frames instead of growing the hub's memory
-    let (tx, mut rx) = mpsc::channel::<Vec<u8>>(OUTBOX);
-    let name: String = hello.name.chars().take(60).collect();
-    let seat: Option<String> = seat.map(|s| s.chars().take(8).collect());
-    let id = state.mesh.register(hello.role, name.clone(), seat.clone(), tx, state.clock.real_ms());
-    tracing::info!("link: node {id} joined as {} ({name})", hello.role.name());
-    let welcome = Frame::new(MsgType::Welcome, state.mesh.hub_seq(), HUB_ID, Welcome { node_id: id, server_ms: state.clock.real_ms() }.encode()).to(id);
-    let _ = sink.send(Message::Binary(welcome.encode().into())).await;
+    let (out_tx, mut out_rx) = mpsc::channel::<Vec<u8>>(OUTBOX);
+    let reader = tokio::spawn(async move {
+        while let Some(m) = stream.next().await {
+            match m {
+                Ok(Message::Binary(b)) => {
+                    if in_tx.send(b.to_vec()).await.is_err() {
+                        break;
+                    }
+                }
+                Ok(Message::Ping(_)) | Ok(Message::Pong(_)) | Ok(Message::Text(_)) => continue,
+                _ => break,
+            }
+        }
+    });
     let writer = tokio::spawn(async move {
-        while let Some(b) = rx.recv().await {
+        while let Some(b) = out_rx.recv().await {
             // a client that cannot take a frame within 5 s is dropped
             match tokio::time::timeout(std::time::Duration::from_secs(5), sink.send(Message::Binary(b.into()))).await {
                 Ok(Ok(())) => {}
                 _ => break,
             }
         }
+        let _ = sink.close().await;
     });
+    session(state, seat, in_rx, out_tx).await;
+    reader.abort();
+    writer.abort();
+}
+
+/// An in-process client of this hub: the same session as a WebSocket client,
+/// over two channels. Returns (datagrams to the hub, datagrams from the hub).
+pub fn local_session(state: Shared, seat: Option<String>) -> (mpsc::Sender<Vec<u8>>, mpsc::Receiver<Vec<u8>>) {
+    let (in_tx, in_rx) = mpsc::channel::<Vec<u8>>(64);
+    let (out_tx, out_rx) = mpsc::channel::<Vec<u8>>(OUTBOX);
+    tokio::spawn(session(state, seat, in_rx, out_tx));
+    (in_tx, out_rx)
+}
+
+/// One client session on the hub, whatever the transport.
+async fn session(state: Shared, seat: Option<String>, mut inbox: mpsc::Receiver<Vec<u8>>, out: mpsc::Sender<Vec<u8>>) {
+    // 1. Hello within 10 s
+    let hello = match tokio::time::timeout(std::time::Duration::from_secs(10), inbox.recv()).await {
+        Ok(Some(b)) => decode_batch(&b).ok().and_then(|fs| fs.into_iter().find(|f| f.kind == MsgType::Hello)).and_then(|f| Hello::decode(&f.payload).ok()),
+        _ => None,
+    };
+    let Some(hello) = hello else { return };
+    let name: String = hello.name.chars().take(60).collect();
+    let seat: Option<String> = seat.map(|s| s.chars().take(8).collect());
+    let id = state.mesh.register(hello.role, name.clone(), seat.clone(), out.clone(), state.clock.real_ms());
+    tracing::info!("link: node {id} joined as {} ({name})", hello.role.name());
+    let welcome = Frame::new(MsgType::Welcome, state.mesh.hub_seq(), HUB_ID, Welcome { node_id: id, server_ms: state.clock.real_ms() }.encode()).to(id);
+    state.mesh.send_to(id, welcome.encode());
 
     // a ship announces its Ed25519 public key; the ground pins it on first use
     if hello.role == Role::Ship && hello.pubkey.len() == 32 {
@@ -85,39 +119,65 @@ async fn handle(socket: WebSocket, state: Shared, seat: Option<String>) {
         }
     }
 
-    // per-session reliable endpoint for ships and band gateways
+    // per-session reliable endpoint for ships, band gateways and medical stations
     let peer_key = format!("{}#{}", name, hello.client_ms);
     let mut ep: Option<Endpoint> = match hello.role {
         Role::Ship => Some(state.peers.lock().expect("peers").remove(&peer_key).unwrap_or_else(|| Endpoint::new(HUB_ID).with_crc(true))),
-        Role::Band => Some(Endpoint::new(HUB_ID)),
+        Role::Band | Role::Station => Some(Endpoint::new(HUB_ID)),
         _ => None,
     };
     if hello.role == Role::Ship {
         state.world.write().expect("world").link = crate::state::LinkStatus { connected: true, peer: Some(name.clone()), profile: "near-space".into(), profile_label: "Ship uplink".into(), up: true, ..Default::default() };
     }
+    // a station gets what it should show now, then every new command once
+    let mut station_cursor = 0u64;
+    if let (Role::Station, Some(e)) = (hello.role, ep.as_mut()) {
+        let (now_cmds, cursor) = crate::station::session_started(&state, id);
+        station_cursor = cursor;
+        for c in now_cmds {
+            e.send(MsgType::StationCmd, c, None);
+        }
+        state.emit(UiEvent::Tick);
+    }
+    // apps and dashboards stand in for their wristbands: they hear LoRa alarms
+    // on the air directly, even while the hub is down
+    let mut air = matches!(hello.role, Role::App | Role::Dash).then(|| state.air.subscribe());
     let mut flush = tokio::time::interval(std::time::Duration::from_millis(100));
     loop {
         tokio::select! {
-            msg = stream.next() => {
-                let b = match msg {
-                    Some(Ok(Message::Binary(b))) => b,
-                    Some(Ok(Message::Ping(_))) | Some(Ok(Message::Pong(_))) | Some(Ok(Message::Text(_))) => continue,
-                    _ => break,
-                };
+            msg = inbox.recv() => {
+                let Some(b) = msg else { break };
+                if state.is_hub_down() {
+                    // simulated hub failure: nothing is processed, relayed or acknowledged
+                    continue;
+                }
                 state.mesh.seen(id, b.len(), state.clock.real_ms());
                 match ep.as_mut() {
                     Some(e) => on_endpoint_datagram(&state, id, hello.role, e, &b),
                     None => on_mesh_datagram(&state, id, seat.as_deref(), &b),
                 }
             }
+            a = async { match air.as_mut() { Some(rx) => rx.recv().await.ok(), None => std::future::pending().await } } => {
+                if let Some(b) = a {
+                    state.mesh.send_to(id, b);
+                }
+            }
             _ = flush.tick() => {
-                if writer.is_finished() {
+                if out.is_closed() {
                     break;
+                }
+                if state.is_hub_down() {
+                    continue;
                 }
                 if let Some(e) = ep.as_mut() {
                     if hello.role == Role::Ship {
                         for text in state.to_ship.lock().expect("to_ship").drain(..) {
                             e.send(MsgType::Text, Text { from: "Ground".into(), to: "ship".into(), text }.encode(), None);
+                        }
+                    }
+                    if hello.role == Role::Station {
+                        for c in crate::station::cmds_since(&state, &mut station_cursor) {
+                            e.send(MsgType::StationCmd, c, None);
                         }
                     }
                     for d in e.outgoing(state.clock.real_ms(), usize::MAX, 16_000) {
@@ -139,8 +199,11 @@ async fn handle(socket: WebSocket, state: Shared, seat: Option<String>) {
         drop(peers);
         state.world.write().expect("world").link.connected = false;
     }
+    if hello.role == Role::Station {
+        crate::station::session_ended(&state, id);
+        state.emit(UiEvent::Tick);
+    }
     state.mesh.unregister(id);
-    writer.abort();
     tracing::info!("link: node {id} left");
 }
 
@@ -212,6 +275,7 @@ fn on_endpoint_datagram(state: &Shared, id: u32, role: Role, e: &mut Endpoint, b
                     vitals_in = true;
                 }
             }
+            Delivered::Frame(f) if role == Role::Station => crate::station::on_frame(state, id, &f),
             Delivered::Frame(f) if role == Role::Ship => match f.kind {
                 MsgType::Record | MsgType::Alarm | MsgType::Guidance => match RecordMsg::decode(&f.payload) {
                     Ok(r) => on_ship_record(state, r),
@@ -619,6 +683,17 @@ fn reflect(state: &Shared, r: &Record, received: u64) {
             if closing {
                 for a in w.alerts.iter_mut().filter(|a| a.seat == subject && a.state == "Open") {
                     a.state = "Solved".into();
+                }
+            }
+        }
+        "station" | "station_alarm" => {
+            // the ship's medical station reported something (signed into the ship's chain)
+            let at = r.body.get("station_s").and_then(|v| v.as_u64()).map(|s| s * 1000).unwrap_or(ts);
+            w.station.events += 1;
+            w.station.last_event = Some((at, text.trim_start_matches("Station: ").to_string()));
+            if let Some(step) = r.body.get("case_step").and_then(|v| v.as_str()) {
+                if let Some(c) = w.cases.iter_mut().find(|c| c.open && c.seat == subject) {
+                    c.steps.push(CaseStep { ts_ms: at, title: step.to_string(), detail: "Medical station report".into(), tone: "info".into(), earth_ms: Some(received) });
                 }
             }
         }

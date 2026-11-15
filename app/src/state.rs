@@ -51,6 +51,8 @@ pub enum UiEvent {
     Chat { seat: String },
     /// move a seat's app to a screen (tool `show_screen`)
     Navigate { seat: String, screen: String },
+    /// the medical station's own screen changed (`grid`: compartments too, not only the Eva strip)
+    Station { grid: bool },
     /// the demo was reset
     Reset,
 }
@@ -99,6 +101,12 @@ pub struct World {
     pub link_profile: LinkProfile,
     /// Eva filtered these minor events instead of alerting
     pub filtered_events: u32,
+    /// the hub's view of the medical station (from its reports; see `station.rs`)
+    pub station: crate::station::StationView,
+    /// simulated bands: real ms of each seat's last LoRa alarm (while the hub is down)
+    pub band_lora: HashMap<String, u64>,
+    /// mission ms when the dev panel took the hub down (simulated outage)
+    pub hub_down_since: Option<u64>,
     next_id: u64,
 }
 
@@ -129,6 +137,9 @@ impl World {
             link: LinkStatus { profile: "near-space".into(), profile_label: "Near-space uplink".into(), ..Default::default() },
             link_profile: LinkProfile::near_space(),
             filtered_events: 23,
+            station: Default::default(),
+            band_lora: HashMap::new(),
+            hub_down_since: None,
             next_id: 100,
         }
     }
@@ -199,6 +210,15 @@ pub struct AppState {
     pub to_ship: Mutex<Vec<String>>,
     /// answers to idempotent POSTs (PWA outbox replays), see `web::idem`
     pub idem: crate::web::idem::IdemCache,
+    /// dev panel "Hub down": the hub stops relaying and its rules stop (simulated failure)
+    pub hub_down: std::sync::atomic::AtomicBool,
+    /// the simulated LoRa broadcast medium: band and station alarms that reach
+    /// every radio directly, whether the hub is up or not
+    pub air: broadcast::Sender<Vec<u8>>,
+    /// commands for the medical station, waiting for its session(s)
+    pub station_out: Mutex<crate::station::StationOutbox>,
+    /// the simulated station computer whose screen `/station` shows (when one runs here)
+    pub station_device: std::sync::OnceLock<Arc<crate::station::StationHandle>>,
 }
 
 pub type Shared = Arc<AppState>;
@@ -233,6 +253,10 @@ impl AppState {
             mirror: Mutex::new(mirror),
             to_ship: Mutex::new(Vec::new()),
             idem: Default::default(),
+            hub_down: Default::default(),
+            air: broadcast::channel(64).0,
+            station_out: Default::default(),
+            station_device: Default::default(),
         }))
     }
 
@@ -241,6 +265,10 @@ impl AppState {
     }
     pub fn emit(&self, ev: UiEvent) {
         let _ = self.tx.send(ev);
+    }
+    /// Dev panel "Hub down" is on: no relay, no hub rules (the station and bands fall back to LoRa).
+    pub fn is_hub_down(&self) -> bool {
+        self.hub_down.load(std::sync::atomic::Ordering::Relaxed)
     }
 
     /// Layer 3: append to the hash chain. Returns the record seq.
@@ -290,6 +318,8 @@ impl AppState {
             w.link_profile = profile;
         }
         self.mirror.lock().expect("mirror").reset();
+        self.hub_down.store(false, std::sync::atomic::Ordering::Relaxed);
+        crate::station::restock(self);
         self.emit(UiEvent::Reset);
     }
 }

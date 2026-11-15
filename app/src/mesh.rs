@@ -177,6 +177,10 @@ pub async fn run_heartbeat(state: crate::state::Shared) {
     let mut tick = tokio::time::interval(std::time::Duration::from_secs(2));
     loop {
         tick.tick().await;
+        if state.is_hub_down() {
+            // simulated hub failure: no heartbeat, so clients notice the silence
+            continue;
+        }
         let now = state.clock.real_ms();
         for id in state.mesh.ids() {
             state.mesh.send_frame(id, MsgType::Ping, payload::encode_time(now));

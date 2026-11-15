@@ -86,7 +86,7 @@ async fn pages_api_and_exports_respond() {
     let (st, body) = get(&s, "/dash").await;
     assert_eq!(st, StatusCode::OK);
     assert!(body.contains("Passengers now"));
-    for uri in ["/app/eva", "/app/emergency", "/app/journal", "/app/storm", "/app/records", "/dev/panel", "/export/report"] {
+    for uri in ["/app/eva", "/app/emergency", "/app/journal", "/app/storm", "/app/records", "/dev/panel", "/export/report", "/station"] {
         assert_eq!(get(&s, uri).await.0, StatusCode::OK, "{uri}");
     }
     let (_, body) = get(&s, "/api/tools").await;

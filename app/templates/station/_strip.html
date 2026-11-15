@@ -1,0 +1,20 @@
+{% import "mascot.html" as m %}
+<section class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4 rounded-card border p-4 sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] lg:gap-5 lg:p-5 {% if urgent %}border-critical/60 bg-critical/10{% else %}border-line bg-surface{% endif %}" aria-label="Eva screen" data-station-mode="{{ mode }}">
+  {% call m::eva(mood, art, "size-16 sm:size-20 lg:size-24") %}
+  <div class="flex min-w-0 flex-col gap-1" role="status" aria-live="{% if urgent %}assertive{% else %}polite{% endif %}" aria-atomic="true">
+    <p class="text-xs uppercase tracking-label {% if urgent %}text-critical{% else %}text-muted{% endif %}">{{ eyebrow }}</p>
+    <p class="text-4xl leading-none tracking-tight text-ink lg:text-5xl" data-station-message>{{ headline }}</p>
+    {% if !sub.is_empty() %}<p class="truncate text-base text-muted lg:text-lg">{{ sub }}</p>{% endif %}
+  </div>
+  <div class="col-span-2 flex flex-wrap items-center gap-2 text-xs sm:col-span-1 sm:flex-col sm:items-end">
+    {% if present %}
+    <span class="inline-flex h-8 items-center gap-2 rounded-full border px-3 font-medium {% if standalone %}border-warn/50 bg-warn/10 text-warn{% else if mode == "Hub online" %}border-ok/40 bg-ok/10 text-ok{% else %}border-line text-muted{% endif %}" data-station-hub><span class="size-2 rounded-full {% if standalone %}bg-warn{% else if mode == "Hub online" %}bg-ok{% else %}bg-faint{% endif %}"></span>{{ mode }}</span>
+    <span class="inline-flex h-8 items-center gap-2 rounded-full border border-line px-3 text-muted">{{ crate::web::ui::ic("radio", 14)|safe }}{% if standalone %}Mesh · LoRa only{% else if let Some(n) = node %}Mesh · node #{{ n }} · LoRa ready{% else %}Mesh · joining{% endif %}</span>
+    <span class="inline-flex h-8 items-center gap-2 rounded-full border border-line px-3 text-muted">{{ crate::web::ui::ic("battery", 14)|safe }}Backup battery {{ battery }}%{% if buffered > 0 %} · <span class="text-warn">{{ buffered }} buffered</span>{% endif %}</span>
+    {% endif %}
+  </div>
+  <button type="button" class="press col-span-2 grid h-16 w-full shrink-0 place-items-center rounded-full bg-critical-deep text-ink ring-4 ring-critical/30 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink sm:col-span-1 sm:size-28 lg:size-32" hx-post="/api/station/button" hx-target="#station-strip" aria-label="Emergency: alert every crew member" {% if !present %}disabled{% endif %}>
+    <span class="flex items-center gap-2 sm:flex-col sm:gap-1">{{ crate::web::ui::ic("siren", 30)|safe }}<span class="text-sm font-semibold uppercase tracking-label">Emergency</span></span>
+  </button>
+</section>
+{% if !last.is_empty() %}<p class="mt-2 truncate px-1 text-xs text-muted">Last report · {{ last }}</p>{% endif %}

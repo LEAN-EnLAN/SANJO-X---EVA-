@@ -11,6 +11,7 @@ pub mod model;
 pub mod protocol;
 pub mod seed;
 pub mod sim;
+pub mod station;
 pub mod state;
 pub mod tls;
 pub mod uplink;
