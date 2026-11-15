@@ -5,7 +5,7 @@
 
 use super::pages::{self, resolve_seat, SeatQ};
 use super::views::*;
-use crate::eva_agent::{self, speech, tools, vision};
+use crate::eva_agent::{self, guard, speech, tools, vision};
 use crate::model::{ChatMsg, EvaMood, LinkMessage, Scenario};
 use crate::state::Storm;
 use crate::protocol::profile::LinkProfile;
@@ -122,12 +122,27 @@ pub struct ChatForm {
 
 pub async fn eva_chat(State(state): State<Shared>, headers: HeaderMap, axum::Form(f): axum::Form<ChatForm>) -> Response {
     let seat = resolve_seat(&state, &SeatQ { seat: f.seat.clone() }, &headers);
-    let text: String = f.text.trim().chars().take(1000).collect();
+    // one character over the cap, so the guard can tell the person it is too long
+    let text: String = f.text.trim().chars().take(guard::MAX_CHAT_CHARS + 1).collect();
     if text.is_empty() {
         return Html(render(&ChatList::build(&state, &seat))).into_response();
     }
+    // a call for help is never rate limited
+    if !guard::is_strong_emergency(&text.to_lowercase()) {
+        if let Some(retry) = guard::rate_limited(&state, &seat, "chat") {
+            let now = state.now();
+            state.world.write().expect("world").chats.push(ChatMsg { ts_ms: now, seat: seat.clone(), from: "eva".into(), label: None, text: guard::RATE_REPLY.into() });
+            state.emit(UiEvent::Chat { seat: seat.clone() });
+            return (StatusCode::TOO_MANY_REQUESTS, [(header::RETRY_AFTER, retry.to_string())], Html(render(&ChatList::build(&state, &seat)))).into_response();
+        }
+    }
     eva_agent::converse(&state, &seat, &text).await;
     Html(render(&ChatList::build(&state, &seat))).into_response()
+}
+
+/// 429 with Eva's friendly line (topic guard layer 6).
+fn too_many(retry: u64) -> Response {
+    (StatusCode::TOO_MANY_REQUESTS, [(header::RETRY_AFTER, retry.to_string())], Json(json!({"error": guard::RATE_REPLY, "retry_after_s": retry}))).into_response()
 }
 
 #[derive(Deserialize)]
@@ -205,17 +220,41 @@ async fn read_multipart(mut mp: Multipart) -> (Vec<(String, String, Vec<u8>)>, s
 }
 
 /// Browser `MediaRecorder` upload → Groq Whisper → `{ "text": … }`.
-pub async fn eva_stt(State(state): State<Shared>, mp: Multipart) -> Response {
+/// The transcript is neutralised (prompt injection removed) and pre-classified
+/// here; the browser then posts it to `/api/eva/chat`, where the full topic
+/// guard runs on it like on typed text.
+pub async fn eva_stt(State(state): State<Shared>, headers: HeaderMap, mp: Multipart) -> Response {
     let Some(pipe) = speech::stt(&state.agent) else {
         return (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"error": "speech-to-text needs GROQ_API_KEY on the server", "fallback": "type, or use the browser's own dictation"}))).into_response();
     };
-    let (files, _fields) = read_multipart(mp).await;
+    let (files, fields) = read_multipart(mp).await;
+    let seat = resolve_seat(&state, &SeatQ { seat: fields.get("seat").cloned() }, &headers);
     let Some((filename, mime, bytes)) = files.into_iter().next() else {
         return (StatusCode::BAD_REQUEST, Json(json!({"error": "no audio"}))).into_response();
     };
+    if let Some(retry) = guard::rate_limited(&state, &seat, "stt") {
+        return too_many(retry);
+    }
+    if guard::audio_too_long(&bytes) {
+        guard::log_filtered(&state, &seat, "voice", &guard::Verdict::new(guard::Category::TooLong, "audio over 30 s", guard::Source::Local), "", 0);
+        return (StatusCode::PAYLOAD_TOO_LARGE, Json(json!({"error": guard::AUDIO_TOO_LONG_REPLY}))).into_response();
+    }
     state.set_mood(None, EvaMood::Listening);
     match pipe.transcribe(&state.http, speech::AudioInput { bytes, filename, mime }).await {
-        Ok(text) => Json(json!({"text": text, "model": pipe.name()})).into_response(),
+        Ok(text) => {
+            let c = guard::neutralise(&text);
+            let local = guard::classify_local(&c.text.to_lowercase());
+            let scope = match local {
+                guard::Local::In(cat, _) => json!({"in_scope": true, "category": cat}),
+                guard::Local::Out(cat, _) => json!({"in_scope": false, "category": cat}),
+                guard::Local::Ambiguous { .. } => json!({"in_scope": null, "category": "ambiguous"}),
+            };
+            Json(json!({"text": c.text, "model": pipe.name(), "guard": {"neutralised": c.removed, "local": scope}})).into_response()
+        }
+        Err(e) if e.to_string().contains(speech::TOO_LONG_ERROR) => {
+            guard::log_filtered(&state, &seat, "voice", &guard::Verdict::new(guard::Category::TooLong, "audio over 30 s", guard::Source::Local), "", 0);
+            (StatusCode::PAYLOAD_TOO_LARGE, Json(json!({"error": guard::AUDIO_TOO_LONG_REPLY}))).into_response()
+        }
         Err(e) => {
             tracing::warn!("stt failed: {e}");
             (StatusCode::BAD_GATEWAY, Json(json!({"error": "transcription failed"}))).into_response()
@@ -233,11 +272,22 @@ pub struct TtsForm {
 /// or the Orpheus terms not accepted by the org admin), the answer is an
 /// explicit `503 {"fallback":"speechSynthesis", "engine", "reason", "message"}`
 /// with `x-eva-voice: browser`, and the Eva badge says "browser voice".
-pub async fn eva_tts(State(state): State<Shared>, axum::Form(f): axum::Form<TtsForm>) -> Response {
+pub async fn eva_tts(State(state): State<Shared>, headers: HeaderMap, axum::Form(f): axum::Form<TtsForm>) -> Response {
+    if state.agent.tts.online_key().is_some() {
+        let seat = resolve_seat(&state, &SeatQ { seat: f.seat.clone() }, &headers);
+        if let Some(retry) = guard::rate_limited(&state, &seat, "tts") {
+            return too_many(retry);
+        }
+    }
     if let Some(s) = &f.seat {
         state.set_mood(Some(s), EvaMood::Speaking);
     }
-    match speech::speak_or_fallback(&state.agent, &state.http, f.text, state.clock.real_ms()).await {
+    // the voice only reads Eva's own, in-scope lines (layer 4 on the input)
+    let text = match guard::check_output(&f.text) {
+        Some(_) => guard::REDIRECT.to_string(),
+        None => f.text,
+    };
+    match speech::speak_or_fallback(&state.agent, &state.http, text, state.clock.real_ms()).await {
         speech::Spoken::Audio(resp) => {
             let ct = resp.headers().get(header::CONTENT_TYPE).and_then(|v| v.to_str().ok()).unwrap_or("audio/wav").to_string();
             let body = Body::from_stream(resp.bytes_stream());
@@ -262,18 +312,35 @@ pub async fn eva_vision(State(state): State<Shared>, headers: HeaderMap, mp: Mul
     if images.is_empty() {
         return (StatusCode::BAD_REQUEST, "no image").into_response();
     }
+    if let Some(retry) = guard::rate_limited(&state, &seat, "vision") {
+        return too_many(retry);
+    }
     let now = state.now();
     let n = images.len();
     state.world.write().expect("world").chats.push(ChatMsg { ts_ms: now, seat: seat.clone(), from: "me".into(), label: None, text: format!("Sent {} {}", n, if fields.contains_key("video") { "video frames" } else if n == 1 { "photo" } else { "photos" }) });
     state.set_mood(Some(&seat), EvaMood::Thinking);
+    // the question that comes with the photo goes through the same guard as chat
+    let question = if question.trim().is_empty() {
+        question
+    } else {
+        let d = guard::check_input(&state, &seat, &question, "vision").await;
+        if !d.allowed() {
+            return vision_reply(&state, &seat, d.verdict.reply().to_string());
+        }
+        d.text
+    };
     let pipe = vision::pipeline(&state.agent);
     let text = match pipe.describe(&state.http, images, task.clone(), question).await {
         Ok(t) => t,
         Err(e) => {
-            tracing::warn!("vision failed: {e}");
+            tracing::warn!("vision failed: {}", state.agent.redact(&e.to_string()));
             "I could not read the image right now. It is saved in your log.".into()
         }
     };
+    if guard::vision_off_topic(&text) {
+        guard::log_filtered(&state, &seat, "vision", &guard::Verdict::new(guard::Category::OffTopic, "image off topic", guard::Source::Classifier), "", 0);
+        return vision_reply(&state, &seat, guard::REDIRECT.to_string());
+    }
     let reply = if task == "meal" {
         let start = text.find('{').unwrap_or(0);
         let end = text.rfind('}').map(|e| e + 1).unwrap_or(text.len());
@@ -282,12 +349,16 @@ pub async fn eva_vision(State(state): State<Shared>, headers: HeaderMap, mp: Mul
         format!("{} {}", v.get("text").and_then(|x| x.as_str()).unwrap_or(""), r.text).trim().to_string()
     } else {
         state.log("agent", &seat, json!({"text": "Eva looked at an image", "model": pipe.name()}));
-        text
+        guard::guard_output(&state, &seat, "vision", &text)
     };
-    state.world.write().expect("world").chats.push(ChatMsg { ts_ms: state.now(), seat: seat.clone(), from: "eva".into(), label: None, text: reply });
-    state.set_mood(Some(&seat), EvaMood::Speaking);
-    state.emit(UiEvent::Chat { seat: seat.clone() });
-    Html(render(&ChatList::build(&state, &seat))).into_response()
+    vision_reply(&state, &seat, reply)
+}
+
+fn vision_reply(state: &Shared, seat: &str, reply: String) -> Response {
+    state.world.write().expect("world").chats.push(ChatMsg { ts_ms: state.now(), seat: seat.to_string(), from: "eva".into(), label: None, text: reply });
+    state.set_mood(Some(seat), EvaMood::Speaking);
+    state.emit(UiEvent::Chat { seat: seat.to_string() });
+    Html(render(&ChatList::build(state, seat))).into_response()
 }
 
 // ---------------------------------------------------------------- forms

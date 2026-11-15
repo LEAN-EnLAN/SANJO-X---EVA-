@@ -22,6 +22,8 @@ use futures_util::future::BoxFuture;
 pub const TTS_RETRY_MS: u64 = 10 * 60_000;
 pub const MAX_AUDIO_BYTES: usize = 24 * 1024 * 1024;
 pub const MAX_TTS_CHARS: usize = 1_000;
+/// Error text when Whisper reports a clip over the topic guard's 30 s cap.
+pub const TOO_LONG_ERROR: &str = "audio over 30 s";
 
 #[derive(Debug, Clone)]
 pub struct AudioInput {
@@ -139,7 +141,7 @@ impl SttPipeline for GroqWhisper {
                 anyhow::bail!("audio must be 1 byte to 24 MB");
             }
             let part = reqwest::multipart::Part::bytes(audio.bytes).file_name(audio.filename).mime_str(&audio.mime).map_err(|e| self.cfg.error(e))?;
-            let form = reqwest::multipart::Form::new().part("file", part).text("model", self.cfg.model.clone()).text("response_format", "json").text("language", "en").text("temperature", "0");
+            let form = reqwest::multipart::Form::new().part("file", part).text("model", self.cfg.model.clone()).text("response_format", "verbose_json").text("language", "en").text("temperature", "0");
             let resp = http
                 .post(self.cfg.url("/audio/transcriptions"))
                 .timeout(std::time::Duration::from_secs(self.cfg.timeout_s))
@@ -152,6 +154,10 @@ impl SttPipeline for GroqWhisper {
             let v: serde_json::Value = resp.json().await.unwrap_or_default();
             if !status.is_success() {
                 return Err(self.cfg.error(format!("groq stt {status}: {}", v.pointer("/error/message").and_then(|m| m.as_str()).unwrap_or("failed"))));
+            }
+            // verbose_json reports the clip length: the guard caps voice at 30 s
+            if v.get("duration").and_then(|d| d.as_f64()).is_some_and(|d| d > super::guard::MAX_AUDIO_SECS + 0.5) {
+                anyhow::bail!(TOO_LONG_ERROR);
             }
             Ok(v.get("text").and_then(|t| t.as_str()).unwrap_or("").trim().to_string())
         })

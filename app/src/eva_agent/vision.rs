@@ -42,11 +42,14 @@ pub fn pipeline(cfg: &AgentConfig) -> Box<dyn VisionPipeline> {
     }
 }
 
+/// The instruction sent with the images. Every task carries the topic
+/// guard's scope (ADR-012): an off-topic image is answered `OFF_TOPIC` and
+/// the app shows Eva's redirect instead.
 pub fn task_prompt(task: &str, question: &str) -> String {
     match task {
-        "meal" => "Describe this meal in one short line and estimate total kcal. Answer only JSON: {\"text\": \"...\", \"kcal\": 0, \"kind\": \"Breakfast|Lunch|Dinner|Snack\"}".to_string(),
-        "symptom" => format!("You give diagnostic support to a passenger in space, never a diagnosis. In at most 3 short plain lines, say what is visible and whether it needs the crew lead. Question: {question}"),
-        _ => format!("Describe what you see in at most 3 short plain lines. {question}"),
+        "meal" => "Describe this meal in one short line and estimate total kcal. Answer only JSON: {\"text\": \"...\", \"kcal\": 0, \"kind\": \"Breakfast|Lunch|Dinner|Snack\"}. If the image shows no food or drink, answer only {\"off_topic\": true}.".to_string(),
+        "symptom" => format!("You give diagnostic support to a passenger in space, never a diagnosis. In at most 3 short plain lines, say what is visible and whether it needs the crew lead. {} Question: {question}", super::guard::VISION_SCOPE),
+        _ => format!("You are Eva, a health copilot on a spacecraft. Describe what you see in at most 3 short plain lines. {} {question}", super::guard::VISION_SCOPE),
     }
 }
 

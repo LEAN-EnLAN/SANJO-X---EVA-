@@ -43,7 +43,7 @@ pub struct Intent {
     pub score: f32,
 }
 
-fn has_word(u: &str, w: &str) -> bool {
+pub fn has_word(u: &str, w: &str) -> bool {
     // phrase match on word boundaries ("ecg" matches "an ecg?" but not "decg")
     let mut start = 0;
     while let Some(i) = u[start..].find(w) {

@@ -12,6 +12,7 @@
 
 pub mod chat;
 pub mod config;
+pub mod guard;
 pub mod offline;
 pub mod prompt;
 pub mod reflex;
@@ -317,35 +318,45 @@ pub fn close_case(state: &Shared, seat: &str) {
     }
 }
 
-/// A person talks to Eva (text, or text from STT). Runs reflex triage first,
-/// then the chat pipeline (online or offline), logs, and returns Eva's reply.
+/// A person talks to Eva (text, or text from STT). Emergencies and
+/// treatment requests are answered first (never filtered), then the topic
+/// guard (ADR-012) decides whether the request is in scope, then the chat
+/// pipeline (online or offline) answers, and the reply goes through the
+/// output check. Everything is logged; filtered requests as `guard` records.
 pub async fn converse(state: &Shared, seat: &str, text: &str) -> chat::ChatReply {
     let now = state.now();
-    let history: Vec<chat::ChatTurn> = {
-        let mut w = state.world.write().expect("world");
-        w.chats.push(ChatMsg { ts_ms: now, seat: seat.into(), from: "me".into(), label: None, text: text.into() });
-        w.chats.iter().filter(|m| m.seat == seat).map(|m| chat::ChatTurn { role: if m.from == "me" { "user".into() } else { "assistant".into() }, content: m.text.clone() }).collect()
-    };
+    let shown: String = text.chars().take(guard::MAX_CHAT_CHARS).collect();
+    state.world.write().expect("world").chats.push(ChatMsg { ts_ms: now, seat: seat.into(), from: "me".into(), label: None, text: shown });
     state.emit(UiEvent::Chat { seat: seat.into() });
     state.set_mood(Some(seat), EvaMood::Thinking);
     let pipe = chat::pipeline(&state.agent);
-    // treatment / shock requests never reach a model: the answer is fixed
     let lower = text.to_lowercase();
-    let reply = if offline::asks_for_treatment(&lower) {
-        chat::offline_reply(state, seat, text)
-    } else {
-        match pipe.reply(state, seat, history, text.to_string()).await {
-        Ok(r) if !r.text.is_empty() => r,
-        Ok(_) => chat::offline_reply(state, seat, text),
-        Err(e) => {
-            // never leave the person without an answer: fall back to offline rules
-            tracing::warn!("chat pipeline failed, answering offline: {}", state.agent.redact(&e.to_string()));
-            let mut r = chat::offline_reply(state, seat, text);
-            r.model = format!("offline-rules (fallback from {})", pipe.name());
-            r
-        }
+    // treatment / shock requests never reach a model: the answer is fixed
+    let treatment = offline::asks_for_treatment(&lower);
+    // a life-threatening message is never held up by the topic guard
+    let urgent = guard::is_strong_emergency(&lower);
+    let decision = if treatment || urgent { None } else { Some(guard::check_input(state, seat, text, "chat").await) };
+    let reply = match &decision {
+        _ if treatment => chat::offline_reply(state, seat, text),
+        Some(d) if !d.allowed() => chat::ChatReply { text: d.verdict.reply().to_string(), model: format!("topic-guard ({})", d.verdict.category.as_str()), ..Default::default() },
+        _ => {
+            let asked = decision.as_ref().map(|d| d.text.clone()).unwrap_or_else(|| text.to_string());
+            let history = model_history(state, seat, &asked);
+            match pipe.reply(state, seat, history, asked.clone()).await {
+                Ok(r) if !r.text.is_empty() => r,
+                Ok(_) => chat::offline_reply(state, seat, &asked),
+                Err(e) => {
+                    // never leave the person without an answer: fall back to offline rules
+                    tracing::warn!("chat pipeline failed, answering offline: {}", state.agent.redact(&e.to_string()));
+                    let mut r = chat::offline_reply(state, seat, &asked);
+                    r.model = format!("offline-rules (fallback from {})", pipe.name());
+                    r
+                }
+            }
         }
     };
+    let mut reply = reply;
+    reply.text = guard::guard_output(state, seat, "chat", &reply.text);
     {
         let mut w = state.world.write().expect("world");
         w.chats.push(ChatMsg { ts_ms: state.now(), seat: seat.into(), from: "eva".into(), label: None, text: reply.text.clone() });
@@ -355,4 +366,32 @@ pub async fn converse(state: &Shared, seat: &str, text: &str) -> chat::ChatReply
     state.set_mood(Some(seat), if concerned { EvaMood::Concerned } else { EvaMood::Speaking });
     state.emit(UiEvent::Chat { seat: seat.into() });
     reply
+}
+
+/// The turns the model sees: this seat's chat without the exchanges the
+/// guard refused, every earlier user turn neutralised, and the current turn
+/// as the guard passed it.
+fn model_history(state: &Shared, seat: &str, asked: &str) -> Vec<chat::ChatTurn> {
+    let w = state.world.read().expect("world");
+    let msgs: Vec<&ChatMsg> = w.chats.iter().filter(|m| m.seat == seat).collect();
+    let mut out: Vec<chat::ChatTurn> = Vec::new();
+    let n = msgs.len();
+    for (i, m) in msgs.iter().enumerate() {
+        if i + 1 == n && m.from == "me" {
+            break; // the current turn, added below as the guard passed it
+        }
+        if m.from == "me" {
+            let refused = msgs.get(i + 1).is_some_and(|r| r.from != "me" && guard::GUARD_REPLIES.contains(&r.text.as_str()));
+            if !refused {
+                let t = guard::neutralise(&m.text).text;
+                if !t.is_empty() {
+                    out.push(chat::ChatTurn { role: "user".into(), content: t });
+                }
+            }
+        } else if !guard::GUARD_REPLIES.contains(&m.text.as_str()) {
+            out.push(chat::ChatTurn { role: "assistant".into(), content: m.text.clone() });
+        }
+    }
+    out.push(chat::ChatTurn { role: "user".into(), content: asked.to_string() });
+    out
 }

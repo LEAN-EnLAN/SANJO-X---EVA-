@@ -209,6 +209,8 @@ pub struct AgentConfig {
     pub offline: bool,
     /// runtime state of the voice (shared by clones)
     pub voice: Arc<VoiceStatus>,
+    /// topic guard: scope classifier, Prompt Guard, cache, rate limits (ADR-012)
+    pub guard: super::guard::GuardConfig,
 }
 
 fn env_or(name: &str, default: &str) -> String {
@@ -233,6 +235,15 @@ impl AgentConfig {
             enabled: !env_off(off_env),
         };
         let offline = std::env::var("EVA_OFFLINE").is_ok_and(|v| v == "1" || v == "true");
+        let gd = super::guard::defaults::CLASSIFIER_MODEL;
+        let safety = env_or("EVA_GUARD_SAFETY_MODEL", super::guard::defaults::SAFETY_MODEL);
+        let num = |name: &str, d: u64| std::env::var(name).ok().and_then(|v| v.trim().parse::<u64>().ok()).filter(|n| *n > 0).unwrap_or(d);
+        let guard = super::guard::GuardConfig::new(
+            p("guard", "EVA_GUARD_MODEL", gd, "EVA_GUARD_BASE_URL", "EVA_GUARD", 2),
+            if matches!(safety.trim(), "off" | "0" | "false" | "none") { None } else { Some(safety) },
+            num("EVA_GUARD_TIMEOUT_MS", super::guard::defaults::TIMEOUT_MS),
+            num("EVA_RATE_PER_MIN", super::guard::defaults::RATE_PER_MIN as u64) as u32,
+        );
         let mut c = AgentConfig {
             chat: p("chat", "EVA_CHAT_MODEL", defaults::CHAT_MODEL, "EVA_CHAT_BASE_URL", "EVA_CHAT", 30),
             stt: p("stt", "EVA_STT_MODEL", defaults::STT_MODEL, "EVA_STT_BASE_URL", "EVA_STT", 30),
@@ -241,6 +252,7 @@ impl AgentConfig {
             vision: p("vision", "EVA_VISION_MODEL", defaults::VISION_MODEL, "EVA_VISION_BASE_URL", "EVA_VISION", 45),
             offline: false,
             voice: Arc::new(VoiceStatus::default()),
+            guard,
         };
         c.set_offline(offline);
         c
@@ -257,6 +269,7 @@ impl AgentConfig {
             vision: p("vision", defaults::VISION_MODEL),
             offline: true,
             voice: Arc::new(VoiceStatus::default()),
+            guard: super::guard::GuardConfig::new(p("guard", super::guard::defaults::CLASSIFIER_MODEL), Some(super::guard::defaults::SAFETY_MODEL.into()), super::guard::defaults::TIMEOUT_MS, super::guard::defaults::RATE_PER_MIN),
         };
         c.voice.set(VoiceEngine::BrowserOffline, 0, 0);
         c
@@ -265,7 +278,7 @@ impl AgentConfig {
     /// Point every pipeline at `base_url` with `key` (tests against a local fake server).
     pub fn with_endpoint(base_url: &str, key: &str) -> Self {
         let mut c = Self::offline_only();
-        for p in [&mut c.chat, &mut c.stt, &mut c.tts, &mut c.vision] {
+        for p in [&mut c.chat, &mut c.stt, &mut c.tts, &mut c.vision, &mut c.guard.classifier] {
             p.key = Some(ApiKey(key.into()));
             p.base_url = base_url.into();
             p.enabled = true;
@@ -278,7 +291,7 @@ impl AgentConfig {
     pub fn set_offline(&mut self, offline: bool) {
         self.offline = offline;
         if offline {
-            for p in [&mut self.chat, &mut self.stt, &mut self.tts, &mut self.vision] {
+            for p in [&mut self.chat, &mut self.stt, &mut self.tts, &mut self.vision, &mut self.guard.classifier] {
                 p.enabled = false;
             }
         }
@@ -316,6 +329,7 @@ impl AgentConfig {
         serde_json::json!({
             "mode": self.mode_label(),
             "chat": p(&self.chat), "stt": p(&self.stt), "tts": p(&self.tts), "vision": p(&self.vision),
+            "guard": {"model": self.guard.classifier.model, "online": self.guard.classifier.online_key().is_some(), "safety_model": self.guard.safety_model, "timeout_ms": self.guard.timeout_ms, "rate_per_min": self.guard.rt.limiter.per_min()},
             "voice": {"engine": v, "label": v.label(), "browser": v.is_browser()},
             // flat fields kept for older clients
             "chat_model": self.chat.model, "stt_model": self.stt.model, "tts_model": self.tts.model, "vision_model": self.vision.model,

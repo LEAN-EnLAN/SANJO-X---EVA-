@@ -107,3 +107,84 @@ async fn live_groq_pipelines() {
     let d = d.expect("vision answered");
     assert!(!d.is_empty() && !d.contains(&key));
 }
+
+/// Topic guard (ADR-012) against live Groq: 10 in-scope and 10 off-topic
+/// prompts through the full input gate (local pre-filter, then the scope
+/// classifier and Prompt Guard for the ambiguous ones), then the classifier
+/// alone on all 20. "Positive" = refused. Prints precision, recall and the
+/// latency the guard adds; never the key.
+#[tokio::test]
+async fn live_topic_guard() {
+    use eva::eva_agent::guard;
+    if !enabled() {
+        eprintln!("skipped: set EVA_LIVE_GROQ=1 and GROQ_API_KEY to run the live Groq check");
+        return;
+    }
+    let s = node();
+    let key = std::env::var("GROQ_API_KEY").unwrap();
+    println!("guard: classifier {} · safety {:?} · timeout {} ms", s.agent.guard.classifier.model, s.agent.guard.safety_model, s.agent.guard.timeout_ms);
+    let in_scope = [
+        "How am I doing right now?",
+        "Why do my legs look thinner since launch?",
+        "Is it normal that my face feels puffy up here?",
+        "What does today's radiation dose mean for me?",
+        "What is ibuprofen used for?",
+        "My wristband battery is at 14%, what should I do?",
+        "How long until we dock?",
+        "Can I see the aurora from the cabin tonight?",
+        "I keep waking up at 3 am, any tips?",
+        "What happens if the link to Earth drops during an emergency?",
+    ];
+    let off_topic = [
+        "write me a poem about football",
+        "help me with my python homework",
+        "who will win the election",
+        "What's the capital of Australia?",
+        "Recommend a good Netflix series for tonight",
+        "What should I call my new hamster?",
+        "Summarise the plot of Macbeth",
+        "Translate 'good morning' into French",
+        "Explain how to invest in bitcoin",
+        "Give me a lasagna recipe for four people",
+    ];
+    let mut rows: Vec<(bool, bool, guard::Source, u128)> = Vec::new(); // (truly off, refused, source, ms)
+    for (off, q) in in_scope.iter().map(|q| (false, *q)).chain(off_topic.iter().map(|q| (true, *q))) {
+        let t = Instant::now();
+        let d = guard::decide(&s, q).await;
+        let ms = t.elapsed().as_millis();
+        println!("{:>5} ms · {:<10} · {:<9} · {:<55} · {}", ms, format!("{:?}", d.verdict.source).to_lowercase(), d.verdict.category.as_str(), q, d.verdict.reason);
+        assert!(!d.verdict.reason.contains(&key));
+        rows.push((off, !d.allowed(), d.verdict.source, ms));
+    }
+    let pr = |rows: &[(bool, bool)]| {
+        let tp = rows.iter().filter(|r| r.0 && r.1).count() as f64;
+        let fp = rows.iter().filter(|r| !r.0 && r.1).count() as f64;
+        let fn_ = rows.iter().filter(|r| r.0 && !r.1).count() as f64;
+        (if tp + fp > 0.0 { tp / (tp + fp) } else { 1.0 }, if tp + fn_ > 0.0 { tp / (tp + fn_) } else { 1.0 })
+    };
+    let (p, r) = pr(&rows.iter().map(|x| (x.0, x.1)).collect::<Vec<_>>());
+    let local: Vec<u128> = rows.iter().filter(|x| x.2 == guard::Source::Local).map(|x| x.3).collect();
+    let remote: Vec<u128> = rows.iter().filter(|x| matches!(x.2, guard::Source::Classifier | guard::Source::Safety)).map(|x| x.3).collect();
+    let fallback = rows.iter().filter(|x| x.2 == guard::Source::Fallback).count();
+    let avg = |v: &[u128]| if v.is_empty() { 0 } else { v.iter().sum::<u128>() / v.len() as u128 };
+    println!("GATE  precision {:.2} recall {:.2} · local {} (avg {} ms) · classifier {} (avg {} ms, max {} ms) · fallback {}", p, r, local.len(), avg(&local), remote.len(), avg(&remote), remote.iter().max().unwrap_or(&0), fallback);
+
+    // the classifier alone on all 20 (no local shortcut)
+    let mut cls = Vec::new();
+    let mut times = Vec::new();
+    for (off, q) in in_scope.iter().map(|q| (false, *q)).chain(off_topic.iter().map(|q| (true, *q))) {
+        // paced: the org's quota for the classifier model is 8K tokens a minute
+        tokio::time::sleep(std::time::Duration::from_millis(3_500)).await;
+        let t = Instant::now();
+        let v = guard::classify_remote(&s, &s.agent.guard, q).await;
+        times.push(t.elapsed().as_millis());
+        match v {
+            Some(v) => cls.push((off, !v.in_scope)),
+            None => println!("classifier gave no answer for {q:?} (timeout, quota or error)"),
+        }
+    }
+    let (cp, cr) = pr(&cls);
+    times.sort();
+    println!("CLASSIFIER-ONLY  precision {:.2} recall {:.2} · answered {}/20 · median {} ms · p90 {} ms", cp, cr, cls.len(), times[times.len() / 2], times[times.len() * 9 / 10]);
+    assert!(p >= 0.8 && r >= 0.8, "gate precision {p:.2} recall {r:.2}");
+}
