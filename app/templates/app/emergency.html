@@ -4,13 +4,13 @@
 {% match mode %}
 {% when "helper_cpr" %}
 {% if let Some(cs) = case %}
-<section class="em-slab flex flex-1 flex-col gap-4 p-5" data-focus>
+<section class="em-slab flex flex-1 flex-col gap-3 p-5" data-focus>
   <div class="flex items-center justify-between pt-1">
     <span class="badge h-7 bg-white/20 text-white">Emergency · near you</span>
     {% call m::eva("alert", "alert", "size-12") %}
   </div>
   <div class="flex flex-col gap-2">
-    <p class="font-display text-[2.25rem] leading-[2.5rem] font-semibold">{{ cs.name.split(' ').next().unwrap_or("") }} needs help</p>
+    <p class="font-display text-[2rem] leading-[2.25rem] font-semibold">{{ cs.name.split(' ').next().unwrap_or("") }} needs help</p>
     <p class="text-[1.0625rem] text-white/90">Seat {{ cs.seat }} · <span class="num font-display text-[1.75rem] font-semibold text-white">{{ distance }}</span> away</p>
   </div>
   <div class="flex items-center gap-4 rounded-card bg-white p-4 text-on-light">
@@ -23,7 +23,7 @@
     <p class="text-label text-white/85">How Eva decided · {{ cs.how }}</p>
   </div>
   <p class="flex items-center gap-2 text-label text-white"><span class="size-2.5 shrink-0 animate-pulse rounded-full bg-station"></span><span><strong class="font-semibold">AED:</strong> station, corridor B · blinking{% if !aed_helper.is_empty() %} · {{ aed_helper }} is bringing it{% endif %}</span></p>
-  <div class="mt-auto flex flex-col gap-3">
+  <div class="mt-auto flex flex-col gap-2.5 pt-1">
     <button type="button" class="btn-white press w-full" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"yes"}' hx-target="#screen">I'm going</button>
     <button type="button" class="btn-outline press w-full" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"no"}' hx-target="#screen">I can't</button>
   </div>
@@ -31,15 +31,15 @@
 {% endif %}
 {% when "helper_aed" %}
 {% if let Some(cs) = case %}
-<section class="em-slab flex flex-1 flex-col gap-4 p-5" data-focus>
+<section class="em-slab flex flex-1 flex-col gap-3 p-5" data-focus>
   <div class="flex items-center justify-between pt-1">
     <span class="badge h-7 bg-white/20 text-white">Emergency · bring the AED</span>
     {% call m::eva("alert", "alert", "size-12") %}
   </div>
-  <p class="font-display text-[2.25rem] leading-[2.5rem] font-semibold">Get the AED</p>
-  <div class="flex items-center gap-2 text-label font-semibold">
-    <span class="rounded-full bg-white px-3 py-1.5 text-critical-deep">You</span><span class="h-0.5 w-4 bg-white/60"></span>
-    <span class="rounded-full bg-white/20 px-3 py-1.5">Station · corridor B</span><span class="h-0.5 w-4 bg-white/60"></span>
+  <p class="font-display text-[2rem] leading-[2.25rem] font-semibold">Get the AED</p>
+  <div class="flex items-center gap-1.5 whitespace-nowrap text-caption font-semibold">
+    <span class="rounded-full bg-white px-3 py-1.5 text-critical-deep">You</span><span class="h-0.5 w-3 shrink-0 bg-white/60"></span>
+    <span class="rounded-full bg-white/20 px-3 py-1.5">Station · corridor B</span><span class="h-0.5 w-3 shrink-0 bg-white/60"></span>
     <span class="rounded-full bg-white/20 px-3 py-1.5">Seat {{ cs.seat }}</span>
   </div>
   <div class="flex items-center gap-4 rounded-card bg-white p-4 text-on-light">
@@ -51,7 +51,7 @@
     <p><strong class="font-semibold">Next</strong> · Pads on the bare chest · follow the AED's voice.</p>
     <p class="text-label text-white/85">How Eva decided · nearest trained person to the station</p>
   </div>
-  <div class="mt-auto flex flex-col gap-3">
+  <div class="mt-auto flex flex-col gap-2.5 pt-1">
     <button type="button" class="btn-white press w-full" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"yes"}' hx-target="#screen" data-haptic-success>I have it</button>
     <button type="button" class="btn-outline press w-full" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"no"}' hx-target="#screen">I can't</button>
   </div>

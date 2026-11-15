@@ -309,7 +309,7 @@ html, body { background: var(--color-background); color: var(--color-ink); font-
 @utility bottom-dock { bottom: calc(6.5rem + max(env(safe-area-inset-bottom, 0px), var(--sab, 0px))); }
 
 /* screens move in with springs (motion.js writes --scr-x px, --scr-o, --scr-s) */
-#screen { transform: translate(calc(var(--scr-x, 0) * 1px), calc(var(--scr-y, 0) * 1px)) scale(var(--scr-s, 1)); opacity: var(--scr-o, 1); transform-origin: 50% 0; }
+#screen { transform: translate(calc(var(--scr-x, 0) * 1px), calc(var(--scr-y, 0) * 1px)) scale(var(--scr-s, 1)); opacity: var(--scr-o, 1); transform-origin: 50% 0; overflow-x: clip; }
 .edge-swipe { touch-action: none; }
 
 /* ---------- floating glass tab bar with a liquid indicator (§3.4) ---------- */
@@ -423,7 +423,8 @@ html[data-eva-mode="rules"] .tab-eva::after { content: ""; position: absolute; t
 
 /* focus mode: while a person has an emergency task (go help, bring the AED, CPR) the screen is
    theirs alone, like a full-screen modal: no tab bar, no room reserved for it */
-body:has(#screen [data-focus]) nav[aria-label="Main"] { display: none; }
+body:has(#screen [data-focus]) nav[aria-label="Main"], body:has(#screen [data-focus]) .app-header, body:has(#screen [data-focus]) .tab-fade { display: none; }
+#screen:has([data-focus]) { padding-top: max(0.75rem, env(safe-area-inset-top)); }
 #screen:has([data-focus]) { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
 /* screens slide in from the side; clip (not hidden: no scroll container, sticky still works) so the
    moving screen never widens the page and mobile browsers never zoom the layout out */
