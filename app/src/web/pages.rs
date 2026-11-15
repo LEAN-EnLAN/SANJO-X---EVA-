@@ -300,6 +300,9 @@ pub async fn dash(State(state): State<Shared>) -> Response {
         node: state.cfg.node_name.clone(),
         storm,
         hub_down: state.is_hub_down(),
+        eva_ok: crate::eva_agent::status::reason(&state.agent) == crate::eva_agent::status::Reason::Ok,
+        eva_label: crate::eva_agent::status::status_json(&state.agent)["label"].as_str().unwrap_or("").to_string(),
+        eva_hint: crate::eva_agent::status::reason(&state.agent).hint(),
     };
     Html(render(&p)).into_response()
 }

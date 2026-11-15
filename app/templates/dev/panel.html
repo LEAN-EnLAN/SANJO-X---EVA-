@@ -5,6 +5,7 @@
     <button type="button" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink" aria-label="Close" data-dev-close>{{ crate::web::ui::ic("x", 18)|safe }}</button>
   </header>
   <p class="text-xs text-muted">Node: {{ role }} · ship time {{ time }} · Eva: {{ agent_mode }}</p>
+  <p class="text-xs text-muted" data-dev-eva-status>Eva status · reason <span class="text-ink">{{ eva.0 }}</span> · key from <span class="text-ink">{{ eva.1 }}</span> · checked {{ eva.2 }}</p>
   {% if !flash.is_empty() %}<p class="rounded-tile bg-info/10 px-3 py-2 text-sm text-info">{{ flash }}</p>{% endif %}
 
   <form class="flex flex-col gap-3" hx-target="#dev-panel" hx-swap="innerHTML">

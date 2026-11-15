@@ -1,53 +1,53 @@
 {% import "mascot.html" as m %}{% import "app/_ui.html" as u %}
-<div class="flex items-center justify-between gap-3 pt-1">
-  <a {% call u::go("/app/records", c.seat, "push") %} aria-label="Past talks and records" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("history", 18)|safe }}</a>
-  <p class="text-xs uppercase tracking-label text-muted">Eva · {{ c.agent_mode }}</p>
-  <button type="button" aria-label="Type instead" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" onclick="document.getElementById('eva-text').focus()">{{ crate::web::ui::ic("keyboard", 18)|safe }}</button>
+<div class="navbar flex items-center justify-between gap-3">
+  <a {% call u::go("/app/records", c.seat, "push") %} aria-label="Past talks and records" class="icon-btn press">{{ crate::web::ui::ic("history", 24)|safe }}</a>
+  {% call u::status_chip(c) %}
+  <button type="button" aria-label="Type instead" class="icon-btn press" onclick="document.getElementById('eva-text').focus()">{{ crate::web::ui::ic("keyboard", 24)|safe }}</button>
 </div>
 
-<div class="flex flex-col items-center gap-1.5">
-  <div class="relative" data-eva-tap data-eva-hello>
-    {% call m::eva(c.mood, c.art, "size-24 min-[380px]:size-32 sm:size-36") %}
-    
+<div class="flex flex-col items-center gap-2">
+  <div class="relative py-2" data-eva-tap data-eva-hello>
+    {% call m::big(c.mood, c.art, "size-32 min-[400px]:size-40") %}
   </div>
-  <p class="text-center text-2xl leading-tight tracking-tight text-ink min-[380px]:text-3xl">Hi {{ c.first }}. How can I help?</p>
-  <p class="flex items-center gap-2 text-sm text-muted"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-info"><span class="absolute inset-0 animate-ping rounded-full bg-info motion-reduce:animate-none"></span></span><span data-eva-status>Reading your wristband live</span></p>
+  <h1 class="relative text-center text-h1 text-ink">Hi {{ c.first }}. How can I help?</h1>
+  <p class="badge badge-dot relative h-7 bg-eva/15 text-eva"><span data-eva-status>Reading your wristband live</span></p>
 </div>
 
-<div class="flex gap-2 rounded-tile bg-surface px-3 py-2.5">
-  <div class="flex flex-1 items-center gap-2">{{ crate::web::ui::pic("heart", "size-9")|safe }}<span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{% if live.vitals.hr == 0 %}—{% else %}{{ live.vitals.hr }}{% endif %}<span class="ml-0.5 text-xs text-muted">bpm</span></span><span class="text-xs text-muted">{{ live.hr_short() }}</span></span></div>
-  <div class="flex flex-1 items-center gap-2">{{ crate::web::ui::pic("oxygen", "size-9")|safe }}<span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{{ live.vitals.spo2 }}<span class="ml-0.5 text-xs text-muted">%</span></span><span class="text-xs text-muted">{% if live.vitals.spo2 >= 95 %}Good{% else %}Check{% endif %}</span></span></div>
-  <div class="flex flex-1 items-center gap-2">{{ crate::web::ui::pic("temperature", "size-9")|safe }}<span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{{ "{:.1}"|format(live.vitals.skin_c()) }}<span class="ml-0.5 text-xs text-muted">°C</span></span><span class="text-xs text-muted">{% if live.skin_word() == "usual" %}Normal{% else %}Warm{% endif %}</span></span></div>
+{% call u::status_banner(c, false) %}
+
+<div class="grid grid-cols-3 gap-2" aria-label="Your vitals">
+  <a href="/app/vitals?k=heart&amp;seat={{ c.seat }}" hx-get="/app/vitals?k=heart&amp;seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" class="tile press flex items-center gap-2 p-2.5" data-tint="heart">{{ crate::web::ui::pic("heart", "size-7")|safe }}<span class="flex flex-col leading-tight"><span class="num font-display text-base font-semibold text-ink">{% if live.vitals.hr == 0 %}—{% else %}{{ live.vitals.hr }}{% endif %}<span class="ml-0.5 text-caption text-muted">bpm</span></span><span class="text-caption text-muted">{{ live.hr_short() }}</span></span></a>
+  <a href="/app/vitals?k=lungs&amp;seat={{ c.seat }}" hx-get="/app/vitals?k=lungs&amp;seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" class="tile press flex items-center gap-2 p-2.5" data-tint="oxygen">{{ crate::web::ui::pic("oxygen", "size-7")|safe }}<span class="flex flex-col leading-tight"><span class="num font-display text-base font-semibold text-ink">{{ live.vitals.spo2 }}<span class="ml-0.5 text-caption text-muted">%</span></span><span class="text-caption text-muted">{% if live.vitals.spo2 >= 95 %}Good{% else %}Check{% endif %}</span></span></a>
+  <a href="/app/vitals?k=temperature&amp;seat={{ c.seat }}" hx-get="/app/vitals?k=temperature&amp;seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" class="tile press flex items-center gap-2 p-2.5" data-tint="temp">{{ crate::web::ui::pic("temperature", "size-7")|safe }}<span class="flex flex-col leading-tight"><span class="num font-display text-base font-semibold text-ink">{{ "{:.1}"|format(live.vitals.skin_c()) }}<span class="ml-0.5 text-caption text-muted">°C</span></span><span class="text-caption text-muted">{% if live.skin_word() == "usual" %}Normal{% else %}Warm{% endif %}</span></span></a>
 </div>
 
 <div class="-mx-5 flex snap-x gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none]" aria-label="Ask or do">
-  <button type="button" class="chip press" hx-post="/api/eva/chat" hx-vals='{"seat":"{{ c.seat }}","text":"How am I?"}' hx-target="#chat"><span class="text-info">{{ crate::web::ui::ic("heart", 14)|safe }}</span>How am I?</button>
-  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"daily_summary","args":"{}"}' hx-target="#chat" data-tool="daily_summary"><span class="text-info">{{ crate::web::ui::ic("book", 14)|safe }}</span>Log my day</button>
-  <button type="button" class="chip press" hx-post="/api/eva/chat" hx-vals='{"seat":"{{ c.seat }}","text":"I feel unwell"}' hx-target="#chat"><span class="text-info">{{ crate::web::ui::ic("frown", 14)|safe }}</span>I feel unwell</button>
-  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"show_screen","args":"{\"screen\":\"journal\"}"}' hx-target="#chat" data-tool="show_screen"><span class="text-info">{{ crate::web::ui::ic("calendar", 14)|safe }}</span>Show my week</button>
-  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"log_water","args":"{\"ml\":250}"}' hx-target="#chat" data-tool="log_water"><span class="text-info">{{ crate::web::ui::ic("glass", 14)|safe }}</span>+1 glass of water</button>
-  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"start_ecg_check","args":"{}"}' hx-target="#chat" data-tool="start_ecg_check" data-then="/app/ecg?seat={{ c.seat }}"><span class="text-info">{{ crate::web::ui::ic("zap", 14)|safe }}</span>30 s ECG</button>
-  <button type="button" class="chip press" hx-get="/app/tools?seat={{ c.seat }}" hx-target="#sheet-body" data-sheet-open><span class="text-info">{{ crate::web::ui::ic("grid", 14)|safe }}</span>All tools</button>
+  <button type="button" class="chip press" hx-post="/api/eva/chat" hx-vals='{"seat":"{{ c.seat }}","text":"How am I?"}' hx-target="#chat"><span>{{ crate::web::ui::ic("heart", 20)|safe }}</span>How am I?</button>
+  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"daily_summary","args":"{}"}' hx-target="#chat" data-tool="daily_summary"><span>{{ crate::web::ui::ic("book", 20)|safe }}</span>Log my day</button>
+  <button type="button" class="chip press" hx-post="/api/eva/chat" hx-vals='{"seat":"{{ c.seat }}","text":"I feel unwell"}' hx-target="#chat"><span>{{ crate::web::ui::ic("frown", 20)|safe }}</span>I feel unwell</button>
+  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"show_screen","args":"{\"screen\":\"journal\"}"}' hx-target="#chat" data-tool="show_screen"><span>{{ crate::web::ui::ic("calendar", 20)|safe }}</span>Show my week</button>
+  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"log_water","args":"{\"ml\":250}"}' hx-target="#chat" data-tool="log_water" data-burst="water" data-burst-mini><span>{{ crate::web::ui::ic("glass", 20)|safe }}</span>+1 glass of water</button>
+  <button type="button" class="chip press" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"start_ecg_check","args":"{}"}' hx-target="#chat" data-tool="start_ecg_check" data-then="/app/ecg?seat={{ c.seat }}"><span>{{ crate::web::ui::ic("zap", 20)|safe }}</span>30 s ECG</button>
+  <button type="button" class="chip press" hx-get="/app/tools?seat={{ c.seat }}" hx-target="#sheet-body" data-sheet-open><span>{{ crate::web::ui::ic("grid", 20)|safe }}</span>All tools</button>
 </div>
 
 <div id="chat" class="flex min-h-16 flex-1 flex-col justify-end gap-2" sse-swap="chat" aria-live="polite">{{ chat|safe }}</div>
 
 <div class="dock sticky bottom-dock z-10 -mx-5 flex flex-col gap-3 px-5 pt-5 pb-1">
-  <form class="flex items-center gap-2" hx-post="/api/eva/chat" hx-target="#chat" hx-on::after-request="this.reset()" data-eva-form>
+  <form class="relative flex items-center" hx-post="/api/eva/chat" hx-target="#chat" hx-on::after-request="this.reset()" data-eva-form>
     <input type="hidden" name="seat" value="{{ c.seat }}">
-    <label class="press inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full" aria-label="Send a photo">{{ crate::web::ui::pic("photo", "size-11")|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-seat="{{ c.seat }}"></label>
+    <label class="press absolute left-1.5 inline-grid size-10 cursor-pointer place-items-center rounded-full text-muted" aria-label="Send a photo">{{ crate::web::ui::ic("camera", 20)|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-seat="{{ c.seat }}"></label>
     <label class="sr-only" for="eva-text">Message Eva</label>
-    <input id="eva-text" name="text" autocomplete="off" required maxlength="1000" placeholder="Ask Eva" class="h-11 min-w-0 flex-1 rounded-full border border-line bg-surface px-4 text-sm text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-info">
-    <button type="submit" aria-label="Send" class="press inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-ink text-on-light">{{ crate::web::ui::ic("send", 16)|safe }}</button>
+    <input id="eva-text" name="text" autocomplete="off" required maxlength="1000" placeholder="Ask Eva" class="h-[3.25rem] min-w-0 flex-1 rounded-[26px] bg-raised pr-14 pl-12 text-body text-ink shadow-[inset_0_1px_0_#FFFFFF14] placeholder:text-muted focus-visible:outline-2 focus-visible:outline-eva">
+    <button type="submit" aria-label="Send" class="press absolute right-1.5 inline-grid size-10 place-items-center rounded-full bg-grad-eva text-on-light">{{ crate::web::ui::ic("send", 20)|safe }}</button>
   </form>
-  <div class="flex items-center justify-center gap-5">
-    <label class="press inline-flex size-12 cursor-pointer items-center justify-center rounded-full" aria-label="Send a short video">{{ crate::web::ui::pic("video", "size-12")|safe }}<input type="file" accept="video/*" capture="environment" class="sr-only" data-eva-video data-seat="{{ c.seat }}"></label>
+  <div class="flex items-center justify-center gap-6">
+    <label class="icon-btn press cursor-pointer" aria-label="Send a short video">{{ crate::web::ui::ic("video", 24)|safe }}<input type="file" accept="video/*" capture="environment" class="sr-only" data-eva-video data-seat="{{ c.seat }}"></label>
     <span class="relative grid size-20 place-items-center">
-      <span class="absolute inset-0 rounded-full bg-info/10 ring-1 ring-info/30"></span>
-      <span class="mic-halo absolute inset-0 rounded-full bg-info/15"></span>
-      <button type="button" class="press relative inline-flex size-[4.5rem] shrink-0 touch-none items-center justify-center rounded-full bg-ink text-on-light" aria-label="Hold to talk" data-eva-mic data-seat="{{ c.seat }}">{{ crate::web::ui::ic("mic", 28)|safe }}</button>
+      <span class="mic-halo absolute inset-0 rounded-full bg-eva/20"></span>
+      <button type="button" class="press relative inline-grid size-[4.5rem] shrink-0 touch-none place-items-center rounded-full bg-grad-eva text-on-light e2" aria-label="Hold to talk" data-eva-mic data-seat="{{ c.seat }}">{{ crate::web::ui::ic("mic", 28)|safe }}</button>
     </span>
-    <label class="press inline-flex size-12 cursor-pointer items-center justify-center rounded-full has-checked:ring-2 has-checked:ring-info has-focus-visible:outline-2 has-focus-visible:outline-info" title="Voice replies"><input type="checkbox" data-eva-voice class="sr-only">{{ crate::web::ui::pic("voice", "size-12")|safe }}<span class="sr-only">Voice replies</span></label>
+    <label class="icon-btn press cursor-pointer has-checked:bg-eva/25 has-checked:text-eva has-focus-visible:outline-2 has-focus-visible:outline-eva" title="Voice replies"><input type="checkbox" data-eva-voice class="sr-only">{{ crate::web::ui::ic("speaker", 24)|safe }}<span class="sr-only">Voice replies</span></label>
   </div>
-  <p class="-mt-1 text-center text-xs text-muted">Hold to talk</p>
+  <p class="-mt-1 text-center text-caption text-muted" data-eva-caption data-online="Hold to talk" data-rules="Voice needs Eva online · type or use the chips">{% if c.eva_mode == "online" %}Hold to talk{% else %}Voice needs Eva online · type or use the chips{% endif %}</p>
 </div>

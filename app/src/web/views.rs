@@ -36,6 +36,11 @@ pub struct AppCommon {
     pub storm: bool,
     pub agent_mode: &'static str,
     pub role: &'static str,
+    /// "online" | "rules" (`/api/eva/status`)
+    pub eva_mode: &'static str,
+    /// "ok" | "no_key" | "offline_flag" | "bad_key" | "unreachable"
+    pub eva_reason: &'static str,
+    pub eva_hint: &'static str,
 }
 
 pub fn common(state: &Shared, seat: &str) -> AppCommon {
@@ -57,6 +62,9 @@ pub fn common(state: &Shared, seat: &str) -> AppCommon {
         storm: w.storm.is_some(),
         agent_mode: state.agent.mode_label(),
         role: state.cfg.role.name(),
+        eva_mode: if crate::eva_agent::status::reason(&state.agent) == crate::eva_agent::status::Reason::Ok { "online" } else { "rules" },
+        eva_reason: crate::eva_agent::status::reason(&state.agent).as_str(),
+        eva_hint: crate::eva_agent::status::reason(&state.agent).hint(),
     }
 }
 
@@ -1273,6 +1281,9 @@ pub struct DashPage {
     pub node: String,
     pub storm: bool,
     pub hub_down: bool,
+    pub eva_ok: bool,
+    pub eva_label: String,
+    pub eva_hint: &'static str,
 }
 
 // ---------------------------------------------------------------- dev panel
@@ -1290,6 +1301,8 @@ pub struct DevPanel {
     pub agent_mode: &'static str,
     pub hub_down: bool,
     pub station: bool,
+    /// `/api/eva/status`: (reason, key_source, checked_at)
+    pub eva: (String, String, String),
 }
 
 // ---------------------------------------------------------------- export

@@ -6,3 +6,19 @@
 {# hero: a photo hero card (Codex kit, 1200×800) that fills the card at 4:3 under a bottom scrim, title
    bottom-left. The AI-generated notice lives in the README, not on screen. #}
 {% macro hero(file, alt, title) %}<figure class="card-hero relative shrink-0 p-0"><img src="/static/img/hero/{{ file }}.webp" alt="{{ alt }}" class="block aspect-4/3 w-full object-cover" width="1200" height="800" decoding="async"><span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,#070A14E6_100%)]" aria-hidden="true"></span>{% if !title.is_empty() %}<figcaption class="absolute bottom-5 left-6 right-6 text-h1 text-ink">{{ title }}</figcaption>{% endif %}</figure>{% endmacro %}
+{# Eva's status chip (§10.3): green Online / amber On-board rules / grey Hub unreachable. Tap opens the banner. #}
+{% macro status_chip(c) %}<button type="button" class="badge badge-dot h-8 px-3 {% if c.eva_mode == "online" %}bg-ok/15 text-ok{% else %}bg-warn/15 text-warn{% endif %}" data-eva-chip data-tone="{% if c.eva_mode == "online" %}ok{% else %}warn{% endif %}" title="{{ c.agent_mode }}"><span data-eva-chip-text>{% if c.eva_mode == "online" %}Online{% else %}On-board rules{% endif %}</span></button>{% endmacro %}
+{# the banner: what on-board rules means and how to turn Eva online. Never on emergency, storm or wristband screens. #}
+{% macro status_banner(c, once) %}<section class="card bg-tint-10 flex flex-col gap-3" data-tint="temp" data-eva-banner{% if once %} data-once{% endif %}{% if c.eva_mode == "online" %} hidden{% endif %} aria-label="Eva's status">
+  <div class="flex items-start gap-3">
+    <img src="/static/img/eva/eva-calm.webp" alt="" class="size-10 shrink-0" width="512" height="512" decoding="async">
+    <div class="flex min-w-0 flex-1 flex-col gap-1"><h2 class="text-h3 text-ink">Eva is on her on-board rules</h2><p class="text-label text-muted">She still reads your wristband, keeps your log and warns you. Open conversation, voice and photos need the hub's online key.</p></div>
+    <button type="button" class="icon-btn size-10 shrink-0" data-eva-dismiss aria-label="Dismiss">{{ crate::web::ui::ic("x", 20)|safe }}</button>
+  </div>
+  <details class="text-label text-ink"><summary class="cursor-pointer font-semibold text-warn">How to turn it on</summary>
+    <p class="mt-2 text-muted" data-eva-reason="no_key"{% if c.eva_reason != "no_key" %} hidden{% endif %}>On the computer running Eva: <strong class="text-ink">Set GROQ_API_KEY and restart</strong>. Easiest: put a file named <code>eva.env</code> next to the <code>eva</code> program with one line, <code>GROQ_API_KEY=your key</code>, then start Eva again.</p>
+    <p class="mt-2 text-muted" data-eva-reason="bad_key"{% if c.eva_reason != "bad_key" %} hidden{% endif %}>The Groq key was refused. Check GROQ_API_KEY and restart</p>
+    <p class="mt-2 text-muted" data-eva-reason="unreachable"{% if c.eva_reason != "unreachable" %} hidden{% endif %}>No internet from the hub. Eva will reconnect by herself</p>
+    <p class="mt-2 text-muted" data-eva-reason="offline_flag"{% if c.eva_reason != "offline_flag" %} hidden{% endif %}>Started with --offline</p>
+  </details>
+</section>{% endmacro %}

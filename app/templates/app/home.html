@@ -13,7 +13,7 @@
 <h1 class="-mt-1 text-h1 text-ink">{{ c.greeting }}, {{ c.first }}</h1>
 <a {% call u::go("/app/eva", c.seat, "push") %} class="card-hero press no-contain flex flex-col gap-4" data-tint="eva" aria-label="Ask Eva">
   <div class="flex items-center gap-2">
-    <div id="live-hero" class="flex min-w-0 flex-1 flex-col gap-3" sse-swap="live-hero" hx-target="this">{{ hero|safe }}</div>
+    <div id="live-hero" class="relative z-[1] flex min-w-0 flex-1 flex-col gap-3" sse-swap="live-hero" hx-target="this">{{ hero|safe }}</div>
     <div class="relative grid shrink-0 place-items-center" data-eva-tap>{% call m::big(c.mood, c.art, "size-[8.25rem]") %}</div>
   </div>
   <span class="flex h-12 items-center gap-3 rounded-full bg-white/10 pr-1 pl-4 shadow-[inset_0_1px_0_#FFFFFF24]">
@@ -21,7 +21,7 @@
     <span class="grid size-10 place-items-center rounded-full bg-grad-eva text-on-light" aria-hidden="true">{{ crate::web::ui::ic("mic", 20)|safe }}</span>
   </span>
 </a>
-<div id="eva-status-home" data-eva-banner-slot="home"></div>
+{% call u::status_banner(c, true) %}
 <div id="live" class="flex flex-col gap-4" sse-swap="live">{{ live|safe }}</div>
 <div class="grid grid-cols-4 gap-2" aria-label="Quick actions">
   <a {% call u::go("/app/checkin", c.seat, "push") %} class="tile press flex flex-col items-center gap-1.5 px-1 py-3 text-label font-semibold text-ink" data-tint="mood">{{ crate::web::ui::pic("mood", "size-14")|safe }}Check-in</a>

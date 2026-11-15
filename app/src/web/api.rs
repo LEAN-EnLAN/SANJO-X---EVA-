@@ -520,6 +520,11 @@ pub fn dev_panel_html(state: &Shared, flash: &str) -> String {
         agent_mode: state.agent.mode_label(),
         hub_down: state.is_hub_down(),
         station: state.station_device.get().is_some(),
+        eva: {
+            let s = eva_agent::status::status_json(&state.agent);
+            let f = |k: &str| s[k].as_str().unwrap_or("").to_string();
+            (f("reason"), f("key_source"), f("checked_at"))
+        },
     })
 }
 

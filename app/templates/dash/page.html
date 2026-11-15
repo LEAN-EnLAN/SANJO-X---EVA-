@@ -8,6 +8,7 @@
 <body class="min-h-dvh bg-background text-ink antialiased" data-view="dash">
 <div class="flex min-h-dvh" hx-ext="sse" sse-connect="/sse/dash">
   <div class="hidden" sse-swap="eva" hx-swap="none"></div>
+  <div class="hidden" sse-swap="eva-status" hx-swap="none"></div>
   <nav class="hidden w-18 shrink-0 border-r border-line bg-surface md:block" aria-label="Sections">
    <div class="sticky top-0 flex h-dvh flex-col items-center gap-2 py-5">
     <a href="#top" title="Overview" class="relative grid size-11 place-items-center rounded-full bg-ink text-on-light">{{ crate::web::ui::ic("home", 19)|safe }}</a>
@@ -34,6 +35,7 @@
         <a href="/export/records.csv" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("download", 14)|safe }}CSV</a>
         <a href="/export/records.json" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("download", 14)|safe }}JSON</a>
       </div>
+      <span class="badge badge-dot h-8 px-3 {% if eva_ok %}bg-ok/15 text-ok{% else %}bg-warn/15 text-warn{% endif %}" data-eva-chip data-online-text="Eva online" title="{{ eva_label }}"><span data-eva-chip-text>{% if eva_ok %}Eva online{% else %}On-board rules{% endif %}</span><span class="hidden text-muted xl:inline" data-eva-hint>{% if !eva_ok %}{{ eva_hint }}{% endif %}</span></span>
       <span class="ml-auto flex items-center gap-2.5">
         <span class="inline-grid size-10 shrink-0 place-items-center rounded-full bg-info/15 text-sm font-medium text-info">{{ initials }}</span>
         <span class="flex flex-col leading-tight"><span class="text-sm text-ink">{{ person }}</span><span class="text-xs text-muted">{{ person_role }}</span></span>

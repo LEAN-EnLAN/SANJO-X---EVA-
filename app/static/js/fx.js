@@ -63,6 +63,7 @@
   // ---------------------------------------------------------------- rolling counters (§3.2)
   var prev = {};
   function splitCount(el) {
+    if (el.querySelector(".count")) return; // already split
     var name = el.getAttribute("data-count"), text = el.textContent.trim();
     if (!/\d/.test(text)) { prev[name] = null; return; }
     var old = prev[name];
@@ -239,20 +240,23 @@
     html.setAttribute("data-eva-mode", s.mode);
     doc.querySelectorAll("[data-eva-chip]").forEach(function (c) {
       c.setAttribute("data-tone", s.mode === "online" ? "ok" : "warn");
-      var w = c.querySelector("[data-eva-chip-text]"); if (w) w.textContent = s.mode === "online" ? "Online" : "On-board rules";
+      var w = c.querySelector("[data-eva-chip-text]"); if (w) w.textContent = s.mode === "online" ? (c.getAttribute("data-online-text") || "Online") : "On-board rules";
+      c.classList.toggle("bg-ok/15", s.mode === "online"); c.classList.toggle("text-ok", s.mode === "online"); c.classList.toggle("bg-warn/15", s.mode !== "online"); c.classList.toggle("text-warn", s.mode !== "online");
     });
     doc.querySelectorAll("[data-eva-hint]").forEach(function (h) { h.textContent = s.hint || ""; });
     doc.querySelectorAll("[data-eva-reason]").forEach(function (h) { h.hidden = h.getAttribute("data-eva-reason") !== s.reason; });
     doc.querySelectorAll("[data-eva-caption]").forEach(function (c) { c.textContent = s.mode === "online" ? c.getAttribute("data-online") : c.getAttribute("data-rules"); });
     var dismissed = false; try { dismissed = sessionStorage.getItem("eva-status-dismissed") === "1"; } catch (e) {}
-    doc.querySelectorAll("[data-eva-banner]").forEach(function (b) { b.hidden = s.mode === "online" || dismissed || (b.hasAttribute("data-once") && seenOnce()); });
+    doc.querySelectorAll("[data-eva-banner]").forEach(function (b) {
+      if (b.hasAttribute("data-once") && !b._once) { var seen = false; try { seen = sessionStorage.getItem("eva-status-home") === "1"; if (s.mode !== "online") sessionStorage.setItem("eva-status-home", "1"); } catch (e) {} b._once = seen ? "hide" : "show"; }
+      b.hidden = s.mode === "online" || dismissed || b._once === "hide";
+    });
     if (live && was && was.mode !== "online" && s.mode === "online") {
       if (window.Eva) window.Eva.toast("Eva is online");
       haptic("success");
       if (M()) { M().setMood("happy"); setTimeout(function () { M().setMood("idle"); }, 2500); }
     }
   }
-  function seenOnce() { try { var v = sessionStorage.getItem("eva-status-home"); sessionStorage.setItem("eva-status-home", "1"); return v === "1" && !doc.querySelector("[data-eva-banner][data-once]:not([hidden])"); } catch (e) { return false; } }
   function refreshStatus() {
     if (!doc.body || doc.body.getAttribute("data-view") === "station") return;
     fetch("/api/eva/status", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (s) { applyStatus(s, true); })
