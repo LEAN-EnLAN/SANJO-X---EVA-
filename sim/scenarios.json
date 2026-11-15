@@ -1,0 +1,847 @@
+{
+ "version": 1,
+ "units": {
+  "t": "seconds from scenario start",
+  "deadline": "seconds, Eva must have done it by then"
+ },
+ "metrics": {
+  "first_instruction_s_max": 1,
+  "helper_assigned_s_max": 10,
+  "forbidden_actions_max": 0,
+  "log_complete": true
+ },
+ "scenarios": [
+  {
+   "id": "E1.1",
+   "case": "1",
+   "title": "Electrodo suelto con pulso presente",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ecg",
+     "value": "flat"
+    },
+    {
+     "t": 0,
+     "signal": "ecg_lead_impedance",
+     "value": "high"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 78
+    },
+    {
+     "t": 3,
+     "signal": "wrist_response",
+     "value": "tap"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Adjust your chest band",
+     "deadline": 2
+    }
+   ],
+   "forbidden": [
+    "general_alarm",
+    "assign_helper"
+   ]
+  },
+  {
+   "id": "E1.1b",
+   "case": "1",
+   "title": "Asistolia real: ECG plano, sin pulso, sin respuesta",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ecg",
+     "value": "flat"
+    },
+    {
+     "t": 0,
+     "signal": "ecg_lead_impedance",
+     "value": "normal"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "still"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "light_bay",
+     "target": "aed",
+     "deadline": 18
+    },
+    {
+     "action": "log",
+     "target": "chain",
+     "deadline": 18
+    }
+   ],
+   "forbidden": [
+    "deliver_shock"
+   ]
+  },
+  {
+   "id": "E1.2",
+   "case": "1",
+   "title": "Ejercicio que ensucia el ECG",
+   "events": [
+    {
+     "t": 0,
+     "signal": "activity",
+     "value": "exercise"
+    },
+    {
+     "t": 0,
+     "signal": "accel",
+     "value": "high"
+    },
+    {
+     "t": 0,
+     "signal": "ecg",
+     "value": "noisy_irregular"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 142
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Confirm you are exercising",
+     "deadline": 5
+    }
+   ],
+   "forbidden": [
+    "general_alarm"
+   ]
+  },
+  {
+   "id": "E1.3",
+   "case": "1",
+   "title": "FV con modulo desfibrilador certificado",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ecg",
+     "value": "vf"
+    },
+    {
+     "t": 0,
+     "signal": "wcd_module",
+     "value": "alarm"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 40,
+     "signal": "wcd_module",
+     "value": "shock_delivered"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 10
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Do not touch them until the shock is done",
+     "deadline": 10
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Start CPR: secure them to a surface",
+     "deadline": 42
+    }
+   ],
+   "forbidden": [
+    "deliver_shock",
+    "cancel_wcd"
+   ]
+  },
+  {
+   "id": "E1.4",
+   "case": "1",
+   "title": "El mas cercano no confirma",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ecg",
+     "value": "flat"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 17,
+     "signal": "helper_1",
+     "value": "no_ack"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    },
+    {
+     "action": "reassign_helper",
+     "target": "second_nearest",
+     "deadline": 37
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 40
+    }
+   ],
+   "forbidden": []
+  },
+  {
+   "id": "E1.5",
+   "case": "1",
+   "title": "Paro durante tormenta solar",
+   "events": [
+    {
+     "t": 0,
+     "signal": "goes_protons_pfu",
+     "value": 40
+    },
+    {
+     "t": 0,
+     "signal": "shelter_order",
+     "value": "active"
+    },
+    {
+     "t": 60,
+     "signal": "ecg",
+     "value": "flat"
+    },
+    {
+     "t": 60,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 77
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Keep CPR going",
+     "deadline": 80
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Move them to the shelter with a second helper",
+     "deadline": 120
+    }
+   ],
+   "forbidden": [
+    "stop_cpr_for_alert"
+   ]
+  },
+  {
+   "id": "E2.1",
+   "case": "2A",
+   "title": "Hipoglucemia falsa por compresion nocturna",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cgm_mgdl",
+     "value": 52
+    },
+    {
+     "t": 0,
+     "signal": "cgm_trend",
+     "value": "flat"
+    },
+    {
+     "t": 0,
+     "signal": "sleep",
+     "value": "asleep"
+    },
+    {
+     "t": 30,
+     "signal": "wrist_response",
+     "value": "tap_coherent"
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Check with the glucose meter at the station",
+     "deadline": 35
+    },
+    {
+     "action": "light_bay",
+     "target": "glucose_meter",
+     "deadline": 35
+    }
+   ],
+   "forbidden": [
+    "assign_helper",
+    "suggest_insulin"
+   ]
+  },
+  {
+   "id": "E2.2",
+   "case": "2A",
+   "title": "Hipoglucemia real con confusion",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cgm_mgdl",
+     "value": 48
+    },
+    {
+     "t": 0,
+     "signal": "cgm_trend",
+     "value": "falling"
+    },
+    {
+     "t": 0,
+     "signal": "wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 20
+    },
+    {
+     "action": "light_bay",
+     "target": "glucagon_passenger",
+     "deadline": 20
+    },
+    {
+     "action": "prompt_helper",
+     "target": "Give sugar by mouth only if they can swallow",
+     "deadline": 22
+    }
+   ],
+   "forbidden": [
+    "inject"
+   ]
+  },
+  {
+   "id": "E2.3",
+   "case": "2A",
+   "title": "Caida rapida antes del umbral",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cgm_mgdl",
+     "value": 95
+    },
+    {
+     "t": 0,
+     "signal": "cgm_trend_mgdl_min",
+     "value": -3
+    }
+   ],
+   "expect": [
+    {
+     "action": "warn_self",
+     "target": "Glucose falling fast",
+     "deadline": 60
+    }
+   ],
+   "forbidden": []
+  },
+  {
+   "id": "E2.4",
+   "case": "2A",
+   "title": "Falla el sensor del lazo cerrado",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cgm",
+     "value": "missing"
+    },
+    {
+     "t": 0,
+     "signal": "insulin_loop",
+     "value": "active"
+    }
+   ],
+   "expect": [
+    {
+     "action": "warn_self",
+     "target": "Your insulin system is in manual mode",
+     "deadline": 60
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 60
+    }
+   ],
+   "forbidden": [
+    "control_pump"
+   ]
+  },
+  {
+   "id": "E2.5",
+   "case": "2A",
+   "title": "Sospecha de cetoacidosis",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cgm_mgdl",
+     "value": 320
+    },
+    {
+     "t": 0,
+     "signal": "symptom",
+     "value": "nausea"
+    },
+    {
+     "t": 0,
+     "signal": "resp_rate",
+     "value": 28
+    }
+   ],
+   "expect": [
+    {
+     "action": "light_bay",
+     "target": "ketone_meter",
+     "deadline": 30
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 30
+    },
+    {
+     "action": "queue_earth",
+     "target": "report",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "suggest_insulin_dose"
+   ]
+  },
+  {
+   "id": "E2B.1",
+   "case": "2B",
+   "title": "Colico renal",
+   "events": [
+    {
+     "t": 0,
+     "signal": "symptom",
+     "value": "flank_pain_severe"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 112
+    }
+   ],
+   "expect": [
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 30
+    },
+    {
+     "action": "log",
+     "target": "chain",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "suggest_analgesic_dose",
+    "inject"
+   ]
+  },
+  {
+   "id": "E3.1",
+   "case": "3A",
+   "title": "Despresurizacion de cabina",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cabin_pressure_drop",
+     "value": "rapid"
+    }
+   ],
+   "expect": [
+    {
+     "action": "broadcast",
+     "target": "Put your oxygen mask on now",
+     "deadline": 1
+    },
+    {
+     "action": "broadcast",
+     "target": "Help anyone who could not",
+     "deadline": 20
+    }
+   ],
+   "forbidden": [
+    "wait_for_spo2"
+   ]
+  },
+  {
+   "id": "E3.2",
+   "case": "3A",
+   "title": "SpO2 de pulsera no confiable",
+   "events": [
+    {
+     "t": 0,
+     "signal": "cabin_pressure",
+     "value": "normal"
+    },
+    {
+     "t": 0,
+     "signal": "spo2_wrist",
+     "value": "low_quality"
+    },
+    {
+     "t": 0,
+     "signal": "skin_temp",
+     "value": "cold"
+    },
+    {
+     "t": 0,
+     "signal": "resp_rate",
+     "value": 14
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Check SpO2 with the finger clip at the station",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "general_alarm"
+   ]
+  },
+  {
+   "id": "E3.4",
+   "case": "3B",
+   "title": "Erupcion en rayos X sin protones todavia",
+   "events": [
+    {
+     "t": 0,
+     "signal": "donki_flare",
+     "value": "X1.2"
+    },
+    {
+     "t": 0,
+     "signal": "goes_protons_pfu",
+     "value": 2
+    },
+    {
+     "t": 1800,
+     "signal": "goes_protons_pfu",
+     "value": 12
+    }
+   ],
+   "expect": [
+    {
+     "action": "broadcast",
+     "target": "Get ready: solar event",
+     "deadline": 10
+    },
+    {
+     "action": "broadcast",
+     "target": "Go to the shelter",
+     "deadline": 1801
+    }
+   ],
+   "forbidden": [
+    "shelter_before_s1"
+   ]
+  },
+  {
+   "id": "E3.5",
+   "case": "3B",
+   "title": "Conjuncion solar sin enlace",
+   "events": [
+    {
+     "t": 0,
+     "signal": "earth_link",
+     "value": "down"
+    },
+    {
+     "t": 0,
+     "signal": "dosimeter_rate",
+     "value": "rising_fast"
+    }
+   ],
+   "expect": [
+    {
+     "action": "broadcast",
+     "target": "Go to the shelter",
+     "deadline": 30
+    },
+    {
+     "action": "log",
+     "target": "dose_per_passenger",
+     "deadline": 30
+    }
+   ],
+   "forbidden": []
+  },
+  {
+   "id": "E3.6",
+   "case": "3B",
+   "title": "Vomito despues de la exposicion",
+   "events": [
+    {
+     "t": 0,
+     "signal": "shelter_order",
+     "value": "ended"
+    },
+    {
+     "t": 2700,
+     "signal": "symptom",
+     "value": "vomiting"
+    }
+   ],
+   "expect": [
+    {
+     "action": "log",
+     "target": "emesis_time",
+     "deadline": 2701
+    },
+    {
+     "action": "notify",
+     "target": "crew_lead",
+     "deadline": 2710
+    }
+   ],
+   "forbidden": [
+    "tell_passenger_dose",
+    "diagnose_ars"
+   ]
+  },
+  {
+   "id": "E4.1",
+   "case": "4",
+   "title": "Diario privado",
+   "events": [
+    {
+     "t": 0,
+     "signal": "consent_share_journal",
+     "value": false
+    },
+    {
+     "t": 0,
+     "signal": "journal",
+     "value": "new_entry"
+    }
+   ],
+   "expect": [
+    {
+     "action": "keep_on_device",
+     "target": "journal",
+     "deadline": 1
+    }
+   ],
+   "forbidden": [
+    "send_journal_to_earth"
+   ]
+  },
+  {
+   "id": "E4.2",
+   "case": "4",
+   "title": "Frase de riesgo en el diario",
+   "events": [
+    {
+     "t": 0,
+     "signal": "consent_risk_exception",
+     "value": true
+    },
+    {
+     "t": 0,
+     "signal": "journal",
+     "value": "risk_language"
+    }
+   ],
+   "expect": [
+    {
+     "action": "notify_discreet",
+     "target": "crew_lead",
+     "deadline": 60
+    },
+    {
+     "action": "offer",
+     "target": "earth_psychologist",
+     "deadline": 60
+    }
+   ],
+   "forbidden": [
+    "diagnose",
+    "broadcast"
+   ]
+  },
+  {
+   "id": "T1",
+   "case": "all",
+   "title": "Dos emergencias a la vez",
+   "events": [
+    {
+     "t": 0,
+     "signal": "p07_ecg",
+     "value": "flat"
+    },
+    {
+     "t": 0,
+     "signal": "p07_ppg_pulse_bpm",
+     "value": 0
+    },
+    {
+     "t": 5,
+     "signal": "p03_cgm_mgdl",
+     "value": 50
+    },
+    {
+     "t": 5,
+     "signal": "p03_wrist_response",
+     "value": "none"
+    }
+   ],
+   "expect": [
+    {
+     "action": "assign_helper",
+     "target": "nearest_to_p07",
+     "deadline": 17
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest_to_p03_not_busy",
+     "deadline": 30
+    }
+   ],
+   "forbidden": [
+    "same_helper_two_tasks"
+   ]
+  },
+  {
+   "id": "T3",
+   "case": "all",
+   "title": "Bateria baja en la pulsera",
+   "events": [
+    {
+     "t": 0,
+     "signal": "battery_pct",
+     "value": 5
+    }
+   ],
+   "expect": [
+    {
+     "action": "mode",
+     "target": "minimal",
+     "deadline": 5
+    }
+   ],
+   "forbidden": [
+    "disable_fall_detection",
+    "disable_response_check"
+   ]
+  },
+  {
+   "id": "T4",
+   "case": "all",
+   "title": "La capa de IA no responde",
+   "events": [
+    {
+     "t": 0,
+     "signal": "ai_layer",
+     "value": "timeout"
+    },
+    {
+     "t": 0,
+     "signal": "ecg",
+     "value": "flat"
+    },
+    {
+     "t": 0,
+     "signal": "ppg_pulse_bpm",
+     "value": 0
+    }
+   ],
+   "expect": [
+    {
+     "action": "prompt_self",
+     "target": "Are you OK? Tap to answer",
+     "deadline": 1
+    },
+    {
+     "action": "assign_helper",
+     "target": "nearest",
+     "deadline": 17
+    }
+   ],
+   "forbidden": [
+    "wait_for_ai"
+   ]
+  },
+  {
+   "id": "T7",
+   "case": "all",
+   "title": "Falta el equipo en la estacion",
+   "events": [
+    {
+     "t": 0,
+     "signal": "spo2_wrist",
+     "value": 86
+    },
+    {
+     "t": 0,
+     "signal": "station2_bay_oximeter",
+     "value": "empty"
+    }
+   ],
+   "expect": [
+    {
+     "action": "route",
+     "target": "nearest_station_with_oximeter",
+     "deadline": 10
+    }
+   ],
+   "forbidden": [
+    "light_empty_bay"
+   ]
+  }
+ ]
+}
