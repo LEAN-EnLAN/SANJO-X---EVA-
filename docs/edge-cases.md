@@ -198,14 +198,14 @@ Formato de cada edge case: situación, qué hace Eva, qué nunca hace y criterio
 ### T12 · El traje queda entre las dos partes del brazalete
 
 - **Qué pasa:** el pasajero se pone el traje con el módulo de sensores en la piel y la interfaz sobre la manga. Los imanes sostienen, pero los pines no tocan.
-- **Riesgo:** los sensores quedan con su batería chica y sin cable de datos hacia la interfaz.
-- **Cómo responde Eva:** la interfaz detecta que no hay contacto en los pines y pasa a modo traje. Los sensores bajan la frecuencia de muestreo a lo mínimo que mantiene las alarmas y mandan los datos por el enlace corto (propuesta NFC o BLE, a validar). La pantalla muestra la carga de la batería chica y el tiempo estimado que queda. Con poca carga, avisa con tiempo para volver a unir las partes.
-- **Para validar:** autonomía real de la batería chica y si el enlace corto atraviesa las capas del traje.
+- **Riesgo:** los sensores quedan con su batería chica y sin pines hacia la interfaz.
+- **Cómo responde Eva:** la interfaz detecta que no hay contacto en los pines y pasa a modo traje. Los sensores bajan la frecuencia de muestreo a lo mínimo que mantiene las alarmas y siguen mandando los datos por LoRa, como cuando están unidas (las dos partes tienen LoRa). La pantalla muestra la carga de la batería chica y el tiempo estimado que queda. Con poca carga, avisa con tiempo para volver a unir las partes.
+- **Para validar:** autonomía real de la batería chica con LoRa transmitiendo a potencia mínima.
 
 ### T13 · Las partes se separan o la interfaz queda lejos
 
 - **Qué pasa:** la interfaz se suelta (golpe, maniobra) o el pasajero se la saca y el módulo de sensores sigue en la piel.
-- **Cómo responde Eva:** el módulo de sensores sigue midiendo con su batería y guarda los datos. Si pierde el enlace con la interfaz por más de unos segundos, el hub avisa al pasajero y a la tripulación. Una alarma crítica detectada sin interfaz se manda por la malla desde el hub y, si hay, por la pulsera del compañero más cercano.
+- **Cómo responde Eva:** el módulo de sensores sigue midiendo con su batería y guarda los datos. Como tiene LoRa propio, sigue mandando sus datos al hub aunque la interfaz no esté. Si la interfaz no responde por más de unos segundos, el hub avisa al pasajero y a la tripulación. Una alarma crítica detectada sin interfaz se manda por la malla desde el hub y, si hay, por la pulsera del compañero más cercano.
 
 ### T14 · Mala señal óptica en la muñeca
 
