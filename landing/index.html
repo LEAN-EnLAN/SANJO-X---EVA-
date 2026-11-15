@@ -76,6 +76,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .chip img{filter:blur(calc((1 - var(--mo,1)) * 9px))}
 .hero #heroSky{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .chip img{width:100%;height:100%;object-fit:cover;transform:scale(1.14);will-change:transform}
+/* a cut-out object (transparent WebP) floats on the sky instead of a framed photo: no crop, a soft alpha contact shadow from CSS */
+.chip.cut{overflow:visible}
+.chip.cut img{object-fit:contain;transform:scale(1.22);filter:blur(calc((1 - var(--mo,1)) * 9px)) drop-shadow(0 12px 14px rgba(0,0,0,.45))}
 .hint{position:absolute;z-index:4;left:20px;bottom:18px;font-size:var(--t-util);color:var(--muted);opacity:calc(1 - var(--s,0)*3)}
 
 /* 2 · Statement */
@@ -134,18 +137,34 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* station legend: the twelve compartments in English */
 .kit2{padding-block:72px 120px}
-.cgrid{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:0 20px;margin-top:28px}
-.cgrid li{display:grid;grid-template-columns:2.2em 1fr;gap:4px 10px;padding:14px 0 18px;border-top:1px solid var(--rule)}
-.cgrid b{font-weight:400;font-size:var(--t-util);color:var(--muted);font-variant-numeric:tabular-nums}
-.cgrid span{font-size:var(--t-label);line-height:1.05}
-.cgrid small{grid-column:2;font-size:15px;line-height:1.3;color:var(--muted)}
-.cgrid li.on{border-top:3px solid var(--teal);padding-top:12px}
-.cgrid li.on b{color:var(--teal)}
+/* station: number + name + one example in two columns (01–06, 07–12), each paired with a numbered dot on the photo */
+.kgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px 40px;margin-top:28px;align-items:start}
+.kfig{margin:0;display:grid;gap:10px}
+.kfig figcaption{font-size:15px;line-height:1.3;color:var(--muted)}
+.kpic{position:relative}
+.kpic img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.kdot{position:absolute;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:var(--mark);color:#0c0c0c;font-size:11px;line-height:24px;text-align:center;font-variant-numeric:tabular-nums;box-shadow:0 0 0 4px rgba(255,216,74,.22),0 0 16px rgba(255,216,74,.6);transition:transform .25s var(--ease);cursor:pointer;user-select:none;-webkit-user-select:none}
+.kdot.c0{background:#1fe5c4;box-shadow:0 0 0 4px rgba(31,229,196,.28),0 0 18px rgba(31,229,196,.75)}
+.kdot.hl{transform:scale(1.4);z-index:2}
+.kbox{position:absolute;border:2px solid var(--mark);box-shadow:0 0 14px rgba(255,216,74,.45);opacity:0;transition:opacity .25s var(--ease);pointer-events:none}
+.kbox.c0{border-color:#1fe5c4;box-shadow:0 0 14px rgba(31,229,196,.5)}
+.kbox.on{opacity:1}
+.clist{list-style:none;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(6,auto);grid-auto-flow:column;gap:0 24px}
+.clist li{display:grid;grid-template-columns:2.2em 1fr;gap:2px 10px;padding:11px 0 12px;border-top:1px solid var(--rule);cursor:default;-webkit-tap-highlight-color:transparent}
+.clist b{font-weight:400;font-size:var(--t-util);color:var(--muted);font-variant-numeric:tabular-nums;grid-row:span 2;transition:color .2s}
+.clist span{font-size:clamp(17px,1.75vw,25px);line-height:1.05}
+.clist small{grid-column:2;font-size:15px;line-height:1.3;color:var(--muted)}
+.clist li.on{border-top:3px solid var(--teal);padding-top:9px}
+.clist li.on b{color:var(--teal)}
+.clist li.hl{border-top-color:var(--ink)}.clist li.on.hl{border-top-color:var(--teal)}
+.clist li.hl b{color:var(--ink)}
+.clist li.hl span{text-decoration:underline 2px var(--mark);text-underline-offset:5px}
+.clist li:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .variants{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:56px}
 .variants figure{margin:0;display:grid;gap:10px}
 .variants img{width:100%;aspect-ratio:4/3;object-fit:cover}
 .variants figcaption{font-size:15px;line-height:1.3;color:var(--muted)}
-@media (max-width:760px){.cgrid{grid-template-columns:1fr 1fr}.cgrid li{grid-template-columns:1fr;gap:4px;align-content:start}.cgrid small{grid-column:1}.cgrid span{font-size:18px}.variants{grid-template-columns:1fr}}
+@media (max-width:760px){.kgrid{grid-template-columns:1fr}.clist{gap:0 14px}.clist li{grid-template-columns:1.7em 1fr;gap:1px 6px;padding:9px 0 10px}.clist li.on{padding-top:7px}.clist span{font-size:16px}.clist small{font-size:12.5px}.clist b{font-size:13px}.kdot{width:20px;height:20px;margin:-10px 0 0 -10px;line-height:20px;font-size:10px}.variants{grid-template-columns:1fr}}
 
 /* pinned step scenes (Case A / B) */
 .storyp{height:420svh}
@@ -211,7 +230,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .bandp .ptxt{left:max(20px,env(safe-area-inset-left,0px));top:0;bottom:0;width:min(420px,31vw)}
 .bandp .bview{position:absolute;right:max(20px,2vw);top:0;bottom:0;width:calc(100% - min(420px,31vw) - 80px);display:grid;place-items:center}
 .bfig{position:relative;width:min(100%,(100svh - 72px - 60px)*1.5);aspect-ratio:1536/1024}
-.bfig .bi,.bfig .bsuit{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(.985);transition:opacity .7s var(--ease),transform 1.1s var(--ease)}
+.bfig .bi{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(.985);transition:opacity .7s var(--ease),transform 1.1s var(--ease)}
 .bfig .on{opacity:1;transform:none}
 .bfig .hs{position:absolute;inset:0;opacity:0;transition:opacity .5s var(--ease) .2s;pointer-events:none}
 .bfig .hs.on{opacity:1}
@@ -225,8 +244,53 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .bscr .ui .sub{font-size:30px;color:rgba(244,243,240,.66)}
 .bscr .ui svg{align-self:center;width:100%;height:120px}
 .bscr .ui path{fill:none;stroke:#1fe5c4;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
-.bsuit text{font-family:var(--font)}
 .bfig .bi{mix-blend-mode:multiply;filter:brightness(1.015)} /* lifts the renders' 253–254 backdrop to white so it melts into the stage */
+/* suit mode: an isometric exploded stack in CSS 3D. It starts flat, exactly over the base in the previous step's render
+   (body centre 25.4% / 49%, body width 44.9% of the frame), then turns to an isometric view and the layers part.
+   --bw is the figure width in px (set from JS); B = base body width. Layer images are cut so their bodies centre at the given %. */
+.bfig .bsuit3{position:absolute;inset:0;opacity:0;transition:opacity .35s var(--ease);pointer-events:none;--bk:.36;--B:calc(var(--bw,900) * var(--bk) * 1px)}
+.bfig .bsuit3.on{opacity:1}
+.s3-stack{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
+  transform:translate(calc(var(--bw,900) * -.246px),calc(var(--bw,900) * -.0067px)) scale(calc(.449 / var(--bk))) rotateX(0deg) rotateZ(0deg);
+  transition:transform 1.1s var(--ease)}
+.s3-l{position:absolute;left:0;top:0;transform-style:preserve-3d;transform:translateZ(0) translate(-50.7%,-48.9%);transition:transform 1.1s var(--ease)}
+.s3-l img{display:block;width:100%;height:auto;position:relative}
+.s3-l img.x{position:absolute;left:0;top:0;transform:translateZ(calc(var(--B) * var(--d) * -.011));filter:brightness(.42) contrast(1.1)} /* stacked darker copies give each part its thickness */
+.s3-base{width:calc(var(--B) * 1.058)}
+.s3-sleeve{width:calc(var(--B) * 1.058);aspect-ratio:960/947;opacity:0;transition:transform 1.1s var(--ease),opacity .5s var(--ease)}
+.s3-scr{width:calc(var(--B) * 1.027);transform:translateZ(0) translate(-50.3%,-50%)}
+/* the suit sleeve: a cream woven fabric plane, wider than the band along the arm, soft at the cut edges */
+.s3-fab{position:absolute;left:-34%;right:-34%;top:19%;bottom:19%;border-radius:4% / 7%;
+  background:repeating-linear-gradient(90deg,rgba(120,104,78,.13) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(120,104,78,.11) 0 1px,transparent 1px 3px),linear-gradient(180deg,#efe9dc,#e2d9c6 55%,#d9cfba);
+  box-shadow:inset 0 0 0 1px rgba(120,104,78,.18);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+.s3-fab::after{content:"";position:absolute;left:0;right:0;top:9%;border-top:1.5px dashed rgba(120,104,78,.45)}
+.s3-mag{position:absolute;width:7%;aspect-ratio:1;margin:-3.5% 0 0 -3.5%;border-radius:50%;border:2px dashed var(--orange);background:rgba(242,138,26,.12)}
+.s3-a{position:absolute;width:0;height:0}
+.bsuit3.open .s3-stack{transform:translate(0,calc(var(--bw,900) * .012px)) scale(1) rotateX(57deg) rotateZ(-45deg)}
+.bsuit3.open .s3-scr{transform:translateZ(calc(var(--B) * .46)) translate(-50.3%,-50%);transition-delay:.08s}
+.bsuit3.open .s3-sleeve{opacity:1;transform:translateZ(calc(var(--B) * .04)) translate(-50.7%,-48.9%);transition-delay:.16s}
+.bsuit3.open .s3-base{transform:translateZ(calc(var(--B) * -.36)) translate(-50.7%,-48.9%);transition-delay:.24s}
+/* labels: page hotspot style, pinned by thin leaders once the stack has settled */
+.s3-lead{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.s3-lead path{fill:none;stroke:#0c0c0c;stroke-width:1}
+.s3-lead circle{fill:var(--orange);stroke:#0c0c0c;stroke-width:1}
+.s3-lead text{font:600 10px var(--font);fill:#0c0c0c;text-anchor:middle;dominant-baseline:central}
+.s3-lora{position:absolute;left:0;top:0;width:clamp(22px,3.2%,36px);overflow:visible}
+.s3-lora path{fill:none;stroke:var(--net);stroke-width:2.4;stroke-linecap:round}
+.s3-lead,.s3-lora,.s3-tags{opacity:0;transition:opacity .35s var(--ease)}
+.bsuit3.set .s3-lead,.bsuit3.set .s3-lora,.bsuit3.set .s3-tags{opacity:1}
+.s3-tags{list-style:none;position:absolute;inset:0}
+.s3-tags li{position:absolute;left:0;top:0;max-width:var(--tw,200px);display:grid;gap:3px;font-size:13px;line-height:1.2;padding:6px 8px;background:#0c0c0c;color:#fff}
+.s3-tags b{font-weight:400}
+.s3-tags small{font-size:11.5px;color:rgba(255,255,255,.7)}
+/* narrow figures: a bigger stack, numbered dots and a legend under it */
+.bsuit3.leg{--bk:.42}
+.bsuit3.leg .s3-tags{inset:auto 0 auto 0;top:calc(100% + 8px);display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.bsuit3.leg .s3-tags li{position:static;max-width:none;background:none;color:var(--ink);padding:0 0 0 20px;font-size:11.5px;line-height:1.2;transform:none!important;position:relative}
+.bsuit3.leg .s3-tags li::before{content:attr(data-n);position:absolute;left:0;top:0;width:15px;height:15px;border-radius:50%;background:var(--orange);color:#0c0c0c;font-size:10px;line-height:15px;text-align:center;box-shadow:0 0 0 1px #0c0c0c}
+.bsuit3.leg .s3-tags small{display:none}
+@media (prefers-reduced-motion:reduce){.s3-stack,.s3-l,.s3-lead,.s3-lora,.s3-tags{transition:none!important}}
 @media (max-width:760px){
   .storyp.bandp .ptxt{left:0;right:0;width:auto;top:auto;bottom:0;align-content:end;padding:40px max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(transparent,var(--canvas) 24%)}
   .bandp .bview{left:0;right:0;width:auto;top:56px;bottom:38%;padding:0 4px;place-items:center}
@@ -238,47 +302,91 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* sensors record → Eva acts */
 .spin{padding-block:20px 120px}
-.ba{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:stretch;margin-top:40px}
-.ba > div{display:grid;align-content:start;gap:14px;border-top:1px solid var(--rule);padding-top:16px}
-.ba .now{border-top:3px solid var(--ink);padding-top:14px}
-.ba h3{font-size:var(--t-sec);line-height:1.05;letter-spacing:-.01em}
-.ba ul{list-style:none;display:grid;gap:0}
-.ba li{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid var(--rule);font-size:var(--t-util);line-height:1.25}
-.ba li span{color:var(--muted);text-align:right}
-.ba .arr{align-self:center;width:clamp(40px,6vw,90px);color:var(--ink)}
-.ba .ten{font-size:var(--t-display);line-height:.9;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.spin .src{margin-top:28px;font-size:14px;line-height:1.4;color:var(--muted);max-width:60em}
+/* show, don't tell: one event, two wrists. Left records it; Eva turns it into what, where and how inside 10 s */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+.vp{display:grid;align-content:start;gap:14px;border-top:1px solid var(--rule);padding-top:14px}
+.vp-b{border-top:3px solid var(--ink);padding-top:12px}
+.vh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:var(--t-label);line-height:1.1}
+.vh small{font-size:var(--t-util);color:var(--muted)}
+.vcount{font-weight:400;font-size:var(--t-label);font-variant-numeric:tabular-nums;color:var(--muted);transition:color .3s}
+.vs[data-s="1"] .vcount,.vs[data-s="2"] .vcount{color:var(--ink)}
+.vdev{width:min(240px,62%);height:auto;justify-self:center;overflow:visible}
+.vdev .ln{fill:none;stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.vdev .vclk{font:13px var(--font);fill:var(--muted);text-anchor:middle;font-variant-numeric:tabular-nums}
+.vdev .vbtnhw{fill:var(--alarm)}
+.vdev .vbang{fill:none;stroke:var(--alarm);stroke-width:3;stroke-linecap:round;opacity:0}
+.vdev .vscr,.vdev .vhb{transition:stroke .3s,opacity .3s}
+.vs[data-s="1"] .vp-b .vscr,.vs[data-s="2"] .vp-b .vscr{stroke:var(--alarm);stroke-width:2.5}
+.vs[data-s="1"] .vp-b .vhb,.vs[data-s="2"] .vp-b .vhb{opacity:0}
+.vs[data-s="1"] .vp-b .vbang,.vs[data-s="2"] .vp-b .vbang{opacity:1}
+.vpulse{width:100%;height:48px;overflow:hidden}
+.vpulse path{fill:none;stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.vwave{animation:vwave 3.2s linear infinite}
+@keyframes vwave{to{transform:translateX(-100px)}}
+.vflat{opacity:0}
+.vs:not([data-s="0"]) .vwave{opacity:0;animation-play-state:paused}
+.vs:not([data-s="0"]) .vflat{opacity:1}
+.vs:not([data-s="0"]) .vp-b .vflat{stroke:var(--alarm)}
+.vlog{position:relative;height:28px;display:flex;align-items:center;gap:10px}
+.vline{flex:none;width:36%;height:1px;background:var(--rule)}
+.vdot{position:absolute;left:36%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--ink);transform:scale(0);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.vrec{padding-left:10px;font-size:var(--t-util);color:var(--muted);opacity:0;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
+.vs:not([data-s="0"]) .vdot{transform:none}.vs:not([data-s="0"]) .vrec{opacity:1}
+.vsteps{list-style:none;display:grid}
+.vsteps li{display:grid;grid-template-columns:4.6em 48px 1fr;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--rule);font-size:var(--t-util);line-height:1.2;opacity:0;transform:translateY(8px);transition:opacity .45s cubic-bezier(.22,1,.36,1),transform .45s cubic-bezier(.22,1,.36,1)}
+.vsteps li.on{opacity:1;transform:none}
+.vsteps i{font-style:normal;color:var(--muted)}
+.vsteps svg{width:48px;height:30px;overflow:visible}
+.vsteps svg *{fill:none;stroke:var(--ink);stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.vsteps .seat{stroke:var(--muted)}
+.vsteps .route{stroke-dasharray:2 3}
+.vsteps .dot{fill:var(--alarm);stroke:none}
+.vsteps .lit{fill:var(--teal);stroke:none;filter:drop-shadow(0 0 3px var(--teal))}
+.vdone{font-size:var(--t-label);line-height:1.1;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
+.vs[data-s="2"] .vdone{opacity:1}
+.vgo{margin-top:24px;min-height:44px;padding:0 20px;border:1px solid var(--ink);border-radius:22px;background:var(--ink);color:var(--canvas);font:inherit;font-size:var(--t-util);cursor:pointer;transition:transform .3s var(--ease)}
+.vgo:hover{transform:translateY(-1px)}
+.vgo:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.spin .src{margin-top:6px;font-size:14px;line-height:1.4;color:var(--muted);max-width:60em}
 .spin .src a{text-decoration:underline;text-underline-offset:2px}
-@media (max-width:760px){.ba{grid-template-columns:1fr}.ba .arr{transform:rotate(90deg);justify-self:start;margin-left:6px}}
+.vnote{margin-top:14px;font-size:14px;line-height:1.4;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+@media (max-width:760px){.vs{grid-template-columns:1fr;gap:28px}.vdev{width:min(200px,56%)}}
+@media (prefers-reduced-motion:reduce){.vwave{animation:none}.vdot,.vrec,.vsteps li,.vdone{transition:none}}
 
 /* Eva's functions */
 .fns{padding-block:20px 120px}
-.fgrid{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:0 20px;margin-top:40px;counter-reset:fn}
-.fgrid li{display:grid;grid-template-columns:2.4em 1fr;align-content:start;gap:6px 10px;padding:16px 0 22px;border-top:1px solid var(--rule);counter-increment:fn}
-.fgrid li::before{content:counter(fn,decimal-leading-zero);font-size:var(--t-util);color:var(--muted);font-variant-numeric:tabular-nums;grid-row:span 2}
-.fgrid b{font-weight:400;font-size:var(--t-label);line-height:1.08;letter-spacing:-.005em}
-.fgrid span{font-size:var(--t-util);line-height:1.3;color:var(--muted)}
-.fns .rule{margin-top:28px;font-size:var(--t-util);line-height:1.3;color:var(--muted);max-width:44em}
-.fns .rule b{font-weight:400;color:var(--ink)}
-@media (max-width:1000px){.fgrid{grid-template-columns:1fr 1fr}}
-@media (max-width:620px){.fgrid{grid-template-columns:1fr}}
+/* Eva's five-step loop: one short label per function, thin rules, no cards */
+.loop5{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:0 20px;margin-top:40px;counter-reset:lp}
+.loop5 li{position:relative;display:grid;align-content:start;gap:6px;padding-top:14px;border-top:1px solid var(--rule);counter-increment:lp}
+.loop5 li::before{content:counter(lp,decimal-leading-zero);font-size:var(--t-util);color:var(--muted);font-variant-numeric:tabular-nums}
+.loop5 li::after{content:"→";position:absolute;right:0;top:12px;font-size:var(--t-util);color:var(--muted)}
+.loop5 li:last-child::after{content:"↺"}
+.loop5 b{font-weight:400;font-size:var(--t-sec);line-height:1.02;letter-spacing:-.01em;margin:2px 0 8px}
+.loop5 span{font-size:var(--t-util);line-height:1.25;color:var(--muted)}
+@media (max-width:760px){.loop5{grid-template-columns:1fr;margin-top:28px}
+  .loop5 li{grid-template-columns:2em 7.4em 1fr;gap:3px 10px;padding:12px 0 14px}
+  .loop5 li::before{grid-row:1/span 4}.loop5 li::after{top:12px}
+  .loop5 b{grid-column:2;grid-row:1/span 4;font-size:var(--t-label);margin:0}
+  .loop5 span{grid-column:3;padding-right:1.4em}}
 
 /* how it links: inline diagram, two layouts */
 .links{padding-block:72px 120px}
-.links .lead{margin-top:28px;max-width:16em}
-.dg{margin-top:40px;width:100%;height:auto;display:block;font-family:var(--font)}
-.dg.tall{display:none}
-@media (max-width:700px){.dg.wide{display:none}.dg.tall{display:block}}
+/* how it links: one diagram, hub in the middle, three client kinds around it, Earth on the right */
+.lgrid{display:grid;grid-template-columns:minmax(0,720px) minmax(0,1fr);gap:24px 56px;align-items:center;margin-top:40px}
+.dg{width:100%;height:auto;display:block;font-family:var(--font);overflow:visible}
 .dg text{fill:var(--ink)}
-.dg .t1{font-size:22px}
-.dg .t2{font-size:15px;fill:var(--muted)}
-.dg .t3{font-size:13px;fill:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-.dg .tal{fill:var(--alarm);font-size:15px}
-.dg .tnet{fill:var(--net);font-size:14px}
+.dg .t1{font-size:24px}
+.dg .t2{font-size:19px;fill:var(--muted)}
+.dg .t3{font-size:13px;fill:var(--canvas);letter-spacing:.08em;text-transform:uppercase}
+.dg .tal{fill:var(--alarm);font-size:19px}
+.dg .tnet{fill:var(--net);font-size:17px}
 .dg .box{fill:var(--canvas);stroke:var(--rule);stroke-width:1.5}
 .dg .hub{fill:var(--canvas);stroke:var(--ink);stroke-width:2}
-.dg .tagf{fill:var(--ink)}.dg .tagf + text{fill:var(--canvas)}
+.dg .tagf{fill:var(--ink)}
 .dg .teal{fill:var(--teal)}
+.dg .band{fill:var(--canvas);stroke:var(--ink);stroke-width:1.5}
+.dg .earth{fill:none;stroke:var(--ink);stroke-width:1.5}
 .dg .lora{stroke:var(--net);stroke-width:2.5;fill:none}
 .dg .mesh{stroke:var(--net);stroke-width:2.5;stroke-dasharray:2 6;stroke-linecap:round;fill:none}
 .dg .wifi{stroke:var(--ink);stroke-opacity:.55;stroke-width:1.5;fill:none}
@@ -286,13 +394,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .dg .nsl{stroke:var(--ink);stroke-width:3;stroke-dasharray:.1 9;stroke-linecap:round;fill:none}
 @keyframes dash{to{stroke-dashoffset:-32}}
 @media (prefers-reduced-motion:reduce){.dg .alarm{animation:none}}
-.dg .m-net{fill:var(--net)}.dg .m-al{fill:var(--alarm)}.dg .m-ink{fill:var(--ink)}
-.dg-note{margin-top:14px;font-size:15px;line-height:1.35;color:var(--muted);max-width:52em}
-.why3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
-.why3 div{display:grid;gap:10px;align-content:start;border-top:1px solid var(--rule);padding-top:14px}
-.why3 h3{font-size:var(--t-label);line-height:1.08}
-.why3 p{font-size:var(--t-util);line-height:1.3;color:var(--muted)}
-@media (max-width:760px){.why3{grid-template-columns:1fr;margin-top:40px}}
+.dg .m-net{fill:var(--net)}.dg .m-al{fill:var(--alarm)}
+.why3{list-style:none;display:grid;gap:0}
+.why3 li{padding:12px 0;border-top:1px solid var(--rule);font-size:var(--t-util);line-height:1.3;color:var(--muted)}
+@media (max-width:900px){.lgrid{grid-template-columns:1fr}}
 .slab.studio{background:#fdfdfc;color:#0c0c0c;--rule:#dedbd6;--muted:rgba(12,12,12,.62)}
 
 /* Solar */
@@ -445,7 +550,7 @@ html[data-i18n-wait] body{visibility:hidden}
 main,.foot{transition:opacity .16s ease}
 html.lswap main,html.lswap .foot{opacity:.15}
 :root[lang="es"] .link-sec .playhead::after{content:"ahora"}
-:root[lang="es"] .dg.wide .es-sm{font-size:17px}:root[lang="es"] .dg.tall .es-sm{font-size:16px!important}
+
 @media (prefers-reduced-motion:reduce){main,.foot{transition:none}.lpick button{transition:none}.lpick button:hover{transform:none}}
 </style>
 
@@ -458,7 +563,7 @@ html.lswap main,html.lswap .foot{opacity:.15}
       <canvas id="heroSky" aria-hidden="true"></canvas>
       <div class="chips" aria-hidden="true">
         <div class="chip" style="left:5%;top:9%"><img class="tl" src="a/ic-eva-orb.webp" alt=""><img class="td" src="a/ic-eva-orb.webp" alt=""></div>
-        <div class="chip" style="left:13%;top:60%"><img class="tl" src="a/band2-on-wrist.webp" alt="" style="object-position:62% 45%"><img class="td" src="a/band2-on-wrist.webp" alt="" style="object-position:62% 45%"></div>
+        <div class="chip cut" style="left:13%;top:60%"><img class="tl" src="a/band2-cut-hero.webp" alt=""><img class="td" src="a/band2-cut-hero.webp" alt=""></div>
         <div class="chip" style="right:6%;top:7%"><img class="tl" src="a/chip-mars-w.jpg" alt=""><img class="td" src="a/chip-mars-b.jpg" alt=""></div>
         <div class="chip" style="right:12%;top:58%"><img class="tl" src="a/chip-earth-w.jpg" alt=""><img class="td" src="a/chip-earth-b.jpg" alt=""></div>
         <div class="chip" style="left:38%;top:-3%"><img class="tl" src="a/chip-sun-w.jpg" alt=""><img class="td" src="a/chip-sun-b.jpg" alt=""></div>
@@ -487,46 +592,42 @@ html.lswap main,html.lswap .foot{opacity:.15}
   <!-- 3 · Sensors record → Eva acts -->
   <section class="g spin" id="spin" aria-labelledby="sp">
     <div class="sh"><h2 id="sp">Sensors record. Eva acts.</h2></div>
-    <p class="prop lead" data-reveal style="margin-top:28px;max-width:15em">NASA already senses the crew. Eva turns that sensing into action.</p>
-    <div class="ba" data-reveal>
-      <div>
-        <p class="label">Today</p>
-        <h3>The wrist records</h3>
-        <p class="note">On Artemis II, the ARCHeR study (Artemis Research for Crew Health and Readiness) had the crew wear the ActLumus wrist actigraph by Condor Instruments.</p>
-        <ul><li>Motion<span>Arm activity, rest</span></li><li>Sleep<span>Sleep and wake patterns</span></li><li>Light<span>10 spectral sensors</span></li><li>Temperature<span>Body temperature</span></li><li>Event button<span>Marks a moment</span></li><li>Output<span>Data for later analysis</span></li></ul>
-        <p class="note">It records. It does not alert or guide.</p>
+    <div class="vs" id="vs" data-s="0">
+      <div class="vp vp-a">
+        <p class="vh">Today's wearable <small>ARCHeR · ActLumus</small></p>
+        <svg class="vdev" viewBox="0 0 240 132" aria-hidden="true"><path class="ln" d="M98 0V24M142 0V24M98 108V132M142 108V132"/><rect class="ln" x="76" y="24" width="88" height="84" rx="20"/><rect class="ln" x="92" y="40" width="56" height="36" rx="6"/><text class="vclk" x="120" y="63" data-i18n-js>00:00</text><circle class="ln" cx="120" cy="92" r="4.5"/></svg>
+        <svg class="vpulse" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true"><g class="vwave"><path d="M0 34h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19"/></g><path class="vflat" d="M0 34H400"/></svg>
+        <div class="vlog"><i class="vline"></i><i class="vdot"></i><span class="vrec">Recorded · read after landing</span></div>
       </div>
-      <svg class="arr" viewBox="0 0 90 40" aria-hidden="true"><path d="M0 20H86M68 4 86 20 68 36" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
-      <div class="now">
-        <p class="label">With Eva</p>
-        <p class="ten">10 s</p>
-        <h3>Within 10 seconds of an event, the person knows what to do, where to go and how to get there</h3>
-        <ul><li>What to do<span>One action per step</span></li><li>Where to go<span>Seat, station or shelter</span></li><li>How to get there<span>Route on the wrist, voice, vibration</span></li><li>Who helps<span>Nearest trained helper, AED runner</span></li><li>Record<span>Signed and sent to Earth</span></li></ul>
-        <p class="note">The 10 seconds are our design target. Eva is a new interface over the sensing, not a new sensor.</p>
+      <div class="vp vp-b">
+        <p class="vh">Eva <b class="vcount" aria-hidden="true"><span id="vsN" data-i18n-js>0.0</span> s</b></p>
+        <svg class="vdev" viewBox="0 0 240 132" aria-hidden="true"><path class="ln" d="M82 0V26M158 0V26M82 106V132M158 106V132"/><rect class="ln" x="44" y="26" width="152" height="80" rx="9"/><rect class="ln vscr" x="58" y="38" width="124" height="56" rx="5"/><path class="ln vhb" d="M66 68h22l5-6 6 12 6-20 6 22 4-8h45"/><path class="vbang" d="M120 52v12M120 70v2"/><rect class="vbtnhw" x="112" y="20" width="16" height="6" rx="2"/></svg>
+        <svg class="vpulse" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true"><g class="vwave"><path d="M0 34h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19h13l6-4 5 4h8l4 5 5-26 5 32 4-11h10l7-7 8 7h19"/></g><path class="vflat" d="M0 34H400"/></svg>
+        <ol class="vsteps">
+          <li><i>What</i><svg viewBox="0 0 48 30" aria-hidden="true"><circle cx="8" cy="23" r="3"/><path d="M12 24H44"/><circle cx="27" cy="4.5" r="3"/><path d="M27 8v8l-6 5M27 16l5 4M27 11l-3 9M27 11l3 9"/></svg><span>Start CPR</span></li>
+          <li><i>Where</i><svg viewBox="0 0 48 30" aria-hidden="true"><rect x="1" y="1" width="46" height="28" rx="3"/><path d="M7 7h6v5H7zM17 7h6v5h-6zM27 7h6v5h-6zM37 7h6v5h-6zM7 18h6v5H7zM17 18h6v5h-6zM27 18h6v5h-6zM37 18h6v5h-6z" class="seat"/><path d="M4 15H38" class="route"/><circle cx="40" cy="20.5" r="3.4" class="dot"/></svg><span>Seat 4B · 3 m</span></li>
+          <li><i>How</i><svg viewBox="0 0 48 30" aria-hidden="true"><rect x="1" y="1" width="46" height="28" rx="2"/><path d="M16 1v28M32 1v28M1 10h46M1 19h46"/><rect x="3" y="3" width="11" height="5" class="lit"/></svg><span>Station 01 lights · AED</span></li>
+        </ol>
+        <p class="vdone">Everyone knows what to do.</p>
       </div>
     </div>
+    <p class="sr" id="vsLive" aria-live="polite"></p>
+    <button class="vgo" id="vsBtn" type="button" data-i18n-js>Simulate an event</button>
+    <p class="vnote">10 s is our design target from Eva's call.</p>
     <p class="src">Sources: <a href="https://pesquisaparainovacao.fapesp.br/4031">FAPESP · Pesquisa para Inovação, the Condor Instruments actigraph on Artemis II</a> · <a href="https://www.nasa.gov/image-detail/amf-jsc2025e075542_alt/">NASA · ARCHeR actigraphy device (jsc2025e075542)</a> · <a href="https://agencia.fapesp.br/58065">Agência FAPESP · the ActLumus actigraph</a></p>
   </section>
 
   <!-- 4 · Eva's functions -->
   <section class="g fns" id="eva" aria-labelledby="fn">
     <div class="sh"><h2 id="fn">What Eva does</h2></div>
-    <p class="prop" data-reveal style="margin-top:28px;max-width:15em">Eva, the AI copilot, in twelve lines</p>
-    <ol class="fgrid">
-      <li><b>Multimodal chat</b><span>Text, voice, photo and video, in plain language.</span></li>
-      <li><b>Reads the wristband live</b><span>Every signal against your own baseline, not a population average.</span></li>
-      <li><b>Diagnostic support in four parts</b><span>What is happening now, why, how she decided, what comes next. The crew lead confirms.</span></li>
-      <li><b>Emergency guidance</b><span>One action per step, on the wrist, by voice and by vibration.</span></li>
-      <li><b>Assigns the helpers</b><span>The nearest trained passenger for CPR and a runner for the AED.</span></li>
-      <li><b>Guides to the station</b><span>Lights the right compartment and says what to take.</span></li>
-      <li><b>ECG on demand</b><span>Two fingers, 30 seconds. Never continuous, never a shock decision.</span></li>
-      <li><b>Solar storm alert</b><span>Minutes of warning and a lit route to the shelter.</span></li>
-      <li><b>Daily log and emotional journal</b><span>Sleep, meals, water and mood, in a few taps or a few words.</span></li>
-      <li><b>Signed records to Earth</b><span>Every step hash-chained and sent over the near-space link.</span></li>
-      <li><b>Works offline</b><span>Runs on the ship hub. No internet and no Earth needed.</span></li>
-      <li><b>Shared tools</b><span>Eva or you can trigger any tool: ECG check, check-in, call for help, route to the shelter.</span></li>
+    <ol class="loop5">
+      <li><b>Sense</b><span>Live vitals</span><span>30 s ECG</span></li>
+      <li><b>Understand</b><span>Your own baseline</span><span>Diagnostic support</span></li>
+      <li><b>Guide</b><span>Step by step</span><span>Nearest helper</span><span>Station</span><span>Shelter route</span></li>
+      <li><b>Record</b><span>Daily log</span><span>Mood journal</span><span>Signed to Earth</span></li>
+      <li><b>Talk</b><span>Text, voice, photo</span></li>
     </ol>
-    <p class="rule"><b>Diagnostic support, not diagnosis.</b> Eva guides, records and warns. The crew lead confirms, and the AED decides the shock.</p>
+    <p class="rule">Diagnostic support only. The AED decides the shock.</p>
   </section>
 
   <!-- 5 · Wristband v2: two magnetic modules (interim visuals: team reference images band2-*.webp, to be swapped for renders) -->
@@ -536,23 +637,23 @@ html.lswap main,html.lswap .foot{opacity:.15}
         <img class="bi on" src="a/band2-hero-white.webp" alt="The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.">
         <img class="bi" src="a/band2-exploded.webp" alt="The screen module lifted above the sensor base: two spring contacts line up with the gold pads on the base, between the magnet seats.">
         <img class="bi" src="a/band2-base-alone.webp" alt="The sensor base from above, with its contacts and magnet seats, and from below, with the optical pulse sensor and two steel skin electrodes.">
-        <svg class="bsuit" viewBox="0 0 1400 933" role="img" aria-label="Suit mode cross-section: the suit sleeve sits between the screen module and the sensor base; the magnets hold, the contacts stay apart, and the base keeps sending by LoRa.">
-          <rect x="250" y="250" width="900" height="120" fill="#3A3D42"/><rect x="290" y="262" width="820" height="34" fill="#050607"/><rect x="250" y="250" width="34" height="120" fill="#c4c6c8"/><rect x="1116" y="250" width="34" height="120" fill="#c4c6c8"/>
-          <rect x="345" y="350" width="40" height="20" fill="#a6abb0"/><rect x="1015" y="350" width="40" height="20" fill="#a6abb0"/>
-          <path d="M120 392 Q 300 378 480 392 T 840 392 T 1180 392 V 426 Q 1000 440 840 426 T 480 426 T 120 426 Z" fill="#e6dfd1" stroke="#b9ae9b" stroke-width="2"/>
-          <rect x="300" y="444" width="800" height="80" fill="#3A3D42"/><rect x="345" y="444" width="40" height="18" fill="#a6abb0"/><rect x="1015" y="444" width="40" height="18" fill="#a6abb0"/>
-          <rect x="676" y="430" width="10" height="14" fill="#d4a63a"/><rect x="714" y="430" width="10" height="14" fill="#d4a63a"/>
-          <path d="M365 372V442M1035 372V442" stroke="#F28A1A" stroke-width="4" stroke-dasharray="6 6"/>
-          <path d="M150 540 Q 700 556 1250 540 V 572 Q 700 590 150 572 Z" fill="#e8c4ab"/>
-          <path d="M1120 470a30 30 0 0 1 0 40M1140 455a52 52 0 0 1 0 70M1160 440a74 74 0 0 1 0 100" fill="none" stroke="#0b6aa6" stroke-width="4"/>
-          <text x="250" y="186" font-size="43">Screen module</text><text x="250" y="232" font-size="31" fill="#555">Main battery · help button · voice · ECG pads</text>
-          <text x="70" y="296" font-size="34">Magnets</text><text x="70" y="334" font-size="34">hold</text><path d="M140 346 345 360" stroke="#0c0c0c" stroke-width="1.5"/>
-          <text x="1190" y="404" font-size="34">Suit</text><text x="1190" y="436" font-size="34">sleeve</text>
-          <text x="700" y="494" font-size="31" fill="#f4f3f0" text-anchor="middle">Sensor base · contacts apart · own battery</text>
-          <text x="1190" y="492" font-size="34" fill="#0b6aa6">LoRa keeps</text><text x="1190" y="524" font-size="34" fill="#0b6aa6">sending</text>
-          <text x="700" y="630" font-size="34" text-anchor="middle">Skin · pulse, SpO₂, temperature, EDA</text>
-          <text x="700" y="700" font-size="31" fill="#555" text-anchor="middle">ECG still works with bare fingers on the two pads</text>
-        </svg>
+        <div class="bsuit3" id="bsuit3" role="img" aria-label="Suit mode, exploded: the suit sleeve sits between the screen module and the sensor base; the magnets hold through the fabric, the spring contacts stay apart, and the base keeps sending by LoRa.">
+          <div class="s3-stack">
+            <div class="s3-l s3-base"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:1"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:2"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:3"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:4"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:5"><img class="x" src="a/suit-layer-base.webp" alt="" style="--d:6"><img src="a/suit-layer-base.webp" alt="" width="960" height="947"><i class="s3-a" data-l="cont" style="left:52%;top:45.4%"></i><i class="s3-a" data-l="base" style="left:6%;top:48%"></i><i class="s3-a" data-l="skin" style="left:66%;top:73%"></i><i class="s3-a" data-l="lora" style="left:97%;top:72%"></i></div>
+            <div class="s3-l s3-sleeve"><div class="s3-fab"></div><i class="s3-mag" style="left:23.5%;top:34.3%"></i><i class="s3-mag" style="left:80.5%;top:34.3%"></i><i class="s3-mag" style="left:24%;top:55.8%"></i><i class="s3-mag" style="left:81%;top:55.8%"></i><i class="s3-a" data-l="sleeve" style="left:118%;top:44%"></i><i class="s3-a" data-l="mag" style="left:24%;top:55.8%"></i></div>
+            <div class="s3-l s3-scr"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:1"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:2"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:3"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:4"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:5"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:6"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:7"><img class="x" src="a/suit-layer-screen.webp" alt="" style="--d:8"><img src="a/suit-layer-screen.webp" alt="" width="960" height="507"><i class="s3-a" data-l="scr" style="left:22%;top:16%"></i></div>
+          </div>
+          <svg class="s3-lead" aria-hidden="true"></svg>
+          <svg class="s3-lora" viewBox="0 0 40 48" aria-hidden="true"><path d="M6 14a14 14 0 0 1 0 20M14 7a24 24 0 0 1 0 34M22 0a34 34 0 0 1 0 48"/></svg>
+          <ol class="s3-tags" aria-hidden="true">
+            <li data-l="scr" data-n="1" data-side="l"><b>Screen module</b><small>Main battery · help button · voice · ECG pads</small></li>
+            <li data-l="mag" data-n="2" data-side="l"><b>Magnets hold through the fabric</b></li>
+            <li data-l="base" data-n="3" data-side="l"><b>Sensor base</b><small>Own battery · LoRa keeps sending</small></li>
+            <li data-l="sleeve" data-n="4" data-side="r"><b>Suit sleeve</b></li>
+            <li data-l="cont" data-n="5" data-side="r"><b>Spring contacts apart</b></li>
+            <li data-l="skin" data-n="6" data-side="r"><b>Skin</b><small>Pulse, SpO₂, temperature, EDA</small></li>
+          </ol>
+        </div>
                 <div class="bscr" id="bscr" aria-hidden="true">
           <div class="ui on" data-u="home"><div class="k"><span>EVA</span><span>08:42</span></div><div class="big">All good</div><div class="sub">Pulse 72 · SpO₂ 98% · 36.4 °C</div></div>
           <div class="ui" data-u="ecg"><div class="k"><span>EVA · ECG</span><span>24 s</span></div><svg viewBox="0 0 240 40" preserveAspectRatio="none"><path d="M0 24H18l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H72l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H126l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H180l4-3 4 3h6l3 4 4-22 4 26 3-8h10l5-5 6 5H240"/></svg><div class="sub">Keep still · one finger on each pad</div></div>
@@ -660,22 +761,24 @@ html.lswap main,html.lswap .foot{opacity:.15}
 
   <section class="g kit2" id="stationKit" aria-labelledby="kh">
     <div class="sh"><h2 id="kh">Inside the station</h2></div>
-    <ol class="cgrid">
-      <li class="on"><b>01</b><span>AED</span><small>The AED and spare pads. Lights teal when Eva asks for it.</small></li>
-      <li><b>02</b><span>Breathing</span><small>Oxygen bottle, mask, bag-valve mask</small></li>
-      <li><b>03</b><span>Diagnostics</span><small>Monitor, thermometer, glucometer</small></li>
-      <li><b>04</b><span>Ultrasound</span><small>Probe, screen and gel</small></li>
-      <li><b>05</b><span>Wounds</span><small>Dressings, bandages, scissors</small></li>
-      <li><b>06</b><span>Restraint</span><small>Straps to secure a patient</small></li>
-      <li><b>07</b><span>Oral meds</span><small>Tablets in blister packs</small></li>
-      <li><b>08</b><span>Injectables</span><small>Station kit used by the crew</small></li>
-      <li><b>09</b><span>IV access</span><small>Fluids and lines</small></li>
-      <li><b>10</b><span>Eyes and dental</span><small>Eye irrigation and dental kit</small></li>
-      <li><b>11</b><span>Airway</span><small>Airway tubes and suction</small></li>
-      <li><b>12</b><span>Hygiene</span><small>Gloves, goggles, waste bags, sharps bin</small></li>
-    </ol>
+    <div class="kgrid">
+      <figure class="kfig" id="kfig"><div class="kpic"><img src="a/station-front.webp" loading="lazy" alt="Front view of the station as a 4 by 3 wall panel, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide."></div><figcaption>Wall panel, four rows of three. On top: the Eva screen, the red button and a printed AED retrieval guide.</figcaption></figure>
+      <ol class="clist" id="clist">
+      <li class="on" data-c="0" tabindex="0"><b>01</b><span>AED</span><small>defibrillator + spare pads</small></li>
+      <li data-c="1" tabindex="0"><b>02</b><span>Breathing</span><small>oxygen, mask</small></li>
+      <li data-c="2" tabindex="0"><b>03</b><span>Diagnostics</span><small>monitor, thermometer</small></li>
+      <li data-c="3" tabindex="0"><b>04</b><span>Ultrasound</span><small>probe</small></li>
+      <li data-c="4" tabindex="0"><b>05</b><span>Wounds</span><small>dressings</small></li>
+      <li data-c="5" tabindex="0"><b>06</b><span>Restraint</span><small>straps</small></li>
+      <li data-c="6" tabindex="0"><b>07</b><span>Oral meds</span><small>tablets</small></li>
+      <li data-c="7" tabindex="0"><b>08</b><span>Injectables</span><small>crew kit</small></li>
+      <li data-c="8" tabindex="0"><b>09</b><span>IV access</span><small>lines</small></li>
+      <li data-c="9" tabindex="0"><b>10</b><span>Eyes and dental</span><small>kits</small></li>
+      <li data-c="10" tabindex="0"><b>11</b><span>Airway</span><small>suction</small></li>
+      <li data-c="11" tabindex="0"><b>12</b><span>Hygiene</span><small>gloves</small></li>
+      </ol>
+    </div>
     <div class="variants">
-      <figure><img src="a/station-front.webp" loading="lazy" alt="Front view of the station as a 4 by 3 wall panel, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide."><figcaption>Wall panel, four rows of three. On top: the Eva screen, the red button and a printed AED retrieval guide.</figcaption></figure>
       <figure><img src="a/station-doors-open.webp" loading="lazy" alt="Variant of the station: a centre cabinet whose side doors open to reveal compartments 07 to 12."><figcaption>Variant: a centre cabinet whose side doors open to compartments 07 to 12. Concept images carry Spanish labels; the legend above is the product text.</figcaption></figure>
     </div>
   </section>
@@ -683,74 +786,31 @@ html.lswap main,html.lswap .foot{opacity:.15}
   <!-- 9 · How it links: one host (ship hub), many clients -->
   <section class="g links" id="links" aria-labelledby="lh">
     <div class="sh"><h2 id="lh">How it links</h2></div>
-    <p class="prop lead" data-reveal>One ship hub hosts everything. Wristbands, phones and the station are its clients.</p>
-    <svg class="dg wide" viewBox="0 0 1200 640" role="img" aria-labelledby="dgT dgD">
-      <title id="dgT">How Eva's parts link</title>
-      <desc id="dgD">The ship hub is the one host. Wristbands talk to it over LoRa and relay for each other in a mesh. A phone or tablet connects over the ship's Wi-Fi. The emergency station is a client over LoRa: the hub tells it to light compartment 01 and it reports the door open and the AED taken. If the hub is down, a wristband's no-pulse alarm goes straight to the station, and the station's red button alarms every wristband. The hub sends signed records to a ground station on Earth over the near-space link.</desc>
-      <defs>
-        <marker id="aN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-net" d="M0 0 10 5 0 10Z"/></marker>
-        <marker id="aA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-al" d="M0 0 10 5 0 10Z"/></marker>
-        <marker id="aI" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-ink" d="M0 0 10 5 0 10Z"/></marker>
-      </defs>
-      <!-- links -->
-      <path class="wifi" d="M600 112V218" marker-end="url(#aI)"/>
-      <path class="lora" d="M290 170C380 170 400 262 466 262" marker-end="url(#aN)"/>
-      <path class="lora" d="M290 280H466" marker-end="url(#aN)"/>
-      <path class="lora" d="M290 390C380 390 400 298 466 298" marker-end="url(#aN)"/>
-      <path class="mesh" d="M110 200V250M110 310V360"/>
-      <path class="lora" d="M732 292H916" marker-end="url(#aN)"/>
-      <path class="lora" d="M916 340H732" marker-end="url(#aN)"/>
-      <path class="nsl" d="M732 240C830 240 830 86 916 86" marker-end="url(#aI)"/>
-      <path class="alarm" d="M200 422C330 560 840 560 1020 402" marker-start="url(#aA)" marker-end="url(#aA)"/>
-      <!-- nodes -->
-      <rect class="box" x="470" y="40" width="260" height="72"/><text class="t1" x="486" y="70">Phone or tablet</text><text class="t2" x="486" y="94">Optional big screen · the app</text>
-      <rect class="box" x="920" y="40" width="250" height="92"/><text class="t1" x="936" y="70">Ground station</text><text class="t2" x="936" y="94">Earth · gets signed records</text><text class="t2" x="936" y="116">Store and forward, ACK</text>
-      <rect class="hub" x="470" y="218" width="260" height="152"/><rect class="tagf" x="470" y="218" width="64" height="24"/><text class="t3" x="480" y="235">Host</text>
-      <text class="t1" x="486" y="276">Ship hub</text><text class="t2" x="486" y="302">Eva · the signed log</text><text class="t2" x="486" y="324">Dashboard · serves the app</text><text class="t2" x="486" y="346">Near-space link to Earth</text>
-      <rect class="box" x="50" y="140" width="240" height="60"/><text class="t1" x="66" y="167">Wristband</text><text class="t2" x="66" y="189">Passenger 03 · client</text>
-      <rect class="box" x="50" y="250" width="240" height="60"/><text class="t1" x="66" y="277">Wristband</text><text class="t2" x="66" y="299">Passenger 07 · client</text>
-      <rect class="box" x="50" y="360" width="240" height="60"/><text class="t1" x="66" y="387">Wristband</text><text class="t2" x="66" y="409">Passenger 11 · client</text>
-      <text class="tnet" x="50" y="124">LoRa mesh: bands relay for each other</text>
-      <rect class="box" x="920" y="250" width="250" height="150"/><rect class="teal" x="1140" y="262" width="18" height="18"/><text class="t1 es-sm" x="936" y="280">Emergency station</text><text class="t2" x="936" y="304">Client · own small computer</text><text class="t2" x="936" y="326">Lights, door and item sensors</text><text class="t2" x="936" y="348">LoRa · backup battery</text><text class="t2" x="936" y="370">Red button</text>
-      <text class="tnet" x="744" y="282">Light 01 · Take the AED</text>
-      <text class="tnet" x="744" y="362">Door 01 · AED taken</text>
-      <text class="t2" x="610" y="168">Ship Wi-Fi</text>
-      <text class="t2" x="770" y="150">Near-space link</text>
-      <text class="tal" x="600" y="562" text-anchor="middle">Hub down: a wristband's no-pulse alarm goes straight to the station,</text>
-      <text class="tal" x="600" y="584" text-anchor="middle">and the station's red button alarms every wristband.</text>
-      <!-- legend -->
-      <g transform="translate(50 618)"><path class="lora" d="M0 -5H40"/><text class="t2" x="50" y="0">LoRa</text><path class="wifi" d="M140 -5H180"/><text class="t2" x="190" y="0">Ship Wi-Fi</text><path class="alarm" d="M310 -5H350" style="animation:none"/><text class="t2" x="360" y="0">Alarm path when the hub is down</text><path class="nsl" d="M620 -5H660"/><text class="t2" x="670" y="0">Near-space link</text></g>
-    </svg>
-    <svg class="dg tall" viewBox="0 0 360 760" role="img" aria-labelledby="dgT2 dgD">
-      <title id="dgT2">How Eva's parts link</title>
-      <defs>
-        <marker id="bN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-net" d="M0 0 10 5 0 10Z"/></marker>
-        <marker id="bA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-al" d="M0 0 10 5 0 10Z"/></marker>
-        <marker id="bI" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-ink" d="M0 0 10 5 0 10Z"/></marker>
-      </defs>
-      <path class="nsl" d="M120 82V132" marker-end="url(#bI)"/><text class="t2" x="132" y="112">Near-space link</text>
-      <path class="wifi" d="M222 196H250" marker-end="url(#bI)"/>
-      <path class="lora" d="M34 252V476M34 330H46M34 403H46M34 476H46"/>
-      <path class="mesh" d="M100 352V381M100 425V454"/>
-      <path class="lora" d="M224 242H268V314" marker-start="url(#bN)" marker-end="url(#bN)"/><text class="tnet" x="232" y="276" text-anchor="end">Light 01</text><text class="tnet" x="232" y="296" text-anchor="end">AED taken</text>
-      <path class="alarm" d="M160 403H196" marker-start="url(#bA)" marker-end="url(#bA)"/>
-      <rect class="box" x="20" y="16" width="320" height="66"/><text class="t1" x="34" y="44" style="font-size:19px">Ground station · Earth</text><text class="t2" x="34" y="68">Signed records, store and forward, ACK</text>
-      <rect class="hub" x="20" y="136" width="202" height="116"/><rect class="tagf" x="20" y="136" width="52" height="22"/><text class="t3" x="28" y="152">Host</text>
-      <text class="t1" x="34" y="186" style="font-size:20px">Ship hub</text><text class="t2" x="34" y="208">Eva · signed log</text><text class="t2" x="34" y="228">Dashboard · the app</text>
-      <rect class="box" x="252" y="160" width="88" height="72"/><text class="t2" x="262" y="186" style="fill:var(--ink)">Phone</text><text class="t2" x="262" y="206">or tablet</text><text class="t2" x="262" y="224">Wi-Fi</text>
-      <rect class="box" x="46" y="308" width="114" height="44"/><text class="t2" x="56" y="335" style="fill:var(--ink)">Wristband 03</text>
-      <rect class="box" x="46" y="381" width="114" height="44"/><text class="t2" x="56" y="408" style="fill:var(--ink)">Wristband 07</text>
-      <rect class="box" x="46" y="454" width="114" height="44"/><text class="t2" x="56" y="481" style="fill:var(--ink)">Wristband 11</text>
-      <text class="tnet" x="46" y="294">LoRa · mesh</text>
-      <rect class="box" x="198" y="318" width="142" height="180"/><rect class="teal" x="314" y="330" width="14" height="14"/><text class="t1 es-sm" x="210" y="346" style="font-size:18px">Emergency</text><text class="t1 es-sm" x="210" y="368" style="font-size:18px">station</text><text class="t2" x="210" y="394">Client</text><text class="t2" x="210" y="414">Lights, door</text><text class="t2" x="210" y="432">and item sensors</text><text class="t2" x="210" y="452">Backup battery</text><text class="t2" x="210" y="472">Red button</text>
-      <text class="tal" x="20" y="536">Hub down: a wristband's no-pulse</text><text class="tal" x="20" y="556">alarm goes straight to the station,</text><text class="tal" x="20" y="576">and its red button alarms every band.</text>
-      <g transform="translate(20 624)"><path class="lora" d="M0 -5H36"/><text class="t2" x="46" y="0">LoRa</text><path class="wifi" d="M0 23H36"/><text class="t2" x="46" y="28">Ship Wi-Fi</text><path class="alarm" d="M0 51H36" style="animation:none"/><text class="t2" x="46" y="56">Alarm path when the hub is down</text><path class="nsl" d="M0 79H36"/><text class="t2" x="46" y="84">Near-space link</text></g>
-    </svg>
-    <p class="dg-note">For the demo, one laptop is the ship hub. Phones play the wristbands, and a tablet or a second browser window plays the station.</p>
-    <div class="why3">
-      <div><p class="label">01</p><h3>One source of truth</h3><p>The hub keeps the signed log and Eva's state. Every client reads and writes the same case.</p></div>
-      <div><p class="label">02</p><h3>Simple clients, fully offline</h3><p>Bands, phones and the station sense, show and report. The ship works with no internet and no Earth.</p></div>
-      <div><p class="label">03</p><h3>The alarm survives the hub</h3><p>If the hub fails, the alarm still reaches the station. When it returns, everyone uploads and the hash chain keeps the order.</p></div>
+    <div class="lgrid">
+      <svg class="dg" viewBox="0 0 560 420" role="img" aria-labelledby="dgT dgD">
+        <title id="dgT">How Eva's parts link</title>
+        <desc id="dgD">The ship hub is the only host. Wristbands reach it over a LoRa mesh, phones over Wi-Fi, and the station over LoRa. The hub stores signed records and forwards them to Earth. If the hub is down, a wristband's alarm goes straight to the station.</desc>
+        <defs><marker id="aN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-net" d="M0 0 10 5 0 10Z"/></marker><marker id="aA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-al" d="M0 0 10 5 0 10Z"/></marker></defs>
+        <path class="wifi" d="M280 84V158"/>
+        <path class="lora" d="M280 268V316" marker-start="url(#aN)" marker-end="url(#aN)"/>
+        <path class="lora" d="M90 190H184" marker-start="url(#aN)" marker-end="url(#aN)"/>
+        <path class="nsl" d="M378 210H438"/>
+        <path class="mesh" d="M56 152V173M56 207V228"/>
+        <path class="alarm" d="M40 262C40 342 120 352 206 352" marker-end="url(#aA)"/>
+        <rect class="hub" x="186" y="158" width="192" height="110"/><rect class="tagf" x="186" y="158" width="58" height="22"/><text class="t3" x="194" y="174">Host</text>
+        <text class="t1" x="200" y="210">Ship hub</text><text class="t2" x="200" y="235">Runs Eva</text><text class="t2" x="200" y="257">Signed log</text>
+        <rect class="box" x="210" y="20" width="140" height="64"/><text class="t1" x="224" y="50">Phones</text><text class="t2" x="224" y="74">Wi-Fi</text>
+        <rect class="box" x="210" y="316" width="140" height="66"/><rect class="teal" x="326" y="328" width="12" height="12"/><text class="t1" x="224" y="346">Station</text><text class="t2" x="224" y="371">LoRa</text>
+        <rect class="band" x="24" y="122" width="64" height="30" rx="7"/><rect class="band" x="24" y="175" width="64" height="30" rx="7"/><rect class="band" x="24" y="230" width="64" height="30" rx="7"/>
+        <text class="t1" x="8" y="104">Wristbands</text><text class="tnet" x="137" y="214" text-anchor="middle">LoRa mesh</text>
+        <circle class="earth" cx="478" cy="210" r="36"/><text class="t1" x="478" y="276" text-anchor="middle">Earth</text><text class="t2" x="552" y="300" text-anchor="end">Store and forward</text>
+        <text class="tal" x="8" y="408">Hub down? The alarm goes direct.</text>
+      </svg>
+      <ul class="why3">
+        <li>One source of truth: the hub's signed log.</li>
+        <li>Fully offline: no internet, no Earth needed.</li>
+        <li>Demo: one laptop is the hub, phones are the bands.</li>
+      </ul>
     </div>
   </section>
 
@@ -903,56 +963,31 @@ const ES={
 "The one host: runs Eva offline and keeps the signed log. No internet, no Earth needed.":"El único host: corre Eva sin conexión y guarda el registro firmado. Sin internet y sin depender de la Tierra.",
 /* sensors record → Eva acts */
 "Sensors record. Eva acts.":"Los sensores registran. Eva actúa.",
-"NASA already senses the crew. Eva turns that sensing into action.":"La NASA ya mide a la tripulación. Eva convierte esas mediciones en acción.",
-"Today":"Hoy","The wrist records":"La muñeca registra",
-"On Artemis II, the ARCHeR study (Artemis Research for Crew Health and Readiness) had the crew wear the ActLumus wrist actigraph by Condor Instruments.":"En Artemis II, el estudio ARCHeR (Artemis Research for Crew Health and Readiness) hizo que la tripulación usara el actígrafo de muñeca ActLumus, de Condor Instruments.",
-"Motion":"Movimiento","Arm activity, rest":"Actividad del brazo, reposo",
-"Sleep":"Sueño","Sleep and wake patterns":"Patrones de sueño y vigilia",
-"Light":"Luz","10 spectral sensors":"10 sensores espectrales",
-"Temperature":"Temperatura","Body temperature":"Temperatura corporal",
-"Event button":"Botón de evento","Marks a moment":"Marca un momento",
-"Output":"Salida","Data for later analysis":"Datos para analizar después",
-"It records. It does not alert or guide.":"Registra. No alerta ni guía.",
-"With Eva":"Con Eva",
-"Within 10 seconds of an event, the person knows what to do, where to go and how to get there":"En menos de 10 segundos desde un evento, la persona sabe qué hacer, adónde ir y cómo llegar",
-"What to do":"Qué hacer","One action per step":"Una acción por paso",
-"Where to go":"Adónde ir","Seat, station or shelter":"Asiento, estación o refugio",
-"How to get there":"Cómo llegar","Route on the wrist, voice, vibration":"Ruta en la muñeca, voz, vibración",
-"Who helps":"Quién ayuda","Nearest trained helper, AED runner":"El ayudante capacitado más cercano y quien trae el DEA",
-"Record":"Registro","Signed and sent to Earth":"Firmado y enviado a la Tierra",
-"The 10 seconds are our design target. Eva is a new interface over the sensing, not a new sensor.":"Los 10 segundos son nuestro objetivo de diseño. Eva es una interfaz nueva sobre esas mediciones, no un sensor nuevo.",
+"Today's wearable":"El wearable de hoy","Recorded · read after landing":"Registrado · se lee después del aterrizaje",
+"What":"Qué","Start CPR":"Empezá la RCP","Where":"Dónde","Seat 4B · 3 m":"Asiento 4B · 3 m","How":"Cómo","Station 01 lights · AED":"Se ilumina la estación 01 · DEA",
+"Everyone knows what to do.":"Todos saben qué hacer.","Simulate an event":"Simular un evento","Next step":"Siguiente paso","Replay":"Repetir",
+"10 s is our design target from Eva's call.":"Los 10 s son nuestro objetivo de diseño, desde el aviso de Eva.",
 "Sources:":"Fuentes:",
 "FAPESP · Pesquisa para Inovação, the Condor Instruments actigraph on Artemis II":"FAPESP · Pesquisa para Inovação, el actígrafo de Condor Instruments en Artemis II",
 "NASA · ARCHeR actigraphy device (jsc2025e075542)":"NASA · dispositivo de actigrafía de ARCHeR (jsc2025e075542)",
 "Agência FAPESP · the ActLumus actigraph":"Agência FAPESP · el actígrafo ActLumus",
 /* what Eva does */
 "What Eva does":"Qué hace Eva",
-"Eva, the AI copilot, in twelve lines":"Eva, la copiloto de IA, en doce líneas",
-"Multimodal chat":"Chat multimodal","Text, voice, photo and video, in plain language.":"Texto, voz, foto y video, en lenguaje simple.",
-"Reads the wristband live":"Lee la pulsera en vivo","Every signal against your own baseline, not a population average.":"Cada señal contra tu propia línea de base, no contra un promedio poblacional.",
-"Diagnostic support in four parts":"Apoyo al diagnóstico en cuatro partes","What is happening now, why, how she decided, what comes next. The crew lead confirms.":"Qué pasa ahora, por qué, cómo lo decidió y qué sigue. El líder de la tripulación confirma.",
-"Emergency guidance":"Guía en emergencias","One action per step, on the wrist, by voice and by vibration.":"Una acción por paso, en la muñeca, por voz y con vibración.",
-"Assigns the helpers":"Asigna a los ayudantes","The nearest trained passenger for CPR and a runner for the AED.":"El pasajero capacitado más cercano para la RCP y otro que va a buscar el DEA.",
-"Guides to the station":"Guía hasta la estación","Lights the right compartment and says what to take.":"Ilumina el compartimiento correcto y dice qué retirar.",
-"ECG on demand":"ECG a demanda","Two fingers, 30 seconds. Never continuous, never a shock decision.":"Dos dedos, 30 segundos. Nunca continuo, nunca decide una descarga.",
-"Solar storm alert":"Alerta de tormenta solar","Minutes of warning and a lit route to the shelter.":"Minutos de aviso y una ruta iluminada hasta el refugio.",
-"Daily log and emotional journal":"Registro diario y diario emocional","Sleep, meals, water and mood, in a few taps or a few words.":"Sueño, comidas, agua y ánimo, con unos toques o unas palabras.",
-"Signed records to Earth":"Registros firmados a la Tierra","Every step hash-chained and sent over the near-space link.":"Cada paso encadenado por hash y enviado por el enlace de espacio cercano.",
-"Works offline":"Funciona sin conexión","Runs on the ship hub. No internet and no Earth needed.":"Corre en el hub de la nave. Sin internet y sin depender de la Tierra.",
-"Shared tools":"Herramientas compartidas","Eva or you can trigger any tool: ECG check, check-in, call for help, route to the shelter.":"Eva o vos pueden activar cualquier herramienta: control de ECG, chequeo de estado, pedido de ayuda, ruta al refugio.",
-"Diagnostic support, not diagnosis.":"Apoyo al diagnóstico, no diagnóstico.",
-"Eva guides, records and warns. The crew lead confirms, and the AED decides the shock.":"Eva guía, registra y alerta. El líder de la tripulación confirma y el DEA decide la descarga.",
+"Signed records to Earth":"Registros firmados a la Tierra",
+"Sense":"Sentir","Live vitals":"Signos vitales en vivo","30 s ECG":"ECG de 30 s",
+"Understand":"Entender","Your own baseline":"Tu propia línea de base","Diagnostic support":"Apoyo al diagnóstico",
+"Guide":"Guiar","Step by step":"Paso a paso","Nearest helper":"Ayudante más cercano","Shelter route":"Ruta al refugio",
+"Record":"Registrar","Daily log":"Registro diario","Mood journal":"Diario de ánimo","Signed to Earth":"Firmado a la Tierra",
+"Talk":"Hablar","Text, voice, photo":"Texto, voz, foto",
+"Diagnostic support only. The AED decides the shock.":"Solo apoyo al diagnóstico. El DEA decide la descarga.",
 /* wristband v2 */
 "The Eva wristband: a rugged graphite screen module with silver corner bumpers and orange buttons, on two dark fabric straps.":"La pulsera Eva: un módulo de pantalla robusto color grafito, con esquinas plateadas y botones naranjas, sobre dos correas de tela oscuras.",
 "The screen module lifted above the sensor base: two spring contacts line up with the gold pads on the base, between the magnet seats.":"El módulo de pantalla levantado sobre la base de sensores: dos contactos de resorte se alinean con las placas doradas de la base, entre los alojamientos de los imanes.",
 "The sensor base from above, with its contacts and magnet seats, and from below, with the optical pulse sensor and two steel skin electrodes.":"La base de sensores vista desde arriba, con sus contactos y los alojamientos de los imanes, y desde abajo, con el sensor óptico de pulso y dos electrodos de acero para la piel.",
-"Suit mode cross-section: the suit sleeve sits between the screen module and the sensor base; the magnets hold, the contacts stay apart, and the base keeps sending by LoRa.":"Corte en modo traje: la manga del traje queda entre el módulo de pantalla y la base de sensores; los imanes sujetan, los contactos quedan separados y la base sigue enviando por LoRa.",
+"Suit mode, exploded: the suit sleeve sits between the screen module and the sensor base; the magnets hold through the fabric, the spring contacts stay apart, and the base keeps sending by LoRa.":"Modo traje, en despiece: la manga del traje queda entre el módulo de pantalla y la base de sensores; los imanes sujetan a través de la tela, los contactos de resorte quedan separados y la base sigue enviando por LoRa.",
+"Magnets hold through the fabric":"Los imanes sujetan a través de la tela","Suit sleeve":"Manga del traje","Spring contacts apart":"Contactos de resorte separados",
+"Own battery · LoRa keeps sending":"Batería propia · LoRa sigue enviando","Skin":"Piel","Pulse, SpO₂, temperature, EDA":"Pulso, SpO₂, temperatura, EDA",
 "Screen module":"Módulo de pantalla","Main battery · help button · voice · ECG pads":"Batería principal · botón de ayuda · voz · placas de ECG",
-"Magnets":"Imanes","hold":"sujetan","Suit":"Manga","sleeve":"del traje",
-"Sensor base · contacts apart · own battery":"Base de sensores · sin contacto · batería propia",
-"LoRa keeps":"LoRa sigue","sending":"enviando",
-"Skin · pulse, SpO₂, temperature, EDA":"Piel · pulso, SpO₂, temperatura, EDA",
-"ECG still works with bare fingers on the two pads":"El ECG sigue funcionando con los dedos sobre las dos placas",
 "All good":"Todo bien","Pulse 72 · SpO₂ 98% · 36.4 °C":"Pulso 72 · SpO₂ 98% · 36,4 °C",
 "Keep still · one finger on each pad":"Sin moverte · un dedo en cada placa",
 "Help button":"Botón de ayuda","Base button":"Botón de la base","Side button":"Botón lateral","Speaker":"Parlante",
@@ -1012,42 +1047,23 @@ const ES={
 "Anyone can raise the alarm to every wristband":"Cualquiera puede dar la alarma a todas las pulseras",
 /* station legend */
 "Inside the station":"Dentro de la estación",
-"The AED and spare pads. Lights teal when Eva asks for it.":"El DEA y los parches de repuesto. Se ilumina en turquesa cuando Eva lo pide.",
-"Oxygen bottle, mask, bag-valve mask":"Tubo de oxígeno, máscara, bolsa-válvula-máscara","Monitor, thermometer, glucometer":"Monitor, termómetro, glucómetro",
-"Probe, screen and gel":"Transductor, pantalla y gel","Dressings, bandages, scissors":"Apósitos, vendas, tijera","Straps to secure a patient":"Correas para sujetar a un paciente",
-"Tablets in blister packs":"Comprimidos en blíster","Station kit used by the crew":"Kit de la estación, para uso de la tripulación","Fluids and lines":"Sueros y vías",
-"Eye irrigation and dental kit":"Lavado ocular y kit dental","Airway tubes and suction":"Tubos de vía aérea y aspiración","Gloves, goggles, waste bags, sharps bin":"Guantes, antiparras, bolsas de residuos, descartador de punzantes",
+"defibrillator + spare pads":"desfibrilador + parches de repuesto","oxygen, mask":"oxígeno, máscara","monitor, thermometer":"monitor, termómetro",
+"probe":"transductor","dressings":"apósitos","straps":"correas","tablets":"comprimidos","crew kit":"kit de la tripulación","lines":"vías",
+"kits":"kits","suction":"aspiración","gloves":"guantes",
 "Front view of the station as a 4 by 3 wall panel, compartment 01 lit, the Eva screen, the red button and the printed AED retrieval guide.":"Vista frontal de la estación como panel de pared de 4 por 3, con el compartimiento 01 iluminado, la pantalla de Eva, el botón rojo y la guía impresa para retirar el DEA.",
 "Wall panel, four rows of three. On top: the Eva screen, the red button and a printed AED retrieval guide.":"Panel de pared, cuatro filas de tres. Arriba: la pantalla de Eva, el botón rojo y una guía impresa para retirar el DEA.",
 "Variant of the station: a centre cabinet whose side doors open to reveal compartments 07 to 12.":"Variante de la estación: un gabinete central cuyas puertas laterales se abren y muestran los compartimientos 07 a 12.",
 "Variant: a centre cabinet whose side doors open to compartments 07 to 12. Concept images carry Spanish labels; the legend above is the product text.":"Variante: un gabinete central cuyas puertas laterales abren los compartimientos 07 a 12. Las imágenes conceptuales tienen rótulos en español, igual que la leyenda de arriba.",
-/* how it links (diagram labels are sized to their boxes) */
+/* how it links */
 "How it links":"Cómo se conecta",
-"One ship hub hosts everything. Wristbands, phones and the station are its clients.":"Un único hub de la nave aloja todo. Pulseras, teléfonos y la estación son sus clientes.",
 "How Eva's parts link":"Cómo se conectan las partes de Eva",
-"The ship hub is the one host. Wristbands talk to it over LoRa and relay for each other in a mesh. A phone or tablet connects over the ship's Wi-Fi. The emergency station is a client over LoRa: the hub tells it to light compartment 01 and it reports the door open and the AED taken. If the hub is down, a wristband's no-pulse alarm goes straight to the station, and the station's red button alarms every wristband. The hub sends signed records to a ground station on Earth over the near-space link.":"El hub de la nave es el único host. Las pulseras se comunican con él por LoRa y se retransmiten entre sí en malla. Un teléfono o una tableta se conecta por el Wi-Fi a bordo. La estación de emergencia es un cliente por LoRa: el hub le indica que ilumine el compartimiento 01 y ella informa la puerta abierta y el DEA retirado. Si el hub cae, la alarma de falta de pulso de una pulsera va directo a la estación, y el botón rojo de la estación alerta a todas las pulseras. El hub envía registros firmados a una estación terrena en la Tierra por el enlace de espacio cercano.",
-"Phone or tablet":"Teléfono o tableta","Optional big screen · the app":"Pantalla grande opcional · app",
-"Ground station":"Estación terrena","Earth · gets signed records":"Tierra · registros firmados","Store and forward, ACK":"Almacena y reenvía, ACK",
-"Eva · the signed log":"Eva · el registro firmado","Dashboard · serves the app":"Panel · sirve la app","Near-space link to Earth":"Enlace con la Tierra",
-"Passenger 03 · client":"Pasajero 03 · cliente","Passenger 07 · client":"Pasajero 07 · cliente","Passenger 11 · client":"Pasajero 11 · cliente",
-"LoRa mesh: bands relay for each other":"Malla LoRa: las pulseras se retransmiten entre sí",
-"Client · own small computer":"Cliente · computadora propia","Lights, door and item sensors":"Luz, sensor de puerta y objeto","LoRa · backup battery":"LoRa · batería auxiliar",
-"Light 01 · Take the AED":"Luz 01 · Retirá el DEA","Door 01 · AED taken":"Puerta 01 · DEA retirado",
-"Ship Wi-Fi":"Wi-Fi a bordo","Near-space link":"Enlace de espacio cercano",
-"Hub down: a wristband's no-pulse alarm goes straight to the station,":"Si el hub cae, la alarma de falta de pulso de una pulsera va directo a la estación,",
-"and the station's red button alarms every wristband.":"y el botón rojo de la estación alerta a todas las pulseras.",
-"Alarm path when the hub is down":"Ruta de la alarma si cae el hub",
-"Light 01":"Luz 01","AED taken":"DEA retirado",
-"Ground station · Earth":"Estación terrena · Tierra","Signed records, store and forward, ACK":"Firmados, almacena y reenvía, ACK",
-"Eva · signed log":"Eva · registro firmado","Dashboard · the app":"Panel · la app",
-"Phone":"Teléfono","or tablet":"o tableta",
-"Wristband 03":"Pulsera 03","Wristband 07":"Pulsera 07","Wristband 11":"Pulsera 11","LoRa · mesh":"LoRa · malla",
-"Emergency":"Estación","station":"de emergencia","Client":"Cliente","Lights, door":"Luz, sensores de","and item sensors":"puerta y objeto","Backup battery":"Batería auxiliar",
-"Hub down: a wristband's no-pulse":"Si cae el hub, la alarma de falta","alarm goes straight to the station,":"de pulso va directo a la estación,","and its red button alarms every band.":"y su botón rojo alerta a todas.",
-"For the demo, one laptop is the ship hub. Phones play the wristbands, and a tablet or a second browser window plays the station.":"Para la demo, una notebook hace de hub de la nave. Los teléfonos hacen de pulseras, y una tableta o una segunda ventana del navegador hace de estación.",
-"One source of truth":"Una sola fuente de verdad","The hub keeps the signed log and Eva's state. Every client reads and writes the same case.":"El hub guarda el registro firmado y el estado de Eva. Todos los clientes leen y escriben el mismo caso.",
-"Simple clients, fully offline":"Clientes simples, sin conexión","Bands, phones and the station sense, show and report. The ship works with no internet and no Earth.":"Pulseras, teléfonos y estación miden, muestran e informan. La nave funciona sin internet y sin la Tierra.",
-"The alarm survives the hub":"La alarma sobrevive al hub","If the hub fails, the alarm still reaches the station. When it returns, everyone uploads and the hash chain keeps the order.":"Si el hub falla, la alarma igual llega a la estación. Cuando vuelve, todos suben sus datos y la cadena de hashes mantiene el orden.",
+"Runs Eva":"Corre Eva","Signed log":"Registro firmado",
+"The ship hub is the only host. Wristbands reach it over a LoRa mesh, phones over Wi-Fi, and the station over LoRa. The hub stores signed records and forwards them to Earth. If the hub is down, a wristband's alarm goes straight to the station.":"El hub de la nave es el único host. Las pulseras llegan a él por una malla LoRa, los teléfonos por Wi-Fi y la estación por LoRa. El hub guarda los registros firmados y los reenvía a la Tierra. Si el hub cae, la alarma de una pulsera va directo a la estación.",
+"Host":"Host","Phones":"Teléfonos","Wi-Fi":"Wi-Fi","LoRa":"LoRa","Wristbands":"Pulseras","LoRa mesh":"Malla LoRa","Earth":"Tierra","Store and forward":"Almacena y reenvía",
+"Hub down? The alarm goes direct.":"¿Se cae el hub? La alarma va directo.",
+"One source of truth: the hub's signed log.":"Una sola fuente de verdad: el registro firmado del hub.",
+"Fully offline: no internet, no Earth needed.":"Todo sin conexión: sin internet y sin depender de la Tierra.",
+"Demo: one laptop is the hub, phones are the bands.":"Demo: una laptop es el hub y los teléfonos son las pulseras.",
 /* solar alert */
 "Hull camera view from the spacecraft: the Sun flares and a storm of protons streams straight at the camera.":"Vista de la cámara del casco de la nave: el Sol erupciona y una tormenta de protones viene directo hacia la cámara.",
 "3D model of the Sun from NASA. Drag to rotate it.":"Modelo 3D del Sol de la NASA. Arrastralo para girarlo.",
@@ -1224,10 +1240,27 @@ function steps(id,onStep){const sec=document.getElementById(id), st=sec.querySel
     if(i!==cur){cur=i;sts.forEach((e,k)=>e.classList.toggle('on',k===i));onStep(i,sts[i],st)}});
   return ()=>{if(cur>=0)onStep(cur,sts[cur],st)}}
 /* 5 · Wristband v2: each step shows one view (joined, stacked, parts, suit cross-section) and its hotspots; the Eva screen UI is fitted to the joined view's glass */
-const bfig=document.getElementById('bfig'), bscr=document.getElementById('bscr'), bviews=[...bfig.querySelectorAll('.bi,.bsuit')], bhs=[...bfig.querySelectorAll('.hs')], bui=[...bscr.querySelectorAll('.ui')];
+const bfig=document.getElementById('bfig'), bscr=document.getElementById('bscr'), bviews=[...bfig.querySelectorAll('.bi,.bsuit3')], bhs=[...bfig.querySelectorAll('.hs')], bui=[...bscr.querySelectorAll('.ui')];
 onMeasure(()=>bscr.style.setProperty('--k',(bfig.clientWidth/1400).toFixed(4)));
+/* suit mode: open the isometric stack on step 4 (and close it on the way back); labels pin once the layers settle */
+const s3=document.getElementById('bsuit3'), s3lead=s3.querySelector('.s3-lead'), s3lora=s3.querySelector('.s3-lora'), s3tags=[...s3.querySelectorAll('.s3-tags li')], s3last=s3.querySelector('.s3-base'); let s3t=0;
+function s3place(){if(!s3.classList.contains('open'))return; const R=s3.getBoundingClientRect(), W=R.width, H=R.height, leg=s3.classList.contains('leg'), NS='http://www.w3.org/2000/svg';
+  const at=k=>{const r=s3.querySelector('.s3-a[data-l="'+k+'"]').getBoundingClientRect();return [r.left-R.left,r.top-R.top]};
+  let svg=''; const lo=at('lora'); s3lora.style.transform=`translate(${(lo[0]+6).toFixed(1)}px,${(lo[1]-s3lora.getBoundingClientRect().height/2).toFixed(1)}px)`;
+  const side={l:[],r:[]}; s3tags.forEach(t=>{const [x,y]=at(t.dataset.l); side[t.dataset.side].push({t,x,y,h:leg?0:t.offsetHeight,w:leg?0:t.offsetWidth})});
+  for(const k of ['l','r']){const L=side[k].sort((a,b)=>a.y-b.y); let prev=-1e9; const gap=8;
+    // spread the labels so they never overlap, then pull the column back inside the figure
+    L.forEach(o=>{o.ty=Math.max(o.y-o.h/2,prev+gap);prev=o.ty+o.h}); const over=prev-(H-4); if(over>0)for(let i=L.length-1,lim=H-4;i>=0;i--){const o=L[i];o.ty=Math.min(o.ty,lim-o.h);lim=o.ty-gap}
+    L.forEach(o=>{o.ty=Math.max(4,o.ty); if(leg){svg+=`<circle cx="${o.x.toFixed(1)}" cy="${o.y.toFixed(1)}" r="8"/><text x="${o.x.toFixed(1)}" y="${o.y.toFixed(1)}">${o.t.dataset.n}</text>`;return}
+      const tx=k==='l'?0:W-o.w, ex=k==='l'?o.w:W-o.w, my=o.ty+o.h/2, bx=k==='l'?ex+14:ex-14;
+      o.t.style.transform=`translate(${tx.toFixed(1)}px,${o.ty.toFixed(1)}px)`;
+      svg+=`<path d="M${o.x.toFixed(1)} ${o.y.toFixed(1)}L${bx.toFixed(1)} ${my.toFixed(1)}H${ex.toFixed(1)}"/><circle cx="${o.x.toFixed(1)}" cy="${o.y.toFixed(1)}" r="4.5"/>`})}
+  s3lead.innerHTML=svg}
+function s3open(on){clearTimeout(s3t); s3.classList.toggle('open',on); if(!on){s3.classList.remove('set');return}
+  s3t=setTimeout(()=>{s3place();s3.classList.add('set')},reduce?0:1250)}
+onMeasure(()=>{const w=bfig.clientWidth; s3.style.setProperty('--bw',w); s3.classList.toggle('leg',w<640); s3.style.setProperty('--tw',Math.max(120,Math.min(210,w*.24))+'px'); requestAnimationFrame(s3place)});
 steps('wsec',(i,st)=>{const v=+st.dataset.v, u=st.dataset.u||'home';
-  bviews.forEach((el,k)=>el.classList.toggle('on',k===v)); bhs.forEach(h=>h.classList.toggle('on',+h.dataset.k===i));
+  bviews.forEach((el,k)=>el.classList.toggle('on',k===v)); s3open(v===3); bhs.forEach(h=>h.classList.toggle('on',+h.dataset.k===i));
   bui.forEach(el=>el.classList.toggle('on',v===0&&el.dataset.u===u)); bscr.style.transition="opacity .5s";bscr.style.opacity=v===0?1:0;});
 const hlA=document.getElementById('hlA'), hlT=document.getElementById('hlT');
 // maps a point given in % of an image's natural size to its box, for object-fit cover or contain (padding aware)
@@ -1247,6 +1280,40 @@ const redoB=steps('caseB',i=>{const u=UI[Math.max(0,i)]; bState=i; uiT.style.opa
 // the 30 s countdown follows the scroll through step 2
 add(y=>{if(bState!==1)return; const p=pinP(caseB,y), t=clamp((p-.25)/.25); uiS.textContent=Math.max(1,Math.ceil(30*(1-t)))+' s'});
 
+/* 3 · Sensors record, Eva acts: one simulated event. Left logs a dot and stays calm; Eva counts to 10 s and shows what, where, how.
+   Reduced motion: no timers, the button steps through the same states. */
+{const vs=document.getElementById('vs'), btn=document.getElementById('vsBtn'), N=document.getElementById('vsN'), live=document.getElementById('vsLive'),
+  li=[...vs.querySelectorAll('.vsteps li')], clk=vs.querySelector('.vclk'), rec=vs.querySelector('.vrec'), done=vs.querySelector('.vdone');
+  const AT=[1.6,3.4,5.6], END=10; let t0=0, raf=0, stage=-1, lab='Simulate an event';
+  const label=k=>{lab=k;btn.textContent=tr(k)};
+  const say=el=>{live.textContent=el.innerText.replace(/\s+/g,' ').trim()};
+  // the left device's clock simply keeps running, event or not
+  const c0=Date.now()-((41*60+12)*1000); setInterval(()=>{const s=Math.floor((Date.now()-c0)/1000)%3600;clk.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
+  function show(t){N.textContent=t>=END?'10':t.toFixed(1); li.forEach((e,k)=>{const on=t>=AT[k]; if(on&&!e.classList.contains('on')){e.classList.add('on');say(e)} else if(!on)e.classList.remove('on')});
+    if(t>=END&&vs.dataset.s!=='2'){vs.dataset.s='2';say(done)}}
+  function reset(){cancelAnimationFrame(raf);vs.dataset.s='0';li.forEach(e=>e.classList.remove('on'));N.textContent='0.0';stage=-1}
+  function start(){reset(); void vs.offsetWidth; vs.dataset.s='1'; say(rec);
+    if(reduce){stage=0;show(0);label('Next step');return}
+    label('Replay'); t0=performance.now(); const tick=now=>{const t=(now-t0)/1000; show(Math.min(t,END)); if(t<END)raf=requestAnimationFrame(tick)}; raf=requestAnimationFrame(tick)}
+  btn.addEventListener('click',()=>{if(reduce&&stage>=0&&stage<4){stage++; const t=stage<4?AT[stage-1]:END; show(stage===4?END:t); if(stage===4)label('Replay'); return} start()});
+  I18.on(()=>{btn.textContent=tr(lab)})}
+/* station dots: one entry per compartment, measured on a/station-front.webp (1400 × 1050), in % of the image:
+   [dot x, dot y, compartment left, top, width, height]. The dot sits on the compartment's printed number tab.
+   When the Codex station render replaces the photo, re-measure only this block. */
+const KDOTS=[
+  [24.3,19.4, 22.1,17.6,18.6,20.0],[44.1,19.4, 41.8,17.6,19.1,20.0],[64.1,19.4, 62.0,17.6,17.4,20.0],
+  [24.3,40.5, 22.1,39.0,18.6,16.4],[44.1,40.5, 41.8,39.0,19.1,16.4],[64.1,40.5, 62.0,39.0,17.4,16.4],
+  [24.3,58.2, 22.1,56.9,18.6,16.6],[44.1,58.2, 41.8,56.9,19.1,16.6],[64.1,58.2, 62.0,56.9,17.4,16.6],
+  [24.3,76.6, 22.1,75.2,18.6,16.9],[44.1,76.6, 41.8,75.2,19.1,16.9],[64.1,76.6, 62.0,75.2,17.4,16.9]];
+{const pic=document.querySelector('#kfig .kpic'), items=[...document.querySelectorAll('#clist li')]; let pinned=-1;
+  const dots=KDOTS.map((d,k)=>{const b=document.createElement('i'); b.className='kbox c'+k; b.style.cssText=`left:${d[2]}%;top:${d[3]}%;width:${d[4]}%;height:${d[5]}%`; pic.appendChild(b);
+    const e=document.createElement('i'); e.className='kdot c'+k; e.setAttribute('aria-hidden','true'); e.textContent=String(k+1).padStart(2,'0'); e.style.cssText=`left:${d[0]}%;top:${d[1]}%`; pic.appendChild(e); return [e,b]});
+  const hl=k=>{items.forEach((it,j)=>it.classList.toggle('hl',j===k)); dots.forEach(([e,b],j)=>{e.classList.toggle('hl',j===k);b.classList.toggle('on',j===k)})};
+  const rest=()=>hl(pinned);
+  items.forEach((it,k)=>{it.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')hl(k)}); it.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch')rest()});
+    it.addEventListener('focus',()=>hl(k)); it.addEventListener('blur',rest); it.addEventListener('click',()=>{pinned=pinned===k?-1:k;hl(pinned<0?k:pinned)})});
+  dots.forEach(([e],k)=>{e.addEventListener('pointerenter',ev=>{if(ev.pointerType!=='touch')hl(k)}); e.addEventListener('pointerleave',ev=>{if(ev.pointerType!=='touch')rest()});
+    e.addEventListener('click',()=>{pinned=pinned===k?-1:k;hl(pinned)})})}
 /* 8 · Emergency station: the ledger fills in and the station state follows it (labels, screen, compartment 01, door, AED taken, red button) */
 const es=document.getElementById('esec'), est=es.querySelector('.stage'), ehead=document.getElementById('ehead'), eat=[...es.querySelectorAll('.lbl')].map(l=>+l.dataset.at);
 add(y=>{const p=pinP(es,y); let k=0; eat.forEach((a,i)=>{if(p>=a)k=i+1}); if(es.dataset.s!==String(k))es.dataset.s=String(k);
@@ -1415,13 +1482,13 @@ const TEAM={
  en:{members:[
   {name:'Lean',role:'Product & build lead',tasks:['Winners analysis','Happy path','Landing','AI models rationale','30 s video'],bio:'Turns the research into Eva’s product, landing and demo.',tags:['Product','Landing','Demo'],links:[]},
   {name:'Tomi',role:'Hardware & screens',tasks:['Energy budget and components','Screens','Wrist phone mount'],bio:'Picks the components, budgets every milliwatt and designs the screens.',tags:['Hardware','Energy','UI'],links:[]},
-  {name:'Hassi',role:'Medical cases',tasks:['Acute cases','Medical variables'],bio:'Maps each emergency from signal to action.',tags:['Medicine','Cases'],links:[]},
+  {name:'Hazzi',role:'Medical cases',tasks:['Acute cases','Medical variables'],bio:'Maps each emergency from signal to action.',tags:['Medicine','Cases'],links:[]},
   {name:'Naza',role:'Medical variables & scale',tasks:['Acute cases','Medical variables','Scalability'],bio:'Defines what we measure and how WearMeds scales.',tags:['Variables','Scale'],links:[]}],
   opts:{title:'Team',meta:'Sanjo-X · NASA Space Apps 2026',teamLine:'Sanjo-X · Space Apps Rosario',org:'Eva by WearMeds',bandLabel:'Crew',serialPrefix:'SX-'}},
  es:{members:[
   {name:'Lean',role:'Líder de producto y desarrollo',tasks:['Análisis de ganadores','Recorrido principal','Landing','Fundamento de los modelos de IA','Video de 30 s'],bio:'Convierte la investigación en el producto, la landing y la demo de Eva.',tags:['Producto','Landing','Demo'],links:[]},
   {name:'Tomi',role:'Hardware y pantallas',tasks:['Presupuesto energético y componentes','Pantallas','Soporte del teléfono en la muñeca'],bio:'Elige los componentes, presupuesta cada milivatio y diseña las pantallas.',tags:['Hardware','Energía','UI'],links:[]},
-  {name:'Hassi',role:'Casos médicos',tasks:['Casos agudos','Variables médicas'],bio:'Mapea cada emergencia desde la señal hasta la acción.',tags:['Medicina','Casos'],links:[]},
+  {name:'Hazzi',role:'Casos médicos',tasks:['Casos agudos','Variables médicas'],bio:'Mapea cada emergencia desde la señal hasta la acción.',tags:['Medicina','Casos'],links:[]},
   {name:'Naza',role:'Variables médicas y escala',tasks:['Casos agudos','Variables médicas','Escalabilidad'],bio:'Define qué medimos y cómo escala WearMeds.',tags:['Variables','Escala'],links:[]}],
   opts:{title:'Equipo',meta:'Sanjo-X · NASA Space Apps 2026',teamLine:'Sanjo-X · Space Apps Rosario',org:'Eva de WearMeds',bandLabel:'Tripulación',serialPrefix:'SX-',
    labels:{profile:'Perfil',tasks:'Tareas',links:'Enlaces',idle:'Pasá el cursor o enfocá una credencial',hintRail:'Enter para girar · ← → para moverte',hintCarousel:'Tocá para girar · deslizá para ver más',backRail:'Hacé clic otra vez o Esc para volver',backCarousel:'Tocá otra vez para volver',dots:'Elegí a un integrante del equipo',show:'Mostrar',member:'integrante',members:'integrantes'}}}};
