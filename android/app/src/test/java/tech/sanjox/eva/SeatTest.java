@@ -13,6 +13,7 @@ public class SeatTest {
         assertEquals(Seat.TOMAS, Seat.fromId(" 1B ", null));
         assertEquals(Seat.DASH, Seat.fromId("dash", null));
         assertEquals(Seat.STATION, Seat.fromId("STATION", null));
+        assertEquals(Seat.WRIST, Seat.fromId("wrist", null));
         assertNull(Seat.fromId("9Z", null));
         assertEquals(Seat.ANA, Seat.fromId(null, Seat.ANA));
     }
@@ -24,6 +25,10 @@ public class SeatTest {
         assertEquals(Seat.ANA, Seat.fromPath("/app", "seat=7C", Seat.LEO));
         assertEquals("?seat=dash is not a passenger seat", Seat.ANA, Seat.fromPath("/app", "seat=dash", Seat.LEO));
         assertEquals(Seat.DASH, Seat.fromPath("/dash", null, Seat.ANA));
+        assertEquals(Seat.WRIST, Seat.fromPath("/app/wrist", "seat=4B&mode=wristband", Seat.ANA));
+        assertEquals(Seat.WRIST, Seat.fromPath("/app", "seat=4B&mode=wristband", Seat.ANA));
+        assertEquals("?seat=wrist is not a passenger seat", Seat.ANA, Seat.fromPath("/app", "seat=wrist", Seat.LEO));
+        assertEquals("/app/wrist?seat=4B&mode=wristband", Seat.WRIST.path);
         assertEquals(Seat.DASH, Seat.fromPath("/DASH/", "", Seat.ANA));
         assertEquals(Seat.STATION, Seat.fromPath("/station", null, Seat.ANA));
         assertEquals(Seat.LEO, Seat.fromPath("/other", null, Seat.LEO));

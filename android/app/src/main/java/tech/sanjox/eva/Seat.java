@@ -6,7 +6,9 @@ public enum Seat {
     LEO("3B", "Leo", "Seat 3B", "/app?seat=3B"),
     TOMAS("1B", "Tomás", "Seat 1B", "/app?seat=1B"),
     DASH("dash", "Crew dashboard", "Mara, crew lead", "/dash"),
-    STATION("station", "Station", "AED station screen", "/station");
+    STATION("station", "Station", "AED station screen", "/station"),
+    /** The phone strapped to a forearm stands in for the wristband: locked landscape, wristband UI. */
+    WRIST("wrist", "Wristband (landscape)", "Ana · 4B, the band's own screen", "/app/wrist?seat=4B&mode=wristband");
 
     /** Stable id stored in preferences and accepted in a pasted URL (?seat=). */
     public final String id;
@@ -41,12 +43,13 @@ public enum Seat {
         String p = path == null ? "" : path.toLowerCase(java.util.Locale.ROOT);
         if (p.startsWith("/dash")) return DASH;
         if (p.startsWith("/station")) return STATION;
+        if (p.startsWith("/app/wrist") || (query != null && query.toLowerCase(java.util.Locale.ROOT).contains("mode=wristband"))) return WRIST;
         if (query != null) {
             for (String kv : query.split("&")) {
                 int eq = kv.indexOf('=');
                 if (eq > 0 && kv.substring(0, eq).equalsIgnoreCase("seat")) {
                     Seat s = fromId(kv.substring(eq + 1), null);
-                    if (s != null && s != DASH && s != STATION) return s;
+                    if (s != null && s != DASH && s != STATION && s != WRIST) return s;
                 }
             }
         }

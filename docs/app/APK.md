@@ -7,15 +7,16 @@ The APK is a small native wrapper (Java, no Capacitor/Cordova, no AndroidX) arou
 | | |
 |---|---|
 | Package | `tech.sanjox.eva` (debug: `tech.sanjox.eva.debug`, can be installed alongside) |
-| Version | 0.3.1 (code 301) |
+| Version | 0.3.2 (code 302) |
 | SDK | minSdk 26 (Android 8.0), targetSdk / compileSdk 36 (Android 16) |
-| Size | release 384 KB, debug 405 KB |
+| Size | release 385 KB, debug 407 KB |
 | Signing | release: own keystore (RSA 3072, v2 scheme), cert SHA-256 `55:F1:78:EE:7A:AE:7E:AD:80:83:5D:AA:59:EE:47:0A:5E:D7:B9:29:00:FD:19:4A:B7:7F:42:50:58:88:44:D7` |
 | Source | `android/` (Gradle wrapper 8.14.7, AGP 8.13.2) |
 
 ## Install
 
-1. Copy `eva-v0.3.1.apk` to the phone (USB, chat, or `adb install eva-v0.3.1.apk`).
+1. Copy `eva-v0.3.2.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.2.apk`). It is signed with the same key as 0.3.1, so it installs over it.
+   **Update the hub too**: the APK is only a WebView around the hub; the new look and wristband mode ship in the `eva` 0.3.2 binary. If the phone still shows the old look after the hub update, Android Settings → Apps → Eva → Storage → Clear cache (the service worker cache `eva-shell-v8` normally evicts the old one).
 2. Open it from Files. Android asks to allow **Install unknown apps** for the app that opens it (Files, Chrome, the chat app): allow it, go back, tap **Install**. Play Protect may warn about an unknown developer: choose **Install anyway**.
 3. To switch between the debug and release builds, or to a build signed with another key, uninstall first. Debug and release have different package names, so both can be installed at the same time.
 
@@ -31,7 +32,7 @@ On the phone (same Wi-Fi or the laptop's hotspot), the first run shows **Connect
 
 - **Hub address**: `192.168.0.10:8080` (IP or name, plus port; 8080 if left out). You can also paste a full URL such as `https://192.168.0.10:8080/app?seat=3B`; its scheme and seat take priority over the form.
 - **Connection**: *https* if the hub runs with `--tls` (needed for voice), *http* otherwise. Plain http is only accepted for local network addresses.
-- **Open as**: Ana · 4B, Leo · 3B, Tomás · 1B, **Crew dashboard** (`/dash`) or **Station** (`/station`).
+- **Open as**: Ana · 4B, Leo · 3B, Tomás · 1B, **Crew dashboard** (`/dash`), **Station** (`/station`) or **Wristband (landscape)** (`/app/wrist?seat=4B&mode=wristband`, locked to landscape: a phone strapped to a forearm stands in for the band).
 - **Keep the screen on while Eva is open**: on by default, so an emergency alert is never hidden behind a locked screen. The screen can still turn off when Eva is in the background.
 
 The choice is remembered. To change it later:
@@ -73,6 +74,15 @@ The certificate's names don't matter once it's pinned. A hub reached by an IP th
 
 A network security config can't express IP ranges, so it permits cleartext and the app enforces the ranges in code (`HubConfig.isCleartextAllowed`, applied to every WebView request and to the setup form). `http://` and `ws://` are allowed only to 10/8, 172.16/12, 192.168/16, 127/8, 169.254/16, 100.64/10, IPv6 loopback, link-local and ULA, `localhost`, `*.local`, `*.lan` and `*.home.arpa`. Anything else over http gets a 403 inside the app. https is never downgraded. Mixed content is blocked.
 
+## Rotation, wristband mode and smoothness (0.3.2)
+
+- **Rotation**: `MainActivity` runs `screenOrientation="fullUser"` and already handles orientation changes without a reload, so turning the phone (auto-rotate on) flips the PWA into wristband mode and back. *Wristband (landscape)* locks `sensorLandscape`.
+- **Eva status toast**: after the hub answers once, the app asks `/api/eva/status` inside the WebView (same origin, same certificate pin) and shows for 3 s "Eva online" or "Eva: on-board rules (the hub has no key)", so the teammate knows before the demo.
+- **WebView smoothness**: `OVER_SCROLL_NEVER` (no grey stretch; the page owns the gesture), scroll bars off, `setOffscreenPreRaster(true)` (always full screen: less checkerboarding on fast scroll), `RENDERER_PRIORITY_IMPORTANT`, the default hardware layer (no `setLayerType` anywhere), `android:hardwareAccelerated="true"` explicit. The display mode with the highest refresh rate at the current resolution is preferred (90/120 Hz phones run the springs natively; the spring loop is time-based).
+- **Navy base**: window, WebView, status bar, navigation bar and splash use `#070A14`, so there is no black flash around the page.
+- **`setTextZoom(100)`**: the layout is built on a fixed type scale and the vitals rings break with system font scaling. Known accessibility trade-off for the demo: Android's font size setting does not enlarge text inside Eva.
+- User agent ends with `EvaAndroid/0.3.2`.
+
 ## Other behaviour
 
 - JavaScript, DOM storage and autoplay without a gesture are on. File access is off, and no JavaScript bridge is exposed.
@@ -90,18 +100,27 @@ Needs JDK 17+ (tested with OpenJDK 21) and the Android SDK packages `platforms;a
 ```bash
 cd android
 echo "sdk.dir=/path/to/android-sdk" > local.properties        # or export ANDROID_HOME
-./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.1-debug.apk
+./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.2-debug.apk
 
 # signed release: keystore and passwords OUTSIDE the repo
 EVA_SIGNING_PROPS=/secure/place/signing.properties ./gradlew lintRelease assembleRelease
-#   → app/build/outputs/apk/release/eva-v0.3.1-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
+#   → app/build/outputs/apk/release/eva-v0.3.2-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
 ```
 
 `signing.properties` holds `storeFile=`, `storePassword=`, `keyAlias=`, `keyPassword=`. The 0.3.1 release keystore (`eva-release.p12`, alias `eva`) and its password file were created outside the repo, both mode 600. **Back them up**: an update signed with a different key has to be installed after uninstalling the old app. `.gitignore` excludes build outputs, `local.properties` and `*.jks`, `*.keystore`, `*.p12` and `signing.properties`.
 
 To make a new key: `keytool -genkeypair -keystore eva-release.p12 -storetype PKCS12 -alias eva -keyalg RSA -keysize 3072 -validity 10000`.
 
-## Test results (15/11/2026)
+## Test results 0.3.2 (15/11/2026)
+
+| check | result |
+|---|---|
+| JVM unit + Robolectric | **55 / 55 pass**. New: `EvaStatusTest` (3: toast text per status, nothing when the hub did not say, the value `evaluateJavascript` returns), `SeatTest` wristband cases (`/app/wrist`, `mode=wristband`, `?seat=wrist` is not a passenger seat), Robolectric: Wristband opens `/app/wrist?seat=4B&mode=wristband` locked landscape, the status request runs after the first page, WebView settings (UA `EvaAndroid/0.3.2`, text zoom 100, no overscroll, no scroll bars, orientation full user). `setOffscreenPreRaster` is not recorded by Robolectric's shadow, so it is checked by reading the code |
+| `lintDebug`, `lintRelease` | 0 errors |
+| `apksigner verify --print-certs` | release verifies (v2), signer SHA-256 `55:F1:78:EE:…:44:D7`, the same key as 0.3.1 |
+| `aapt2 dump badging` | `tech.sanjox.eva` 0.3.2/302, min 26, target 36 |
+
+## Test results 0.3.1 (15/11/2026)
 
 There's no `/dev/kvm` on the build machine, so **no emulator run**. Instead:
 
@@ -136,3 +155,15 @@ Hub: `eva demo --tls` on the laptop. Phone: same Wi-Fi.
 - [ ] Hub without `--tls`, app on http → everything except voice works. The setup screen explains why.
 - [ ] Hub settings → turn off "Keep the screen on" → the screen times out as usual.
 - [ ] Android 15/16 phone: content isn't under the status bar or gesture bar, and the keyboard doesn't cover the Eva chat box.
+
+### Smoothness checklist (0.3.2)
+
+- [ ] Android System WebView / Chrome updated (≥ 111 for view transitions; older falls back to spring pushes).
+- [ ] Battery saver off (it caps the display at 60 Hz and throttles timers); "Remove animations" off unless testing reduced motion.
+- [ ] Home: heart ring beats at the shown bpm, numbers roll on change, tab indicator slides, no stutter when scrolling Band/Journal.
+- [ ] Tile → detail morph plays (or a clean push on an old WebView). Band flick spins with inertia and haptic detents.
+- [ ] Dev panel → cardiac arrest: red takeover + long vibration; CPR metronome haptic on each beat; text readable at arm's length.
+- [ ] About → Smooth mode shows "Auto (Full)" on a mid-range phone; switching to Lite removes the glass blur and stays fluid.
+- [ ] Tab bar clears the gesture bar; keyboard does not cover the Eva composer.
+- [ ] Rotate the phone: the wristband UI appears (face, swipe pages, Help needs a 2 s hold) and goes back upright. *Open as → Wristband (landscape)* stays landscape.
+- [ ] On connect, a toast says "Eva online" or "Eva: on-board rules (the hub has no key)".

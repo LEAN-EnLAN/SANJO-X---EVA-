@@ -189,12 +189,34 @@ public class MainActivityRobolectricTest {
     // ------------------------------------------------------------ WebView basics
 
     @Test
+    public void wristbandOpensTheBandUiLockedLandscape() {
+        MainActivity a = launchWith("10.0.2.2:9280", "http", Seat.WRIST);
+        assertEquals("http://10.0.2.2:9280/app/wrist?seat=4B&mode=wristband", shadowOf(web(a)).getLastLoadedUrl());
+        assertEquals(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE, a.getRequestedOrientation());
+    }
+
+    @Test
+    public void asksTheHubForEvaStatusOnceAfterTheFirstPage() {
+        MainActivity a = launchWith("10.0.2.2:9280", "http", Seat.ANA);
+        a.showEvaStatus();
+        String js = shadowOf(web(a)).getLastEvaluatedJavascript();
+        assertNotNull(js);
+        assertTrue(js.contains("/api/eva/status"));
+    }
+
+    @Test
     public void loadsTheSeatUrlAndKeepsTheScreenOn() {
         MainActivity a = launchWith("10.0.2.2:9280", "http", Seat.LEO);
         assertEquals("http://10.0.2.2:9280/app?seat=3B", shadowOf(web(a)).getLastLoadedUrl());
         assertTrue(web(a).getSettings().getJavaScriptEnabled());
         assertTrue(web(a).getSettings().getDomStorageEnabled());
         assertFalse(web(a).getSettings().getMediaPlaybackRequiresUserGesture());
+        // smoothness settings (APP-POLISH §8) and the user agent
+        assertTrue(web(a).getSettings().getUserAgentString().endsWith(" EvaAndroid/0.3.2"));
+        assertEquals(100, web(a).getSettings().getTextZoom());
+        assertEquals(View.OVER_SCROLL_NEVER, web(a).getOverScrollMode());
+        assertFalse(web(a).isVerticalScrollBarEnabled());
+        assertEquals(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_USER, a.getRequestedOrientation());
         int flags = a.getWindow().getAttributes().flags;
         assertTrue((flags & WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0);
     }

@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.PermissionRequest;
@@ -80,6 +82,10 @@ public class MainActivity extends Activity {
     private AlertDialog trustDialog;
 
     private Object backCallback;
+    /** The v2 navy base (#070A14): window, WebView and system bars, so nothing flashes black around the page. */
+    static final int BACKGROUND = 0xFF070A14;
+    /** Whether the Eva status toast was shown for this load of the hub. */
+    private boolean statusShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +97,9 @@ public class MainActivity extends Activity {
             finish();
             return;
         }
-        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.BLACK));
+        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(BACKGROUND));
+        applyOrientation();
+        preferHighRefreshRate();
         if (Build.VERSION.SDK_INT >= 29) getWindow().setNavigationBarContrastEnforced(false);
         setContentView(R.layout.activity_main);
         Insets.applySystemBarPadding(findViewById(R.id.root));
@@ -133,6 +141,7 @@ public class MainActivity extends Activity {
         } else if (!now.equals(config)) {
             boolean hostChanged = !now.host.equals(config.host);
             config = now;
+            applyOrientation();
             if (hostChanged) web.clearSslPreferences();
             web.clearHistory();
             load();
@@ -174,15 +183,58 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(true); // uploads of content:// photos picked or captured
         s.setSupportMultipleWindows(false);
-        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.1");
-        web.setBackgroundColor(Color.BLACK);
+        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.2");
+        // Smoothness (APP-POLISH §8): the page owns overscroll (pull to refresh) and its own type scale; the
+        // WebView is always full screen, so pre-rastering off-screen tiles avoids checkerboarding on fast scroll.
+        // The default hardware layer is kept (no setLayerType anywhere).
+        s.setOffscreenPreRaster(true);
+        s.setTextZoom(100);
+        web.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        web.setVerticalScrollBarEnabled(false);
+        web.setHorizontalScrollBarEnabled(false);
+        web.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, false);
+        web.setBackgroundColor(BACKGROUND);
         web.setWebViewClient(new HubClient());
         web.setWebChromeClient(new HubChrome());
         web.setDownloadListener((url, ua, cd, mime, len) -> openExternally(url));
         // Service workers are on by default in WebView; Eva's /sw.js registers itself when the origin is trusted.
     }
 
+    /** Wristband (landscape) locks landscape; everything else follows the phone (auto-rotate flips the PWA). */
+    private void applyOrientation() {
+        setRequestedOrientation(config != null && config.seat == Seat.WRIST
+                ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                : ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
+    }
+
+    /** 90/120 Hz phones run the springs at their native rate (the spring loop is time-based). */
+    private void preferHighRefreshRate() {
+        Display d = getWindowManager().getDefaultDisplay();
+        if (d == null) return;
+        Display.Mode cur = d.getMode(), best = cur;
+        for (Display.Mode m : d.getSupportedModes()) {
+            if (m.getPhysicalWidth() == cur.getPhysicalWidth() && m.getPhysicalHeight() == cur.getPhysicalHeight()
+                    && m.getRefreshRate() > best.getRefreshRate()) best = m;
+        }
+        if (best.getModeId() != cur.getModeId()) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.preferredDisplayModeId = best.getModeId();
+            getWindow().setAttributes(lp);
+        }
+    }
+
+    /** After the hub answers once: ask it whether Eva is online and say so for 3 seconds (same origin, same pin). */
+    void showEvaStatus() {
+        if (statusShown || web == null) return;
+        statusShown = true;
+        web.evaluateJavascript(EvaStatus.FETCH_JS, value -> {
+            String msg = EvaStatus.toastFor(EvaStatus.unquote(value));
+            if (msg != null) Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        });
+    }
+
     private void load() {
+        statusShown = false;
         hideError();
         mainFrameFailed = false;
         certErrorShown = false;
@@ -276,7 +328,10 @@ public class MainActivity extends Activity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (!mainFrameFailed && config.isSameOrigin(url)) hideError();
+            if (!mainFrameFailed && config.isSameOrigin(url)) {
+                hideError();
+                showEvaStatus();
+            }
         }
 
         @Override

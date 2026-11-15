@@ -35,6 +35,7 @@
 
     <application
         android:allowBackup="false"
+        android:hardwareAccelerated="true"
         android:enableOnBackInvokedCallback="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
@@ -51,6 +52,7 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density"
             android:exported="true"
             android:launchMode="singleTask"
+            android:screenOrientation="fullUser"
             android:theme="@style/Theme.Eva.Launch"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

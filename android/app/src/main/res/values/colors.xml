@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- twocreate tokens, same as app/styles/app.css -->
-    <color name="eva_background">#000000</color>
-    <color name="eva_raised">#141417</color>
+    <!-- v2 "Aurora" tokens, same as app/styles/app.css (navy base, no black flash around the page) -->
+    <color name="eva_background">#070A14</color>
+    <color name="eva_raised">#161C31</color>
     <color name="eva_line">#26262C</color>
     <color name="eva_ink">#F4F3F0</color>
     <color name="eva_muted">#8F8E8A</color>
