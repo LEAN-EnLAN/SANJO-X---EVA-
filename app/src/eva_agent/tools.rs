@@ -57,16 +57,36 @@ pub struct ToolDef {
     pub parameters: fn() -> Value,
 }
 
-/// Names that must never be registered (checked by a test).
-pub const FORBIDDEN: &[&str] = &["shock", "defibrillate", "deliver_shock", "give_drug", "inject", "administer", "treat"];
+/// Fragments that must never appear in a tool name (checked by a test, and
+/// refused at run time even if a model invents such a tool).
+pub const FORBIDDEN: &[&str] = &["shock", "defib", "drug", "dose", "medicat", "inject", "administer", "treat", "epinephrine", "adrenaline", "cardiovert", "pace", "infuse", "prescribe"];
+
+/// What Eva says when asked for a treatment or a shock (prompt injection or not).
+pub const REFUSAL: &str = "I can't give drugs, treatments or shocks, and no one can make me. The ship's AED decides shocks from its own pads; the crew lead decides any treatment. I can get help now, guide CPR, read the band and record everything.";
+
+/// True if a name looks like a treatment or shock action.
+pub fn is_forbidden(name: &str) -> bool {
+    let n = name.to_ascii_lowercase();
+    FORBIDDEN.iter().any(|f| n.contains(f))
+}
+
+impl Origin {
+    pub fn who(self) -> &'static str {
+        match self {
+            Origin::Eva => "Eva",
+            Origin::User => "the user",
+            Origin::Reflex => "Eva's reflex rules",
+        }
+    }
+}
 
 pub const SCREENS: &[&str] = &["home", "eva", "journal", "emergency", "storm", "plan", "records"];
 
 pub fn registry() -> Vec<ToolDef> {
     vec![
-        ToolDef { name: "get_vitals", description: "Read the latest wristband vitals (pulse, oxygen, breathing, skin temperature, EDA, motion, signal, batteries) for a passenger, with plain read-outs against their own usual range.", parameters: || json!({"type":"object","properties":{"seat":{"type":"string","description":"Seat like 4B. Defaults to the person talking."}},"additionalProperties":false}) },
-        ToolDef { name: "log_mood", description: "Record the person's State of Mind: valence 1 (very unpleasant) to 5 (very pleasant), feeling labels and what is affecting them.", parameters: || json!({"type":"object","properties":{"valence":{"type":"integer","minimum":1,"maximum":5},"labels":{"type":"array","items":{"type":"string"},"maxItems":6},"affects":{"type":"array","items":{"type":"string"},"maxItems":6}},"required":["valence"],"additionalProperties":false}) },
-        ToolDef { name: "add_journal_entry", description: "Save a private journal entry in the person's words. Shared with the crew lead only if shared=true.", parameters: || json!({"type":"object","properties":{"text":{"type":"string","maxLength":4000},"valence":{"type":"integer","minimum":1,"maximum":5},"labels":{"type":"array","items":{"type":"string"}},"shared":{"type":"boolean","default":false}},"required":["text"],"additionalProperties":false}) },
+        ToolDef { name: "get_vitals", description: "Read the latest wristband vitals (pulse, oxygen, breathing, skin temperature, EDA, motion, signal, batteries) for a passenger, with plain read-outs against their own usual range.", parameters: || json!({"type":"object","properties":{"seat":{"type":"string","maxLength":8,"description":"Seat like 4B. Defaults to the person talking."}},"additionalProperties":false}) },
+        ToolDef { name: "log_mood", description: "Record the person's State of Mind: valence 1 (very unpleasant) to 5 (very pleasant), feeling labels and what is affecting them.", parameters: || json!({"type":"object","properties":{"valence":{"type":"integer","minimum":1,"maximum":5},"labels":{"type":"array","items":{"type":"string","maxLength":40},"maxItems":12},"affects":{"type":"array","items":{"type":"string","maxLength":40},"maxItems":12}},"required":["valence"],"additionalProperties":false}) },
+        ToolDef { name: "add_journal_entry", description: "Save a private journal entry in the person's words. Shared with the crew lead only if shared=true.", parameters: || json!({"type":"object","properties":{"text":{"type":"string","maxLength":4000},"valence":{"type":"integer","minimum":1,"maximum":5},"labels":{"type":"array","items":{"type":"string","maxLength":40},"maxItems":12},"affects":{"type":"array","items":{"type":"string","maxLength":40},"maxItems":12},"shared":{"type":"boolean","default":false}},"required":["text"],"additionalProperties":false}) },
         ToolDef { name: "log_meal", description: "Log a meal from a text description or from a photo already described by the vision pipeline.", parameters: || json!({"type":"object","properties":{"text":{"type":"string","maxLength":500},"kind":{"type":"string","enum":["Breakfast","Lunch","Dinner","Snack"]},"kcal":{"type":"integer","minimum":0,"maximum":3000},"from_photo":{"type":"boolean"}},"required":["text"],"additionalProperties":false}) },
         ToolDef { name: "log_water", description: "Add water the person drank, in millilitres.", parameters: || json!({"type":"object","properties":{"ml":{"type":"integer","minimum":50,"maximum":2000}},"required":["ml"],"additionalProperties":false}) },
         ToolDef { name: "start_ecg_check", description: "Start an on-demand 30 second wrist ECG: the person rests one finger of each hand on the two metal pads of the wristband's screen part.", parameters: || json!({"type":"object","properties":{},"additionalProperties":false}) },
@@ -97,25 +117,57 @@ fn arg_int(a: &Value, k: &str) -> Option<i64> {
     a.get(k).and_then(|v| v.as_i64().or_else(|| v.as_str().and_then(|s| s.parse().ok())))
 }
 fn arg_list(a: &Value, k: &str) -> Vec<String> {
-    a.get(k).and_then(|v| v.as_array()).map(|v| v.iter().filter_map(|x| x.as_str().map(|s| s.chars().take(40).collect())).take(6).collect()).unwrap_or_default()
+    a.get(k).and_then(|v| v.as_array()).map(|v| v.iter().filter_map(|x| x.as_str().map(|s| s.chars().take(40).collect())).take(12).collect()).unwrap_or_default()
+}
+
+/// Find a tool by name.
+pub fn find(name: &str) -> Option<ToolDef> {
+    registry().into_iter().find(|t| t.name == name)
 }
 
 /// Validate, execute and log one tool call for `seat`.
+///
+/// Order: refuse anything that looks like a treatment or shock, refuse
+/// unknown tools, validate the arguments against the tool's JSON schema,
+/// run it. **Every** call, refused or not, goes on the hash chain with who
+/// invoked it (`origin`: eva, user or reflex).
 pub fn execute(state: &Shared, seat: &str, name: &str, args: &Value, origin: Origin) -> ToolResult {
-    let args = if args.is_object() { args.clone() } else { json!({}) };
-    let mut res = run(state, seat, name, &args);
+    let raw = if args.is_object() { args.clone() } else { json!({}) };
+    let name_safe: String = name.chars().filter(|c| c.is_ascii_alphanumeric() || *c == '_').take(48).collect();
+    let (mut res, args, refused) = if is_forbidden(name) {
+        (ToolResult::err(REFUSAL), raw, true)
+    } else {
+        match find(name) {
+            None => (ToolResult::err(format!("There is no tool called {name_safe}.")), raw, true),
+            Some(def) => match super::schema::validate(&raw, &(def.parameters)()) {
+                Err(why) => (ToolResult::err(format!("I could not {}: {why}.", name_safe.replace('_', " "))), raw, true),
+                Ok(clean) => (run(state, seat, name, &clean), clean, false),
+            },
+        }
+    };
     // Layer 3: every invocation goes on the chain. Private text is not copied there.
     let mut logged_args = args.clone();
     if name == "add_journal_entry" && !args.get("shared").and_then(|v| v.as_bool()).unwrap_or(false) {
         logged_args["text"] = json!("(private)");
     }
-    let seq = state.log("tool", seat, json!({"text": format!("{} · {}", name.replace('_', " "), res.text), "tool": name, "origin": origin, "args": logged_args, "ok": res.ok}));
+    let logged_args = cap_json(&logged_args, 2_000);
+    let seq = state.log("tool", seat, json!({"text": format!("{} · by {} · {}", name_safe.replace('_', " "), origin.who(), res.text), "tool": name_safe, "origin": origin, "by": origin.who(), "args": logged_args, "ok": res.ok, "refused": refused}));
     res.chain_seq = Some(seq);
     if let Some(screen) = &res.navigate {
         state.emit(UiEvent::Navigate { seat: seat.to_string(), screen: screen.clone() });
     }
     state.emit(UiEvent::Tick);
     res
+}
+
+/// Keep logged arguments small: a huge argument is replaced by a note.
+fn cap_json(v: &Value, max: usize) -> Value {
+    let s = v.to_string();
+    if s.len() <= max {
+        v.clone()
+    } else {
+        json!({"(truncated)": format!("{} bytes", s.len())})
+    }
 }
 
 fn run(state: &Shared, seat: &str, name: &str, a: &Value) -> ToolResult {
@@ -284,9 +336,22 @@ mod tests {
     #[test]
     fn no_treatment_tools() {
         for t in registry() {
-            for f in FORBIDDEN {
-                assert!(!t.name.contains(f), "tool {} looks like a treatment", t.name);
+            assert!(!is_forbidden(t.name), "tool {} looks like a treatment", t.name);
+            let d = t.description.to_lowercase();
+            for verb in ["administer", "inject", "deliver a shock", "defibrillate", "give a drug", "dose"] {
+                assert!(!d.contains(verb) || d.contains("never") || d.contains("not eva"), "tool {} description offers treatment: {d}", t.name);
             }
+        }
+        for bad in ["deliver_shock", "administer_epinephrine", "give_drug", "Defibrillate", "treat_patient", "inject_adrenaline"] {
+            assert!(is_forbidden(bad), "{bad}");
+        }
+    }
+
+    #[test]
+    fn every_schema_is_strict() {
+        for t in registry() {
+            let p = (t.parameters)();
+            assert_eq!(p["additionalProperties"], json!(false), "{} must reject unknown parameters", t.name);
         }
     }
 

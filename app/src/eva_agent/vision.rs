@@ -8,6 +8,7 @@
 //! Without a key, [`OfflineVision`] answers with a neutral placeholder so the
 //! flow (photo → meal log) still works in a demo.
 
+use super::config::PipelineConfig;
 use super::AgentConfig;
 use base64::Engine;
 use futures_util::future::BoxFuture;
@@ -34,8 +35,8 @@ pub trait VisionPipeline: Send + Sync {
 }
 
 pub fn pipeline(cfg: &AgentConfig) -> Box<dyn VisionPipeline> {
-    if cfg.online_key().is_some() {
-        Box::new(GroqVision { cfg: cfg.clone() })
+    if cfg.vision.online_key().is_some() {
+        Box::new(GroqVision { cfg: cfg.vision.clone() })
     } else {
         Box::new(OfflineVision)
     }
@@ -50,12 +51,12 @@ pub fn task_prompt(task: &str, question: &str) -> String {
 }
 
 pub struct GroqVision {
-    pub cfg: AgentConfig,
+    pub cfg: PipelineConfig,
 }
 
 impl VisionPipeline for GroqVision {
     fn name(&self) -> String {
-        format!("groq:{}", self.cfg.vision_model)
+        format!("groq:{}", self.cfg.model)
     }
     fn describe<'a>(&'a self, http: &'a reqwest::Client, images: Vec<ImageInput>, task: String, question: String) -> BoxFuture<'a, anyhow::Result<String>> {
         Box::pin(async move {
@@ -64,12 +65,19 @@ impl VisionPipeline for GroqVision {
             for img in images.iter().take(MAX_IMAGES) {
                 content.push(json!({"type": "image_url", "image_url": {"url": img.data_uri()}}));
             }
-            let body = json!({"model": self.cfg.vision_model, "messages": [{"role": "user", "content": content}], "temperature": 0.2, "max_completion_tokens": 300});
-            let resp = http.post(format!("{}/chat/completions", self.cfg.base_url)).bearer_auth(key.expose()).json(&body).send().await?;
+            let body = json!({"model": self.cfg.model, "messages": [{"role": "user", "content": content}], "temperature": 0.2, "max_completion_tokens": 300});
+            let resp = http
+                .post(self.cfg.url("/chat/completions"))
+                .timeout(std::time::Duration::from_secs(self.cfg.timeout_s))
+                .bearer_auth(key.expose())
+                .json(&body)
+                .send()
+                .await
+                .map_err(|e| self.cfg.error(e))?;
             let status = resp.status();
-            let v: serde_json::Value = resp.json().await?;
+            let v: serde_json::Value = resp.json().await.unwrap_or_default();
             if !status.is_success() {
-                anyhow::bail!("groq vision {status}: {}", v.pointer("/error/message").and_then(|m| m.as_str()).unwrap_or("failed"));
+                return Err(self.cfg.error(format!("groq vision {status}: {}", v.pointer("/error/message").and_then(|m| m.as_str()).unwrap_or("failed"))));
             }
             Ok(v.pointer("/choices/0/message/content").and_then(|c| c.as_str()).unwrap_or("").trim().to_string())
         })

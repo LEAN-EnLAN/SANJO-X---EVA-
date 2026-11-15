@@ -12,8 +12,10 @@
 
 pub mod chat;
 pub mod config;
+pub mod offline;
 pub mod prompt;
 pub mod reflex;
+pub mod schema;
 pub mod speech;
 pub mod tools;
 pub mod vision;
@@ -294,11 +296,21 @@ pub async fn converse(state: &Shared, seat: &str, text: &str) -> chat::ChatReply
     state.emit(UiEvent::Chat { seat: seat.into() });
     state.set_mood(Some(seat), EvaMood::Thinking);
     let pipe = chat::pipeline(&state.agent);
-    let reply = match pipe.reply(state, seat, history, text.to_string()).await {
+    // treatment / shock requests never reach a model: the answer is fixed
+    let lower = text.to_lowercase();
+    let reply = if offline::asks_for_treatment(&lower) {
+        chat::offline_reply(state, seat, text)
+    } else {
+        match pipe.reply(state, seat, history, text.to_string()).await {
         Ok(r) if !r.text.is_empty() => r,
-        Ok(_) | Err(_) => {
+        Ok(_) => chat::offline_reply(state, seat, text),
+        Err(e) => {
             // never leave the person without an answer: fall back to offline rules
-            chat::offline_reply(state, seat, text)
+            tracing::warn!("chat pipeline failed, answering offline: {}", state.agent.redact(&e.to_string()));
+            let mut r = chat::offline_reply(state, seat, text);
+            r.model = format!("offline-rules (fallback from {})", pipe.name());
+            r
+        }
         }
     };
     {

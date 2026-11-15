@@ -55,7 +55,7 @@ pub async fn state_json(State(state): State<Shared>, headers: HeaderMap) -> Resp
         "link": w.link,
         "chain": {"signed": signed, "sent": sent, "acked": acked},
         "mesh": state.mesh.views(state.clock.real_ms()),
-        "agent": {"mode": state.agent.mode_label(), "chat_model": state.agent.chat_model, "stt_model": state.agent.stt_model, "tts_model": state.agent.tts_model, "vision_model": state.agent.vision_model},
+        "agent": state.agent.describe(),
     });
     drop(w);
     negotiate(&headers, &v)
@@ -207,24 +207,26 @@ pub struct TtsForm {
     pub seat: Option<String>,
 }
 
-/// Groq TTS streamed back as WAV. Without a key: 503 + speechSynthesis fallback.
+/// Groq TTS streamed back as WAV. When Groq can not speak (no key, offline,
+/// or the Orpheus terms not accepted by the org admin), the answer is an
+/// explicit `503 {"fallback":"speechSynthesis", "engine", "reason", "message"}`
+/// with `x-eva-voice: browser`, and the Eva badge says "browser voice".
 pub async fn eva_tts(State(state): State<Shared>, axum::Form(f): axum::Form<TtsForm>) -> Response {
-    let Some(pipe) = speech::tts(&state.agent) else {
-        return (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"fallback": "speechSynthesis"}))).into_response();
-    };
     if let Some(s) = &f.seat {
         state.set_mood(Some(s), EvaMood::Speaking);
     }
-    match pipe.speak(&state.http, f.text).await {
-        Ok(resp) => {
+    match speech::speak_or_fallback(&state.agent, &state.http, f.text, state.clock.real_ms()).await {
+        speech::Spoken::Audio(resp) => {
             let ct = resp.headers().get(header::CONTENT_TYPE).and_then(|v| v.to_str().ok()).unwrap_or("audio/wav").to_string();
             let body = Body::from_stream(resp.bytes_stream());
-            ([(header::CONTENT_TYPE, ct), (header::CACHE_CONTROL, "no-store".to_string())], body).into_response()
+            ([(header::CONTENT_TYPE, ct), (header::CACHE_CONTROL, "no-store".to_string()), (header::HeaderName::from_static("x-eva-voice"), "groq".to_string())], body).into_response()
         }
-        Err(e) => {
-            tracing::warn!("tts failed: {e}");
-            (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"fallback": "speechSynthesis"}))).into_response()
-        }
+        speech::Spoken::Browser(engine, message) => (
+            StatusCode::SERVICE_UNAVAILABLE,
+            [(header::HeaderName::from_static("x-eva-voice"), "browser")],
+            Json(json!({"fallback": "speechSynthesis", "engine": engine, "reason": engine.reason(), "label": engine.label(), "message": message})),
+        )
+            .into_response(),
     }
 }
 

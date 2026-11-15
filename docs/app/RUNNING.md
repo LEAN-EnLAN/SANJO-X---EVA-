@@ -32,7 +32,31 @@ set -a; . /path/outside/the/repo/.eva-demo.env; set +a   # optional: GROQ_API_KE
 | http://localhost:8080/dash | crew dashboard (Mara, crew lead) |
 | http://localhost:8081/dash | ground view (flight surgeon), fed by the near-space uplink |
 
-Without a key Eva runs on offline rules (`--offline` forces it). The key is read only from `GROQ_API_KEY`; never commit it (`.env*` is ignored).
+Without a key Eva runs on offline rules (`--offline` forces it). The key is read only from `GROQ_API_KEY`; never commit it (`.env*` is ignored). Logs and error messages scrub it (`gsk_***`), and a test fails if it ever shows up in a log line, an error, the chain or `/api/state`.
+
+### Eva's voice: Groq TTS needs the Orpheus terms accepted
+
+Groq's text-to-speech model (`canopylabs/orpheus-v1-english`) answers **"requires terms acceptance"** until an **admin of the Groq organisation** that owns the key accepts the model's terms once: sign in at [console.groq.com](https://console.groq.com), open the Playground, pick *canopylabs/orpheus-v1-english* and accept the terms (only org admins see the button). Nothing in the app or the key changes.
+
+Until then the fallback is explicit, not a silent error:
+
+- `POST /api/eva/tts` answers `503` with `x-eva-voice: browser` and `{"fallback":"speechSynthesis","reason":"terms_not_accepted","message":"…"}`; the browser speaks with its own `speechSynthesis`.
+- The Eva badge (app Eva screen, dashboard case card, dev panel) reads **"Groq online · browser voice (TTS terms pending)"**; `/api/state` → `agent.voice.engine` is `browser_terms`.
+- The server remembers the refusal for 10 minutes, so replies do not wait for a failed call; after that it tries Groq again and switches back by itself once the terms are accepted.
+- No key or `--offline`: same fallback with reason `no_key` and the badge "offline rules · browser voice". `EVA_TTS=browser` forces the browser voice even with a key.
+
+### Pipelines and their settings
+
+Each Eva pipeline has its own settings (model, base URL, on/off); all share `GROQ_API_KEY`.
+
+| pipeline | model env (default) | base URL env | off switch |
+|---|---|---|---|
+| chat + tools | `EVA_CHAT_MODEL` (`openai/gpt-oss-120b`) | `EVA_CHAT_BASE_URL` | `EVA_CHAT=off` |
+| speech-to-text | `EVA_STT_MODEL` (`whisper-large-v3-turbo`) | `EVA_STT_BASE_URL` | `EVA_STT=off` |
+| text-to-speech | `EVA_TTS_MODEL` (`canopylabs/orpheus-v1-english`), `EVA_TTS_VOICE` (`hannah`) | `EVA_TTS_BASE_URL` | `EVA_TTS=browser` |
+| vision | `EVA_VISION_MODEL` (`qwen/qwen3.8-27b`) | `EVA_VISION_BASE_URL` | `EVA_VISION=off` |
+
+`GROQ_BASE_URL` changes the default for all four. Live check (prints models and timings, never the key): `EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture` with the key in the environment.
 
 ### The demo story
 
@@ -52,9 +76,11 @@ eva serve --role ship --port 8080 --peer http://127.0.0.1:8081             # 15 
 eva serve --role ship --port 8080 --sim 0 & eva sim --target ws://127.0.0.1:8080/link --n 15   # bands over Eva Link
 ```
 
-Other commands: `eva bench` (bytes per message + 10-minute run per link profile), `eva verify --data data` (check chain files), `eva --help`.
+Other commands: `eva bench` (see [BENCHMARKS.md](BENCHMARKS.md)), `eva verify --data data` (hash chain + Ed25519 signature of every record in every chain file, against the node's pinned public key, and the ground's mirror; exits 1 on any tampering), `eva --help`.
 
-Options: `--host 0.0.0.0` (default, LAN-visible), `--data <dir>` (chain files, certificates), `--name <node>`, `--tls`, `--tls-host <name>`, `--offline`. Env: `GROQ_API_KEY`, `EVA_CHAT_MODEL`, `EVA_STT_MODEL`, `EVA_TTS_MODEL`, `EVA_TTS_VOICE`, `EVA_VISION_MODEL`, `EVA_OFFLINE=1`, `RUST_LOG=eva=debug`.
+Keys: on first run each node creates `data/keys/<node>.ed25519` (private, mode 0600) and `data/keys/<node>.pub`. The ground pins the ship's public key the first time the ship connects (`data/keys/peer-<ship>.pub`); delete that file to accept a new ship key. Back up the `.ed25519` file if you want to keep signing as the same node.
+
+Options: `--host 0.0.0.0` (default, LAN-visible), `--data <dir>` (chain files, node keys in `keys/`, the ground's mirror, certificates), `--name <node>`, `--tls`, `--tls-host <name>`, `--offline`. Env: `GROQ_API_KEY`, the pipeline settings above, `EVA_OFFLINE=1`, `RUST_LOG=eva=debug`.
 
 ## Phones on the LAN (install the PWA)
 
