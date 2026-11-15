@@ -6,8 +6,8 @@ Needs only a Rust toolchain (1.85+; tested with cargo 1.97). On a busy machine a
 
 ```bash
 cd app
-cargo build --release          # → target/release/eva: one 11.8 MB binary (stripped, thin LTO), all assets embedded
-cargo test                     # 46 tests: protocol, chain, rules, tools, HTTP flows
+cargo build --release          # → target/release/eva: one 12.5 MB binary (stripped, thin LTO), all assets embedded
+cargo test                     # 99 tests: protocol, chain + signatures, rules, tools, agent, HTTP flows, break tests (TESTING.md)
 ```
 
 CSS is generated from `app/styles/app.css` with the Tailwind v4 CLI and committed. Only after changing templates, styles or class strings in Rust/JS:
@@ -59,6 +59,8 @@ Each Eva pipeline has its own settings (model, base URL, on/off); all share `GRO
 `GROQ_BASE_URL` changes the default for all four. Live check (prints models and timings, never the key): `EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture` with the key in the environment.
 
 ### The demo story
+
+The stage version, minute by minute, with what to say and what to do if the Wi-Fi dies: [DEMO.md](DEMO.md). The same story runs headless as a test: `scripts/e2e/run.sh` (TESTING.md).
 
 1. Open `/dash` and `/app?seat=3B` side by side (and `:8081/dash` if you have room).
 2. Press **↑ ↑ ↓ ↓ ← → ← → B A** (on a phone: tap the clock / logo 5 times) → **dev panel**.
