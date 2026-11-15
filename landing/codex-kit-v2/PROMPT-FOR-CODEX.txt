@@ -1,0 +1,7 @@
+Read AGENTS.md, STYLE.md and prompts.json in this folder before doing anything. Use gpt-6.1-terra as the orchestrator and GPT Image 2.5 for images (gpt-image-2.5-flare for drafts, gpt-image-2.5-sunburst for finals and edits). First check the current OpenAI Images API docs and fix prompts.json "api"/"models" (or generate.py) if parameter names, sizes or model ids differ.
+
+Generate all 62 assets in prompts.json order, black and white variants plus shared transparent layers: run a flare draft pass, review it, then run the sunburst final pass. Respect the design masters (OR0 wristband, HX0 harness): every set, glow, figure and scene is edited from them with the listed reference images. Enforce every hard rule: no NASA insignia, logos or any brand; no text; device screens pure black; no visible faces; no needles or gore; transparent layers truly transparent; scene edges fading into exact #000000 or #FFFFFF; same camera within each set.
+
+Retry failing images at most twice and log the reason with --note. Then run: python generate.py --post-only --upscale --qa --derive --sheet --zip
+
+The shared medical station was eliminated by the team, so never draw it. Report which assets needed retries and why, the alpha IoU for each exploded set, which sizes were native and which were upscaled, and any edge or transparency flags left in manifest.json.

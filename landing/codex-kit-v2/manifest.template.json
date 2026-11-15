@@ -1,0 +1,52 @@
+{
+  "kit": "Eva by WearMeds · Codex kit v2 · Sanjo-X · NASA Space Apps 2026",
+  "orchestrator_model": "gpt-6.1-terra",
+  "updated_at": "YYYY-MM-DDTHH:MM:SS+00:00",
+  "assets": {
+    "S1-B": {
+      "id": "S1-B",
+      "base": "S1",
+      "variant": "black",
+      "file": "black/scenes/s1-cabin-hero.png",
+      "model": "gpt-image-2.5-sunburst (the model that actually ran; write 'unknown: built-in tool' if not reported)",
+      "size": "1536x1024",
+      "target": "2880x1920",
+      "background": "#000000",
+      "refs": ["ref/v1/scenes/s1-cabin-hero.png", "OR0"],
+      "prompt_final": "…assembled prompt exactly as sent…",
+      "post": ["fit_target 2880x1920", "edge_lock", "watermark"],
+      "checks": { "edge_dev_before": 3.2 },
+      "retries": 0,
+      "notes": "",
+      "generated_at": "YYYY-MM-DDTHH:MM:SS+00:00"
+    },
+    "HX2": {
+      "id": "HX2",
+      "base": "HX2",
+      "variant": "shared",
+      "file": "shared/harness-exploded/hx2-defib-pads.png",
+      "model": "gpt-image-2.5-sunburst",
+      "size": "1024x1536",
+      "target": "1600x2400",
+      "background": "transparent",
+      "refs": ["HX0"],
+      "prompt_final": "…",
+      "post": ["fit_target 1600x2400"],
+      "checks": { "transparent_ok": true },
+      "retries": 1,
+      "notes": "retry: right pad drifted ~20px from anchor; residual offset +4px x",
+      "generated_at": "YYYY-MM-DDTHH:MM:SS+00:00"
+    },
+    "SH-OR0": {
+      "id": "SH-OR0",
+      "variant": "white",
+      "file": "white/shadows/sh-wristband-orbit.png",
+      "model": "local (Pillow)",
+      "source": "OR0",
+      "background": "transparent",
+      "prompt_final": "(local) Soft contact shadow built by generate.py from the alpha of OR0 …",
+      "retries": 0,
+      "notes": ""
+    }
+  }
+}
