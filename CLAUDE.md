@@ -19,13 +19,15 @@ El Drive del equipo manda: carpeta `1NCFN_22gxWjRGJdxKjX11KcOk5v7bic7`. Este rep
 - Todo uso de IA va a la sección **"Uso de IA (requisito de NASA)"**: fecha, herramienta, tarea, archivos y quién lo revisó.
 
 ## Código
+- **Claves de API** (por ejemplo, Groq para voz en las demos): solo en variables de entorno locales (`GROQ_API_KEY`). Nunca en el repo, el Drive, un artefacto ni el código del navegador.
 - Stack: **Rust + htmx + HTML**, un solo binario. Código **100% propio**.
 - **Nada de copiar código open source.** De HealthLog, OpenNutriTracker, nasa/hermes, Human Atlas o hds-core se toman patrones e ingeniería inversa, nunca líneas de código. Ojo con las licencias: HealthLog es PolyForm Noncommercial; OpenNutriTracker, GPL-3.
 - Sin logos de NASA (insignia, logotipo, banderas, parches) en nada nuestro ni en imágenes de IA. Toda imagen de IA lleva "AI-generated" visible.
 
 ## Producto y lenguaje
 - El asistente se llama **Eva** (nombre propio, no sigla). Los wearables son **WearMeds**.
-- Eva **guides, records and warns**. Nunca escribir que diagnostica, trata o es totalmente autónoma.
+- Eva es el **agente copiloto de salud** (multimodal: texto, voz, imágenes y video): lee el brazalete en tiempo real, registra todo, lleva el diario emocional, da **apoyo al diagnóstico** (*diagnostic support*) y avisa. Nunca escribir que diagnostica por sí sola, trata, decide una descarga o es totalmente autónoma. La descarga la decide el desfibrilador (DEA) de la estación de la nave.
+- Eva es la innovación; el brazalete WearMeds es su factor de forma. No hay arnés ni inyectable.
 - Usá solo las cifras verificadas de `HANDOFF.md`.
 - Textos del producto y de la entrega en **inglés** (requisito de NASA).
 - Diseño vigente: **twocreate** (ver `HANDOFF.md`). Los sistemas anteriores están descartados.
