@@ -194,7 +194,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .caseA .scn{width:100%;bottom:auto;height:58%}
   .caseA .sc{-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
   .caseA .sc.icn{padding:6% 18%}
-  .caseA .ptxt,.caseB .ptxt{left:16px;right:16px;width:auto;top:auto;bottom:0;align-content:end;padding:56px 0 22px;background:linear-gradient(transparent,var(--canvas) 32%)}
+  .caseA .ptxt,.caseB .ptxt{left:0;right:0;width:auto;top:auto;bottom:0;align-content:end;padding:56px max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(transparent,var(--canvas) 32%)}
   .sts{min-height:11.5em}
   .caseB .bdev{left:0;right:0;width:auto;top:6%;transform:none;overflow:hidden}
   .caseB .bdev .w{width:190%;margin-left:-43%}
@@ -225,9 +225,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .bsuit text{font-family:var(--font)}
 .bfig .bi{mix-blend-mode:multiply}
 @media (max-width:760px){
-  .storyp.bandp .ptxt{left:16px;right:16px;width:auto;top:auto;bottom:0;align-content:end;padding:40px 0 22px;background:linear-gradient(transparent,var(--canvas) 24%)}
-  .bandp .bview{left:0;right:0;width:auto;top:7%;bottom:auto;padding:0 8px}
-  .bfig{width:106%;margin-left:-3%}
+  .storyp.bandp .ptxt{left:0;right:0;width:auto;top:auto;bottom:0;align-content:end;padding:40px max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px));background:linear-gradient(transparent,var(--canvas) 24%)}
+  .bandp .bview{left:0;right:0;width:auto;top:56px;bottom:38%;padding:0 4px;place-items:center}
+  .bfig{width:118%;margin-left:-9%}
   .bandp .hot span{font-size:11px;padding:4px 6px;top:-10px}
 }
 
@@ -310,14 +310,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .solar .hud .rec{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
 .solar .hud .rec::before{content:"";width:8px;height:8px;border-radius:50%;background:#ff2a1f;animation:alBlink 1s steps(1,end) infinite}
 .solar .meter{position:absolute;z-index:5;left:20px;top:44px;font:13px ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.7);font-variant-numeric:tabular-nums}
-.solar .log{position:absolute;z-index:5;left:20px;top:80px;margin:0;padding:0;list-style:none;display:grid;gap:8px;max-width:min(460px,calc(100% - 40px));color:#fff;font:13px/1.35 ui-monospace,Menlo,monospace;letter-spacing:.03em;transition:opacity .5s;pointer-events:none}
-.solar .log li{opacity:0;clip-path:inset(0 100% 0 0);transition:clip-path .7s steps(30,end),opacity .15s}
-.solar .log li.on{opacity:1;clip-path:inset(0 0 0 0)}
+.solar .log{position:absolute;z-index:5;left:20px;top:80px;margin:0;padding:0;list-style:none;display:grid;gap:12px;max-width:min(480px,calc(100% - 40px));color:#fff;font:400 clamp(16px,1.3vw,19px)/1.25 var(--sans,Inter,system-ui,sans-serif);letter-spacing:0;transition:opacity .5s;pointer-events:none}
+.solar .log li{opacity:0;transform:translateY(8px);padding-left:14px;border-left:1px solid rgba(255,255,255,.35);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.solar .log li.on{opacity:1;transform:none}
 .solar .log li b{display:inline-block;min-width:58px;font-weight:400;color:rgba(255,255,255,.5)}
-.solar .log li.red{color:#ff5a4a}.solar .log li.red b{color:#ff5a4a}
+.solar .log li.red{color:#ff6a3d;border-left-color:#ff6a3d}.solar .log li.red b{color:#ff5a4a}
 .solar.explain .log{opacity:0}
 .solar .txt{position:absolute;z-index:6;left:20px;top:80px;max-width:min(440px,calc(100% - 40px));display:grid;gap:10px;color:var(--space-ink);background:#000;border:1px solid #2a2a2a;padding:20px 22px 22px;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .6s var(--ease);pointer-events:none}
 .solar.explain .txt{opacity:1;transform:none;pointer-events:auto}
+.solar.explain .alert,.solar.explain .alvig{opacity:0!important;transition:opacity .5s var(--ease)}
 .solar .txt h2{font-size:clamp(24px,2.4vw,34px);line-height:1.05}
 .solar .txt .note{color:var(--space-muted);font-size:15px}
 .solar .alert{--red:#ff2a1f;color:#fff;position:absolute;z-index:6;right:20px;bottom:24px;width:min(460px,calc(100% - 40px));background:var(--red);display:grid;gap:10px;padding:0 0 20px;overflow:hidden;
@@ -741,19 +742,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <div class="hud" aria-hidden="true"><i class="c c1"></i><i class="c c2"></i><i class="c c3"></i><i class="c c4"></i><div class="bar"><span>Hull cam 02 · forward</span><span class="rec" id="recT">00:00:00</span></div></div>
       <div class="meter" id="meter">Proton flux · 2 pfu</div>
       <ol class="log" id="slog">
-        <li data-at=".03"><b>EVA</b>Watching NOAA GOES and NASA DONKI</li>
-        <li data-at=".16" class="red"><b>GOES</b>X-ray spike · X-class flare</li>
-        <li data-at=".22"><b>DONKI</b>Flare report in · energetic particles expected</li>
-        <li data-at=".29" class="red"><b>EVA</b>Particles in ~18 min · alerting every wristband</li>
-        <li data-at=".35"><b>BANDS</b>Acknowledged <span id="nAck">0</span>/15</li>
-        <li data-at=".43"><b>EVA</b>Route lit to the storm shelter</li>
-        <li data-at=".5"><b>CREW</b>In shelter <span id="nIn">0</span>/15</li>
-        <li data-at=".6" class="red"><b>HULL</b>Proton storm hitting the ship</li>
-        <li data-at=".76"><b>EVA</b>All 15 sheltered · dose logged per passenger</li>
+        <li data-at=".03">Eva watches NASA DONKI and NOAA GOES</li>
+        <li data-at=".16" class="red">X-ray flare seen · the particles are about 18 minutes behind</li>
+        <li data-at=".29">Every wristband alerted · <span id="nAck">0</span>/15 acknowledged</li>
+        <li data-at=".43">The route to the storm shelter lights up on every wrist · <span id="nIn">0</span>/15 inside</li>
+        <li data-at=".76">All 15 sheltered before the particles arrive · dose logged per passenger</li>
       </ol>
-      <button class="ascii-t" id="asciiBtn" type="button" aria-pressed="false">+ ASCII</button>
+      <button class="ascii-t" id="asciiBtn" type="button" aria-pressed="false" hidden>+ ASCII</button>
       <p class="drag" id="sunHint">Drag the Sun</p>
-      <div class="txt"><p class="label" id="sa">Solar alert</p><h2>Minutes of warning before the particles arrive</h2><p class="note">Eva reads NASA DONKI flare reports and NOAA GOES proton data. X-rays arrive with the light; the particles that follow leave time to reach the shelter.</p></div>
+      <div class="txt"><p class="label" id="sa">Solar alert</p><h2>Warned minutes early. Everyone stays in the shelter.</h2></div>
       <div class="alvig" aria-hidden="true"></div>
       <div class="alert" role="alert"><div class="al-tape"></div><div class="al-top"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#ffd400"/><circle cx="50" cy="50" r="8" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(120 50 50)"/><path d="M50 37 L50 12 A38 38 0 0 1 82.9 31 L60.8 43.7 A13 13 0 0 0 50 37Z" fill="#000" transform="rotate(240 50 50)"/></svg>RADIATION STORM<em>LIVE</em></div><b>Go to the shelter now</b><div class="al-count"><strong id="alT">18:00</strong><i id="alI">until the particles hit</i></div><span>Drop everything. Follow the arrows on your wristband.</span></div>
     </div>
