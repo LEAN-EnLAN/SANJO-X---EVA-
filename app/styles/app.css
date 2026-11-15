@@ -25,6 +25,8 @@
   --color-ok: #5be38a;
   --color-info: #7fd4ff;
   --color-on-light: #0c0c0c;
+  /* deep red for full-bleed emergency surfaces: ink text on it stays above 4.5:1 */
+  --color-critical-deep: #b81d12;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -220,3 +222,5 @@ html, body { background: var(--color-background); color: var(--color-ink); font-
 
 /* toasts sit over live content: a solid, tinted pill so the text never mixes with what is behind */
 .toast { background-color: color-mix(in oklab, currentColor 14%, var(--color-raised)); box-shadow: 0 8px 24px rgb(0 0 0 / 0.5); max-width: calc(100vw - 2rem); }
+/* when a new chat line scrolls into view it stops above Eva's composer dock and the tab bar */
+#chat > * { scroll-margin-bottom: calc(17rem + env(safe-area-inset-bottom, 0px)); }

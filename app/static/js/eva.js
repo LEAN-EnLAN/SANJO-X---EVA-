@@ -213,9 +213,11 @@
     r.start();
   }
 
-  // speak Eva's newest reply when "Voice replies" is on
+  // speak Eva's newest reply when "Voice replies" is on; keep the newest line in view above the dock
   document.addEventListener("htmx:afterSwap", function (e) {
     if (!e.target || e.target.id !== "chat") return;
+    var lastMsg = e.target.lastElementChild;
+    if (lastMsg) lastMsg.scrollIntoView({ block: "end", behavior: M() && M().reduced.matches ? "auto" : "smooth" });
     var on = document.querySelector("[data-eva-voice]");
     if (!on || !on.checked) return;
     var msgs = e.target.querySelectorAll("[data-eva-msg]");

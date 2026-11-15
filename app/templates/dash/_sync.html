@@ -1,6 +1,6 @@
 <section class="flex flex-col gap-4 rounded-card border border-line bg-surface p-5">
   <div class="flex items-center justify-between gap-3">
-    <div class="flex items-center gap-3"><span class="inline-grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/earth-link.webp" alt="Ground link" class="size-full scale-90 object-cover"></span><h3 class="text-base text-ink">{% if ground %}From the ship{% else %}Ground sync{% endif %}</h3></div>
+    <div class="flex items-center gap-3"><span class="inline-grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/earth-link.webp" alt="Ground link" class="size-full scale-90 object-cover"></span><h2 class="text-base text-ink">{% if ground %}From the ship{% else %}Ground sync{% endif %}</h2></div>
     {% if link.connected && link.up %}<span class="inline-flex items-center gap-1 rounded-full border border-info/40 bg-info/10 px-2.5 py-0.5 text-xs font-medium text-info">Link open</span>
     {% else if link.connected %}<span class="inline-flex items-center gap-1 rounded-full border border-warn/40 bg-warn/10 px-2.5 py-0.5 text-xs font-medium text-warn">Contact gap · queued</span>
     {% else %}<span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">{% if ground %}Waiting for the ship{% else %}No ground link{% endif %}</span>{% endif %}

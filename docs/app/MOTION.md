@@ -46,3 +46,18 @@ New simplified art is being commissioned: keep the file names in `static/img/eva
 ## Reduced motion
 
 `prefers-reduced-motion: reduce` → springs jump straight to their targets, Eva's loops stop, CSS spring transitions drop to 1 ms, the CPR metronome and orb breathing stop (wireframe rules).
+
+## Navigation and sheets (`motion.js`, second half)
+
+| move | spring | detail |
+|---|---|---|
+| push (open a detail screen) | gentle | screen enters from +30% width, opacity from 0.3 |
+| back (header back, edge swipe, browser back) | gentle | enters from −25% width |
+| tab switch | snappy | cross-fade, scale 0.985 → 1 (iOS tabs do not slide) |
+| refresh after a tool | none | the screen redraws in place |
+| edge swipe | tracks the finger | strip on the left 16 px; release past 33% or faster than 700 px/s completes the back move, otherwise springs home (bouncy) |
+| tab pill | gentle (x), bouncy (stretch) | slides under the active tab, stretches 1.25× and settles |
+| tools sheet | gentle open, snappy close | follows the finger down 1:1, rubber-bands up; closes past 30% or above 160 %/s |
+| rings and bars on enter | gentle | `[data-grow]` springs `--g` from 0 to 1 once |
+
+Links say what kind of move they are with `data-nav="push|back|tab|fade"` (the `go` macro in `templates/app/_ui.html` sets it). Scripts can call `EvaMotion.expect("refresh")` before swapping `#screen` to keep it still.

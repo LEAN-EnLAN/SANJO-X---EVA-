@@ -28,5 +28,5 @@
 {% else %}<button type="button" class="press inline-flex h-14 w-full items-center justify-center rounded-full bg-ink px-7 text-base font-medium text-on-light" hx-post="/api/shelter" hx-vals='{"seat":"{{ c.seat }}"}' hx-target="#screen">I'm in the shelter</button>{% endif %}
 {% else %}
 <p class="text-4xl leading-none tracking-tight text-ink">No storm warning</p>
-<p class="text-sm text-muted">Eva watches the Sun's X-rays (NOAA GOES) and the ship's radiation sensors. If a storm comes, this screen shows your route to the shelter.</p>
+<p class="text-sm text-muted">Eva watches the Sun's X-rays and the ship's radiation sensors. If a storm comes, your route shows here.</p>
 {% endif %}

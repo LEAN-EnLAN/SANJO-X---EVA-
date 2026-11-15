@@ -13,7 +13,7 @@
       {% for (s, n) in seats %}<option value="{{ s }}" {% if s == "4B" %}selected{% endif %}>{{ s }} · {{ n }}</option>{% endfor %}
     </select>
     <div class="grid grid-cols-2 gap-2">
-      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full bg-critical px-4 text-sm font-medium text-ink" hx-post="/api/dev/cardiac">{{ crate::web::ui::ic("heart", 16)|safe }}Cardiac arrest</button>
+      <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full bg-critical-deep px-4 text-sm font-medium text-ink" hx-post="/api/dev/cardiac">{{ crate::web::ui::ic("heart", 16)|safe }}Cardiac arrest</button>
       <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/close_case">Close case</button>
       <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/suit">{{ crate::web::ui::ic("shirt", 16)|safe }}Toggle suit mode</button>
       <button class="press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" hx-post="/api/dev/battery">Low battery</button>

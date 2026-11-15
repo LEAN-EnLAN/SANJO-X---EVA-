@@ -1,7 +1,7 @@
 {
   "name": "Eva by WearMeds",
   "short_name": "Eva",
-  "description": "Your health copilot on board: live wristband, journal, emergency help.",
+  "description": "Eva, your health copilot on board: live wristband, day plan, food and water, journal, wrist ECG and emergency help.",
   "id": "/app",
   "start_url": "/app",
   "scope": "/",
@@ -16,7 +16,9 @@
     { "src": "/static/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Talk to Eva", "url": "/app/eva" },
+    { "name": "Talk to Eva", "url": "/app/eva", "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Today's plan", "url": "/app/plan" },
+    { "name": "30 s ECG", "url": "/app/ecg" },
     { "name": "Get help", "url": "/app/emergency" },
     { "name": "Crew dashboard", "url": "/dash" }
   ]

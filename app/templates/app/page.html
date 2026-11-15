@@ -1,4 +1,4 @@
-{% import "app/_ui.html" as u %}
+{% import "app/_ui.html" as u %}{% import "mascot.html" as m %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -31,7 +31,7 @@
       <span class="tab-pill pointer-events-none absolute top-3 left-0 size-11 rounded-full bg-ink opacity-0" data-tab-pill aria-hidden="true"></span>
       <a {% call u::go("/app/home", c.seat, "tab") %} data-tab="home" aria-label="Home" {% if tab == "home" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("home", 20)|safe }}</a>
       <a {% call u::go("/app/plan", c.seat, "tab") %} data-tab="plan" aria-label="Today's plan" {% if tab == "plan" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("list", 20)|safe }}</a>
-      <a {% call u::go("/app/eva", c.seat, "tab") %} data-tab="eva" aria-label="Eva" {% if tab == "eva" %}aria-current="page"{% endif %} class="tab-eva press relative -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 ring-line"><img src="/static/img/eva/eva-neutral.webp" alt="" class="size-10 object-contain" width="40" height="40"></a>
+      <a {% call u::go("/app/eva", c.seat, "tab") %} data-tab="eva" aria-label="Eva" {% if tab == "eva" %}aria-current="page"{% endif %} class="tab-eva press relative -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 ring-line">{% call m::eva(c.mood, c.art, "size-10") %}</a>
       <a {% call u::go("/app/food", c.seat, "tab") %} data-tab="food" aria-label="Food and water" {% if tab == "food" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("utensils", 20)|safe }}</a>
       <a {% call u::go("/app/records", c.seat, "tab") %} data-tab="records" aria-label="Logbook" {% if tab == "records" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("records", 20)|safe }}</a>
     </div>

@@ -7,10 +7,10 @@
 
 <div class="flex flex-col items-center gap-1.5">
   <div class="relative" data-eva-tap>
-    {% call m::eva(c.mood, c.art, "size-32 sm:size-36") %}
+    {% call m::eva(c.mood, c.art, "size-24 min-[380px]:size-32 sm:size-36") %}
     <span class="absolute -right-6 bottom-0 rounded-full bg-background/80 px-2 py-0.5 text-xs text-muted">AI-generated</span>
   </div>
-  <p class="text-center text-3xl leading-tight tracking-tight text-ink">Hi {{ c.first }}. How can I help?</p>
+  <p class="text-center text-2xl leading-tight tracking-tight text-ink min-[380px]:text-3xl">Hi {{ c.first }}. How can I help?</p>
   <p class="flex items-center gap-2 text-sm text-muted"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-info"><span class="absolute inset-0 animate-ping rounded-full bg-info motion-reduce:animate-none"></span></span><span data-eva-status>Reading your wristband live</span></p>
 </div>
 

@@ -195,6 +195,14 @@ pub struct EmergencyScreen {
     pub step: usize,
 }
 
+impl EmergencyScreen {
+    /// `call_aed_runner` for the open case, from a bystander's phone.
+    pub fn aed_vals(&self) -> String {
+        let seat = self.case.as_ref().map(|c| c.seat.as_str()).unwrap_or("");
+        tool_vals(&self.c.seat, "call_aed_runner", serde_json::json!({"seat": seat}))
+    }
+}
+
 #[derive(Template)]
 #[template(path = "app/journal.html")]
 pub struct JournalScreen {

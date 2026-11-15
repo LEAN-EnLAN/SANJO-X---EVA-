@@ -1,7 +1,7 @@
 {% match mode %}
 {% when "helper_cpr" %}
 {% if let Some(cs) = case %}
-<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical p-5 text-ink">
+<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical-deep p-5 text-ink">
   <div class="flex items-center justify-between pt-1">
     <p class="text-xs uppercase tracking-label text-ink">Emergency · near you</p>
     <span class="grid size-11 place-items-center rounded-full bg-background/20 text-sm text-ink">{{ c.initials }}</span>
@@ -31,7 +31,7 @@
 {% endif %}
 {% when "helper_aed" %}
 {% if let Some(cs) = case %}
-<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical p-5 text-ink">
+<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical-deep p-5 text-ink">
   <p class="pt-1 text-xs uppercase tracking-label text-ink">Emergency · bring the AED</p>
   <p class="text-5xl leading-none tracking-tight text-ink">Get the AED</p>
   <p class="text-xl text-ink">Emergency station, corridor B · then seat {{ cs.seat }}</p>
@@ -98,15 +98,20 @@
   <p class="text-4xl leading-none tracking-tight text-ink">{{ cs.name }} is being helped</p>
   <p class="text-base text-ink">Keep corridor B clear. Stay in your seat unless Eva asks you.</p>
   {% for h in cs.helpers %}<p class="flex items-center gap-2 text-sm text-muted"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-info"></span>{{ h.name }} · {{ h.task }}</p>{% endfor %}
+  {% if aed_helper.is_empty() %}<button type="button" class="press inline-flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-raised px-5 text-sm text-ink" hx-post="/api/eva/tool" hx-vals="{{ self.aed_vals() }}" hx-target="#toast" hx-confirm="Send the nearest trained person to fetch the AED?" data-tool="call_aed_runner">{{ crate::web::ui::ic("zap", 16)|safe }}Send someone for the AED</button>{% endif %}
 </section>
 {% endif %}
 {% else %}
-<div class="flex flex-col gap-1 pt-2">
+<div class="flex items-center justify-between gap-3 pt-1">
+  <a href="/app?seat={{ c.seat }}" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" aria-label="Back" data-back data-nav="back" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
   <p class="text-xs uppercase tracking-label text-muted">Help</p>
+  <span class="size-11"></span>
+</div>
+<div class="flex flex-col gap-1">
   <h1 class="text-4xl leading-none tracking-tight text-ink">No emergency right now</h1>
 </div>
-<p class="text-sm text-muted">If you or someone near you is in danger, press the button. Eva sends the nearest trained person and tells the crew lead.</p>
-<button type="button" class="press inline-flex h-20 w-full items-center justify-center gap-3 rounded-full bg-critical px-8 text-xl font-medium text-ink" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"request_help","args":"{\"reason\":\"Help button on the app\"}"}' hx-target="#toast">{{ crate::web::ui::ic("siren", 24)|safe }}Get help now</button>
+<p class="text-sm text-muted">Someone in danger? Press it. Eva sends the nearest trained person and tells the crew lead.</p>
+<button type="button" class="press inline-flex h-20 w-full items-center justify-center gap-3 rounded-full bg-critical-deep px-8 text-xl font-medium text-ink" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"request_help","args":"{\"reason\":\"Help button on the app\"}"}' hx-target="#toast">{{ crate::web::ui::ic("siren", 24)|safe }}Get help now</button>
 <div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
   <p class="flex items-center gap-2 text-xs text-muted"><span class="size-2 shrink-0 animate-pulse rounded-full bg-info"></span><span><span class="text-ink">AED:</span> emergency station, corridor B · blinks when needed</span></p>
   <p class="flex items-center gap-2 text-xs text-muted"><span class="size-2 shrink-0 rounded-full bg-info"></span><span><span class="text-ink">Shelter:</span> Deck B · water walls block radiation</span></p>

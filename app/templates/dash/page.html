@@ -24,7 +24,7 @@
     <header class="flex flex-wrap items-center gap-3 border-b border-line px-4 py-4 md:px-6">
       <span class="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-ink pr-4 pl-1.5 text-on-light" data-konami-tap>
         <span class="grid size-8 place-items-center rounded-full bg-on-light"><span class="size-3 rounded-full bg-brand"></span></span>
-        <span class="text-sm font-semibold tracking-tight">Eva</span><span class="text-xs text-muted">by WearMeds</span>
+        <span class="text-sm font-semibold tracking-tight">Eva</span><span class="text-xs text-on-light/70">by WearMeds</span>
       </span>
       <span class="hidden h-11 min-w-0 flex-1 items-center gap-3 rounded-full border border-line bg-surface px-4 text-sm text-muted lg:flex">{{ crate::web::ui::ic("eye", 17)|safe }}<span class="truncate">{% if ground %}Ground view · records from the ship, verified on arrival{% else %}Ship hub · {{ node }} · offline-first{% endif %}</span></span>
       <div class="flex flex-wrap items-center gap-2">
@@ -67,7 +67,7 @@
           <div id="sync" sse-swap="sync">{{ sync|safe }}</div>
           {% if ground %}
           <section class="rounded-card border border-line bg-surface p-5">
-            <header class="mb-3 flex items-center justify-between gap-3"><h3 class="text-base text-ink">Message the ship</h3><span class="text-xs text-muted">reliable · acknowledged</span></header>
+            <header class="mb-3 flex items-center justify-between gap-3"><h2 class="text-base text-ink">Message the ship</h2><span class="text-xs text-muted">reliable · acknowledged</span></header>
             <form class="flex items-center gap-2" hx-post="/api/ground/message" hx-swap="none" hx-on::after-request="this.reset()">
               <input name="text" required maxlength="500" placeholder="Flight surgeon note for the crew lead" class="h-10 min-w-0 flex-1 rounded-full border border-line bg-background px-4 text-sm text-ink placeholder:text-muted">
               <button class="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-on-light" aria-label="Send">{{ crate::web::ui::ic("send", 16)|safe }}</button>
@@ -79,7 +79,7 @@
       </div>
     </main>
     <footer class="flex flex-wrap items-center gap-2 border-t border-line bg-surface px-4 py-2.5 text-xs text-muted md:px-6">
-      <span>Decision-support functions after Russell et al., npj Microgravity 9:46 (2023) · <a href="https://doi.org/10.1038/s41526-023-00284-1" class="text-info hover:underline">doi:10.1038/s41526-023-00284-1</a></span>
+      <span>Decision-support functions after Russell et al., npj Microgravity 9:46 (2023) · <a href="https://doi.org/10.1038/s41526-023-00284-1" class="text-info underline underline-offset-2">doi:10.1038/s41526-023-00284-1</a></span>
       <span class="ml-auto">Eva guides, records and warns · the AED decides shocks · images AI-generated</span>
     </footer>
   </div>
