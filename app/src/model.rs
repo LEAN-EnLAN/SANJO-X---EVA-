@@ -287,39 +287,95 @@ pub struct LinkMessage {
     pub channel: String,
 }
 
-/// Eva's visible state; drives the mascot animation in both views.
+/// Eva's visible state; drives the mascot animation in both views. Each state has
+/// its own mascot image (`static/img/eva/eva-<name>.webp`, 18 in the Codex kit;
+/// `eva-face` is only the tab-bar avatar, not a state).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "kebab-case")]
 pub enum EvaMood {
     #[default]
     Idle,
+    /// greeting when a person opens Eva
+    Hello,
+    /// recording the person's voice
     Listening,
+    /// waiting for the model (chat, vision)
     Thinking,
+    /// answering (TTS or a fresh reply)
     Speaking,
+    /// a tool ran fine
     Happy,
+    /// a tap on Eva
+    Wink,
+    /// someone near needs attention
     Concerned,
+    /// emergency: guiding a case or a storm
     Alert,
+    /// CPR guidance: steady voice, steady rhythm
+    Calm,
+    /// ship night (22:30 to 06:30) while nothing else is going on
+    Sleeping,
+    /// a daily goal was met
+    Celebrate,
+    /// check-in, the person said they feel worse, or a patient waiting for help
+    Care,
+    /// showing records or a summary
+    Reading,
+    /// journaling
+    Writing,
+    /// uplink: a record or report on its way to the ground
+    Sending,
+    /// the band's sensor base or screen part is below 20 %
+    LowBattery,
 }
 
 impl EvaMood {
+    pub const ALL: [EvaMood; 17] = [
+        EvaMood::Idle,
+        EvaMood::Hello,
+        EvaMood::Listening,
+        EvaMood::Thinking,
+        EvaMood::Speaking,
+        EvaMood::Happy,
+        EvaMood::Wink,
+        EvaMood::Concerned,
+        EvaMood::Alert,
+        EvaMood::Calm,
+        EvaMood::Sleeping,
+        EvaMood::Celebrate,
+        EvaMood::Care,
+        EvaMood::Reading,
+        EvaMood::Writing,
+        EvaMood::Sending,
+        EvaMood::LowBattery,
+    ];
     pub fn name(self) -> &'static str {
         match self {
             EvaMood::Idle => "idle",
+            EvaMood::Hello => "hello",
             EvaMood::Listening => "listening",
             EvaMood::Thinking => "thinking",
             EvaMood::Speaking => "speaking",
             EvaMood::Happy => "happy",
+            EvaMood::Wink => "wink",
             EvaMood::Concerned => "concerned",
             EvaMood::Alert => "alert",
+            EvaMood::Calm => "calm",
+            EvaMood::Sleeping => "sleeping",
+            EvaMood::Celebrate => "celebrate",
+            EvaMood::Care => "care",
+            EvaMood::Reading => "reading",
+            EvaMood::Writing => "writing",
+            EvaMood::Sending => "sending",
+            EvaMood::LowBattery => "low-battery",
         }
     }
-    /// which placeholder mascot image fits the state
+    /// mascot image for the state (`eva-<art>.webp`): every state has its own
     pub fn art(self) -> &'static str {
-        match self {
-            EvaMood::Happy | EvaMood::Speaking => "happy",
-            EvaMood::Concerned | EvaMood::Alert => "care",
-            EvaMood::Listening => "wink",
-            _ => "neutral",
-        }
+        self.name()
+    }
+    /// short-lived states fall back to idle after a moment (see `state::pulse_mood`)
+    pub fn transient(self) -> bool {
+        matches!(self, EvaMood::Hello | EvaMood::Happy | EvaMood::Wink | EvaMood::Celebrate | EvaMood::Sending | EvaMood::Reading)
     }
 }

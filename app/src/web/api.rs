@@ -9,7 +9,7 @@ use crate::eva_agent::{self, speech, tools, vision};
 use crate::model::{ChatMsg, EvaMood, LinkMessage, Scenario};
 use crate::state::Storm;
 use crate::protocol::profile::LinkProfile;
-use crate::state::{Shared, UiEvent};
+use crate::state::{pulse_mood, Shared, UiEvent};
 use axum::body::{Body, Bytes};
 use axum::extract::{Multipart, Path, Query, State};
 use axum::http::{header, HeaderMap, StatusCode};
@@ -144,13 +144,35 @@ pub async fn eva_tool(State(state): State<Shared>, headers: HeaderMap, axum::For
     let r = tools::execute(&state, &seat, &f.name, &args, tools::Origin::User);
     let now = state.now();
     state.world.write().expect("world").chats.push(ChatMsg { ts_ms: now, seat: seat.clone(), from: "eva".into(), label: None, text: r.text.clone() });
-    state.set_mood(Some(&seat), if r.ok { EvaMood::Happy } else { EvaMood::Concerned });
+    mood_after_tool(&state, &seat, &f.name, &args, r.ok);
     state.emit(UiEvent::Chat { seat: seat.clone() });
     let target = headers.get("hx-target").and_then(|v| v.to_str().ok()).unwrap_or("");
     if target == "toast" {
         return Html(toast(&r.text, r.ok)).into_response();
     }
     Html(render(&ChatList::build(&state, &seat))).into_response()
+}
+
+/// Eva's face after a person runs a tool: a goal met celebrates, an uplink shows
+/// her sending, a summary shows her reading, "I feel worse" turns to care.
+/// Emergency tools leave the alert state they set alone.
+pub fn mood_after_tool(state: &Shared, seat: &str, name: &str, args: &Value, ok: bool) {
+    if !ok {
+        state.set_mood(Some(seat), EvaMood::Concerned);
+        return;
+    }
+    let worse = args.get("labels").and_then(|l| l.as_array()).is_some_and(|l| l.iter().any(|x| x.as_str() == Some("Worse")));
+    match name {
+        "request_help" | "call_aed_runner" => {}
+        "log_water" => {
+            let goal = state.world.read().expect("world").passenger(seat).is_some_and(|p| p.water_ml >= 2000);
+            if goal { pulse_mood(state, seat, EvaMood::Celebrate, 4000) } else { pulse_mood(state, seat, EvaMood::Happy, 2500) }
+        }
+        "send_to_ground" | "export_report" => pulse_mood(state, seat, EvaMood::Sending, 3500),
+        "daily_summary" | "show_screen" => pulse_mood(state, seat, EvaMood::Reading, 3500),
+        "add_journal_entry" | "log_mood" if worse => state.set_mood(Some(seat), EvaMood::Care),
+        _ => pulse_mood(state, seat, EvaMood::Happy, 2500),
+    }
 }
 
 pub fn toast(text: &str, ok: bool) -> String {
@@ -284,7 +306,7 @@ pub async fn journal_post(State(state): State<Shared>, headers: HeaderMap, body:
     } else {
         tools::execute(&state, &seat, "add_journal_entry", &json!({"text": text, "valence": valence, "labels": all("labels"), "affects": all("affects"), "shared": shared}), tools::Origin::User);
     }
-    state.set_mood(Some(&seat), EvaMood::Happy);
+    pulse_mood(&state, &seat, EvaMood::Happy, 2500);
     Html(pages::journal_screen(&state, &seat, true)).into_response()
 }
 

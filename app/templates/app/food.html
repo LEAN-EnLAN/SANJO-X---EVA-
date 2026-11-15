@@ -4,6 +4,7 @@
   <p class="text-xs uppercase tracking-label text-muted">Food · today</p>
   <button type="button" aria-label="Log a meal" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" onclick="document.getElementById('meal-text').focus()">{{ crate::web::ui::ic("plus", 18)|safe }}</button>
 </div>
+{% call u::hero("nutrition", "A ship meal tray: chicken with vegetables, fruit, a drink pouch and coffee", "Food today") %}
 <div class="flex items-center gap-5">
   <span class="relative grid size-32 shrink-0 place-items-center" role="img" aria-label="{{ eaten }} of {{ goal }} kcal eaten">
     <svg viewBox="0 0 120 120" class="absolute inset-0 size-full -rotate-90" aria-hidden="true">
@@ -24,11 +25,11 @@
 </div>
 
 <section class="flex flex-col">
-  <p class="pb-1 text-xs uppercase tracking-label text-muted">Meals</p>
+  <p class="flex items-center gap-2 pb-1 text-xs uppercase tracking-label text-muted">{{ crate::web::ui::pic("food", "size-8")|safe }}Meals</p>
   {% for ml in meals %}
   <div class="flex items-center justify-between gap-3 border-b border-line py-2 last:border-b-0">
     <div class="flex min-w-0 items-center gap-3">
-      <span class="inline-grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/{{ ml.img }}.webp" alt="" class="size-full scale-90 object-cover" loading="lazy" width="48" height="48"></span>
+      {{ crate::web::ui::pic(ml.img, "size-12")|safe }}
       <span class="flex min-w-0 flex-col"><span class="text-sm text-ink">{{ ml.kind }}{% if !ml.time.is_empty() %}<span class="ml-1.5 text-xs text-muted">{{ ml.time }}</span>{% endif %}</span><span class="truncate text-xs text-muted">{{ ml.text }}{% if ml.photo %} · from a photo{% endif %}</span></span>
     </div>
     {% if let Some(k) = ml.kcal %}<span class="shrink-0 text-sm text-ink tabular-nums">{{ k }}<span class="ml-1 text-xs text-muted">kcal</span></span>{% else %}<span class="shrink-0 text-xs text-muted">Planned</span>{% endif %}
@@ -51,7 +52,7 @@
 
 <section class="flex flex-col gap-2">
   <div class="flex items-center justify-between gap-2">
-    <span class="flex items-center gap-2"><span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/water.webp" alt="" class="size-full scale-90 object-cover" width="36" height="36"></span><span class="text-xs uppercase tracking-label text-muted">Water</span></span>
+    <a href="/app/vitals?k=water&amp;seat={{ c.seat }}" hx-get="/app/vitals?k=water&amp;seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" class="press flex items-center gap-2 rounded-full pr-2">{{ crate::web::ui::pic("water", "size-9")|safe }}<span class="text-xs uppercase tracking-label text-muted">Water</span><span class="text-muted">{{ crate::web::ui::ic("chevron", 14)|safe }}</span></a>
     <span class="text-xs text-muted">{{ "{:.1}"|format(water_ml as f32 / 1000.0) }} of 2 L{% if water_ml < 2000 %} · {{ (2000 - water_ml + 249) / 250 }} to go{% endif %}</span>
   </div>
   <div class="flex gap-1.5" role="group" aria-label="Glasses of water today, tap an empty one to add 250 ml">
@@ -67,13 +68,13 @@
   <p class="text-xs uppercase tracking-label text-muted">Bones</p>
   <div class="grid grid-cols-2 gap-2">
     <div class="flex items-center gap-2.5 rounded-tile bg-surface px-2.5 py-2">
-      <span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/calcium.webp" alt="" class="size-full scale-90 object-cover" loading="lazy" width="36" height="36"></span>
+      {{ crate::web::ui::pic("calcium", "size-10")|safe }}
       <span class="flex min-w-0 flex-col gap-0.5"><span class="flex items-center gap-2 text-sm text-ink"><span class="size-2 rounded-full bg-warn"></span>Calcium</span><span class="text-xs text-muted">Low · 620 / 1,000 mg</span></span>
     </div>
     <div class="flex items-center gap-2.5 rounded-tile bg-surface px-2.5 py-2">
-      <span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/vitamin-d.webp" alt="" class="size-full scale-90 object-cover" loading="lazy" width="36" height="36"></span>
+      {{ crate::web::ui::pic("vitamin-d", "size-10")|safe }}
       <span class="flex min-w-0 flex-col gap-0.5"><span class="flex items-center gap-2 text-sm text-ink"><span class="size-2 rounded-full bg-ok"></span>Vitamin D</span><span class="text-xs text-muted">Taken · good</span></span>
     </div>
   </div>
 </section>
-<p class="text-center text-xs text-muted">Food photos are AI-generated</p>
+<p class="text-center text-xs text-muted">Food images and icons are AI-generated</p>

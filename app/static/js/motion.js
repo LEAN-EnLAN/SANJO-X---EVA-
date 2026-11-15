@@ -92,40 +92,79 @@
   // ---- Eva mascot: state-driven springs
   // targets per state: y (px), s (scale), r (deg), glow (opacity), gs (glow scale), and an
   // optional idle loop that alternates targets so the motion keeps breathing.
+  // Every state has its own image (static/img/eva/eva-<state>.webp, Codex kit). A change of
+  // state cross-fades the two images on the gentle spring and gives the body a small squash
+  // that the bouncy spring releases. `data-eva-fixed` (the tab-bar face) keeps its image and
+  // only moves.
   var STATES = {
-    idle:      { y: 0,  s: 1,    r: 0,  glow: 0.55, gs: 1,    cfg: "slow",   loop: { every: 2600, y: -3, s: 1.025, glow: 0.7 } },
-    listening: { y: -4, s: 1.06, r: -4, glow: 0.9,  gs: 1.15, cfg: "gentle", loop: { every: 900, s: 1.08, glow: 1 } },
-    thinking:  { y: -2, s: 1,    r: -6, glow: 0.6,  gs: 1.05, cfg: "gentle", loop: { every: 800, r: 6 } },
-    speaking:  { y: -1, s: 1.02, r: 0,  glow: 0.8,  gs: 1.1,  cfg: "snappy", loop: { every: 260, s: 1.06, y: -3 } },
-    happy:     { y: -10, s: 1.08, r: 3, glow: 0.85, gs: 1.2,  cfg: "bouncy", settle: { after: 420, y: 0, s: 1.03 } },
-    concerned: { y: 2,  s: 0.97, r: -3, glow: 0.7,  gs: 1,    cfg: "slow",   loop: { every: 2000, y: 0 } },
-    alert:     { y: -2, s: 1.04, r: 0,  glow: 1,    gs: 1.25, cfg: "snappy", loop: { every: 500, s: 1, gs: 1.1 } }
+    idle:          { y: 0,  s: 1,    r: 0,  glow: 0.55, gs: 1,    cfg: "slow",   loop: { every: 2600, y: -3, s: 1.025, glow: 0.7 } },
+    hello:         { y: -6, s: 1.05, r: 3,  glow: 0.8,  gs: 1.12, cfg: "bouncy", settle: { after: 480, y: 0, s: 1.02, r: 0 } },
+    listening:     { y: -4, s: 1.06, r: -4, glow: 0.9,  gs: 1.15, cfg: "gentle", loop: { every: 900, s: 1.08, glow: 1 } },
+    thinking:      { y: -2, s: 1,    r: -6, glow: 0.6,  gs: 1.05, cfg: "gentle", loop: { every: 800, r: 6 } },
+    speaking:      { y: -1, s: 1.02, r: 0,  glow: 0.8,  gs: 1.1,  cfg: "snappy", loop: { every: 260, s: 1.06, y: -3 } },
+    happy:         { y: -10, s: 1.08, r: 3, glow: 0.85, gs: 1.2,  cfg: "bouncy", settle: { after: 420, y: 0, s: 1.03 } },
+    wink:          { y: -4, s: 1.04, r: 5,  glow: 0.75, gs: 1.1,  cfg: "bouncy", settle: { after: 360, y: 0, r: 2 } },
+    concerned:     { y: 2,  s: 0.97, r: -3, glow: 0.7,  gs: 1,    cfg: "slow",   loop: { every: 2000, y: 0 } },
+    alert:         { y: -2, s: 1.04, r: 0,  glow: 1,    gs: 1.25, cfg: "snappy", loop: { every: 500, s: 1, gs: 1.1 } },
+    calm:          { y: 0,  s: 1,    r: 0,  glow: 0.65, gs: 1.05, cfg: "slow",   loop: { every: 3200, y: -2, glow: 0.8, gs: 1.12 } },
+    sleeping:      { y: 2,  s: 0.98, r: -2, glow: 0.3,  gs: 0.95, cfg: "slow",   loop: { every: 3600, y: 0, s: 1, glow: 0.4 } },
+    celebrate:     { y: -14, s: 1.1, r: -3, glow: 1,    gs: 1.3,  cfg: "bouncy", loop: { every: 520, y: -4, r: 3, s: 1.05 } },
+    care:          { y: 1,  s: 0.99, r: -2, glow: 0.7,  gs: 1.05, cfg: "slow",   loop: { every: 2400, y: -1, r: 0 } },
+    reading:       { y: 0,  s: 1,    r: -2, glow: 0.6,  gs: 1,    cfg: "gentle", loop: { every: 1800, r: 1 } },
+    writing:       { y: 0,  s: 1,    r: 2,  glow: 0.6,  gs: 1,    cfg: "gentle", loop: { every: 700, r: -1, y: -1 } },
+    sending:       { y: -5, s: 1.03, r: 4,  glow: 0.85, gs: 1.15, cfg: "snappy", loop: { every: 600, y: -2, gs: 1.05 } },
+    "low-battery": { y: 3,  s: 0.97, r: -4, glow: 0.35, gs: 0.95, cfg: "slow",   loop: { every: 2800, y: 1 } }
   };
-  var ART = { idle: "neutral", thinking: "neutral", listening: "wink", speaking: "happy", happy: "happy", concerned: "care", alert: "care" };
 
   function Mascot(el) {
     this.el = el;
     this.sp = {
       y: varSpring(el, "--eva-y", 0), s: varSpring(el, "--eva-s", 1), r: varSpring(el, "--eva-r", 0),
-      glow: varSpring(el, "--eva-glow", 0.55), gs: varSpring(el, "--eva-gs", 1)
+      glow: varSpring(el, "--eva-glow", 0.55), gs: varSpring(el, "--eva-gs", 1),
+      sx: varSpring(el, "--eva-sx", 1), sy: varSpring(el, "--eva-sy", 1)
     };
     this.timer = 0; this.flip = false;
-    this.setState(el.getAttribute("data-state") || "idle");
+    this.setState(el.getAttribute("data-state") || "idle", true);
   }
   Mascot.prototype.apply = function (t, cfg) {
     var sp = this.sp;
     Object.keys(sp).forEach(function (k) { if (t[k] !== undefined) sp[k].set(t[k], cfg); });
   };
-  Mascot.prototype.setState = function (state) {
-    var st = STATES[state] || STATES.idle, self = this;
+  // the new image fades in over the old one; the old one leaves when the new is fully in
+  Mascot.prototype.swapArt = function (src) {
+    var img = this.el.querySelector("img.eva-body:not([data-leaving])");
+    if (!img || img.getAttribute("src") === src) return;
+    if (reduced.matches) { img.setAttribute("src", src); return; }
+    var next = img.cloneNode(false);
+    next.setAttribute("src", src);
+    next.classList.add("eva-next");
+    next.style.opacity = "0";
+    img.setAttribute("data-leaving", "");
+    img.after(next);
+    var done = false;
+    function finish() {
+      if (done) return; done = true;
+      img.remove(); next.classList.remove("eva-next"); next.style.opacity = "";
+    }
+    var fade = new Spring(0, "gentle", function (x) {
+      next.style.opacity = x.toFixed(3); img.style.opacity = (1 - x).toFixed(3);
+      if (x > 0.995) finish();
+    });
+    var go = function () { fade.set(1, "gentle"); setTimeout(finish, 900); };
+    if (next.complete) go(); else { next.onload = go; next.onerror = finish; }
+  };
+  Mascot.prototype.setState = function (state, first) {
+    if (!STATES[state]) state = "idle";
+    var st = STATES[state], self = this, changed = state !== this.state;
     this.state = state;
     this.el.setAttribute("data-state", state);
-    var img = this.el.querySelector("img");
-    if (img && ART[state]) {
-      var want = "/static/img/eva/eva-" + ART[state] + ".webp";
-      if (img.getAttribute("src") !== want) img.setAttribute("src", want);
-    }
+    if (!this.el.hasAttribute("data-eva-fixed")) this.swapArt("/static/img/eva/eva-" + state + ".webp");
     clearInterval(this.timer); clearTimeout(this.settle);
+    // a small squash on every change of state, released by the bouncy spring
+    if (changed && !first && !reduced.matches) {
+      this.sp.sx.track(1.07, 0); this.sp.sy.track(0.9, 0);
+      this.sp.sx.set(1, "bouncy"); this.sp.sy.set(1, "bouncy");
+    }
     this.apply(st, st.cfg);
     if (st.settle) this.settle = setTimeout(function () { self.apply(st.settle, "gentle"); }, st.settle.after);
     if (st.loop && !reduced.matches) {
@@ -151,7 +190,30 @@
   document.addEventListener("htmx:load", function (e) { mountMascots(e.target); });
   reduced.addEventListener && reduced.addEventListener("change", function () { setMood(document.querySelector("[data-eva]")?.getAttribute("data-state") || "idle"); });
 
-  window.EvaMotion = { Spring: Spring, token: token, varSpring: varSpring, setMood: setMood, mountMascots: mountMascots, reduced: reduced, linearFor: linearFor };
+  // first-load screen: the splash (Codex kit) holds a moment, then fades out on the gentle spring
+  // with a slight push-in. It never takes taps (pointer-events: none) and shows once per session.
+  function hideSplash() {
+    var sp = document.getElementById("splash");
+    if (!sp) return;
+    if (reduced.matches) { sp.remove(); return; }
+    var o = varSpring(sp, "--splash-o", 1, "gentle"), sc = varSpring(sp, "--splash-s", 1, "gentle");
+    o.set(0, "gentle"); sc.set(1.06, "gentle");
+    setTimeout(function () { sp.remove(); }, 900);
+  }
+  if (document.readyState === "complete") setTimeout(hideSplash, 450);
+  else window.addEventListener("load", function () { setTimeout(hideSplash, 450); });
+
+  // warm the cache with every state image once the page is idle, so a change of state never waits
+  function preloadStates() {
+    if (!document.querySelector("[data-eva]")) return;
+    Object.keys(STATES).forEach(function (k) { var i = new Image(); i.decoding = "async"; i.src = "/static/img/eva/eva-" + k + ".webp"; });
+  }
+  window.addEventListener("load", function () {
+    if (window.requestIdleCallback) window.requestIdleCallback(preloadStates, { timeout: 2500 });
+    else setTimeout(preloadStates, 1200);
+  });
+
+  window.EvaMotion = { Spring: Spring, token: token, varSpring: varSpring, setMood: setMood, mountMascots: mountMascots, reduced: reduced, linearFor: linearFor, states: Object.keys(STATES) };
 
   // ================================================================ app navigation motion
   // Screens: push slides in from the right, back from the left, tabs cross-fade with a

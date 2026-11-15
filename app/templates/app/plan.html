@@ -16,7 +16,7 @@
 <ul class="flex flex-col">
   {% for it in items %}
   <li class="flex items-center gap-3 border-b border-line py-3 last:border-b-0">
-    <span class="grid size-11 shrink-0 place-items-center rounded-full {% if it.done %}bg-ok/10 text-ok{% else %}bg-raised text-ink{% endif %}">{{ crate::web::ui::ic(it.icon, 20)|safe }}</span>
+    {% if it.done %}{{ crate::web::ui::pic(it.icon, "size-11 ring-2 ring-ok/50")|safe }}{% else %}{{ crate::web::ui::pic(it.icon, "size-11")|safe }}{% endif %}
     <span class="flex min-w-0 flex-1 flex-col"><span class="text-sm {% if it.done %}text-muted{% else %}text-ink{% endif %}">{{ it.title }}</span><span class="text-xs text-muted">{{ it.sub }}</span></span>
     {% if let Some(b) = it.action %}
     <button type="button" class="press inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-ink px-3 text-xs font-medium text-on-light" {% call u::tool(b) %}>{{ b.label }}</button>

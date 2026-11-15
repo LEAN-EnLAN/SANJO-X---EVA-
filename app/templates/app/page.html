@@ -6,6 +6,9 @@
 <title>Eva · {{ c.first }}</title>
 </head>
 <body class="min-h-dvh bg-background text-ink antialiased" data-view="app" data-seat="{{ c.seat }}">
+<div id="splash" class="fixed inset-0 z-50 grid place-items-center bg-background" aria-hidden="true"><img src="/static/img/splash.webp" alt="" class="h-full max-h-dvh w-auto max-w-full object-contain" width="1024" height="1536" fetchpriority="high"><span class="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-full bg-background/80 px-2 py-0.5 text-xs text-muted">Eva by WearMeds · AI-generated</span></div>
+<script>try{if(sessionStorage.getItem("eva-splash"))document.getElementById("splash").remove();else sessionStorage.setItem("eva-splash","1")}catch(e){}</script>
+<noscript><style>#splash{display:none}</style></noscript>
 <div class="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-2xl" hx-ext="sse" sse-connect="/sse/app?seat={{ c.seat }}">
   <header class="flex items-center justify-between gap-3 px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-1 text-sm">
     <button type="button" class="min-h-11 min-w-11 tabular-nums text-ink" data-konami-tap title="Ship time">{{ c.time }}</button>
@@ -31,7 +34,7 @@
       <span class="tab-pill pointer-events-none absolute top-3 left-0 size-11 rounded-full bg-ink opacity-0" data-tab-pill aria-hidden="true"></span>
       <a {% call u::go("/app/home", c.seat, "tab") %} data-tab="home" aria-label="Home" {% if tab == "home" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("home", 20)|safe }}</a>
       <a {% call u::go("/app/plan", c.seat, "tab") %} data-tab="plan" aria-label="Today's plan" {% if tab == "plan" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("list", 20)|safe }}</a>
-      <a {% call u::go("/app/eva", c.seat, "tab") %} data-tab="eva" aria-label="Eva" {% if tab == "eva" %}aria-current="page"{% endif %} class="tab-eva press relative -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 ring-line">{% call m::eva(c.mood, c.art, "size-10") %}</a>
+      <a {% call u::go("/app/eva", c.seat, "tab") %} data-tab="eva" aria-label="Eva" {% if tab == "eva" %}aria-current="page"{% endif %} class="tab-eva press relative -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 ring-line">{% call m::face(c.mood, "size-11") %}</a>
       <a {% call u::go("/app/food", c.seat, "tab") %} data-tab="food" aria-label="Food and water" {% if tab == "food" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("utensils", 20)|safe }}</a>
       <a {% call u::go("/app/records", c.seat, "tab") %} data-tab="records" aria-label="Logbook" {% if tab == "records" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("records", 20)|safe }}</a>
     </div>

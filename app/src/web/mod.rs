@@ -76,6 +76,8 @@ pub fn router(state: Shared) -> Router {
         .route("/app/checkin", get(pages::app_checkin))
         .route("/app/ecg", get(pages::app_ecg))
         .route("/app/band", get(pages::app_band))
+        .route("/app/vitals", get(pages::app_vitals))
+        .route("/app/about", get(pages::app_about))
         .route("/app/tools", get(pages::app_tools))
         .route("/dash", get(pages::dash))
         .route("/sse/app", get(sse::app_sse))

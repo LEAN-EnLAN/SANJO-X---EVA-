@@ -210,6 +210,24 @@ pub async fn app_band(State(state): State<Shared>, Query(q): Query<SeatQ>, heade
     page(&state, &seat, "home", s, &headers)
 }
 
+#[derive(Deserialize, Default)]
+pub struct VitalsQ {
+    pub seat: Option<String>,
+    pub k: Option<String>,
+}
+
+pub async fn app_vitals(State(state): State<Shared>, Query(q): Query<VitalsQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
+    let s = VitalsScreen::build(&state, &seat, q.k.as_deref().unwrap_or("heart")).map(|v| render(&v)).unwrap_or_default();
+    page(&state, &seat, "home", s, &headers)
+}
+
+pub async fn app_about(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &q, &headers);
+    let s = render(&AboutScreen { c: common(&state, &seat) });
+    page(&state, &seat, "home", s, &headers)
+}
+
 /// The tools sheet (a fragment the app shows in its bottom sheet).
 pub async fn app_tools(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
     let seat = resolve_seat(&state, &q, &headers);

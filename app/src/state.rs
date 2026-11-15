@@ -152,8 +152,20 @@ impl World {
     pub fn open_case(&self) -> Option<&Case> {
         self.cases.iter().rev().find(|c| c.open)
     }
-    pub fn mood(&self, seat: &str) -> EvaMood {
-        self.moods.get(seat).copied().unwrap_or(EvaMood::Idle)
+    /// Eva's state for a seat. A plain idle turns into `LowBattery` when the band
+    /// needs charging, or `Sleeping` at ship night, so the mascot says so on its own.
+    pub fn mood(&self, seat: &str, now_ms: u64) -> EvaMood {
+        let m = self.moods.get(seat).copied().unwrap_or(EvaMood::Idle);
+        if m != EvaMood::Idle {
+            return m;
+        }
+        if self.passenger(seat).is_some_and(|p| p.vitals.base_batt < 20 || p.vitals.screen_batt < 20) {
+            return EvaMood::LowBattery;
+        }
+        if is_night(now_ms) {
+            return EvaMood::Sleeping;
+        }
+        EvaMood::Idle
     }
     /// Seats Eva has asked to help in an open case, with their task.
     pub fn helper_task(&self, seat: &str) -> Option<(&Case, &Helper)> {
@@ -238,16 +250,26 @@ impl AppState {
     }
 
     pub fn set_mood(&self, seat: Option<&str>, mood: EvaMood) {
-        {
+        let now = self.now();
+        let shown = {
             let mut w = self.world.write().expect("world");
             match seat {
                 Some(s) => {
                     w.moods.insert(s.to_string(), mood);
+                    w.mood(s, now)
                 }
-                None => w.dash_mood = mood,
+                None => {
+                    w.dash_mood = mood;
+                    mood
+                }
             }
-        }
-        self.emit(UiEvent::Eva { seat: seat.map(String::from), mood });
+        };
+        self.emit(UiEvent::Eva { seat: seat.map(String::from), mood: shown });
+    }
+
+    /// Eva's state for a seat as the app shows it (see `World::mood`).
+    pub fn mood_of(&self, seat: &str) -> EvaMood {
+        self.world.read().expect("world").mood(seat, self.now())
     }
 
     /// Demo reset: world, chain and clock back to the start.
@@ -280,4 +302,25 @@ fn seed_chain(chain: &mut Chain, now: u64) {
     for (ts, kind, subject, body) in seed::chain_records(day_start) {
         chain.append(ts, kind, subject, body);
     }
+}
+
+/// Ship night for the mascot: 22:30 to 06:30 mission time (the day plan's sleep window).
+pub fn is_night(now_ms: u64) -> bool {
+    let m = (now_ms % crate::clock::DAY_MS) / 60_000;
+    !(6 * 60 + 30..22 * 60 + 30).contains(&m)
+}
+
+/// Set a short-lived state (happy, celebrate, sending…) that falls back to idle
+/// after `ms` of real time, unless something else changed Eva's state meanwhile.
+pub fn pulse_mood(state: &Shared, seat: &str, mood: EvaMood, ms: u64) {
+    state.set_mood(Some(seat), mood);
+    let Ok(rt) = tokio::runtime::Handle::try_current() else { return };
+    let (st, seat) = (state.clone(), seat.to_string());
+    rt.spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_millis(ms)).await;
+        let still = st.world.read().expect("world").moods.get(&seat).copied() == Some(mood);
+        if still {
+            st.set_mood(Some(&seat), EvaMood::Idle);
+        }
+    });
 }

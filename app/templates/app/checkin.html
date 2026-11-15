@@ -1,8 +1,8 @@
-{% import "app/_ui.html" as u %}
+{% import "app/_ui.html" as u %}{% import "mascot.html" as m %}
 <div class="flex items-center justify-between gap-3 pt-1">
   <a {% call u::go("/app/home", c.seat, "back") %} aria-label="Later" data-back class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("x", 18)|safe }}</a>
   <p class="text-xs uppercase tracking-label text-muted">Check-in</p>
-  <span class="size-11"></span>
+  {% call m::eva("care", "care", "size-11") %}
 </div>
 <div class="flex flex-col gap-2">
   <p class="text-xs uppercase tracking-label text-muted">{{ c.time }}</p>

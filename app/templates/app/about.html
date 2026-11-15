@@ -1,0 +1,18 @@
+{% import "app/_ui.html" as u %}{% import "mascot.html" as m %}
+<div class="flex items-center justify-between gap-3 pt-1">
+  <a {% call u::go("/app/home", c.seat, "back") %} aria-label="Back" data-back class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <p class="text-xs uppercase tracking-label text-muted">About</p>
+  <span class="size-11"></span>
+</div>
+<div class="flex items-center gap-4" data-eva-hello>
+  {% call m::eva(c.mood, c.art, "size-20") %}
+  <div class="flex flex-col gap-1">
+    <h1 class="text-4xl leading-none tracking-tight text-ink">About Eva</h1>
+    <p class="text-sm text-muted">Your health copilot on board</p>
+  </div>
+</div>
+<section class="rounded-card border border-line bg-surface p-5">
+  <h2 class="mb-3 text-base text-ink">Images and credits</h2>
+  {% include "_credits.html" %}
+</section>
+<p class="text-center text-xs text-muted">Images AI-generated · Eva by WearMeds · team Sanjo-X</p>

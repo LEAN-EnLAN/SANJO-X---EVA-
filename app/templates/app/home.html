@@ -15,10 +15,10 @@
 </a>
 <div id="live" class="flex flex-col gap-4" sse-swap="live">{{ live|safe }}</div>
 <div class="grid grid-cols-4 gap-2" aria-label="Quick actions">
-  <a {% call u::go("/app/checkin", c.seat, "push") %} class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink"><span class="text-info">{{ crate::web::ui::ic("smile", 22)|safe }}</span>Check-in</a>
-  <a {% call u::go("/app/ecg", c.seat, "push") %} class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink"><span class="text-info">{{ crate::web::ui::ic("pulse", 22)|safe }}</span>ECG</a>
-  <button type="button" class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink" hx-post="/api/eva/tool" hx-vals="{{ water }}" hx-target="#toast" data-tool="log_water"><span class="text-info">{{ crate::web::ui::ic("glass", 22)|safe }}</span>+ Water</button>
-  <a {% call u::go("/app/journal", c.seat, "push") %} class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink"><span class="text-info">{{ crate::web::ui::ic("book", 22)|safe }}</span>Journal</a>
+  <a {% call u::go("/app/checkin", c.seat, "push") %} class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink">{{ crate::web::ui::pic("mood", "size-10")|safe }}Check-in</a>
+  <a {% call u::go("/app/ecg", c.seat, "push") %} class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink">{{ crate::web::ui::pic("ecg", "size-10")|safe }}ECG</a>
+  <button type="button" class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink" hx-post="/api/eva/tool" hx-vals="{{ water }}" hx-target="#toast" data-tool="log_water">{{ crate::web::ui::pic("water", "size-10")|safe }}+ Water</button>
+  <a {% call u::go("/app/journal", c.seat, "push") %} class="press flex flex-col items-center gap-1.5 rounded-tile bg-surface px-1 py-3 text-xs text-ink">{{ crate::web::ui::pic("journal", "size-10")|safe }}Journal</a>
 </div>
 {% if let Some((t, text)) = next %}
 <a {% call u::go("/app/plan", c.seat, "tab") %} class="press flex items-center gap-3 rounded-full bg-surface py-2 pr-2 pl-5">
@@ -26,4 +26,4 @@
   <span class="inline-flex size-11 items-center justify-center rounded-full bg-ink text-on-light" aria-hidden="true">{{ crate::web::ui::ic("arrow", 18)|safe }}</span>
 </a>
 {% endif %}
-<p class="text-center text-xs text-muted">Eva guides and warns · the AED decides shocks<br>Images AI-generated</p>
+<p class="text-center text-xs text-muted">Eva guides and warns · the AED decides shocks<br>Images and Eva are AI-generated · <a {% call u::go("/app/about", c.seat, "push") %} class="text-info underline underline-offset-2">About &amp; credits</a></p>

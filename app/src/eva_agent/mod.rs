@@ -216,6 +216,9 @@ pub fn helper_answer(state: &Shared, helper_seat: &str, going: bool) {
             let _ = assign_aed_runner(state, &seat);
         }
     }
+    // the CPR helper gets a calm Eva while she counts the pushes; the AED runner stays on alert
+    let cpr = going && state.world.read().expect("world").helper_task(helper_seat).is_some_and(|(_, h)| h.task == "CPR");
+    state.set_mood(Some(helper_seat), if cpr { EvaMood::Calm } else if going { EvaMood::Alert } else { EvaMood::Idle });
     state.emit(UiEvent::Tick);
 }
 
@@ -259,6 +262,7 @@ fn progress_cases(state: &Shared) {
 /// Close the open case for `seat` (crew lead decision) and stand helpers down.
 pub fn close_case(state: &Shared, seat: &str) {
     let now = state.now();
+    let stood_down: Vec<String>;
     {
         let mut w = state.world.write().expect("world");
         let mut helpers = Vec::new();
@@ -267,11 +271,12 @@ pub fn close_case(state: &Shared, seat: &str) {
             c.steps.push(CaseStep { ts_ms: now, title: "Case closed by the crew lead".into(), detail: "Moved to the med bay · records kept on the chain".into(), tone: "neutral".into(), earth_ms: None });
             helpers.extend(c.helpers.iter().map(|h| h.seat.clone()));
         }
-        for h in helpers {
-            if let Some(p) = w.passenger_mut(&h) {
+        for h in &helpers {
+            if let Some(p) = w.passenger_mut(h) {
                 p.scenario = Scenario::Normal;
             }
         }
+        stood_down = helpers;
         if let Some(p) = w.passenger_mut(seat) {
             p.scenario = Scenario::Normal;
             p.vitals.flags &= !vflag::NO_ANSWER;
@@ -282,6 +287,9 @@ pub fn close_case(state: &Shared, seat: &str) {
     }
     state.log("case", seat, json!({"text": "Case closed by the crew lead"}));
     state.set_mood(None, EvaMood::Idle);
+    for s in std::iter::once(seat.to_string()).chain(stood_down) {
+        state.set_mood(Some(&s), EvaMood::Idle);
+    }
 }
 
 /// A person talks to Eva (text, or text from STT). Runs reflex triage first,

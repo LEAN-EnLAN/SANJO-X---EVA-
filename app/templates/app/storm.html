@@ -1,8 +1,10 @@
+{% import "app/_ui.html" as u %}
 <div class="flex items-center justify-between pt-2">
   {% if active %}<span class="inline-flex items-center gap-1 rounded-full border border-critical/50 bg-critical/15 px-2.5 py-0.5 text-xs font-medium text-critical">Solar storm</span>
   {% else %}<span class="inline-flex items-center gap-1 rounded-full border border-ok/40 bg-ok/10 px-2.5 py-0.5 text-xs font-medium text-ok">Sun quiet</span>{% endif %}
   <span class="text-xs text-muted">Shelter · Deck B</span>
 </div>
+{% call u::hero("radiation", "A shelter pod with a vault door inside thick water walls", "") %}
 {% if active %}
 <p class="text-5xl leading-none tracking-tight text-ink">Go to the shelter now</p>
 <div class="flex items-center gap-3">
@@ -10,13 +12,13 @@
   <span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">Walk, don't run</span>
 </div>
 <div class="flex flex-col gap-3">
-  <p class="text-xs uppercase tracking-label text-muted">Your route · 40 m</p>
+  <p class="flex items-center gap-2 text-xs uppercase tracking-label text-muted">{{ crate::web::ui::pic("shelter", "size-9")|safe }}Your route · 40 m</p>
   <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full bg-ink text-sm text-on-light">1</span><p class="pt-1 text-sm text-ink">Leave your seat and turn left</p></div>
   <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full border border-line text-sm text-ink">2</span><p class="pt-1 text-sm text-ink">Follow the floor arrows to Deck B</p></div>
   <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full border border-line text-sm text-ink">3</span><p class="pt-1 text-sm text-ink">Go in and close the hatch</p></div>
 </div>
 <div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
-  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Why</span><span>Water walls block the radiation</span></div>
+  <div class="flex items-center gap-3 text-sm text-ink"><span class="w-10 shrink-0 text-xs uppercase tracking-label text-muted">Why</span><span class="flex-1">Water walls block the radiation</span>{{ crate::web::ui::pic("radiation", "size-9")|safe }}</div>
   <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Next</span><span>Stay until Eva says it is over</span></div>
   <p class="text-xs text-muted">How Eva decided · NOAA GOES X-ray flux and ship radiation sensors</p>
 </div>

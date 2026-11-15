@@ -29,19 +29,29 @@ EvaMotion.setMood("thinking"); // every Eva mascot on the page
 
 ## Eva's states
 
-Driven by the agent (`EvaMood` in `model.rs`), pushed over SSE as the `eva` event.
+Driven by the agent (`EvaMood` in `model.rs`), pushed over SSE as the `eva` event; a few short ones come from the page itself (eva.js). Every state has its own image from the Codex kit (`static/img/eva/eva-<state>.webp`, 512 px, AI-generated). A change of state cross-fades the old and new image on the gentle spring and squashes the body (scale 1.07 × 0.90) for the bouncy spring to release. The tab-bar avatar is `eva-face` (`data-eva-fixed`): it moves with the state but keeps its image.
 
-| state | when | motion (placeholder) | art |
+| state | when | set by | motion |
 |---|---|---|---|
-| idle | nothing happening | slow breathing: rises 3 px and grows 2.5% every 2.6 s | neutral |
-| listening | recording your voice | leans in (scale 1.06, tilt −4°), glow pulses | wink |
-| thinking | waiting for the model / tools | sways ±6° | neutral |
-| speaking | answer shown or spoken | quick small pulses | happy |
-| happy | a tool succeeded | hop up 10 px with the bouncy spring, settles | happy |
-| concerned | something to watch | sinks 2 px, smaller, warm glow | care |
-| alert | emergency | fast pulse, big red glow | care |
+| idle | nothing happening | default | slow breathing: rises 3 px and grows 2.5% every 2.6 s |
+| hello | Eva's screen (or About) opens | eva.js, 1.6 s | bouncy hop, settles |
+| listening | recording your voice | eva.js on the mic, `/api/eva/stt` | leans in, glow pulses |
+| thinking | waiting for the model (chat, photo, video) | agent, `/api/eva/vision` | sways ±6° |
+| speaking | answer shown or spoken (TTS playing) | agent, `/api/eva/tts`, eva.js on audio play | quick small pulses |
+| happy | a tool succeeded | `mood_after_tool`, 2.5 s | hop 10 px, settles |
+| wink | a tap on Eva | eva.js, 1.4 s | small tilted hop |
+| concerned | something to watch, or a tool failed | agent | sinks 2 px, warm glow |
+| alert | emergency (case opened, solar storm, AED runner) | agent | fast pulse, red glow |
+| calm | the CPR helper is pushing | `helper_answer` (CPR) | slow, steady glow |
+| sleeping | ship night 22:30–06:30 and otherwise idle | `World::mood` | very slow breathing, dim violet glow |
+| celebrate | a daily goal is met (2 L of water) | `mood_after_tool`, 4 s | bouncy jumps |
+| care | check-in, "I feel worse" | check-in screen, `mood_after_tool` | slow lean, mint glow |
+| reading | showing records or a summary | records screen, `daily_summary` / `show_screen`, 3.5 s | gentle page-turn sway |
+| writing | journaling | journal screen, eva.js while the text box has focus | small writing wiggle |
+| sending | uplink: send to the ground, report, outbox replay | `mood_after_tool` (3.5 s), eva.js on replay | quick lift, glow pulses |
+| low-battery | the band's base or screen part is under 20 % and otherwise idle | `World::mood` | sinks, dim warm glow |
 
-New simplified art is being commissioned: keep the file names in `static/img/eva/` or update `ART` in `motion.js`.
+Short states (`EvaMood::transient`) fall back to idle by themselves (`state::pulse_mood`), unless something else changed Eva's state meanwhile. Emergency states are never overridden by a tap or a hello.
 
 ## Reduced motion
 

@@ -9,17 +9,66 @@
   "orientation": "portrait",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "categories": ["health", "medical"],
+  "categories": [
+    "health",
+    "medical"
+  ],
   "icons": [
-    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/static/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Talk to Eva", "url": "/app/eva", "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Today's plan", "url": "/app/plan" },
-    { "name": "30 s ECG", "url": "/app/ecg" },
-    { "name": "Get help", "url": "/app/emergency" },
-    { "name": "Crew dashboard", "url": "/dash" }
+    {
+      "name": "Talk to Eva",
+      "url": "/app/eva",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Today's plan",
+      "url": "/app/plan"
+    },
+    {
+      "name": "30 s ECG",
+      "url": "/app/ecg"
+    },
+    {
+      "name": "Get help",
+      "url": "/app/emergency"
+    },
+    {
+      "name": "Crew dashboard",
+      "url": "/dash"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/img/splash.webp",
+      "sizes": "1024x1536",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Eva, the health copilot (AI-generated art)"
+    }
   ]
 }

@@ -11,7 +11,7 @@
 {% endif %}
 {% if storm %}
 <a href="/app/storm" hx-get="/app/storm" hx-target="#screen" hx-push-url="true" class="press mt-2 flex items-center gap-3 rounded-card border border-warn/40 bg-warn/10 p-3">
-  <span class="text-warn">{{ crate::web::ui::ic("sun", 18)|safe }}</span>
+  {{ crate::web::ui::pic("sun", "size-9")|safe }}
   <span class="flex flex-1 flex-col"><span class="text-sm text-ink">Solar storm · go to the shelter</span><span class="text-xs text-muted">Deck B · walk, don't run</span></span>
   <span class="text-warn">{{ crate::web::ui::ic("arrow", 18)|safe }}</span>
 </a>

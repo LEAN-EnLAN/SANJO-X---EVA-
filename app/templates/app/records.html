@@ -1,3 +1,4 @@
+{% import "mascot.html" as m %}
 <div class="flex items-center justify-between gap-3 pt-1">
   <button type="button" aria-label="Send my day to the ground" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"send_to_ground","args":"{\"text\":\"Daily log from {{ c.first }}\"}"}' hx-target="#toast" data-tool="send_to_ground">{{ crate::web::ui::ic("satellite", 18)|safe }}</button>
   <p class="text-xs uppercase tracking-label text-muted">Logbook</p>
@@ -6,6 +7,10 @@
 <div class="flex items-end justify-between gap-3">
   <p class="text-4xl leading-none tracking-tight text-ink">Your records</p>
   {% if verified %}<span class="inline-flex items-center gap-1 rounded-full border border-ok/40 bg-ok/10 px-2.5 py-0.5 text-xs font-medium text-ok">Chain verified · {{ total }}</span>{% else %}<span class="inline-flex items-center gap-1 rounded-full border border-critical/50 bg-critical/15 px-2.5 py-0.5 text-xs font-medium text-critical">Chain broken</span>{% endif %}
+</div>
+<div class="flex items-center gap-3 rounded-tile bg-surface py-2 pr-4 pl-2">
+  {% call m::eva("reading", "reading", "size-12") %}
+  <p class="flex-1 text-sm text-ink">Eva keeps your records · each one signed on board, then sent to the ground</p>
 </div>
 <div class="grid grid-cols-3 gap-2">
   <a href="/export/report?seat={{ c.seat }}" target="_blank" class="press inline-flex h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-3 text-sm font-medium text-on-light">{{ crate::web::ui::ic("file", 16)|safe }}Report</a>

@@ -6,7 +6,7 @@
 </div>
 
 <div class="flex flex-col items-center gap-1.5">
-  <div class="relative" data-eva-tap>
+  <div class="relative" data-eva-tap data-eva-hello>
     {% call m::eva(c.mood, c.art, "size-24 min-[380px]:size-32 sm:size-36") %}
     <span class="absolute -right-6 bottom-0 rounded-full bg-background/80 px-2 py-0.5 text-xs text-muted">AI-generated</span>
   </div>
@@ -15,9 +15,9 @@
 </div>
 
 <div class="flex gap-2 rounded-tile bg-surface px-3 py-2.5">
-  <div class="flex flex-1 items-center gap-2"><span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/heart.webp" alt="" class="size-full scale-90 object-cover"></span><span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{% if live.vitals.hr == 0 %}—{% else %}{{ live.vitals.hr }}{% endif %}<span class="ml-0.5 text-xs text-muted">bpm</span></span><span class="text-xs text-muted">{{ live.hr_short() }}</span></span></div>
-  <div class="flex flex-1 items-center gap-2"><span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/oxygen.webp" alt="" class="size-full scale-90 object-cover"></span><span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{{ live.vitals.spo2 }}<span class="ml-0.5 text-xs text-muted">%</span></span><span class="text-xs text-muted">{% if live.vitals.spo2 >= 95 %}Good{% else %}Check{% endif %}</span></span></div>
-  <div class="flex flex-1 items-center gap-2"><span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/icons/skin-temp.webp" alt="" class="size-full scale-90 object-cover"></span><span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{{ "{:.1}"|format(live.vitals.skin_c()) }}<span class="ml-0.5 text-xs text-muted">°C</span></span><span class="text-xs text-muted">{% if live.skin_word() == "usual" %}Normal{% else %}Warm{% endif %}</span></span></div>
+  <div class="flex flex-1 items-center gap-2">{{ crate::web::ui::pic("heart", "size-9")|safe }}<span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{% if live.vitals.hr == 0 %}—{% else %}{{ live.vitals.hr }}{% endif %}<span class="ml-0.5 text-xs text-muted">bpm</span></span><span class="text-xs text-muted">{{ live.hr_short() }}</span></span></div>
+  <div class="flex flex-1 items-center gap-2">{{ crate::web::ui::pic("oxygen", "size-9")|safe }}<span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{{ live.vitals.spo2 }}<span class="ml-0.5 text-xs text-muted">%</span></span><span class="text-xs text-muted">{% if live.vitals.spo2 >= 95 %}Good{% else %}Check{% endif %}</span></span></div>
+  <div class="flex flex-1 items-center gap-2">{{ crate::web::ui::pic("temperature", "size-9")|safe }}<span class="flex flex-col leading-tight"><span class="text-base tracking-tight text-ink">{{ "{:.1}"|format(live.vitals.skin_c()) }}<span class="ml-0.5 text-xs text-muted">°C</span></span><span class="text-xs text-muted">{% if live.skin_word() == "usual" %}Normal{% else %}Warm{% endif %}</span></span></div>
 </div>
 
 <div class="-mx-5 flex snap-x gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none]" aria-label="Ask or do">
@@ -35,19 +35,19 @@
 <div class="dock sticky bottom-dock z-10 -mx-5 flex flex-col gap-3 px-5 pt-5 pb-1">
   <form class="flex items-center gap-2" hx-post="/api/eva/chat" hx-target="#chat" hx-on::after-request="this.reset()" data-eva-form>
     <input type="hidden" name="seat" value="{{ c.seat }}">
-    <label class="press inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" aria-label="Send a photo">{{ crate::web::ui::ic("camera", 18)|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-seat="{{ c.seat }}"></label>
+    <label class="press inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full" aria-label="Send a photo">{{ crate::web::ui::pic("photo", "size-11")|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-seat="{{ c.seat }}"></label>
     <label class="sr-only" for="eva-text">Message Eva</label>
     <input id="eva-text" name="text" autocomplete="off" required maxlength="1000" placeholder="Ask Eva" class="h-11 min-w-0 flex-1 rounded-full border border-line bg-surface px-4 text-sm text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-info">
     <button type="submit" aria-label="Send" class="press inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-ink text-on-light">{{ crate::web::ui::ic("send", 16)|safe }}</button>
   </form>
   <div class="flex items-center justify-center gap-5">
-    <label class="press inline-flex size-11 cursor-pointer items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" aria-label="Send a short video">{{ crate::web::ui::ic("video", 18)|safe }}<input type="file" accept="video/*" capture="environment" class="sr-only" data-eva-video data-seat="{{ c.seat }}"></label>
+    <label class="press inline-flex size-12 cursor-pointer items-center justify-center rounded-full" aria-label="Send a short video">{{ crate::web::ui::pic("video", "size-12")|safe }}<input type="file" accept="video/*" capture="environment" class="sr-only" data-eva-video data-seat="{{ c.seat }}"></label>
     <span class="relative grid size-20 place-items-center">
       <span class="absolute inset-0 rounded-full bg-info/10 ring-1 ring-info/30"></span>
       <span class="mic-halo absolute inset-0 rounded-full bg-info/15"></span>
       <button type="button" class="press relative inline-flex size-[4.5rem] shrink-0 touch-none items-center justify-center rounded-full bg-ink text-on-light" aria-label="Hold to talk" data-eva-mic data-seat="{{ c.seat }}">{{ crate::web::ui::ic("mic", 28)|safe }}</button>
     </span>
-    <label class="inline-flex size-11 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-full bg-raised text-ink has-checked:bg-info/20 has-checked:text-info" title="Voice replies"><input type="checkbox" data-eva-voice class="sr-only"><span aria-hidden="true">{{ crate::web::ui::ic("speaker", 18)|safe }}</span><span class="sr-only">Voice replies</span></label>
+    <label class="press inline-flex size-12 cursor-pointer items-center justify-center rounded-full has-checked:ring-2 has-checked:ring-info has-focus-visible:outline-2 has-focus-visible:outline-info" title="Voice replies"><input type="checkbox" data-eva-voice class="sr-only">{{ crate::web::ui::pic("voice", "size-12")|safe }}<span class="sr-only">Voice replies</span></label>
   </div>
   <p class="-mt-1 text-center text-xs text-muted">Hold to talk</p>
 </div>

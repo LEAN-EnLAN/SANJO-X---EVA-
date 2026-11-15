@@ -4,24 +4,32 @@
 // - SSE (/sse), /link and /api GETs: network only (live data must not be stale).
 // - POSTs to journal / Eva tools / chat while offline: stored in IndexedDB and replayed
 //   when the page says it is back online (or on the next successful request).
-const CACHE = "eva-shell-v3";
+const CACHE = "eva-shell-v4";
 // screens of the astronaut app: cached as full pages (cold start offline) and as the
 // htmx fragments the tab bar swaps in (navigation offline)
-const SCREENS = ["/app", "/app/home", "/app/plan", "/app/eva", "/app/food", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/storm"];
+const SCREENS = ["/app", "/app/home", "/app/plan", "/app/eva", "/app/food", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/storm", "/app/about",
+  "/app/vitals?k=heart", "/app/vitals?k=lungs", "/app/vitals?k=temperature", "/app/vitals?k=sleep", "/app/vitals?k=water"];
 const FRAG = "?fragment";
+// Codex art kit (AI-generated): 3D icons, Eva's states, detail heroes, splash
+const ICONS = ["aed", "aed-pads", "ack", "alert", "battery", "calcium", "crew", "earth", "earth-link", "ecg", "eda", "exercise", "export", "food",
+  "heart", "hub", "interface", "journal", "logbook", "lora", "lungs", "magnet", "meal-breakfast", "meal-dinner", "meal-lunch", "meal-snack",
+  "mood", "movement", "oxygen", "photo", "radiation", "reminder", "send", "sensor-base", "shelter", "sleep", "sun", "temperature", "video",
+  "vitamin-d", "voice", "water", "wristband"];
+const EVA = ["idle", "hello", "listening", "thinking", "speaking", "happy", "wink", "concerned", "alert", "calm", "sleeping", "celebrate",
+  "care", "reading", "writing", "sending", "low-battery", "face"];
+const HEROES = ["heart", "lungs", "temperature", "sleep", "water", "nutrition", "journal", "ecg", "radiation", "aed"];
 const SHELL = [
-  "/app", "/app/plan", "/app/food", "/app/eva", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency",
+  "/app", "/app/plan", "/app/food", "/app/eva", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/about",
   "/dash", "/manifest.webmanifest",
   "/static/css/app.css", "/static/js/htmx.min.js", "/static/js/htmx-sse.js",
   "/static/js/motion.js", "/static/js/eva.js", "/static/js/link.js",
-  "/static/icons/icon-192.png", "/static/icons/icon-512.png",
-  "/static/img/eva/eva-neutral.webp", "/static/img/eva/eva-happy.webp", "/static/img/eva/eva-wink.webp", "/static/img/eva/eva-care.webp",
-  "/static/img/icons/heart.webp", "/static/img/icons/lungs.webp", "/static/img/icons/skin-temp.webp", "/static/img/icons/oxygen.webp",
-  "/static/img/wrist/band-top.webp", "/static/img/wrist/band-base.webp", "/static/img/wrist/band-interface.webp",
-  "/static/img/wrist/wrist-ecg.webp", "/static/img/wrist/wrist-two-parts.webp", "/static/img/wrist/wrist-suit.webp",
-  "/static/img/icons/water.webp", "/static/img/icons/calcium.webp", "/static/img/icons/vitamin-d.webp",
-  "/static/img/icons/meal-breakfast.webp", "/static/img/icons/meal-lunch.webp", "/static/img/icons/meal-snack.webp", "/static/img/icons/meal-dinner.webp",
-  "/static/icons/icon-maskable-512.png"
+  "/static/icons/icon-192.png", "/static/icons/icon-512.png", "/static/icons/icon-maskable-512.png",
+  "/static/icons/apple-touch-icon.png", "/static/icons/favicon-32.png",
+  "/static/img/splash.webp",
+  "/static/img/wrist/wrist-two-parts.webp", "/static/img/wrist/wrist-suit.webp", "/static/img/wrist/wrist-alert.webp", "/static/img/wrist/wrist-cpr.webp",
+  ...ICONS.map((n) => `/static/img/icons/${n}.webp`),
+  ...EVA.map((n) => `/static/img/eva/eva-${n}.webp`),
+  ...HEROES.map((n) => `/static/img/hero/${n}.webp`)
 ];
 const QUEUED = ["/api/journal", "/api/eva/tool", "/api/eva/chat", "/api/shelter", "/api/help"];
 
@@ -92,7 +100,9 @@ self.addEventListener("fetch", (e) => {
   // pages and htmx fragments: network first, cache as fallback. A fragment request must
   // never get a full page back (it would nest a page inside #screen), so they cache apart.
   const frag = !!req.headers.get("hx-request") && !req.headers.get("hx-history-restore-request");
-  const key = url.pathname + (frag ? FRAG : "");
+  // the vitals detail view is one path for five readings: keep each one apart
+  const kind = url.pathname === "/app/vitals" ? "?k=" + (url.searchParams.get("k") || "heart") : "";
+  const key = url.pathname + kind + (frag ? FRAG : "");
   e.respondWith(fetch(req).then((r) => {
     if (r.ok) { const copy = r.clone(); caches.open(CACHE).then((c) => c.put(key, copy)); }
     return r;

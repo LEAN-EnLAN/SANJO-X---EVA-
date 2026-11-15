@@ -9,17 +9,25 @@
   <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-xs text-ink"><span class="size-2 rounded-full {% if suit %}bg-info{% else %}bg-ok{% endif %}"></span>{% if suit %}Suit mode{% else %}Joined{% endif %}</span>
   <span class="absolute right-3 bottom-3 rounded-full bg-background/80 px-2 py-0.5 text-xs text-ink">AI-generated</span>
 </div>
-<h1 class="text-2xl leading-tight tracking-tight text-ink">{% if suit %}Your suit is between the parts.{% else %}Two parts, held by magnets.{% endif %}</h1>
+<h1 class="flex items-center gap-3 text-2xl leading-tight tracking-tight text-ink">{{ crate::web::ui::pic("magnet", "size-11")|safe }}{% if suit %}Your suit is between the parts.{% else %}Two parts, held by magnets.{% endif %}</h1>
+
+<section class="grid grid-cols-5 gap-1 rounded-tile bg-surface px-2 py-3" aria-label="What the sensor base reads">
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("heart", "size-10")|safe }}Pulse</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("oxygen", "size-10")|safe }}Oxygen</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("temperature", "size-10")|safe }}Skin</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("eda", "size-10")|safe }}EDA</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("movement", "size-10")|safe }}Motion</span>
+</section>
 
 <section class="grid grid-cols-2 gap-2" aria-label="Batteries">
   <div class="flex flex-col gap-2 rounded-tile bg-surface p-3">
-    <span class="flex items-center gap-2"><span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/wrist/band-interface.webp" alt="" class="size-full scale-90 object-cover" width="36" height="36"></span><span class="text-sm text-ink">Screen</span></span>
+    <span class="flex items-center gap-2">{{ crate::web::ui::pic("interface", "size-10")|safe }}<span class="text-sm text-ink">Screen</span></span>
     <p class="text-3xl tracking-tight text-ink tabular-nums">{{ p.vitals.screen_batt }}<span class="ml-0.5 text-sm text-muted">%</span></p>
     <div class="relative h-2 w-full overflow-hidden rounded-full bg-hatch"><div class="spring-w h-full w-(--pct) rounded-full bg-ink" style="--pct: {{ p.vitals.screen_batt }}%"></div></div>
     <span class="text-xs text-muted">{{ screen_left }} · ECG pads, LoRa</span>
   </div>
   <div class="flex flex-col gap-2 rounded-tile bg-surface p-3">
-    <span class="flex items-center gap-2"><span class="inline-grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line"><img src="/static/img/wrist/band-base.webp" alt="" class="size-full scale-90 object-cover" width="36" height="36"></span><span class="text-sm text-ink">Sensor base</span></span>
+    <span class="flex items-center gap-2">{% if p.vitals.base_batt < 20 %}{{ crate::web::ui::pic("battery", "size-10")|safe }}{% else %}{{ crate::web::ui::pic("sensor-base", "size-10")|safe }}{% endif %}<span class="text-sm text-ink">Sensor base</span></span>
     <p class="text-3xl tracking-tight tabular-nums {% if p.vitals.base_batt < 20 %}text-warn{% else %}text-ink{% endif %}">{{ p.vitals.base_batt }}<span class="ml-0.5 text-sm text-muted">%</span></p>
     <div class="relative h-2 w-full overflow-hidden rounded-full bg-hatch"><div class="spring-w h-full w-(--pct) rounded-full {% if p.vitals.base_batt < 20 %}bg-warn{% else %}bg-ink{% endif %}" style="--pct: {{ p.vitals.base_batt }}%"></div></div>
     <span class="text-xs {% if p.vitals.base_batt < 20 %}text-warn{% else %}text-muted{% endif %}">{{ base_left }} · pulse, oxygen, skin</span>
@@ -29,9 +37,9 @@
 <section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5 py-4">
   <header class="flex items-center justify-between gap-3"><h2 class="text-base text-ink">Suit mode</h2><span class="text-xs {% if suit %}text-info{% else %}text-muted{% endif %}">{% if suit %}On now{% else %}Off · parts joined{% endif %}</span></header>
   <div class="flex flex-col gap-1">
-    <div class="flex items-center gap-4"><img src="/static/img/wrist/band-interface.webp" alt="" class="h-10 w-24 shrink-0 rounded-sm object-cover" loading="lazy"><p class="text-sm text-ink">Screen part<span class="block text-xs text-muted">ECG pads · LoRa</span></p></div>
+    <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 justify-center">{{ crate::web::ui::pic("interface", "pic-bare size-12")|safe }}</span><p class="text-sm text-ink">Screen part<span class="block text-xs text-muted">ECG pads · LoRa</span></p></div>
     <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 flex-col items-center gap-1"><span class="flex w-16 justify-between"><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span></span><span class="h-5 w-full rounded-sm {% if suit %}bg-hatch-info{% else %}bg-hatch{% endif %}"></span></span><p class="text-sm {% if suit %}text-info{% else %}text-ink{% endif %}">Suit fabric<span class="block text-xs text-muted">Magnets hold · pins don't</span></p></div>
-    <div class="flex items-center gap-4"><img src="/static/img/wrist/band-base.webp" alt="" class="h-10 w-24 shrink-0 rounded-sm object-cover" loading="lazy"><p class="text-sm text-ink">Sensor base<span class="block text-xs text-muted">Own battery · LoRa</span></p></div>
+    <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 justify-center">{{ crate::web::ui::pic("sensor-base", "pic-bare size-12")|safe }}</span><p class="text-sm text-ink">Sensor base<span class="block text-xs text-muted">Own battery · LoRa</span></p></div>
   </div>
   <ol class="flex flex-col gap-2 border-t border-line pt-3">
     <li class="flex items-start gap-3"><span class="grid size-7 shrink-0 place-items-center rounded-full border border-line text-xs text-ink">1</span><p class="text-sm text-ink">Suit off? Snap the parts together<span class="block text-xs text-muted">Pins touch · the base charges</span></p></li>
@@ -40,7 +48,7 @@
 </section>
 
 <section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5 py-4">
-  <header class="flex items-center justify-between gap-3"><h2 class="text-base text-ink">Signal</h2><span class="text-xs text-muted">Last reading {{ age }}</span></header>
+  <header class="flex items-center justify-between gap-3"><h2 class="flex items-center gap-2 text-base text-ink">{{ crate::web::ui::pic("lora", "size-9")|safe }}Signal</h2><span class="text-xs text-muted">Last reading {{ age }}</span></header>
   <div class="flex items-center gap-4">
     <span class="flex h-8 items-end gap-1" aria-hidden="true">{% for on in signal_bars %}<span class="w-2 rounded-sm {% if *on %}bg-ink{% else %}bg-line{% endif %}" style="height: {{ (loop.index * 25) }}%"></span>{% endfor %}</span>
     <span class="flex flex-col"><span class="text-2xl tracking-tight text-ink tabular-nums">{{ p.vitals.quality }}<span class="ml-0.5 text-sm text-muted">%</span></span><span class="text-xs text-muted">{{ signal_word }}</span></span>

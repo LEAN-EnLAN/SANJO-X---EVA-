@@ -1,0 +1,32 @@
+{% import "app/_ui.html" as u %}
+<div class="flex items-center justify-between gap-3 pt-1">
+  <a {% call u::go("/app/home", c.seat, "back") %} aria-label="Back" data-back class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <p class="text-xs uppercase tracking-label text-muted">{{ title }} · {% if kind == "sleep" %}last night{% else if kind == "water" %}today{% else %}live{% endif %}</p>
+  <span class="size-11"></span>
+</div>
+{% call u::hero(hero, hero_alt, title) %}
+<div class="flex flex-col gap-2">
+  <span class="inline-flex items-center gap-1 self-start rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(tone) }}">{{ word }}</span>
+  <h1 class="text-6xl leading-none tracking-tight text-ink tabular-nums">{{ value }}{% if !unit.is_empty() %}<span class="ml-2 text-xl text-muted">{{ unit }}</span>{% endif %}</h1>
+  <p class="text-sm text-muted">{{ usual }}</p>
+</div>
+{% if let Some((pts, by, bh, lx, ly)) = chart %}
+<section class="rounded-card border border-line bg-surface p-5 py-4">
+  <header class="mb-2 flex items-center justify-between gap-3"><h2 class="text-base text-ink">Last 2 hours</h2><span class="flex items-center gap-2 text-xs text-muted"><span class="h-3 w-5 rounded-full bg-ok/20 ring-1 ring-ok/40"></span>Your usual</span></header>
+  <svg viewBox="0 0 320 72" class="h-20 w-full" preserveAspectRatio="none" aria-label="{{ title }} over the last 2 hours" role="img"><rect x="0" width="320" y="{{ by }}" height="{{ bh }}" rx="4" class="fill-ok/15"/><polyline points="{{ pts }}" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-ink"/><circle cx="{{ lx }}" cy="{{ ly }}" r="3.5" class="fill-info"/></svg>
+</section>
+{% endif %}
+{% if kind == "water" %}
+<section class="flex flex-col gap-2">
+  <div class="flex gap-1.5" role="img" aria-label="Glasses of water today">
+    {% for full in glasses %}<span class="flex h-11 flex-1 flex-col justify-end overflow-hidden rounded-t-sm rounded-b-lg border border-line bg-hatch">{% if *full %}<span class="glass-fill h-4/5 bg-info"></span>{% endif %}</span>{% endfor %}
+  </div>
+  {% if let Some(b) = water %}<button type="button" class="press inline-flex h-12 items-center justify-center gap-2 rounded-full bg-info/15 text-sm text-info ring-1 ring-info/30" {% call u::tool(b) %}>{{ crate::web::ui::ic("glass", 16)|safe }}{{ b.label }} · {{ b.hint }}</button>{% endif %}
+</section>
+{% endif %}
+<div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
+  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">How</span><span>{{ why }}</span></div>
+  <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Next</span><span>{{ next }}</span></div>
+</div>
+<a {% call u::go("/app/eva", c.seat, "push") %} class="press inline-flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-raised px-5 text-sm text-ink">{{ crate::web::ui::ic("chat", 16)|safe }}Ask Eva about it</a>
+<p class="text-center text-xs text-muted">Diagnostic support · the crew lead confirms</p>

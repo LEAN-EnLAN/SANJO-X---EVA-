@@ -7,7 +7,7 @@
         <p class="text-4xl tracking-tight text-ink tabular-nums">{{ k.value }}{% if !k.unit.is_empty() %}<span class="ml-1 text-base text-muted">{{ k.unit }}</span>{% endif %}</p>
         <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(k.delta_tone) }}">{{ k.delta }}</span>{{ k.hint }}</p>
       </div>
-      <span class="grid size-9 shrink-0 place-items-center rounded-full bg-raised text-muted">{{ crate::web::ui::ic(k.icon, 16)|safe }}</span>
+      {{ crate::web::ui::pic(k.icon, "size-11")|safe }}
     </div>
   {% endfor %}
   </div>

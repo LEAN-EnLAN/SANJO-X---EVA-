@@ -17,6 +17,7 @@
     <a href="#sync" title="Ground link" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("satellite", 19)|safe }}</a>
     <a href="#mesh" title="Mesh" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("radio", 19)|safe }}</a>
     <a href="/export/report" target="_blank" title="Records report" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("file", 19)|safe }}</a>
+    <a href="#about" title="About &amp; credits" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink" onclick="document.getElementById('about').open=true">{{ crate::web::ui::ic("info", 19)|safe }}</a>
     <a href="/app" title="Astronaut app" class="mt-auto grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("arrow", 19)|safe }}</a>
    </div>
   </nav>
@@ -49,9 +50,9 @@
             {% call m::eva(mood, art, "size-12") %}
             <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status>{% if mood == "alert" %}Guiding a case{% else %}Watching the crew{% endif %}</span></span>
           </a>
-          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted"><img src="/static/img/icons/ship-hub.webp" alt="" class="size-6 rounded-full object-cover">{% if ground %}Ground node · mirror{% else %}Hub online · offline-ready{% endif %}</span>
-          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted"><img src="/static/img/icons/lora.webp" alt="" class="size-6 rounded-full object-cover">Eva Link mesh · <span data-mesh-count>live</span></span>
-          {% if storm %}<span class="inline-flex h-9 items-center gap-2 rounded-full border border-warn/40 bg-warn/10 pr-3.5 pl-1.5 text-xs text-warn"><img src="/static/img/icons/sun.webp" alt="" class="size-6 rounded-full object-cover">Solar storm · shelter</span>{% endif %}
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{% if ground %}{{ crate::web::ui::pic("earth", "size-7")|safe }}{% else %}{{ crate::web::ui::pic("hub", "size-7")|safe }}{% endif %}{% if ground %}Ground node · mirror{% else %}Hub online · offline-ready{% endif %}</span>
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{{ crate::web::ui::pic("lora", "size-7")|safe }}Eva Link mesh · <span data-mesh-count>live</span></span>
+          {% if storm %}<span class="inline-flex h-9 items-center gap-2 rounded-full border border-warn/40 bg-warn/10 pr-3.5 pl-1.5 text-xs text-warn">{{ crate::web::ui::pic("sun", "size-7")|safe }}Solar storm · shelter</span>{% endif %}
         </div>
       </div>
 
@@ -80,7 +81,11 @@
     </main>
     <footer class="flex flex-wrap items-center gap-2 border-t border-line bg-surface px-4 py-2.5 text-xs text-muted md:px-6">
       <span>Decision-support functions after Russell et al., npj Microgravity 9:46 (2023) · <a href="https://doi.org/10.1038/s41526-023-00284-1" class="text-info underline underline-offset-2">doi:10.1038/s41526-023-00284-1</a></span>
-      <span class="ml-auto">Eva guides, records and warns · the AED decides shocks · images AI-generated</span>
+      <span class="ml-auto">Eva guides, records and warns · the AED decides shocks · images, icons and Eva are AI-generated</span>
+      <details class="w-full" id="about">
+        <summary class="inline-flex h-8 cursor-pointer items-center gap-2 rounded-full border border-line px-3 text-xs text-ink hover:bg-raised">About &amp; credits</summary>
+        <div class="max-w-3xl pt-3 pb-2">{% include "_credits.html" %}</div>
+      </details>
     </footer>
   </div>
 </div>

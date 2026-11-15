@@ -8,6 +8,7 @@
 @source "../templates";
 @source "../src";
 @source "../static/js/eva.js";
+@source "../static/js/motion.js";
 @source "../static/sw.js";
 
 @theme {
@@ -205,14 +206,32 @@ html, body { background: var(--color-background); color: var(--color-ink); font-
   .ring-fill, .tab { transition-duration: 1ms; }
 }
 
-/* ---------- Eva mascot: state-driven placeholder animation ----------
-   motion.js springs translate/scale/rotate/glow toward per-state targets;
-   these CSS variables are what it writes. */
-.eva-mascot .eva-body { transform: translateY(calc(var(--eva-y, 0) * 1px)) scale(var(--eva-s, 1)) rotate(calc(var(--eva-r, 0) * 1deg)); transform-origin: 50% 80%; will-change: transform; }
+/* ---------- Eva mascot: one image per state (Codex kit, AI-generated) ----------
+   motion.js springs translate/scale/rotate/glow toward per-state targets, and a
+   squash (--eva-sx / --eva-sy) on every change of state while the new image
+   cross-fades in over the old one (.eva-next). These CSS variables are what it writes. */
+.eva-mascot .eva-body { transform: translateY(calc(var(--eva-y, 0) * 1px)) scale(calc(var(--eva-s, 1) * var(--eva-sx, 1)), calc(var(--eva-s, 1) * var(--eva-sy, 1))) rotate(calc(var(--eva-r, 0) * 1deg)); transform-origin: 50% 85%; will-change: transform; }
+.eva-mascot .eva-next { position: absolute; inset: 0; }
 .eva-mascot .eva-glow { opacity: var(--eva-glow, 0.6); transform: scale(var(--eva-gs, 1)); }
 .eva-mascot[data-state="alert"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-critical) 35%, transparent), transparent); }
 .eva-mascot[data-state="concerned"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-warn) 28%, transparent), transparent); }
 .eva-mascot[data-state="happy"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-mood-5) 30%, transparent), transparent); }
+.eva-mascot[data-state="celebrate"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-mood-5) 38%, transparent), transparent); }
+.eva-mascot[data-state="low-battery"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-warn) 24%, transparent), transparent); }
+.eva-mascot[data-state="sleeping"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-mood-1) 32%, transparent), transparent); }
+.eva-mascot[data-state="care"] .eva-glow, .eva-mascot[data-state="calm"] .eva-glow { background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-mood-4) 26%, transparent), transparent); }
+
+/* ---------- 3D icons (Codex "clay-lite" kit, AI-generated: covered by the app-level notice) ----------
+   A soft lit disc keeps the darker icons (navy book, hub) readable on pure black.
+   Size comes from the caller (size-8 … size-16); the art keeps its own padding. */
+.pic { display: inline-grid; flex-shrink: 0; place-items: center; border-radius: 999px; background: radial-gradient(circle at 50% 30%, var(--color-elevated), var(--color-raised) 70%); box-shadow: inset 0 0 0 1px var(--color-line); }
+.pic > img { width: 100%; height: 100%; object-fit: contain; padding: 6%; }
+.pic-bare { background: none; box-shadow: none; }
+.pic-bare > img { padding: 0; }
+
+/* first-load screen: the splash, then a spring fade (motion.js); never blocks taps */
+#splash { pointer-events: none; opacity: var(--splash-o, 1); }
+#splash img { transform: scale(var(--splash-s, 1)); }
 
 /* ---------- journaling valence slider ---------- */
 .mood-range { -webkit-appearance: none; appearance: none; height: 0.75rem; border-radius: 999px; background-image: linear-gradient(90deg, var(--color-mood-1), var(--color-mood-2), var(--color-mood-3), var(--color-mood-4), var(--color-mood-5)); }

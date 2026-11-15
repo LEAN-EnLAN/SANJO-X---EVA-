@@ -28,13 +28,44 @@
   });
 
   // ---------------------------------------------------------------- Eva mood via SSE
+  // what Eva is doing, in words, for each mascot state (motion.js has the motion and the art)
+  var STATUS = {
+    idle: "Watching quietly", hello: "Hi there", listening: "Listening…", thinking: "Thinking…",
+    speaking: "Answering", happy: "Done", wink: "Here for you", concerned: "Keeping an eye on it",
+    alert: "Guiding an emergency", calm: "Counting the pushes with you", sleeping: "Ship night · resting",
+    celebrate: "Goal met", care: "Here with you", reading: "Reading your records", writing: "Writing with you",
+    sending: "Sending to the ground", "low-battery": "Band battery low · re-join the parts"
+  };
+  function mood(state) {
+    if (M()) M().setMood(state);
+    document.querySelectorAll("[data-eva-status]").forEach(function (s) { if (STATUS[state]) s.textContent = STATUS[state]; });
+  }
+  function current() { var m = document.querySelector("[data-eva]:not([data-eva-fixed])") || document.querySelector("[data-eva]"); return m ? m.getAttribute("data-state") : "idle"; }
+  // a short state (hello, wink, sending) that goes back to what Eva was doing, unless
+  // something else changed it meanwhile; never over an emergency
+  function blip(state, ms) {
+    var was = current();
+    if (was === "alert" || was === "calm" || was === state) return;
+    mood(state);
+    setTimeout(function () { if (current() === state) mood(was === "hello" || was === "wink" ? "idle" : was); }, ms);
+  }
+  // Eva says hello when her screen opens; she writes along while the journal box has focus
+  function greet(root) {
+    var h = root && root.querySelector && root.querySelector("[data-eva-hello]");
+    if (h && /^(idle|sleeping)$/.test(current())) blip("hello", 1600);
+  }
+  document.addEventListener("DOMContentLoaded", function () { greet(document); });
+  document.addEventListener("htmx:afterSwap", function (e) { if (e.target && e.target.id === "screen") greet(e.target); });
+  document.addEventListener("focusin", function (e) { if (e.target.matches && e.target.matches("[data-eva-writes]") && current() !== "alert") mood("writing"); });
+  document.addEventListener("focusout", function (e) { if (e.target.matches && e.target.matches("[data-eva-writes]") && current() === "writing" && !e.target.value.trim()) mood("idle"); });
+
   document.addEventListener("htmx:sseBeforeMessage", function (e) {
     var d = e.detail;
     if (d && d.type === "eva") {
       e.preventDefault();
       if (M()) M().setMood(d.data);
       var status = document.querySelectorAll("[data-eva-status]");
-      var words = { idle: "Watching quietly", listening: "Listening…", thinking: "Thinking…", speaking: "Answering", happy: "Done", concerned: "Keeping an eye on it", alert: "Guiding an emergency" };
+      var words = STATUS;
       status.forEach(function (s) { s.textContent = words[d.data] || s.textContent; });
     }
   });
@@ -79,14 +110,11 @@
     }
   });
 
-  // tap Eva: a happy hop, then back to what she was doing
+  // tap Eva: a wink, then back to what she was doing
   document.addEventListener("click", function (e) {
     var t = e.target.closest && e.target.closest("[data-eva-tap]");
     if (!t || !M()) return;
-    var m = t.querySelector("[data-eva]"), was = m ? m.getAttribute("data-state") : "idle";
-    if (was === "alert") return;
-    M().setMood("happy");
-    setTimeout(function () { M().setMood(was === "happy" ? "idle" : was); }, 1400);
+    blip("wink", 1400);
   });
 
   // ---------------------------------------------------------------- Konami → dev panel
@@ -233,7 +261,8 @@
       return r.blob();
     }).then(function (b) {
       var a = new Audio(URL.createObjectURL(b));
-      a.onended = function () { M() && M().setMood("idle"); };
+      a.onplay = function () { mood("speaking"); };
+      a.onended = function () { mood("idle"); };
       a.play();
     }).catch(function () {
       if (!window.speechSynthesis) return;
@@ -353,7 +382,7 @@
       navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage("replay");
     });
     navigator.serviceWorker.addEventListener && navigator.serviceWorker.addEventListener("message", function (e) {
-      if (e.data && e.data.type === "replayed" && e.data.count) toast("Sent " + e.data.count + " saved item(s)");
+      if (e.data && e.data.type === "replayed" && e.data.count) { toast("Sent " + e.data.count + " saved item(s)"); blip("sending", 2400); }
     });
   }
 

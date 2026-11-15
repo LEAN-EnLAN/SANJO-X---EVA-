@@ -138,6 +138,14 @@ pub fn trend(data: &[u16], usual: (u16, u16), width: f32, height: f32) -> (Strin
     (pts.join(" "), by, bh, width - 5.0, y(*data.last().unwrap_or(&0.0)))
 }
 
+/// One 3D icon from the Codex kit (`static/img/icons/<name>.webp`, 256 px) on its soft
+/// disc (`.pic` in styles/app.css). `class` sizes the disc (`size-12`) and may add more.
+/// Content icons use these; tab bar, toolbars, chips and buttons with words keep the
+/// line icons below (`ic`). The art is AI-generated, covered by the app-level notice.
+pub fn pic(name: &str, class: &str) -> String {
+    format!(r#"<span class="pic {class}" aria-hidden="true"><img src="/static/img/icons/{name}.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>"#)
+}
+
 /// Our own minimal stroke icons.
 pub fn ic(name: &str, size: u32) -> String {
     let body = match name {

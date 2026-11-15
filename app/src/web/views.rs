@@ -42,7 +42,7 @@ pub fn common(state: &Shared, seat: &str) -> AppCommon {
     let now = state.now();
     let w = state.world.read().expect("world");
     let (name, first, initials) = w.passenger(seat).map(|p| (p.name.clone(), p.first_name().to_string(), p.initials())).unwrap_or_else(|| ("Guest".into(), "there".into(), "G".into()));
-    let mood = w.mood(seat);
+    let mood = w.mood(seat, now);
     AppCommon {
         seat: seat.to_string(),
         name,
@@ -119,6 +119,122 @@ impl LiveCard {
     pub fn skin_read(&self) -> String {
         format!("Skin · {}", if self.p.skin_word() == "usual" { "normal" } else { self.p.skin_word() })
     }
+}
+
+// ---------------------------------------------------------------- vitals detail
+
+/// One large detail view per reading (pulse, oxygen, skin temperature) and per daily
+/// habit (sleep, water), each under its hero image (Codex kit, AI-generated mark on it).
+#[derive(Template)]
+#[template(path = "app/vitals.html")]
+pub struct VitalsScreen {
+    pub c: AppCommon,
+    /// heart | lungs | temperature | sleep | water
+    pub kind: &'static str,
+    pub hero: &'static str,
+    pub hero_alt: &'static str,
+    pub title: &'static str,
+    pub value: String,
+    pub unit: &'static str,
+    pub word: String,
+    pub tone: &'static str,
+    /// (points, band_y, band_h, last_x, last_y) for the last 2 h, when the band measures it
+    pub chart: Option<(String, f32, f32, f32, f32)>,
+    pub usual: String,
+    pub why: &'static str,
+    pub next: String,
+    pub glasses: Vec<bool>,
+    pub water: Option<ToolBtn>,
+}
+
+impl VitalsScreen {
+    pub const KINDS: [&'static str; 5] = ["heart", "lungs", "temperature", "sleep", "water"];
+
+    pub fn build(state: &Shared, seat: &str, kind: &str) -> Option<Self> {
+        let c = common(state, seat);
+        let w = state.world.read().expect("world");
+        let p = w.passenger(seat)?.clone();
+        drop(w);
+        let kind = Self::KINDS.into_iter().find(|k| *k == kind).unwrap_or("heart");
+        // the last 2 h, thinned to about 48 points for a small chart
+        let thin = |f: &dyn Fn(&crate::protocol::delta::VitalsSample) -> u16| -> Vec<u16> {
+            let all: Vec<u16> = p.history.iter().map(f).filter(|v| *v > 0).collect();
+            let step = (all.len() / 48).max(1);
+            all.iter().step_by(step).copied().collect()
+        };
+        let mut v = VitalsScreen { c, kind, hero: kind, hero_alt: "", title: "", value: String::new(), unit: "", word: String::new(), tone: "ok", chart: None, usual: String::new(), why: "", next: String::new(), glasses: Vec::new(), water: None };
+        match kind {
+            "heart" => {
+                let (lo, hi) = p.usual_hr;
+                v.hero_alt = "A heart on black";
+                v.title = "Pulse";
+                v.value = if p.vitals.hr == 0 { "—".into() } else { p.vitals.hr.to_string() };
+                v.unit = "bpm";
+                v.word = p.hr_short().into();
+                v.tone = match p.hr_short() { "Calm" => "ok", "No pulse" => "critical", _ => "warn" };
+                v.chart = Some(ui::trend(&thin(&|s| s.hr), (lo, hi), 320.0, 72.0));
+                v.usual = format!("Usual for you · {lo} to {hi} bpm");
+                v.why = "Light through your skin reads the pulse every second.";
+                v.next = if v.tone == "ok" { "Nothing to do. Eva keeps watching.".into() } else { "Eva checks again in a minute and tells the crew lead if it stays.".into() };
+            }
+            "lungs" => {
+                v.hero_alt = "A pair of lungs on black";
+                v.title = "Blood oxygen";
+                v.value = if p.vitals.spo2 == 0 { "—".into() } else { p.vitals.spo2.to_string() };
+                v.unit = "%";
+                (v.word, v.tone) = match p.vitals.spo2 { 0 => ("No reading".into(), "warn"), 1..=89 => ("Low".into(), "critical"), 90..=94 => ("A bit low".into(), "warn"), _ => ("Good".into(), "ok") };
+                v.chart = Some(ui::trend(&thin(&|s| s.spo2 as u16), (95, 100), 320.0, 72.0));
+                v.usual = "Usual · 95 to 100 %".into();
+                v.why = "Red and infrared light through the wrist read how much oxygen your blood carries.";
+                v.next = if v.tone == "ok" { "Nothing to do.".into() } else { "Sit still for a minute; Eva reads it again.".into() };
+            }
+            "temperature" => {
+                let u = p.usual_skin_c10;
+                v.hero_alt = "A glowing thermometer capsule on black";
+                v.title = "Skin temperature";
+                v.value = format!("{:.1}", p.vitals.skin_c10 as f32 / 10.0);
+                v.unit = "°C";
+                v.word = if p.skin_word() == "usual" { "Normal".into() } else { p.skin_word().to_string() };
+                v.tone = if p.skin_word() == "usual" { "ok" } else { "warn" };
+                v.chart = Some(ui::trend(&thin(&|s| s.skin_c10.max(0) as u16), ((u - 5).max(0) as u16, (u + 5).max(0) as u16), 320.0, 72.0));
+                v.usual = format!("Usual for you · about {:.1} °C", u as f32 / 10.0);
+                v.why = "Skin temperature follows sleep, effort and fever; Eva compares it with your own usual.";
+                v.next = if v.tone == "ok" { "Nothing to do.".into() } else { "Drink some water and rest; Eva asks how you feel.".into() };
+            }
+            "sleep" => {
+                v.hero_alt = "A crescent moon resting on a pillow";
+                v.title = "Sleep";
+                v.value = format!("{} h {:02}", p.sleep_min / 60, p.sleep_min % 60);
+                v.word = if p.sleep_min >= 420 { "Rested".into() } else { "Short night".into() };
+                v.tone = if p.sleep_min >= 420 { "ok" } else { "warn" };
+                v.usual = "Plan · 22:30 to 06:30, 8 h".into();
+                v.why = "Movement and pulse from the band estimate when you slept. No microphone, no camera.";
+                v.next = if p.sleep_min >= 420 { "Same time tonight. Eva dims at 22:00.".into() } else { "Lights down 30 min earlier tonight; skip caffeine after 14:00.".into() };
+            }
+            _ => {
+                let full = (p.water_ml / 250).min(8) as usize;
+                v.hero_alt = "A glass of water with droplets on black";
+                v.title = "Water";
+                v.value = format!("{:.1}", p.water_ml as f32 / 1000.0);
+                v.unit = "of 2 L";
+                v.word = if p.water_ml >= 2000 { "Goal met".into() } else { format!("{} glasses to go", (2000 - p.water_ml.min(2000) + 249) / 250) };
+                v.tone = if p.water_ml >= 2000 { "ok" } else { "info" };
+                v.usual = "Goal · 2 L a day, more on exercise days".into();
+                v.why = "In microgravity fluids shift to the head and thirst fades, so Eva counts for you.";
+                v.next = if p.water_ml >= 2000 { "Done for today.".into() } else { "One glass now, one with the next meal.".into() };
+                v.glasses = (0..8).map(|i| i < full).collect();
+                v.water = (p.water_ml < 2000).then(|| btn(seat, "log_water", "+1 glass", "250 ml", "glass", serde_json::json!({"ml": 250})));
+            }
+        }
+        Some(v)
+    }
+}
+
+/// About and credits: what is AI-generated in the app, who made what.
+#[derive(Template)]
+#[template(path = "app/about.html")]
+pub struct AboutScreen {
+    pub c: AppCommon,
 }
 
 pub struct CaseBanner {
@@ -302,7 +418,10 @@ pub struct ToolBtn {
     pub name: String,
     pub label: String,
     pub hint: String,
+    /// line icon (buttons with words)
     pub icon: &'static str,
+    /// 3D icon for tiles (empty: use the line icon)
+    pub art: &'static str,
     pub vals: String,
     /// ask before running (opens a case, sends someone)
     pub confirm: String,
@@ -323,7 +442,27 @@ pub struct ToolForm {
 }
 
 fn btn(seat: &str, name: &str, label: &str, hint: &str, icon: &'static str, args: serde_json::Value) -> ToolBtn {
-    ToolBtn { name: name.into(), label: label.into(), hint: hint.into(), icon, vals: tool_vals(seat, name, args), confirm: String::new(), then: String::new(), danger: false }
+    ToolBtn { name: name.into(), label: label.into(), hint: hint.into(), icon, art: tool_art(name), vals: tool_vals(seat, name, args), confirm: String::new(), then: String::new(), danger: false }
+}
+
+/// The 3D icon for a tool's tile in the tools sheet (empty: a tool added later keeps a line icon).
+pub fn tool_art(name: &str) -> &'static str {
+    match name {
+        "get_vitals" => "wristband",
+        "log_water" => "water",
+        "log_mood" => "mood",
+        "start_ecg_check" => "ecg",
+        "daily_summary" => "logbook",
+        "show_screen" => "journal",
+        "export_report" => "export",
+        "log_meal" => "meal-snack",
+        "set_reminder" => "reminder",
+        "send_to_ground" => "earth-link",
+        "add_journal_entry" => "journal",
+        "request_help" => "alert",
+        "call_aed_runner" => "aed",
+        _ => "",
+    }
 }
 
 /// Plain words for a tool name we have no preset for: `call_crew_lead` → "Call crew lead".
@@ -436,19 +575,19 @@ impl PlanScreen {
         let checkin = w.journal.iter().filter(|j| j.seat == seat && j.ts_ms >= day0).map(|j| j.ts_ms).max();
         let sleep = p.map(|p| p.sleep_min).unwrap_or(0);
         let mut items = vec![
-            PlanItem { icon: "run", title: "2 h exercise".into(), sub: if now >= at(11, 20) { "Done 11:20".into() } else { "Planned 09:20".into() }, done: now >= at(11, 20), action: None, link: None },
+            PlanItem { icon: "exercise", title: "2 h exercise".into(), sub: if now >= at(11, 20) { "Done 11:20".into() } else { "Planned 09:20".into() }, done: now >= at(11, 20), action: None, link: None },
             PlanItem {
-                icon: "glass",
+                icon: "water",
                 title: "Drink 2 L of water".into(),
                 sub: format!("{:.1} of 2 L", water as f32 / 1000.0),
                 done: water >= 2000,
                 action: (water < 2000).then(|| btn(seat, "log_water", "+250 ml", "", "plus", json!({"ml": 250}))),
                 link: None,
             },
-            PlanItem { icon: "pill", title: "Take vitamin D".into(), sub: if breakfast { "Done · breakfast".into() } else { "With breakfast".into() }, done: breakfast, action: None, link: None },
-            PlanItem { icon: "moon", title: "Sleep 22:30 to 06:30".into(), sub: format!("Last night {} h {:02}", sleep / 60, sleep % 60), done: false, action: None, link: None },
+            PlanItem { icon: "vitamin-d", title: "Take vitamin D".into(), sub: if breakfast { "Done · breakfast".into() } else { "With breakfast".into() }, done: breakfast, action: None, link: None },
+            PlanItem { icon: "sleep", title: "Sleep 22:30 to 06:30".into(), sub: format!("Last night {} h {:02}", sleep / 60, sleep % 60), done: false, action: None, link: Some((format!("/app/vitals?k=sleep&seat={seat}"), "Details")) },
             PlanItem {
-                icon: "chat",
+                icon: "mood",
                 title: "Check in with Eva".into(),
                 sub: checkin.map(|t| format!("Done {}", clock::hhmm(t))).unwrap_or_else(|| "Two taps".into()),
                 done: checkin.is_some(),
@@ -459,7 +598,7 @@ impl PlanScreen {
         let mut rem: Vec<&Reminder> = w.reminders.iter().filter(|r| r.seat == seat && r.at_ms >= day0 && r.at_ms < day0 + clock::DAY_MS).collect();
         rem.sort_by_key(|r| r.at_ms);
         for r in rem {
-            items.push(PlanItem { icon: "bell", title: r.text.clone(), sub: if r.done { format!("Done · {}", clock::hhmm(r.at_ms)) } else { format!("Reminder · {}", clock::hhmm(r.at_ms)) }, done: r.done || r.at_ms < now, action: None, link: None });
+            items.push(PlanItem { icon: "reminder", title: r.text.clone(), sub: if r.done { format!("Done · {}", clock::hhmm(r.at_ms)) } else { format!("Reminder · {}", clock::hhmm(r.at_ms)) }, done: r.done || r.at_ms < now, action: None, link: None });
         }
         drop(w);
         let done = items.iter().filter(|i| i.done).count();
@@ -897,17 +1036,17 @@ impl KpiStrip {
         let watch_words: Vec<&str> = watch.iter().map(|p| short_status(p.status)).collect();
         let ground = w.role == NodeRole::Ground;
         let mut items = vec![
-            Kpi { icon: "users", label: "Passengers OK", value: ok.to_string(), unit: format!("/ {total}"), delta: help.first().map(|p| format!("{} in care", p.first_name())).unwrap_or_else(|| "Everyone fine".into()), delta_tone: if help.is_empty() { "ok" } else { "critical" }, hint: String::new() },
-            Kpi { icon: "siren", label: "Open alerts", value: open.to_string(), unit: String::new(), delta: w.open_case().map(|c| c.kind.clone()).unwrap_or_else(|| "None".into()), delta_tone: if open > 0 { "critical" } else { "ok" }, hint: if w.open_case().is_some_and(|c| c.steps.iter().any(|s| s.title.contains("AED"))) { "AED on".into() } else { String::new() } },
-            Kpi { icon: "eye", label: "Watching", value: watch.len().to_string(), unit: String::new(), delta: if watch_words.is_empty() { "Nothing".into() } else { dedup(&watch_words).join(" · ") }, delta_tone: if watch.is_empty() { "ok" } else { "warn" }, hint: String::new() },
+            Kpi { icon: "crew", label: "Passengers OK", value: ok.to_string(), unit: format!("/ {total}"), delta: help.first().map(|p| format!("{} in care", p.first_name())).unwrap_or_else(|| "Everyone fine".into()), delta_tone: if help.is_empty() { "ok" } else { "critical" }, hint: String::new() },
+            Kpi { icon: "alert", label: "Open alerts", value: open.to_string(), unit: String::new(), delta: w.open_case().map(|c| c.kind.clone()).unwrap_or_else(|| "None".into()), delta_tone: if open > 0 { "critical" } else { "ok" }, hint: if w.open_case().is_some_and(|c| c.steps.iter().any(|s| s.title.contains("AED"))) { "AED on".into() } else { String::new() } },
+            Kpi { icon: "wristband", label: "Watching", value: watch.len().to_string(), unit: String::new(), delta: if watch_words.is_empty() { "Nothing".into() } else { dedup(&watch_words).join(" · ") }, delta_tone: if watch.is_empty() { "ok" } else { "warn" }, hint: String::new() },
         ];
         if ground {
-            items.push(Kpi { icon: "satellite", label: "Ship link", value: if l.connected { "On".into() } else { "Off".into() }, unit: String::new(), delta: l.last_contact_ms.map(|t| format!("Last record {}", clock::hhmm(t))).unwrap_or_else(|| "Waiting for the ship".into()), delta_tone: if l.connected { "ok" } else { "neutral" }, hint: String::new() });
+            items.push(Kpi { icon: "earth-link", label: "Ship link", value: if l.connected { "On".into() } else { "Off".into() }, unit: String::new(), delta: l.last_contact_ms.map(|t| format!("Last record {}", clock::hhmm(t))).unwrap_or_else(|| "Waiting for the ship".into()), delta_tone: if l.connected { "ok" } else { "neutral" }, hint: String::new() });
             let m = state.mirror.lock().expect("mirror");
-            items.push(Kpi { icon: "file", label: "Records received", value: m.records.len().to_string(), unit: String::new(), delta: format!("{} verified", m.verified.len()), delta_tone: if m.failed.is_empty() { "ok" } else { "critical" }, hint: String::new() });
+            items.push(Kpi { icon: "logbook", label: "Records received", value: m.records.len().to_string(), unit: String::new(), delta: format!("{} verified", m.verified.len()), delta_tone: if m.failed.is_empty() { "ok" } else { "critical" }, hint: String::new() });
         } else {
-            items.push(Kpi { icon: "satellite", label: "Ground delay", value: delay, unit: "s one way".into(), delta: if !l.connected { "No ground link".into() } else if l.up { format!("{} · in contact", l.profile_label) } else { "Contact gap · queued".into() }, delta_tone: if l.connected && l.up { "neutral" } else { "warn" }, hint: String::new() });
-            items.push(Kpi { icon: "file", label: "Records", value: acked.to_string(), unit: "acknowledged".into(), delta: format!("{} queued · {} sent", signed, sent), delta_tone: if signed + sent == 0 { "ok" } else { "info" }, hint: String::new() });
+            items.push(Kpi { icon: "earth", label: "Ground delay", value: delay, unit: "s one way".into(), delta: if !l.connected { "No ground link".into() } else if l.up { format!("{} · in contact", l.profile_label) } else { "Contact gap · queued".into() }, delta_tone: if l.connected && l.up { "neutral" } else { "warn" }, hint: String::new() });
+            items.push(Kpi { icon: "logbook", label: "Records", value: acked.to_string(), unit: "acknowledged".into(), delta: format!("{} queued · {} sent", signed, sent), delta_tone: if signed + sent == 0 { "ok" } else { "info" }, hint: String::new() });
         }
         KpiStrip { items }
     }
