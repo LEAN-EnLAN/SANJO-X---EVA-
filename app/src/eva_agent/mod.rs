@@ -316,6 +316,8 @@ pub fn close_case(state: &Shared, seat: &str) {
     state.set_mood(None, EvaMood::Idle);
     for s in std::iter::once(seat.to_string()).chain(stood_down) {
         state.set_mood(Some(&s), EvaMood::Idle);
+        // the people in the case go back to their home screen (wristband: the face)
+        state.emit(UiEvent::Navigate { seat: s, screen: "home".into() });
     }
 }
 

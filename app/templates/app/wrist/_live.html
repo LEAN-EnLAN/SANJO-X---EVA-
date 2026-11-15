@@ -1,0 +1,33 @@
+{% if part == "face" %}
+<div class="w-time-block">
+  <p class="w-time num" data-wrist-time aria-label="Ship time {{ time }}"><span>{{ self.hh() }}</span><span class="w-colon">:</span><span>{{ self.mm() }}</span></p>
+  <p class="w-day">Day {{ day }} · to Mars</p>
+</div>
+<div class="w-vcol">
+  <p class="w-vrow{% if self.hr_bad() %} is-bad{% endif %}" style="--beat: {{ l.beat_ms() }}ms"><span class="w-dot beating" style="background: var(--color-heart)"></span><span class="w-vnum num" data-count="w-heart">{% if l.p.vitals.hr == 0 %}—{% else %}{{ l.p.vitals.hr }}{% endif %}</span><span class="w-vunit">bpm</span></p>
+  <p class="w-vrow{% if self.spo2_bad() %} is-bad{% endif %}"><span class="w-dot" style="background: var(--color-oxygen)"></span><span class="w-vnum num" data-count="w-spo2">{{ l.p.vitals.spo2 }}</span><span class="w-vunit">%</span></p>
+  <p class="w-vrow"><span class="w-dot" style="background: var(--color-temp)"></span><span class="w-vnum num" data-count="w-skin">{{ "{:.1}"|format(l.p.vitals.skin_c()) }}</span><span class="w-vunit">°C</span></p>
+  {% if l.p.vitals.base_batt < 20 || l.p.vitals.screen_batt < 20 %}<span class="w-batt">{{ self.min_batt() }}%</span>{% endif %}
+</div>
+{% if let Some(o) = other %}<p class="w-bystander" role="status">{{ o.name.split(' ').next().unwrap_or("") }} is being helped · keep the corridor clear</p>{% endif %}
+{% else %}
+<button type="button" class="w-panel press{% if l.p.vitals.hr == 0 %} no-reading{% endif %}" data-panel="heart" data-tint="heart" style="--beat: {{ l.beat_ms() }}ms" aria-label="Pulse {{ l.p.vitals.hr }} bpm, {{ self.hr_word() }}">
+  <span class="w-panel-ic">{{ crate::web::ui::pic("heart", "size-[2.5rem]")|safe }}</span>
+  <span class="w-ringwrap vring"><span class="beat-wave"></span><span class="beat-wave"></span><span class="beating absolute inset-0">{{ crate::web::ui::ring_svg("heart", l.hr_pct(), 6.0)|safe }}</span>
+    <span class="w-pnum num{% if self.hr_bad() %} text-critical{% endif %}" data-count="wp-heart">{% if l.p.vitals.hr == 0 %}—{% else %}{{ l.p.vitals.hr }}{% endif %}</span></span>
+  <span class="w-punit">bpm · {{ self.hr_word() }}</span>
+  <span class="w-more"><span class="w-range" aria-label="Usual for you · {{ usual.0 }} to {{ usual.1 }} bpm"><i style="left: {{ self.usual_left() }}%; width: {{ self.usual_width() }}%"></i><b style="left: {{ self.hr_pos() }}%"></b></span><span class="w-fine">Usual for you · {{ usual.0 }} to {{ usual.1 }} bpm</span></span>
+</button>
+<button type="button" class="w-panel press" data-panel="oxygen" data-tint="oxygen" aria-label="Oxygen {{ l.p.vitals.spo2 }} %, {{ self.spo2_word() }}">
+  <span class="w-panel-ic">{{ crate::web::ui::pic("lungs", "size-[2.5rem]")|safe }}</span>
+  <span class="w-pnum num{% if self.spo2_bad() %} text-warn{% endif %}" data-count="wp-spo2">{{ l.p.vitals.spo2 }}</span>
+  <span class="w-punit">% · {{ self.spo2_word() }}</span>
+  <span class="w-more"><span class="w-fine">Usual for you · 95 to 100 %</span></span>
+</button>
+<button type="button" class="w-panel press" data-panel="temp" data-tint="temp" aria-label="Skin {{ "{:.1}"|format(l.p.vitals.skin_c()) }} °C, {{ self.skin_word() }}">
+  <span class="w-panel-ic">{{ crate::web::ui::pic("temperature", "size-[2.5rem]")|safe }}</span>
+  <span class="w-pnum num" data-count="wp-skin">{{ "{:.1}"|format(l.p.vitals.skin_c()) }}</span>
+  <span class="w-punit">°C · {{ self.skin_word() }}</span>
+  <span class="w-more"><span class="w-fine">Skin temperature from the sensor base</span></span>
+</button>
+{% endif %}

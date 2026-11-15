@@ -396,17 +396,25 @@ pub async fn journal_post(State(state): State<Shared>, headers: HeaderMap, body:
 pub struct HelpForm {
     pub seat: String,
     pub going: String,
+    /// set by the wristband: answer with its screen instead of the phone's
+    pub wrist: Option<String>,
 }
 
 pub async fn help_post(State(state): State<Shared>, axum::Form(f): axum::Form<HelpForm>) -> Response {
     let seat = f.seat.to_uppercase();
     eva_agent::helper_answer(&state, &seat, f.going == "yes");
+    // the wristband posts the same answer and gets its own screen back
+    if f.wrist.is_some() {
+        return Html(pages::wrist_emergency_screen(&state, &seat)).into_response();
+    }
     Html(pages::emergency_screen(&state, &seat)).into_response()
 }
 
 #[derive(Deserialize)]
 pub struct SeatForm {
     pub seat: Option<String>,
+    /// set by the wristband: answer with its screen instead of the phone's
+    pub wrist: Option<String>,
 }
 
 pub async fn shelter_post(State(state): State<Shared>, headers: HeaderMap, axum::Form(f): axum::Form<SeatForm>) -> Response {
@@ -421,6 +429,9 @@ pub async fn shelter_post(State(state): State<Shared>, headers: HeaderMap, axum:
     }
     state.log("storm", &seat, json!({"text": format!("{seat} is in the shelter")}));
     state.emit(UiEvent::Tick);
+    if f.wrist.is_some() {
+        return Html(pages::wrist_storm_screen(&state, &seat)).into_response();
+    }
     Html(pages::storm_screen(&state, &seat)).into_response()
 }
 

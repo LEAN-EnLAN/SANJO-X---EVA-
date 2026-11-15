@@ -105,7 +105,7 @@
     }
     var tgt = e.detail.target;
     // on the wristband the track stays where it is; only its live parts redraw
-    if (document.documentElement.getAttribute("data-mode") === "wristband") { document.dispatchEvent(new CustomEvent("wrist:refresh")); return; }
+    if (document.documentElement.getAttribute("data-mode") === "wristband") { document.body.dispatchEvent(new CustomEvent("wrist:refresh", { bubbles: true })); return; }
     if (tgt && tgt.id === "toast" && document.getElementById("screen") && !document.getElementById("chat")) {
       if (M()) M().expect("refresh");
       htmx.ajax("GET", location.pathname + location.search, { target: "#screen" });

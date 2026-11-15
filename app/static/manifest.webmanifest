@@ -6,9 +6,9 @@
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "orientation": "any",
+  "background_color": "#070A14",
+  "theme_color": "#070A14",
   "categories": [
     "health",
     "medical"

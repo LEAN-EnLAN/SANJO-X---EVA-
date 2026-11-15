@@ -89,6 +89,11 @@ pub async fn app_eva(State(state): State<Shared>, Query(q): Query<SeatQ>, header
 }
 
 pub fn emergency_screen(state: &Shared, seat: &str) -> String {
+    render(&emergency_view(state, seat))
+}
+
+/// The emergency view model for one seat (phone and wristband templates share it).
+pub fn emergency_view(state: &Shared, seat: &str) -> EmergencyScreen {
     let w = state.world.read().expect("world");
     let case = w.open_case().cloned();
     let me = w.passenger(seat).cloned();
@@ -125,7 +130,7 @@ pub fn emergency_screen(state: &Shared, seat: &str) -> String {
         }
     }
     drop(w);
-    render(&EmergencyScreen { c: common(state, seat), mode, case, distance, direction, aed_helper, step: step.min(4) })
+    EmergencyScreen { c: common(state, seat), mode, case, distance, direction, aed_helper, step: step.min(4) }
 }
 
 pub async fn app_emergency(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
@@ -159,6 +164,10 @@ pub async fn app_journal(State(state): State<Shared>, Query(q): Query<SeatQ>, he
 }
 
 pub fn storm_screen(state: &Shared, seat: &str) -> String {
+    render(&storm_view(state, seat))
+}
+
+pub fn storm_view(state: &Shared, seat: &str) -> StormScreen {
     let now = state.now();
     let w = state.world.read().expect("world");
     let total = w.passengers.len();
@@ -170,7 +179,7 @@ pub fn storm_screen(state: &Shared, seat: &str) -> String {
         None => (false, String::new(), 0, false),
     };
     drop(w);
-    render(&StormScreen { c: common(state, seat), active, left, in_shelter: inside, total, me_in, pct: if total == 0 { 0 } else { inside * 100 / total } })
+    StormScreen { c: common(state, seat), active, left, in_shelter: inside, total, me_in, pct: if total == 0 { 0 } else { inside * 100 / total } }
 }
 
 pub async fn app_storm(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
@@ -301,6 +310,67 @@ pub async fn station(State(state): State<Shared>) -> Response {
     let strip = render(&StationStrip::build(&state));
     let grid = StationGrid::build(&state).map(|g| render(&g)).unwrap_or_default();
     Html(render(&StationPage { strip, grid })).into_response()
+}
+
+// ---------------------------------------------------------------- wristband mode (§9)
+
+#[derive(Deserialize, Default)]
+pub struct WristQ {
+    pub seat: Option<String>,
+    pub part: Option<String>,
+}
+
+/// The five-page track (face · vitals · Eva · ECG · Help), opened on page `start`.
+pub fn wrist_track(state: &Shared, seat: &str, start: usize) -> String {
+    let live_face = WristLive::build(state, seat, "face").map(|l| render(&l)).unwrap_or_default();
+    let live_vitals = WristLive::build(state, seat, "vitals").map(|l| render(&l)).unwrap_or_default();
+    render(&WristTrack::build(state, seat, start, live_face, live_vitals))
+}
+
+pub async fn app_wrist(State(state): State<Shared>, Query(q): Query<WristQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
+    let s = wrist_track(&state, &seat, 0);
+    page_t(&state, &seat, "wrist", "eva", s, &headers)
+}
+pub async fn app_wrist_eva(State(state): State<Shared>, Query(q): Query<WristQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
+    let s = wrist_track(&state, &seat, 2);
+    page_t(&state, &seat, "wrist", "eva", s, &headers)
+}
+pub async fn app_wrist_ecg(State(state): State<Shared>, Query(q): Query<WristQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
+    let s = wrist_track(&state, &seat, 3);
+    page_t(&state, &seat, "wrist", "heart", s, &headers)
+}
+/// Live parts of the face (`part=face`) or the vitals page (`part=vitals`), re-fetched on `sse:live`.
+pub async fn app_wrist_live(State(state): State<Shared>, Query(q): Query<WristQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
+    let part = if q.part.as_deref() == Some("vitals") { "vitals" } else { "face" };
+    with_cookie(&seat, WristLive::build(&state, &seat, part).map(|l| render(&l)).unwrap_or_default())
+}
+pub fn wrist_emergency_screen(state: &Shared, seat: &str) -> String {
+    let e = emergency_view(state, seat);
+    if e.mode == "none" {
+        return wrist_track(state, seat, 4);
+    }
+    render(&WristEmergency { e })
+}
+pub async fn app_wrist_emergency(State(state): State<Shared>, Query(q): Query<WristQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
+    let s = wrist_emergency_screen(&state, &seat);
+    page_t(&state, &seat, "wrist", "critical", s, &headers)
+}
+pub fn wrist_storm_screen(state: &Shared, seat: &str) -> String {
+    let s = storm_view(state, seat);
+    if !s.active {
+        return wrist_track(state, seat, 0);
+    }
+    render(&WristStorm { s })
+}
+pub async fn app_wrist_storm(State(state): State<Shared>, Query(q): Query<WristQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
+    let s = wrist_storm_screen(&state, &seat);
+    page_t(&state, &seat, "wrist", "temp", s, &headers)
 }
 
 pub async fn root() -> Redirect {

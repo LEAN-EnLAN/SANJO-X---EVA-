@@ -4,11 +4,13 @@
 // - SSE (/sse), /link and /api GETs: network only (live data must not be stale).
 // - POSTs to journal / Eva tools / chat while offline: stored in IndexedDB and replayed
 //   when the page says it is back online (or on the next successful request).
-const CACHE = "eva-shell-v7";
+const CACHE = "eva-shell-v8";
 // screens of the astronaut app: cached as full pages (cold start offline) and as the
 // htmx fragments the tab bar swaps in (navigation offline)
 const SCREENS = ["/app", "/app/home", "/app/plan", "/app/eva", "/app/food", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/storm", "/app/about",
-  "/app/vitals?k=heart", "/app/vitals?k=lungs", "/app/vitals?k=temperature", "/app/vitals?k=sleep", "/app/vitals?k=water"];
+  "/app/vitals?k=heart", "/app/vitals?k=lungs", "/app/vitals?k=temperature", "/app/vitals?k=sleep", "/app/vitals?k=water",
+  // wristband mode (the same PWA on a small wide screen)
+  "/app/wrist", "/app/wrist/eva", "/app/wrist/ecg", "/app/wrist/emergency", "/app/wrist/storm"];
 const FRAG = "?fragment";
 // Codex art kit (AI-generated): 3D icons, Eva's states, detail heroes, splash, wristband renders
 const ICONS = ["aed", "aed-pads", "ack", "alert", "battery", "calcium", "crew", "earth", "earth-link", "ecg", "eda", "exercise", "export", "food",
@@ -23,9 +25,10 @@ const BAND = ["card", "ecg", "suit-mode", "cabin", "on-wrist", "parts-exploded",
   ...["000", "045", "090", "135", "180", "225", "270", "315"].map((a) => `spin-${a}`)];
 const SHELL = [
   "/app", "/app/plan", "/app/food", "/app/eva", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/about",
-  "/dash", "/station", "/manifest.webmanifest",
+  "/app/wrist", "/dash", "/station", "/manifest.webmanifest",
   "/static/css/app.css", "/static/js/htmx.min.js", "/static/js/htmx-sse.js",
-  "/static/js/motion.js", "/static/js/eva.js", "/static/js/link.js",
+  "/static/js/motion.js", "/static/js/fx.js", "/static/js/wrist.js", "/static/js/eva.js", "/static/js/link.js",
+  "/static/fonts/sora-var.woff2", "/static/fonts/inter-var.woff2",
   "/static/icons/icon-192.png", "/static/icons/icon-512.png", "/static/icons/icon-maskable-512.png",
   "/static/icons/apple-touch-icon.png", "/static/icons/favicon-32.png",
   "/static/img/splash.webp",

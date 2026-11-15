@@ -20,6 +20,7 @@
   var mode = saved || (matchMedia(W).matches ? "wristband" : "phone");
   d.setAttribute("data-mode", mode);
   if (saved) d.setAttribute("data-mode-forced", saved);
+  if (mode === "wristband" && !matchMedia(W).matches) d.setAttribute("data-letterbox", "");
   var wrist = /^\/app\/wrist/.test(path), seat = q.get("seat"), tail = seat ? "?seat=" + encodeURIComponent(seat) : "";
   var twins = { "eva": "eva", "ecg": "ecg", "emergency": "emergency", "storm": "storm" };
   if (mode === "wristband" && !wrist) {

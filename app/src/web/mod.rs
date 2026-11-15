@@ -26,7 +26,13 @@ fn asset(path: &str) -> Response {
     match Assets::get(path) {
         Some(f) => {
             let mime = f.metadata.mimetype().to_string();
-            let cache = if path.ends_with(".css") || path.ends_with(".js") || path.ends_with(".webmanifest") { "no-cache" } else { "public, max-age=86400" };
+            let cache = if path.ends_with(".css") || path.ends_with(".js") || path.ends_with(".webmanifest") {
+                "no-cache"
+            } else if path.ends_with(".woff2") {
+                "public, max-age=31536000, immutable"
+            } else {
+                "public, max-age=86400"
+            };
             ([(header::CONTENT_TYPE, mime), (header::CACHE_CONTROL, cache.to_string())], f.data.into_owned()).into_response()
         }
         None => (StatusCode::NOT_FOUND, "not found").into_response(),
@@ -79,6 +85,12 @@ pub fn router(state: Shared) -> Router {
         .route("/app/vitals", get(pages::app_vitals))
         .route("/app/about", get(pages::app_about))
         .route("/app/tools", get(pages::app_tools))
+        .route("/app/wrist", get(pages::app_wrist))
+        .route("/app/wrist/live", get(pages::app_wrist_live))
+        .route("/app/wrist/eva", get(pages::app_wrist_eva))
+        .route("/app/wrist/ecg", get(pages::app_wrist_ecg))
+        .route("/app/wrist/emergency", get(pages::app_wrist_emergency))
+        .route("/app/wrist/storm", get(pages::app_wrist_storm))
         .route("/dash", get(pages::dash))
         .route("/station", get(pages::station))
         .route("/sse/station", get(sse::station_sse))

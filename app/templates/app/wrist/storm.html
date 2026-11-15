@@ -1,0 +1,16 @@
+{# Solar storm route on the wristband (amber takeover). #}
+<section class="w-take w-storm" data-storm-active data-wrist-arrive="warn">
+  <div class="w-take-left">
+    <span class="w-arrowbig nudge">{{ crate::web::ui::ic("upleft", 112)|safe }}</span>
+    <p class="w-dist num" aria-label="Time left {{ s.left }}">{{ s.left }}</p>
+  </div>
+  <div class="w-take-right">
+    <p class="w-take-h">Go to the shelter</p>
+    <p class="w-body">Deck B · walk, don't run</p>
+    <p class="w-body flex items-center gap-[0.5rem]"><span class="w-steps"><i class="on"></i><i></i><i></i></span>Leave your seat and turn left</p>
+    <div class="w-btns">
+      {% if s.me_in %}<p class="w-body text-ok">You are in the shelter. Eva tells you when it is over.</p>
+      {% else %}<button type="button" class="w-btn w-btn-amber press" hx-post="/api/shelter" hx-vals='{"seat":"{{ s.c.seat }}","wrist":"1"}' hx-target="#screen" data-haptic="success">I'm in the shelter</button>{% endif %}
+    </div>
+  </div>
+</section>

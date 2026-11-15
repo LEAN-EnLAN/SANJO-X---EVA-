@@ -158,7 +158,8 @@ pub fn spo2_pct(spo2: u8) -> u32 {
 pub fn skin_pct(c: f32) -> u32 {
     (((c - 30.0) / 8.0).clamp(0.05, 1.0) * 100.0).round() as u32
 }
-pub fn beat_ms(hr: u16) -> u32 {
+pub fn beat_ms(hr: impl ui::Val<u16>) -> u32 {
+    let hr = hr.val();
     if hr == 0 {
         1000
     } else {
@@ -1480,4 +1481,132 @@ impl StationTile {
             ("Online", "ok")
         }
     }
+}
+
+// ---------------------------------------------------------------- wristband mode (APP-POLISH §9)
+
+/// `/app/wrist`: the five pages of the wristband UI in one horizontal track.
+#[derive(Template)]
+#[template(path = "app/wrist/track.html")]
+pub struct WristTrack {
+    pub c: AppCommon,
+    /// page the track opens on: 0 face · 1 vitals · 2 Eva · 3 ECG · 4 Help
+    pub start: usize,
+    pub live_face: String,
+    pub live_vitals: String,
+    /// the next plan item with a one-tap action: (title, sub, button)
+    pub next: Option<(String, String, ToolBtn)>,
+    pub eva_line: String,
+    pub ecg: EcgScreen,
+    pub help_vals: String,
+    pub water: String,
+}
+
+impl WristTrack {
+    pub fn build(state: &Shared, seat: &str, start: usize, live_face: String, live_vitals: String) -> Self {
+        let plan = PlanScreen::build(state, seat);
+        let next = plan.items.into_iter().find(|i| !i.done && i.action.is_some()).map(|i| (i.title, i.sub, i.action.unwrap()));
+        let eva_line = {
+            let w = state.world.read().expect("world");
+            let last = w.chats.iter().rev().find(|m| m.seat == seat && m.from != "me").map(|m| m.text.lines().next().unwrap_or("").to_string());
+            last.or_else(|| w.passenger(seat).map(|p| p.eva_line.clone())).filter(|s| !s.is_empty()).unwrap_or_else(|| "All good. I'm watching quietly.".into())
+        };
+        WristTrack {
+            c: common(state, seat),
+            start: start.min(4),
+            live_face,
+            live_vitals,
+            next,
+            eva_line,
+            ecg: EcgScreen::build(state, seat),
+            help_vals: tool_vals(seat, "request_help", serde_json::json!({"reason": "Help button on the wristband"})),
+            water: tool_vals(seat, "log_water", serde_json::json!({"ml": 250})),
+        }
+    }
+}
+
+/// Live parts of the wristband: the face's time and vitals column, or the three vitals panels.
+#[derive(Template)]
+#[template(path = "app/wrist/_live.html")]
+pub struct WristLive {
+    pub l: LiveCard,
+    pub part: &'static str,
+    pub time: String,
+    pub day: u64,
+    /// someone else's open case: a slim bar over the face ("Ana is being helped")
+    pub other: Option<CaseBanner>,
+    pub usual: (u16, u16),
+}
+
+impl WristLive {
+    pub fn build(state: &Shared, seat: &str, part: &'static str) -> Option<Self> {
+        let l = LiveCard::build(state, seat)?;
+        let now = state.now();
+        let other = Banner::build(state, seat).case.filter(|c| c.role == "other");
+        Some(WristLive { usual: l.p.usual_hr, l, part, time: clock::hhmm(now), day: now / clock::DAY_MS + 1, other })
+    }
+    pub fn hr_word(&self) -> &'static str {
+        if self.l.p.vitals.hr == 0 { "No reading" } else { self.l.p.hr_short() }
+    }
+    pub fn min_batt(&self) -> u8 {
+        self.l.p.vitals.base_batt.min(self.l.p.vitals.screen_batt)
+    }
+    pub fn hh(&self) -> &str {
+        self.time.split(':').next().unwrap_or("")
+    }
+    pub fn mm(&self) -> &str {
+        self.time.split(':').nth(1).unwrap_or("")
+    }
+    pub fn spo2_word(&self) -> &'static str {
+        match self.l.p.vitals.spo2 {
+            0 => "No reading",
+            1..=94 => "Low",
+            _ => "Good",
+        }
+    }
+    pub fn skin_word(&self) -> &'static str {
+        if self.l.p.skin_word() == "usual" { "Normal" } else { "Warm" }
+    }
+    pub fn hr_bad(&self) -> bool {
+        let (lo, hi) = self.usual;
+        let hr = self.l.p.vitals.hr;
+        hr == 0 || hr < lo.saturating_sub(10) || hr > hi + 15
+    }
+    pub fn spo2_bad(&self) -> bool {
+        self.l.p.vitals.spo2 < 94
+    }
+    /// position of the current pulse on the usual-range bar, 0–100
+    pub fn hr_pos(&self) -> u32 {
+        let (lo, hi) = self.usual;
+        let span = (hi as f32 - lo as f32 + 40.0).max(1.0);
+        (((self.l.p.vitals.hr as f32 - (lo as f32 - 20.0)) / span).clamp(0.0, 1.0) * 100.0).round() as u32
+    }
+    pub fn usual_left(&self) -> u32 {
+        let (lo, hi) = self.usual;
+        (20.0 / (hi as f32 - lo as f32 + 40.0) * 100.0).round() as u32
+    }
+    pub fn usual_width(&self) -> u32 {
+        let (lo, hi) = self.usual;
+        ((hi as f32 - lo as f32) / (hi as f32 - lo as f32 + 40.0) * 100.0).round() as u32
+    }
+}
+
+/// Emergency takeover on the wristband: the same view model as the phone's screen.
+#[derive(Template)]
+#[template(path = "app/wrist/emergency.html")]
+pub struct WristEmergency {
+    pub e: EmergencyScreen,
+}
+
+impl WristEmergency {
+    pub fn first(&self) -> String {
+        self.e.case.as_ref().map(|c| c.name.split(' ').next().unwrap_or("").to_string()).unwrap_or_default()
+    }
+}
+
+/// Solar-storm route on the wristband.
+#[derive(Template)]
+#[template(path = "app/wrist/storm.html")]
+pub struct WristStorm {
+    pub s: StormScreen,
 }
