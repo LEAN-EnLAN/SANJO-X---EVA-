@@ -7,7 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LANG = os.environ.get("EVA_LANG", "en")
 SCRIPT = {l["id"]: l for l in json.load(open(os.path.join(HERE, "script.json")))}
 DUR = json.load(open(os.path.join(HERE, "durations.json")))[LANG]
-SFX = os.path.join(HERE, "..", "sfx")
+SFX = next(p for p in (os.path.join(HERE, "..", "sfx"), os.path.join(HERE, "..", "manim", "sfx")) if os.path.isdir(p))
 config.background_color = "#000000"
 CORAL = "#FF6A3D"; CREAM = "#F4F3F0"; CYAN = "#7FD4FF"; AMBER = "#FFB347"; MUTED = "#8A8986"; RED = "#FF2A1F"; YEL = "#FFD84A"; GREEN = "#5BE38A"; SKIN = "#E9B38F"; SUIT = "#E7E5E0"
 FONT = "Inter"
