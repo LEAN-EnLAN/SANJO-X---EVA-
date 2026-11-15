@@ -7,28 +7,39 @@ The APK is a small native wrapper (Java, no Capacitor/Cordova; its only library 
 | | |
 |---|---|
 | Package | `tech.sanjox.eva` (debug: `tech.sanjox.eva.debug`, can be installed alongside) |
-| Version | 0.3.4 (code 304) |
+| Version | 0.3.5 (code 305) |
 | SDK | minSdk 26 (Android 8.0), targetSdk / compileSdk 36 (Android 16) |
-| Size | release 2.1 MB, debug 3.3 MB (the offline replay is 3.6 MB of assets, compressed) |
+| Size | release 2.3 MB, debug 3.5 MB (the offline demo is 4.9 MB of assets, compressed) |
 | Signing | release: own keystore (RSA 3072, v2 scheme), cert SHA-256 `55:F1:78:EE:7A:AE:7E:AD:80:83:5D:AA:59:EE:47:0A:5E:D7:B9:29:00:FD:19:4A:B7:7F:42:50:58:88:44:D7` |
 | Source | `android/` (Gradle wrapper 8.14.7, AGP 8.13.2) |
+
+## Install from a QR (0.3.5)
+
+`https://eva-wearmeds.vercel.app/download/` ("Install Eva on Android", EN/ES): a Download APK button (`/download/eva.apk`, served as `application/vnd.android.package-archive`), the version and size, three steps (allow the install, open Eva, choose "Try the demo") and a QR code to that page, an inline SVG generated locally (`pitch4/assets/qr.js`, ECC M, 4-module quiet zone, checked with jsQR).
+
+## What 0.3.5 adds
+
+- **The demo is the new launcher**, online (`/app/`) and bundled (a copy of `public-sites/app/` without the old board): "Pick a view", scenes s1–s6, the three phones, the crew dashboard, the station, the ground and **three wristband views** (`#view=w4B`, `w3B`, `w1B`; deep links like `#view=w3B&scene=s2`).
+- **Wristband in both demos**: the band screens are captured from the real app at 640 × 360 in wristband mode (home track, emergency s2–s4 for all three seats, storm s6, Eva and ECG pages). The launcher uses the app's own rule (landscape, height ≤ 480 px, aspect ≥ 8:5, or a tiny square): on a band-shaped screen, or a phone turned to landscape, it opens the chosen seat's band full screen with no menu; `?mode=wristband` / `?mode=phone` override. The demos never lock the orientation, so the launcher always sees the real screen.
+- **Live Eva everywhere**: one `replay.js` for the site (relative `/api/eva/*`) and the bundle (absolute `https://eva-wearmeds.vercel.app/api/eva/*`, allowed by CORS for `https://appassets.androidplatform.net`). Chat, **voice** (tap the mic, up to 30 s, Whisper; a thin teal ring while recording), **Eva speaks** (the speaker toggle; Orpheus WAV in English, the browser's best voice for Spanish or on any failure), **photo** (one JPEG ≤ 1024 px) and **video** (4 evenly spaced frames on one 2 × 2 sheet ≤ 1024 px). No network or an error: a small toast and the captured answer.
+- **Microphone in the demo modes**: `RECORD_AUDIO` is asked at runtime and the WebView's audio capture is granted only to the demo's own origin (Vercel online, the asset host offline); camera capture is never granted to a demo (photos and video go through the file chooser, with the camera). The hub's policy is unchanged.
 
 ## Modes (0.3.4)
 
 | Mode | Opens | Network and trust |
 |---|---|---|
-| **Try the demo (online)**, recommended, first choice | `https://eva-wearmeds.vercel.app/app/`: the guided replay of the real app; Eva's chat is live through `/api/eva/chat` | normal system TLS (public CA); **no** trust-on-first-use, an SSL error just cancels. The WebView keeps only `/app/…` and `/api/…` on that exact host; anything else opens in the browser (intents and other schemes are dropped). Mic and camera are never granted in the demos. |
-| **Offline demo** | the same replay bundled in `assets/replay/`, served by `WebViewAssetLoader` at `https://appassets.androidplatform.net/assets/replay/index.html` (not `file://`) | no network needed. `replay.js` never calls `/api` on the asset host (nor on `file:`), so Eva answers with the captured replies. |
+| **Try the demo (online)**, recommended, first choice | `https://eva-wearmeds.vercel.app/app/`: the guided replay of the real app; Eva's chat is live through `/api/eva/chat` | normal system TLS (public CA); **no** trust-on-first-use, an SSL error just cancels. The WebView keeps only `/app/…` and `/api/…` on that exact host; anything else opens in the browser (intents and other schemes are dropped). Since 0.3.5 the microphone is granted to the demo's own origin (voice to Eva). |
+| **Offline demo** | the same demo bundled in `assets/replay/`, served by `WebViewAssetLoader` at `https://appassets.androidplatform.net/assets/replay/index.html` (not `file://`) | works with no network (captured answers). Since 0.3.5, when the phone is online, Eva is live from the bundle too: `replay.js` calls the hosted API by absolute URL from the asset host. |
 | **Connect to a ship hub** | the hub form as before (address, http/https, seat, keep-screen-on, pinned certificate) | unchanged: TOFU pinning for the hub only, LAN-only cleartext. |
 
 - The choice is remembered (installs from 0.3.3 that saved a hub stay on it). The online demo opens the offline one, with a toast, when the phone has no network at launch or when the site's main page fails to load.
 - Back to settings: back at the root (Leave / **Settings**), a long-press on the page background (Reload / **Settings**), the error screen, or the launcher shortcut **Eva settings**.
 - Refresh the bundle after a new replay: copy `scratchpad/webdemo/out/` into `android/app/src/main/assets/replay/` (drop `_local.html`) and wrap `index.html` in a UTF-8 document skeleton (`<!doctype html>`, `<meta charset="utf-8">`, the viewport meta): the asset loader sends no charset, and the hosted page relies on Vercel's header.
-- Live chat from the offline bundle (falling back to Vercel when online) is **not** enabled: `/api/eva/chat` answers a CORS preflight with 405 and refuses foreign origins with 403.
+- (0.3.4) Live chat from the offline bundle was off because `/api/eva/chat` had no CORS; since 0.3.5 the site allows the asset-host origin and the bundle uses it.
 
 ## Install
 
-1. Copy `eva-v0.3.4.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.4.apk`). It is signed with the same key as 0.3.1–0.3.3, so it installs over them. Open it and tap **Try the demo (online)**, or **Offline demo** with no network: no hub needed.
+1. Scan the QR on `https://eva-wearmeds.vercel.app/download/`, or copy `eva-v0.3.5.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.5.apk`). It is signed with the same key as 0.3.1–0.3.4, so it installs over them. Open it and tap **Try the demo (online)**, or **Offline demo** with no network: no hub needed.
    **Hub mode: update the hub too**: there the APK is only a WebView around the hub; the copy rules v3 wording ships in the `eva` 0.3.3 binary. If the phone still shows the old look after the hub update, Android Settings → Apps → Eva → Storage → Clear cache (the service worker cache `eva-shell-v9` normally evicts the old one).
 2. Open it from Files. Android asks to allow **Install unknown apps** for the app that opens it (Files, Chrome, the chat app): allow it, go back, tap **Install**. Play Protect may warn about an unknown developer: choose **Install anyway**.
 3. To switch between the debug and release builds, or to a build signed with another key, uninstall first. Debug and release have different package names, so both can be installed at the same time.
@@ -113,16 +124,28 @@ Needs JDK 17+ (tested with OpenJDK 21) and the Android SDK packages `platforms;a
 ```bash
 cd android
 echo "sdk.dir=/path/to/android-sdk" > local.properties        # or export ANDROID_HOME
-./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.4-debug.apk
+./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.5-debug.apk
 
 # signed release: keystore and passwords OUTSIDE the repo
 EVA_SIGNING_PROPS=/secure/place/signing.properties ./gradlew lintRelease assembleRelease
-#   → app/build/outputs/apk/release/eva-v0.3.4-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
+#   → app/build/outputs/apk/release/eva-v0.3.5-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
 ```
 
 `signing.properties` holds `storeFile=`, `storePassword=`, `keyAlias=`, `keyPassword=`. The 0.3.1 release keystore (`eva-release.p12`, alias `eva`) and its password file were created outside the repo, both mode 600. **Back them up**: an update signed with a different key has to be installed after uninstalling the old app. `.gitignore` excludes build outputs, `local.properties` and `*.jks`, `*.keystore`, `*.p12` and `signing.properties`.
 
 To make a new key: `keytool -genkeypair -keystore eva-release.p12 -storetype PKCS12 -alias eva -keyalg RSA -keysize 3072 -validity 10000`.
+
+## Test results 0.3.5 (15/11/2026)
+
+| check | result |
+|---|---|
+| JVM unit + Robolectric | **84 / 84 pass**. New since 0.3.4: the demo microphone (audio granted to the demo origin only, camera and other origins denied, the Android permission asked first, offline on the asset host), `isDemoMediaOrigin`, the bundled `replay.js` picks the absolute hosted API only on the asset host, the bundled launcher uses the app's exact wristband rule (compared with `app/templates/head.html`) and has the band views, demo modes keep the orientation free and the WebView at device width |
+| `lintDebug`, `lintRelease` | 0 errors |
+| `apksigner verify --print-certs` | release verifies (v2), signer SHA-256 `55:F1:78:EE:…:44:D7`, the same key as 0.3.1–0.3.4 |
+| `aapt2 dump badging` | `tech.sanjox.eva` 0.3.5/305; `RECORD_AUDIO`, `CAMERA`; 188 files under `assets/replay/` |
+| Headless Chromium, WebView user agent, the replay served at the asset-host origin and at the site origin, live Vercel API, fake media (a spoken WAV as the microphone) | 33 / 34 in the full run: launcher at 412 × 915 (9 views), 640 × 360 lands in the band view full screen with no chrome, `?mode` overrides, deep links; from both origins: chat, mic → stt → chat, Eva speaks (WAV), photo → vision, offline → toast + captured answer; band page: starts on Eva, chip and mic answer in her bubble, arrows. The one failure was the site-origin video in the sequential run (an error answer from the endpoint after several calls); the same request passed on its own and from the asset origin |
+| QR | the download page's QR decodes to `https://eva-wearmeds.vercel.app/download/` (jsQR, from a screenshot) |
+| Emulator | none on the build machine |
 
 ## Test results 0.3.4 (15/11/2026)
 

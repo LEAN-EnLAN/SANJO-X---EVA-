@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Which WebView media requests the app may grant: microphone and camera only, only to the configured hub origin,
- * and only once the matching Android runtime permission is held. Pure logic (string constants only), unit-tested.
+ * Which WebView media requests the app may grant: microphone and camera to the configured hub origin, the microphone
+ * only to the demo's own origin (voice questions to Eva; photos and video go through the file chooser), and only once
+ * the matching Android runtime permission is held. Pure logic (string constants only), unit-tested.
  */
 public final class MediaPolicy {
     private MediaPolicy() {}
@@ -26,6 +27,14 @@ public final class MediaPolicy {
             }
         }
         return out.toArray(new String[0]);
+    }
+
+    /** The demo modes ask for the microphone only. */
+    public static String[] audioOnly(String[] resources) {
+        for (String r : supported(resources)) {
+            if (PermissionRequest.RESOURCE_AUDIO_CAPTURE.equals(r)) return new String[] {r};
+        }
+        return new String[0];
     }
 
     /** Android runtime permissions needed for the supported resources. */

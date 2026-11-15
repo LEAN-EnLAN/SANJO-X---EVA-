@@ -69,7 +69,7 @@
         </div>
         <div class="flex flex-wrap items-center justify-end gap-2">
           <a href="#case" class="press flex h-14 items-center gap-3 rounded-full border border-line bg-surface py-1 pr-4 pl-1 ring-1 ring-info/20" aria-label="Eva: open the case card">
-            <span class="eva-mascot relative inline-grid shrink-0 place-items-center size-12" data-eva="" data-state="alert" style="--eva-y: -2.0000; --eva-s: 1.0000; --eva-r: 0.0000; --eva-glow: 1.0000; --eva-gs: 1.0993; --eva-sx: 1.0000; --eva-sy: 1.0000;"><img src="../static/img/eva/eva-alert.webp" alt="Eva, the health copilot" class="eva-body relative size-full object-contain" draggable="false" decoding="async" style="opacity: 1;"></span>
+            <span class="eva-mascot relative inline-grid shrink-0 place-items-center size-12" data-eva="" data-state="alert" style="--eva-y: -2.0000; --eva-s: 1.0000; --eva-r: 0.0000; --eva-glow: 1.0000; --eva-gs: 1.1000; --eva-sx: 1.0000; --eva-sy: 1.0000;"><img src="../static/img/eva/eva-alert.webp" alt="Eva, the health copilot" class="eva-body relative size-full object-contain" draggable="false" decoding="async" style="opacity: 1;"></span>
             <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status="">Guiding an emergency</span></span>
           </a>
           <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted"><span class="pic size-7" aria-hidden="true"><img src="../static/img/icons/hub.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>Hub · hosts the Super Intelligence · stores everything</span>
@@ -112,7 +112,7 @@
       <div class="flex flex-col gap-2">
         <p class="text-xs uppercase tracking-label text-muted">Ground delay</p>
         <p class="text-vital tabular-nums text-ink"><span data-count="kpi-4" aria-label="1.7"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 1;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="sep">.</span><span class="slot"><span class="col" style="--d: 7;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span><span class="ml-1 text-base text-muted">s one way</span></p>
-        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge border border-line text-muted">Near-space uplink · in contact</span></p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge border border-line text-warn">Contact gap · queued</span></p>
       </div>
       <span class="pic size-11" aria-hidden="true"><img src="../static/img/icons/earth.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>
     </div>
@@ -120,8 +120,8 @@
     <div class="relative flex items-start justify-between gap-3 px-6 before:absolute before:top-[-1.25rem] before:left-6 before:h-1 before:w-10 before:rounded-full before:bg-eva">
       <div class="flex flex-col gap-2">
         <p class="text-xs uppercase tracking-label text-muted">Records</p>
-        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-5" aria-label="18"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 1;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="slot"><span class="col" style="--d: 8;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span><span class="ml-1 text-base text-muted">acknowledged</span></p>
-        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge border border-line text-ok">0 queued · 0 sent</span></p>
+        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-5" aria-label="17"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 1;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="slot"><span class="col" style="--d: 7;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span><span class="ml-1 text-base text-muted">acknowledged</span></p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge border border-line text-info">0 queued · 1 sent</span></p>
       </div>
       <span class="pic size-11" aria-hidden="true"><img src="../static/img/icons/logbook.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>
     </div>
@@ -164,7 +164,7 @@
     <div class="w-52 shrink-0">
       <span class="flex items-center gap-3">
         <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-critical">No pulse</span><span class="truncate text-xs text-critical">since 14:01</span></span></span>
-        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="6.666666" rx="4" class="fill-ok/15"></rect><polyline points="0.0,8.3 3.8,9.0 7.6,6.7 11.4,7.3 15.2,8.0 19.0,8.7 22.8,6.3 26.5,7.0 30.3,7.7 34.1,8.3 37.9,9.0 41.7,6.7 45.5,7.3 49.3,8.0 53.1,8.7 56.9,7.7 60.7,9.7 64.5,7.7 68.2,7.0 72.0,7.7 75.8,31.0 79.6,31.0 83.4,31.0 87.2,31.0 91.0,31.0" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-critical"></polyline><circle cx="91" cy="31" r="3.5" class="fill-current text-critical"></circle></svg>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="6.666666" rx="4" class="fill-ok/15"></rect><polyline points="0.0,7.3 3.8,8.0 7.6,8.7 11.4,6.3 15.2,7.0 19.0,7.7 22.8,8.3 26.5,9.0 30.3,6.7 34.1,7.3 37.9,8.0 41.7,8.7 45.5,7.7 49.3,9.7 53.1,7.7 56.9,7.0 60.7,7.7 64.5,9.0 68.2,31.0 72.0,31.0 75.8,31.0 79.6,31.0 83.4,31.0 87.2,31.0 91.0,31.0" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-critical"></polyline><circle cx="91" cy="31" r="3.5" class="fill-current text-critical"></circle></svg>
       </span>
     </div>
     <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-critical">—</span><span class="truncate text-xs text-critical">no reading</span></span></div>
@@ -174,7 +174,7 @@
     <div class="w-36 shrink-0">
       <span class="flex flex-col gap-1">
         <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 66%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">66%</span></span>
-        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 70%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">70%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 71%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">71%</span></span>
       </span>
     </div>
   </div>
@@ -207,8 +207,8 @@
     <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge border border-line text-warn">ECG review</span></div>
     <div class="w-52 shrink-0">
       <span class="flex items-center gap-3">
-        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">71<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for her</span></span></span>
-        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="26" rx="4" class="fill-ok/15"></rect><polyline points="0.0,16.7 3.8,19.3 7.6,21.9 11.4,12.8 15.2,15.4 19.0,18.0 22.8,20.6 26.5,23.2 30.3,14.1 34.1,16.7 37.9,19.3 41.7,21.9 45.5,12.8 49.3,15.4 53.1,18.0 56.9,18.0 60.7,23.2 64.5,16.7 68.2,18.0 72.0,19.3 75.8,20.6 79.6,18.0 83.4,18.0 87.2,18.0 91.0,16.7" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="16.7" r="3.5" class="fill-current text-info"></circle></svg>
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">69<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for her</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="26" rx="4" class="fill-ok/15"></rect><polyline points="0.0,12.8 3.8,15.4 7.6,18.0 11.4,20.6 15.2,23.2 19.0,14.1 22.8,16.7 26.5,19.3 30.3,21.9 34.1,12.8 37.9,15.4 41.7,18.0 45.5,18.0 49.3,23.2 53.1,16.7 56.9,18.0 60.7,19.3 64.5,18.0 68.2,18.0 72.0,18.0 75.8,16.7 79.6,19.3 83.4,20.6 87.2,19.3 91.0,19.3" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="19.3" r="3.5" class="fill-current text-info"></circle></svg>
       </span>
     </div>
     <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">98<span class="ml-1 text-xs text-muted">%</span></span><span class="truncate text-xs text-muted">normal</span></span></div>
@@ -217,7 +217,7 @@
     <div class="hidden w-24 shrink-0 min-[1400px]:block"><span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"></path><path d="M6 8h4M14 8h4"></path></svg>Joined</span></div>
     <div class="w-36 shrink-0">
       <span class="flex flex-col gap-1">
-        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 58%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">58%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 57%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">57%</span></span>
         <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 62%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">62%</span></span>
       </span>
     </div>
@@ -240,8 +240,8 @@
     <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge border border-line text-warn">Battery low</span></div>
     <div class="w-52 shrink-0">
       <span class="flex items-center gap-3">
-        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">72<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for him</span></span></span>
-        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="26" rx="4" class="fill-ok/15"></rect><polyline points="0.0,9.7 3.8,12.1 7.6,14.5 11.4,16.8 15.2,19.2 19.0,10.9 22.8,13.3 26.5,15.6 30.3,18.0 34.1,9.7 37.9,12.1 41.7,14.5 45.5,16.8 49.3,19.2 53.1,10.9 56.9,13.3 60.7,13.3 64.5,16.8 68.2,19.2 72.0,18.0 75.8,14.5 79.6,14.5 83.4,14.5 87.2,15.6 91.0,19.2" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="19.181818" r="3.5" class="fill-current text-info"></circle></svg>
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">74<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for him</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="26" rx="4" class="fill-ok/15"></rect><polyline points="0.0,16.8 3.8,19.2 7.6,10.9 11.4,13.3 15.2,15.6 19.0,18.0 22.8,9.7 26.5,12.1 30.3,14.5 34.1,16.8 37.9,19.2 41.7,10.9 45.5,13.3 49.3,13.3 53.1,16.8 56.9,19.2 60.7,18.0 64.5,14.5 68.2,14.5 72.0,20.4 75.8,21.5 79.6,19.2 83.4,16.8 87.2,16.8 91.0,16.8" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="16.81818" r="3.5" class="fill-current text-info"></circle></svg>
       </span>
     </div>
     <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">98<span class="ml-1 text-xs text-muted">%</span></span><span class="truncate text-xs text-muted">normal</span></span></div>
@@ -273,8 +273,8 @@
     <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge border border-line text-warn">Skin warm</span></div>
     <div class="w-52 shrink-0">
       <span class="flex items-center gap-3">
-        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">73<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for him</span></span></span>
-        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="6.130434" height="24.869566" rx="4" class="fill-ok/15"></rect><polyline points="0.0,11.8 3.8,14.0 7.6,6.1 11.4,8.4 15.2,10.7 19.0,12.9 22.8,5.0 26.5,7.3 30.3,9.5 34.1,11.8 37.9,14.0 41.7,6.1 45.5,8.4 49.3,10.7 53.1,12.9 56.9,9.5 60.7,14.0 64.5,12.9 68.2,14.0 72.0,17.4 75.8,20.8 79.6,19.7 83.4,19.7 87.2,18.6 91.0,16.3" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="16.304348" r="3.5" class="fill-current text-info"></circle></svg>
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">71<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for him</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="6.130434" height="24.869566" rx="4" class="fill-ok/15"></rect><polyline points="0.0,8.4 3.8,10.7 7.6,12.9 11.4,5.0 15.2,7.3 19.0,9.5 22.8,11.8 26.5,14.0 30.3,6.1 34.1,8.4 37.9,10.7 41.7,12.9 45.5,9.5 49.3,14.0 53.1,12.9 56.9,14.0 60.7,17.4 64.5,19.7 68.2,19.7 72.0,15.2 75.8,16.3 79.6,16.3 83.4,17.4 87.2,18.6 91.0,18.6" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="18.565216" r="3.5" class="fill-current text-info"></circle></svg>
       </span>
     </div>
     <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">98<span class="ml-1 text-xs text-muted">%</span></span><span class="truncate text-xs text-muted">normal</span></span></div>
@@ -283,7 +283,7 @@
     <div class="hidden w-24 shrink-0 min-[1400px]:block"><span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"></path><path d="M6 8h4M14 8h4"></path></svg>Joined</span></div>
     <div class="w-36 shrink-0">
       <span class="flex flex-col gap-1">
-        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 60%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">60%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 61%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">61%</span></span>
         <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 70%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">70%</span></span>
       </span>
     </div>
@@ -310,7 +310,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">71<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">70<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted">Crew lead · usual for her</p>
@@ -349,7 +349,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">69<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted"><span class="text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"></path></svg></span>Suit drill until 14:30</p>
@@ -362,7 +362,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">75<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">76<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted"><span class="text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"></path></svg></span>Suit drill until 14:30</p>
@@ -375,7 +375,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">72<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted"><span class="text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"></path></svg></span>Suit drill until 14:30</p>
@@ -388,7 +388,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">63<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for her</p>
@@ -401,7 +401,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">60<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for her</p>
@@ -414,7 +414,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">69<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for him</p>
@@ -427,7 +427,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">74<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">70<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for her</p>
@@ -440,7 +440,7 @@
           <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">71<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">70<span class="ml-1 text-xs text-muted">bpm</span></span></span>
           <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
         </div>
         <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for him</p>
@@ -455,7 +455,7 @@
           <div id="case">
 <section class="flex flex-col gap-5 rounded-card border p-5 border-critical/50 bg-critical/5">
   <header class="flex flex-wrap items-center gap-3">
-    <span class="eva-mascot relative inline-grid shrink-0 place-items-center size-12" data-eva="" data-state="alert" style="--eva-y: -2.0000; --eva-s: 1.0000; --eva-r: 0.0000; --eva-glow: 1.0000; --eva-gs: 1.0989;"><img src="../static/img/eva/eva-alert.webp" alt="Eva, the health copilot" class="eva-body relative size-full object-contain" draggable="false" decoding="async"></span>
+    <span class="eva-mascot relative inline-grid shrink-0 place-items-center size-12" data-eva="" data-state="alert" style="--eva-y: -2.0000; --eva-s: 1.0000; --eva-r: 0.0000; --eva-glow: 1.0000; --eva-gs: 1.1000;"><img src="../static/img/eva/eva-alert.webp" alt="Eva, the health copilot" class="eva-body relative size-full object-contain" draggable="false" decoding="async"></span>
     <span class="flex min-w-0 flex-1 flex-col leading-tight">
       <span class="flex items-center gap-2 text-sm text-ink">Eva<span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"><span class="absolute inset-0 animate-ping rounded-full bg-ok"></span></span><span class="text-xs text-muted">live · offline rules · browser voice</span></span>
       <span class="truncate text-xs text-muted">Guiding Ana Ruiz's case · 2 min</span>
@@ -484,7 +484,7 @@
     <ol class="flex flex-col">
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3 bg-critical/10">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:05</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:20</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-critical"></span></span>
@@ -493,7 +493,7 @@
       </li>
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:05</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:20</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-info"></span></span>
@@ -502,7 +502,7 @@
       </li>
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:12</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:37</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-info"></span></span>
@@ -511,7 +511,7 @@
       </li>
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:12</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:37</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-info"></span></span>
@@ -520,25 +520,16 @@
       </li>
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:12</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:37</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-info"></span></span>
-          <div class="flex min-w-0 flex-col gap-0.5"><p class="text-sm text-ink">AED taken at the station · 00:06</p><p class="text-xs text-muted">Tomás tapped "I have it" · on the way to seat 4B</p></div>
+          <div class="flex min-w-0 flex-col gap-0.5"><p class="text-sm text-ink">AED taken at the station · 00:16</p><p class="text-xs text-muted">Tomás tapped "I have it" · on the way to seat 4B</p></div>
         </div>
       </li>
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:18</span>
-        
-        <div class="relative flex gap-4 col-span-9 md:col-span-10">
-          <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-faint"></span></span>
-          <div class="flex min-w-0 flex-col gap-0.5"><p class="text-sm text-ink">Door 01 opened at the station · 00:12</p><p class="text-xs text-muted">Door sensor · signed station report</p></div>
-        </div>
-      </li>
-      
-      <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:35</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:50</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-faint"></span></span>
@@ -547,7 +538,16 @@
       </li>
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:02:00</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:53</span>
+        
+        <div class="relative flex gap-4 col-span-9 md:col-span-10">
+          <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-faint"></span></span>
+          <div class="flex min-w-0 flex-col gap-0.5"><p class="text-sm text-ink">Door 01 opened at the station · 00:32</p><p class="text-xs text-muted">Door sensor · signed station report</p></div>
+        </div>
+      </li>
+      
+      <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:02:15</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-info"></span></span>
@@ -556,7 +556,7 @@
       </li>
       
       <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3 bg-critical/10">
-        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:03:05</span>
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:03:20</span>
         
         <div class="relative flex gap-4 col-span-9 md:col-span-10">
           <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-critical"></span></span>
@@ -666,14 +666,14 @@
           <div id="sync"><section class="flex flex-col gap-4 rounded-card border border-line bg-surface p-5">
   <div class="flex items-center justify-between gap-3">
     <div class="flex items-center gap-3"><span class="pic size-12" aria-hidden="true"><img src="../static/img/icons/earth-link.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span><h2 class="text-base text-ink">Ground sync</h2></div>
-    <span class="inline-flex items-center gap-1 rounded-full border border-info/40 px-2.5 py-0.5 text-xs font-medium text-info">Link open</span>
+    <span class="inline-flex items-center gap-1 rounded-full border border-warn/40 px-2.5 py-0.5 text-xs font-medium text-warn">Contact gap · queued</span>
     
   </div>
   
   <ol class="grid grid-cols-3 gap-2">
     <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile bg-raised px-4 py-3 text-ink"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Saved<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/logbook.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">0</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">signed on board</span></li>
-    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile border border-info/40 px-4 py-3 text-info"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Sent<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/send.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">0</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">≈ 3.4 s round trip</span></li>
-    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile bg-ink px-4 py-3 text-on-light"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Confirmed<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/ack.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">18</span></div><span class="text-xs text-muted">acknowledged</span></li>
+    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile border border-info/40 px-4 py-3 text-info"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Sent<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/send.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">1</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">≈ 3.3 s round trip</span></li>
+    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile bg-ink px-4 py-3 text-on-light"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Confirmed<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/ack.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">17</span></div><span class="text-xs text-muted">acknowledged</span></li>
   </ol>
   
   <ul class="flex flex-col divide-y divide-line">
@@ -681,18 +681,12 @@
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="font-mono text-muted">14:03</span>
       <span class="min-w-0 flex-1 truncate text-ink">4B · AED attached, shock advised by the AED</span>
-      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-info">Sent</span>
     </li>
     
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="font-mono text-muted">14:02</span>
       <span class="min-w-0 flex-1 truncate text-ink">4B · Leo arrived, CPR started</span>
-      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
-    </li>
-    
-    <li class="flex items-center gap-3 py-2 text-xs">
-      <span class="font-mono text-muted">14:02</span>
-      <span class="min-w-0 flex-1 truncate text-ink">4B · Crew lead Mara notified</span>
       <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
     </li>
     
@@ -710,23 +704,29 @@
     
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="font-mono text-muted">14:01</span>
-      <span class="min-w-0 flex-1 truncate text-ink">4B · AED taken at the station · 00:06</span>
+      <span class="min-w-0 flex-1 truncate text-ink">4B · Crew lead Mara notified</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="font-mono text-muted">14:01</span>
+      <span class="min-w-0 flex-1 truncate text-ink">4B · AED taken at the station · 00:16</span>
       <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
     </li>
     
   </ul>
   
   <div class="flex flex-col gap-2 rounded-tile bg-raised p-3 text-xs">
-    <div class="flex items-center justify-between"><span class="text-muted">Eva Link · Near-space uplink</span><span class="text-ink tabular-nums">RTO 5236 ms</span></div>
+    <div class="flex items-center justify-between"><span class="text-muted">Eva Link · Near-space uplink</span><span class="text-ink tabular-nums">RTO 4887 ms</span></div>
     <div class="grid grid-cols-4 gap-2 text-center">
       <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">alarm</span></span>
       <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">guidance</span></span>
-      <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">vitals</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">15</span><span class="text-muted">vitals</span></span>
       <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">logs</span></span>
     </div>
-    <div class="flex items-center justify-between text-muted"><span>Sent 12.0 KB · lost datagrams 15</span><span>0 in flight</span></div>
+    <div class="flex items-center justify-between text-muted"><span>Sent 12.6 KB · lost datagrams 16</span><span>1 in flight</span></div>
     
-    <div class="flex flex-wrap gap-1.5"><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">hello · 60 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">ping · 10.4 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">pong · 10.8 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">vitals · 18.8 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">record · 214.2 B avg</span></div>
+    <div class="flex flex-wrap gap-1.5"><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">hello · 60 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">ping · 10.6 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">pong · 10.9 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">vitals · 18.1 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">record · 208.9 B avg</span></div>
     
   </div>
   
@@ -747,7 +747,7 @@
   
   <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
     <dt class="text-muted">Last event</dt>
-    <dd class="min-w-0 text-ink" data-station-last=""><span class="font-mono tabular-nums text-muted">14:01:18</span> · AED taken from compartment 01 · 0 left</dd>
+    <dd class="min-w-0 text-ink" data-station-last=""><span class="font-mono tabular-nums text-muted">14:01:53</span> · AED taken from compartment 01 · 0 left</dd>
     
     <dt class="text-muted">Battery</dt>
     <dd class="flex items-center gap-2 text-ink"><span class="h-1.5 w-20 overflow-hidden rounded-full bg-line"><span class="spring-w block h-full rounded-full bg-ok" style="width: 96%"></span></span><span class="tabular-nums">96%</span></dd>
@@ -767,32 +767,32 @@
     
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">1</span>
-      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Medical station · corridor B</span><span class="text-muted">station · 57 in / 49 out</span></span>
-      <span class="font-mono tabular-nums text-ink">98.7 ms</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Medical station · corridor B</span><span class="text-muted">station · 78 in / 67 out</span></span>
+      <span class="font-mono tabular-nums text-ink">80.1 ms</span>
     </li>
     
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">2</span>
-      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 4B</span><span class="text-muted">app · 4B · 58 in / 101 out</span></span>
-      <span class="font-mono tabular-nums text-ink">2 ms</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 4B</span><span class="text-muted">app · 4B · 82 in / 144 out</span></span>
+      <span class="font-mono tabular-nums text-ink">2.5 ms</span>
     </li>
     
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">3</span>
-      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 3B</span><span class="text-muted">app · 3B · 58 in / 101 out</span></span>
-      <span class="font-mono tabular-nums text-ink">2.4 ms</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 3B</span><span class="text-muted">app · 3B · 82 in / 144 out</span></span>
+      <span class="font-mono tabular-nums text-ink">3 ms</span>
     </li>
     
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">4</span>
-      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 1B</span><span class="text-muted">app · 1B · 58 in / 101 out</span></span>
-      <span class="font-mono tabular-nums text-ink">2.4 ms</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 1B</span><span class="text-muted">app · 1B · 82 in / 144 out</span></span>
+      <span class="font-mono tabular-nums text-ink">3.1 ms</span>
     </li>
     
     <li class="flex items-center gap-3 py-2 text-xs">
       <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">5</span>
-      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Dashboard</span><span class="text-muted">dash · 58 in / 101 out</span></span>
-      <span class="font-mono tabular-nums text-ink">1.7 ms</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Dashboard</span><span class="text-muted">dash · 82 in / 144 out</span></span>
+      <span class="font-mono tabular-nums text-ink">3 ms</span>
     </li>
     
     

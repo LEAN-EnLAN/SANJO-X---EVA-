@@ -89,4 +89,17 @@ public class AppModeTest {
         assertFalse(AppMode.isOnlineDemoHost("https://eva-wearmeds.vercel.app.evil.example/"));
         assertFalse(AppMode.isOnlineDemoHost("https://192.168.0.10:8080/app"));
     }
+
+    @Test
+    public void demoMicOriginIsTheDemosOwnHost() {
+        assertTrue(AppMode.ONLINE.isDemoMediaOrigin("https://eva-wearmeds.vercel.app"));
+        assertTrue(AppMode.ONLINE.isDemoMediaOrigin("https://eva-wearmeds.vercel.app/"));
+        assertFalse(AppMode.ONLINE.isDemoMediaOrigin("http://eva-wearmeds.vercel.app"));
+        assertFalse(AppMode.ONLINE.isDemoMediaOrigin("https://appassets.androidplatform.net"));
+        assertTrue(AppMode.OFFLINE.isDemoMediaOrigin("https://appassets.androidplatform.net/"));
+        assertFalse(AppMode.OFFLINE.isDemoMediaOrigin("https://eva-wearmeds.vercel.app"));
+        assertFalse(AppMode.OFFLINE.isDemoMediaOrigin("https://appassets.androidplatform.net:8443"));
+        assertFalse(AppMode.HUB.isDemoMediaOrigin("https://eva-wearmeds.vercel.app"));
+        assertFalse(AppMode.ONLINE.isDemoMediaOrigin(null));
+    }
 }

@@ -233,7 +233,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(true); // uploads of content:// photos picked or captured
         s.setSupportMultipleWindows(false);
-        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.4");
+        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.5");
         // The demo replay is plain static pages: no file:// or content:// beyond uploads, and its player frames and
         // fetches stay same-origin (the asset loader serves the bundle on an https origin, not file://).
         s.setAllowFileAccessFromFileURLs(false);
@@ -589,10 +589,8 @@ public class MainActivity extends Activity {
     private final class HubChrome extends WebChromeClient {
         @Override
         public void onPermissionRequest(PermissionRequest request) {
-            // mic and camera for a ship hub only; the demo replay never needs them
-            boolean sameOrigin = mode == AppMode.HUB && config.isSameOrigin(request.getOrigin().toString());
-            String[] wanted = MediaPolicy.supported(request.getResources());
-            if (!sameOrigin || wanted.length == 0) {
+            String[] wanted = allowedMedia(request);
+            if (wanted.length == 0) {
                 request.deny();
                 return;
             }
@@ -629,9 +627,19 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * What this page may ask for: mic and camera for the ship hub's origin; the mic only for the demo's own origin
+     * (Vercel online, the asset host offline); nothing for anyone else.
+     */
+    private String[] allowedMedia(PermissionRequest request) {
+        String origin = request.getOrigin() == null ? null : request.getOrigin().toString();
+        if (mode == AppMode.HUB) return config.isSameOrigin(origin) ? MediaPolicy.supported(request.getResources()) : new String[0];
+        return mode.isDemoMediaOrigin(origin) ? MediaPolicy.audioOnly(request.getResources()) : new String[0];
+    }
+
     private void grantOrDeny(PermissionRequest request) {
-        String[] grant = MediaPolicy.toGrant(request.getResources(),
-                mode == AppMode.HUB && config.isSameOrigin(request.getOrigin().toString()),
+        String[] allowed = allowedMedia(request);
+        String[] grant = MediaPolicy.toGrant(allowed, allowed.length > 0,
                 checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED,
                 checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
         if (grant.length > 0) {

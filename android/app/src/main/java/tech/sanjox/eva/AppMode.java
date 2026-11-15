@@ -91,6 +91,24 @@ public enum AppMode {
         return ASSET_HOST.equals(host) && path.startsWith(OFFLINE_ROOT);
     }
 
+    /**
+     * The page origin a demo mode may give the microphone to: the hosted demo online, the bundle's asset host offline
+     * (https, default port). Never in {@link #HUB}, whose origin rule is {@link HubConfig#isSameOrigin(String)}.
+     */
+    public boolean isDemoMediaOrigin(String origin) {
+        if (origin == null || this == HUB) return false;
+        URI u;
+        try {
+            u = new URI(origin.trim());
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        if (u.getScheme() == null || u.getHost() == null || !"https".equals(u.getScheme().toLowerCase(Locale.ROOT))) return false;
+        if (u.getPort() != -1 && u.getPort() != 443) return false;
+        String host = u.getHost().toLowerCase(Locale.ROOT);
+        return this == ONLINE ? ONLINE_HOST.equals(host) : ASSET_HOST.equals(host);
+    }
+
     /** True for a URL on the hosted demo's host (the only host the online mode talks to). */
     public static boolean isOnlineDemoHost(String url) {
         return ONLINE_HOST.equals(HubConfig.hostOf(url));

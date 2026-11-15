@@ -1,478 +1,266 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{color-scheme:dark;background:#000;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
-<title>Eva Replay</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Eva demo</title>
+<link rel="icon" href="static/icons/icon-192.png">
 <style>
-/* Layout: a ship's watch board. Story bar on top, the passenger phone on the left, the crew
-   dashboard on the right with the ground or the station under it. Black canvas, Inter 400,
-   1px rules, square corners (the landing's language); the app screens keep their own look. */
-:root{
-  --bg:#0c0c0c; --ink:#f9f7f4; --rule:#3d3d3d; --muted:rgba(249,247,244,.6); --faint:rgba(249,247,244,.36);
-  --stage:#151316; --alarm:#ff5a4e;
-  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --t-xs:12px; --t-s:13px; --t-m:15px; --t-l:22px;
-  color-scheme:dark;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--t-m)/1.35 var(--font);-webkit-font-smoothing:antialiased;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-h1,h2,p{margin:0;font-weight:400}
-button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;border-radius:0}
-:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
-code{font-family:var(--mono);font-size:.92em}
+@font-face{font-family:Inter;src:url(static/fonts/inter-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{--bg:#000;--ink:#f4f3f0;--mu:#9b9996;--rule:#2a2a2a;--eva:#1fe5c4;--alarm:#ff2a1f;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.4 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
 
-.shell{display:flex;flex-direction:column;min-height:100%;padding-block:12px 16px;gap:12px}
-
-/* header */
-.top{position:relative;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;border-bottom:1px solid var(--rule);padding-bottom:10px}
-.top h1{font-size:var(--t-l);letter-spacing:-.01em}
-.top .note{color:var(--muted);font-size:var(--t-s);flex:1;min-width:0}
-.live{font-size:var(--t-s)}
-.lang{display:flex;border:1px solid var(--rule);font-size:var(--t-xs);letter-spacing:.06em}
-.lang button{padding:3px 8px;color:var(--muted)}
+/* menu */
+#menu{min-height:100%;display:flex;flex-direction:column;padding:max(24px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));max-width:880px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:15px;letter-spacing:.02em}
+.lang{display:flex;border:1px solid var(--rule)}
+.lang button{padding:6px 12px;font-size:13px;letter-spacing:.06em;color:var(--mu)}
 .lang button+button{border-left:1px solid var(--rule)}
-.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.live summary{cursor:pointer;list-style:none;text-transform:uppercase;letter-spacing:.06em;font-size:var(--t-xs)}
-.live summary::-webkit-details-marker{display:none}
-.live summary::before{content:"+ "}
-.live[open] summary::before{content:"− "}
-.live .body{position:absolute;right:0;top:calc(100% + 1px);z-index:20;width:min(560px,100%);background:var(--bg);border:1px solid var(--rule);padding:16px;display:flex;flex-direction:column;gap:10px;color:var(--muted)}
-.live pre{margin:0;padding:10px 12px;border:1px solid var(--rule);color:var(--ink);font:12px/1.5 var(--mono);overflow-x:auto;white-space:pre}
-.live b{color:var(--ink);font-weight:400}
+.lang button[aria-pressed=true]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--eva)}
+h1{font-weight:400;font-size:clamp(34px,7vw,64px);line-height:1.02;letter-spacing:-.02em;margin:40px 0 10px}
+.sub{color:var(--mu);font-size:15px;margin-bottom:32px}
+.lab{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);margin:28px 0 10px}
+.list{border-top:1px solid var(--rule)}
+.row{display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:18px 4px;border-bottom:1px solid var(--rule);transition:background .2s}
+.row:hover,.row:focus-visible{background:#0b0b0b;outline:none}
+.row .n{font-size:13px;color:var(--mu);width:28px;flex:none;font-variant-numeric:tabular-nums}
+.row .t{flex:1;min-width:0}
+.row .t b{display:block;font-weight:400;font-size:clamp(18px,3.2vw,24px)}
+.row .t span{display:block;color:var(--mu);font-size:14px;margin-top:2px}
+.row .go{flex:none;width:22px;height:22px;opacity:.6}
+.scenes{display:flex;flex-wrap:wrap;gap:8px}
+.scenes button{border:1px solid var(--rule);padding:9px 14px;font-size:14px;color:var(--mu)}
+.scenes button[aria-pressed=true]{color:var(--ink);border-color:var(--ink)}
+.scenes button.al[aria-pressed=true]{border-color:var(--alarm)}
+.foot{margin-top:auto;padding-top:36px;color:var(--mu);font-size:13px;display:flex;gap:18px;flex-wrap:wrap}
 
-/* story bar */
-.story{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.ctl{display:flex;border-right:1px solid var(--rule)}
-.ctl button{width:44px;height:52px;display:grid;place-items:center;border-right:1px solid var(--rule)}
-.ctl button:last-child{border-right:0}
-.ctl button:hover{background:var(--stage)}
-.ctl svg{width:16px;height:16px;fill:currentColor}
-.steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));min-width:0}
-.step{position:relative;text-align:left;padding:8px 12px 10px;border-right:1px solid var(--rule);color:var(--faint);display:flex;flex-direction:column;gap:2px;min-width:0}
-.step:last-child{border-right:0}
-.step .n{font-size:var(--t-xs);font-variant-numeric:tabular-nums;letter-spacing:.06em}
-.step .l{font-size:var(--t-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.step:hover{color:var(--muted)}
-.step.done{color:var(--muted)}
-.step[aria-current="step"]{color:var(--ink)}
-.step[aria-current="step"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink);transform-origin:0 50%}
-.step.alarm .n::after{content:" ●";color:var(--alarm)}
-body.playing .step[aria-current="step"]::after{animation:fill var(--dwell,7s) linear forwards}
-@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-
-.caption{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,32ch);gap:6px 24px;align-items:baseline;min-height:calc(3 * 1.35em)}
-.caption p{max-width:78ch;text-wrap:pretty}
-.caption .hint{color:var(--muted);font-size:var(--t-s);text-align:right}
-.caption .hint b{color:var(--ink);font-weight:400}
-
-/* stage */
-.stage{flex:1;display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;min-height:0}
-.col{display:flex;flex-direction:column;gap:8px;min-width:0;min-height:0}
-.label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:var(--t-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.label .who{color:var(--ink)}
-.seg{display:flex;border:1px solid var(--rule)}
-.seg button{flex:1;padding:7px 10px;border-right:1px solid var(--rule);color:var(--muted);font-size:var(--t-s);text-align:left;white-space:nowrap}
-.seg button:last-child{border-right:0}
-.seg button small{display:block;font-size:var(--t-xs);color:var(--faint)}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.seg button[aria-pressed="true"] small{color:rgba(12,12,12,.6)}
-.seg button.cue:not([aria-pressed="true"]){color:var(--ink);box-shadow:inset 0 -2px 0 var(--alarm)}
-
-.phone{position:relative;border:1px solid var(--rule);background:#000;padding:8px;align-self:flex-start}
-.frame{position:relative;overflow:hidden;background:var(--stage)}
-.frame iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:#000;display:block}
-.frame iframe.next{visibility:hidden}
-.pane{position:relative;border:1px solid var(--rule);min-height:0}
-.right{display:grid;grid-template-rows:auto minmax(0,1.35fr) auto minmax(0,1fr);gap:8px}
-.lowerhead{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.lowerhead .seg{min-width:260px}
-.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:24px;color:var(--muted);background:var(--bg)}
-.placeholder p:first-child{color:var(--ink);font-size:var(--t-l)}
-
-.tabs{display:none}
-
-/* desktop: fit the viewport */
-@media (min-width:1000px){
-  html,body{overflow:hidden}
-  .shell{height:100%}
-}
-/* phone / tablet: one view at a time */
-@media (max-width:999px){
-  .stage{display:block}
-  .tabs{display:flex;border:1px solid var(--rule);position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg)}
-  .tabs button{flex:1;padding:10px 4px;border-right:1px solid var(--rule);color:var(--muted);font-size:var(--t-s)}
-  .tabs button:last-child{border-right:0}
-  .tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
-  .right{display:block}
-  .right > *{margin-top:8px}
-  .stage [data-panel]{display:none}
-  .stage[data-show="phone"] [data-panel="phone"],
-  .stage[data-show="dash"] [data-panel="dash"],
-  .stage[data-show="lower"] [data-panel="lower"]{display:flex}
-  .stage[data-show="dash"] .right,.stage[data-show="lower"] .right{display:flex;flex-direction:column}
-  .col.left{align-items:stretch;margin-top:8px}
-  .phone{align-self:center}
-  .pane{height:72vh;flex:none}
-  .lowerhead #lower-seg{display:none}
-  .steps{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .step:nth-child(3){border-right:0}
-  .step:nth-child(-n+3){border-bottom:1px solid var(--rule)}
-  .ctl{flex-direction:column}
-  .ctl button{border-right:0;border-bottom:1px solid var(--rule);height:auto;flex:1}
-  .ctl button:last-child{border-bottom:0}
-  .caption{grid-template-columns:1fr;min-height:0}
-  .caption .hint{text-align:left}
-  .top .note{flex-basis:100%;order:3}
-}
-@media (max-width:420px){
-  .step{padding:6px 8px 8px}
-  .step .l{font-size:var(--t-s);white-space:normal}
-  .seg button{padding:6px 6px}
-}
-@media (prefers-reduced-motion:reduce){body.playing .step[aria-current="step"]::after{animation:none}}
+/* viewer */
+#viewer{position:fixed;inset:0;background:#000;display:none}
+#viewer.on{display:block}
+#frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+#bar{position:fixed;right:max(8px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:2px;background:rgba(0,0,0,.82);border:1px solid var(--rule);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:4px;transition:opacity .35s}
+#bar.dim{opacity:.35}
+#bar:not(.open) > :not(#bHandle){display:none}
+#bar.open #bHandle{display:none}
+#scn{writing-mode:vertical-rl;transform:rotate(180deg);padding:8px 0!important;max-height:30vh}
+#frame.phone{left:50%;width:min(100%,430px);transform:translateX(-50%);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+/* the band's own screen: 16:9 in the middle on a big screen, the whole screen on a band-shaped one */
+#frame.wrist{left:50%;top:50%;right:auto;bottom:auto;width:min(100vw,960px,177.78vh);height:auto;aspect-ratio:16/9;transform:translate(-50%,-50%);border:1px solid var(--rule)}
+body.band #frame.wrist{inset:0;width:100%;height:100%;aspect-ratio:auto;transform:none;border:0}
+body.band #bar,body.band #hint{display:none}
+@media (max-width:600px){#frame.phone{border:0}}
+#bar button{width:40px;height:40px;display:grid;place-items:center}
+#bar button:hover{background:#111}
+#bar svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+#scn{font-size:13px;color:var(--mu);padding:0 8px;white-space:nowrap;max-width:44vw;overflow:hidden;text-overflow:ellipsis}
+#scn.al{color:var(--alarm)}
+#hint{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%);z-index:11;background:rgba(0,0,0,.85);border:1px solid var(--rule);padding:8px 14px;font-size:13px;color:var(--ink);pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap}
+#hint.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+</head>
+<body>
 
-<div class="shell">
-  <header class="top">
-    <h1>Eva · replay</h1>
-    <p class="note" data-i18n="note"></p>
-    <div class="lang" role="group" aria-label="Language / Idioma" id="lang">
-      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
-      <button type="button" data-lang="es" aria-pressed="false" lang="es">ES</button>
-    </div>
-    <details class="live" id="live">
-      <summary data-i18n="live"></summary>
-      <div class="body" data-i18n="liveBody"></div>
-    </details>
-  </header>
-
-  <nav class="story" aria-label="Story" data-i18n-aria="story">
-    <div class="ctl">
-      <button type="button" id="prev" data-i18n-aria="prev"><svg viewBox="0 0 16 16"><path d="M4 2h2v12H4zM14 2v12L7 8z"/></svg></button>
-      <button type="button" id="play" aria-label="Play" aria-pressed="false"><svg viewBox="0 0 16 16" id="play-ic"><path d="M4 2l10 6-10 6z"/></svg></button>
-      <button type="button" id="next" data-i18n-aria="next"><svg viewBox="0 0 16 16"><path d="M10 2h2v12h-2zM2 2v12l7-6z"/></svg></button>
-    </div>
-    <div class="steps" id="steps"></div>
-  </nav>
-
-  <div class="caption" aria-live="polite">
-    <p id="cap"></p>
-    <p class="hint" id="hint"></p>
+<main id="menu">
+  <div class="top">
+    <p class="brand">Eva <span style="color:var(--mu)">by WearMeds</span> · <span data-t="demo">demo</span></p>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></div>
   </div>
+  <h1 data-t="h1">Pick a view.</h1>
+  <p class="sub" data-t="sub">Each one opens full screen. Switch views or scenes any time from the small button in the corner.</p>
 
-  <div class="tabs" role="tablist" id="tabs">
-    <button type="button" role="tab" data-tab="phone" aria-selected="true" data-i18n="tPhone"></button>
-    <button type="button" role="tab" data-tab="dash" aria-selected="false" data-i18n="tCrew"></button>
-    <button type="button" role="tab" data-tab="lower" data-sub="ground" aria-selected="false" data-i18n="tGround"></button>
-    <button type="button" role="tab" data-tab="lower" data-sub="station" aria-selected="false" data-i18n="tStation"></button>
+  <p class="lab" data-t="lScene">Scene</p>
+  <div class="scenes" id="scenes"></div>
+
+  <p class="lab" data-t="lView">View</p>
+  <div class="list" id="views"></div>
+
+  <div class="foot">
+    <a href="board.html" data-t="board">All views side by side</a>
+    <a href="../" data-t="site">Back to the site</a>
   </div>
+</main>
 
-  <main class="stage" id="stage" data-show="phone">
-    <section class="col left" data-panel="phone" data-i18n-aria="phone">
-      <div class="label"><span data-i18n="phone"></span><span class="who" id="who"></span></div>
-      <div class="seg" id="seats">
-        <button type="button" data-seat="4B" aria-pressed="true">4B Ana<small data-i18n="s4B"></small></button>
-        <button type="button" data-seat="3B" aria-pressed="false">3B Leo<small data-i18n="s3B"></small></button>
-        <button type="button" data-seat="1B" aria-pressed="false">1B Tomás<small data-i18n="s1B"></small></button>
-      </div>
-      <div class="phone"><div class="frame" id="f-phone"></div></div>
-    </section>
-    <section class="col right">
-      <div class="label" data-panel="dash"><span data-i18n="dash"></span><span class="who" data-i18n="dashWho"></span></div>
-      <div class="pane frame" id="f-dash" data-panel="dash"></div>
-      <div class="lowerhead" data-panel="lower">
-        <div class="label"><span id="lower-label">Ground · flight surgeon</span></div>
-        <div class="seg" id="lower-seg">
-          <button type="button" data-lower="ground" aria-pressed="true" data-i18n="bGround"></button>
-          <button type="button" data-lower="station" aria-pressed="false" data-i18n="bStation"></button>
-        </div>
-      </div>
-      <div class="pane frame" id="f-lower" data-panel="lower"></div>
-    </section>
-  </main>
-</div>
+<section id="viewer" aria-label="Eva view">
+  <iframe id="frame" title="Eva" allow="fullscreen; microphone; camera; autoplay"></iframe>
+  <div id="hint"></div>
+  <div id="bar" role="toolbar" aria-label="Demo controls">
+    <button id="bHandle" aria-label="Show controls" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18" r="1.2"/></svg></button>
+    <button id="bMenu" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <button id="bPrev" aria-label="Previous scene"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span id="scn"></span>
+    <button id="bNext" aria-label="Next scene"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button id="bView" aria-label="Next view"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="6"/><rect x="13" y="13" width="8" height="6"/></svg></button>
+    <button id="bFull" aria-label="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+</section>
 
 <script>
 (function () {
   "use strict";
-  var DATA = {"station":true,"states":[{"id":"s1","title":"Normal day","phone":{"4B":"s1-4B-home.html","3B":"s1-3B-home.html","1B":"s1-1B-home.html"},"dash":"s1-dash.html","ground":"s1-ground.html","station":"s1-station.html"},{"id":"s2","title":"Cardiac arrest","phone":{"4B":"s2-4B-emergency.html","3B":"s2-3B-emergency.html","1B":"s2-1B-emergency.html"},"dash":"s2-dash.html","ground":"s2-ground.html","station":"s2-station.html"},{"id":"s3","title":"Help on the way","phone":{"4B":"s3-4B-emergency.html","3B":"s3-3B-emergency.html","1B":"s3-1B-emergency.html"},"dash":"s3-dash.html","ground":"s3-ground.html","station":"s3-station.html"},{"id":"s4","title":"AED taken","phone":{"4B":"s4-4B-emergency.html","3B":"s4-3B-emergency.html","1B":"s4-1B-emergency.html"},"dash":"s4-dash.html","ground":"s4-ground.html","station":"s4-station.html"},{"id":"s5","title":"Records on Earth","phone":{"4B":"s5-4B-home.html","3B":"s5-3B-home.html","1B":"s5-1B-home.html"},"dash":"s5-dash.html","ground":"s5-ground.html","station":"s5-station.html"},{"id":"s6","title":"Solar storm","phone":{"4B":"s6-4B-storm.html","3B":"s6-3B-storm.html","1B":"s6-1B-storm.html"},"dash":"s6-dash.html","ground":"s6-ground.html","station":"s6-station.html"}]};
-  var DWELL = 7000;
-  // player chrome in English and Spanish; the captured app screens stay in English
-  var T = {
-    en: {
-      note: "Static replay of the real app. Run <code>eva demo</code> for the live version.",
-      live: "Run it live",
-      liveBody: "<p>One binary runs the ship hub, the simulated bands and the ground. From the repo's <b>app/</b> folder:</p>" +
-        "<pre>cargo build --release\n./target/release/eva demo            # ship :8080 · ground :8081\n./target/release/eva demo --tls      # phones need HTTPS to install the app</pre>" +
-        "<p>Open <b>/app?seat=4B</b>, <b>/app?seat=3B</b> and <b>/app?seat=1B</b> on three phones, <b>/dash</b> on the projector and <b>:8081/dash</b> for the ground{STATION}.</p>" +
-        "<p>Dev panel: on the dashboard press <b>↑ ↑ ↓ ↓ ← → ← → B A</b> (on a phone, tap the clock 5 times), pick seat 4B, then <b>Cardiac arrest</b>. The case opens about 20 s later, or press <b>+1 min</b>.</p>" +
-        "<p>Works with no internet: Eva answers from her on-board rules. A Groq key, if you use one, stays in the server's environment as <code>GROQ_API_KEY</code>. Full script: <b>docs/app/DEMO.md</b>.</p>",
-      station: ", <b>/station</b> on a tablet",
-      story: "Story", prev: "Previous step", next: "Next step", play: "Play", pause: "Pause",
-      tPhone: "Phone", tCrew: "Crew", tGround: "Ground", tStation: "Station",
-      phone: "Passenger phone", s4B: "the patient", s3B: "nearest · CPR", s1B: "nearest the AED",
-      dash: "Crew dashboard · ship hub", dashWho: "Mara Okoye · crew lead",
-      bGround: "Ground dashboard", bStation: "Medical station",
-      lGround: "Ground · flight surgeon", lStation: "Medical station · corridor B",
-      ph: "<p>Medical station</p><p>The station screen (<code>/station</code>) was not in the build this replay was captured from. Run <code>eva demo</code> and open it live.</p>",
-      missing: "Replay data missing.",
-      steps: [
-        ["Normal day", "Day 96 in space. Fifteen passengers, a WearMeds band on every wrist. Eva reads each band against that person's own usual range, keeps the logs and gives diagnostic support.", "Try <b>Ask Eva</b>, then the <b>How am I?</b> chip, on Ana's phone."],
-        ["Cardiac arrest", "Ana's band reports no pulse, no movement and no answer. Eva's reflex rule needs all three signs. It asks Leo, 3 m away, for CPR, and Tomás, nearest the AED station, to bring the AED. Three phones change at the same second.", "Tap <b>I'm going</b> on 3B or <b>I have it</b> on 1B."],
-        ["Help on the way", "Leo gets guided CPR at 110 pushes a minute on his own band. Tomás heads to the medical station in corridor B. Every step becomes a signed record on the case timeline.", ["On the <b>Medical station</b>, tap compartment <b>01</b>.", "Press next to attach the AED."]],
-        ["AED taken", "The AED is out of compartment 01 and on Ana's chest. The AED reads the heart and decides the shock, not Eva. Eva guides, records and warns.", "On the crew dashboard, <b>Close case</b>."],
-        ["Records on Earth", "The crew lead closes the case. Earth receives and acknowledges the signed records, checking each hash and signature on arrival. Ship time and ground time sit side by side.", ""],
-        ["Solar storm", "A solar storm warning reaches every app at once: go to the Deck B shelter, where water walls block the radiation.", ""]
-      ]
-    },
-    es: {
-      note: "Réplica estática de la app real. Ejecutá <code>eva demo</code> para la versión en vivo. Las pantallas de la app están en inglés (requisito de NASA).",
-      live: "Correla en vivo",
-      liveBody: "<p>Un solo binario corre el hub de la nave, los brazaletes simulados y la base en Tierra. Desde la carpeta <b>app/</b> del repo:</p>" +
-        "<pre>cargo build --release\n./target/release/eva demo            # nave :8080 · Tierra :8081\n./target/release/eva demo --tls      # los teléfonos necesitan HTTPS para instalar la app</pre>" +
-        "<p>Abrí <b>/app?seat=4B</b>, <b>/app?seat=3B</b> y <b>/app?seat=1B</b> en tres teléfonos, <b>/dash</b> en el proyector y <b>:8081/dash</b> para Tierra{STATION}.</p>" +
-        "<p>Panel de desarrollo: en el tablero apretá <b>↑ ↑ ↓ ↓ ← → ← → B A</b> (en un teléfono, tocá el reloj 5 veces), elegí el asiento 4B y después <b>Cardiac arrest</b>. El caso se abre unos 20 s después, o apretá <b>+1 min</b>.</p>" +
-        "<p>Funciona sin internet: Eva responde con sus reglas a bordo. Si usás una clave de Groq, queda en el entorno del servidor como <code>GROQ_API_KEY</code>. Guion completo: <b>docs/app/DEMO.md</b>.</p>",
-      station: ", <b>/station</b> en una tablet",
-      story: "Historia", prev: "Paso anterior", next: "Paso siguiente", play: "Reproducir", pause: "Pausa",
-      tPhone: "Teléfono", tCrew: "Tripulación", tGround: "Tierra", tStation: "Estación",
-      phone: "Teléfono del pasajero", s4B: "la paciente", s3B: "el más cercano · RCP", s1B: "el más cerca del DEA",
-      dash: "Tablero de la tripulación · hub de la nave", dashWho: "Mara Okoye · jefa de tripulación",
-      bGround: "Tablero en Tierra", bStation: "Estación médica",
-      lGround: "Tierra · medicina de vuelo", lStation: "Estación médica · pasillo B",
-      ph: "<p>Estación médica</p><p>La pantalla de la estación (<code>/station</code>) no estaba en la versión que se capturó para esta réplica. Ejecutá <code>eva demo</code> y abrila en vivo.</p>",
-      missing: "Faltan los datos de la réplica.",
-      steps: [
-        ["Día normal", "Día 96 en el espacio. Quince pasajeros, un brazalete WearMeds en cada muñeca. Eva lee cada brazalete contra el rango habitual de esa persona, lleva los registros y da apoyo al diagnóstico.", "Probá <b>Ask Eva</b> y después el botón <b>How am I?</b> en el teléfono de Ana."],
-        ["Paro cardíaco", "El brazalete de Ana no detecta pulso, ni movimiento, ni respuesta. La regla refleja de Eva necesita las tres señales. Le pide RCP a Leo, a 3 m, y le pide a Tomás, el más cerca de la estación, que traiga el DEA. Tres teléfonos cambian en el mismo segundo.", "Tocá <b>I'm going</b> en 3B o <b>I have it</b> en 1B."],
-        ["La ayuda va en camino", "Leo recibe RCP guiada a 110 compresiones por minuto en su propio brazalete. Tomás va a la estación médica del pasillo B. Cada paso queda como un registro firmado en la línea de tiempo del caso.", ["En la <b>Estación médica</b>, tocá el compartimento <b>01</b>.", "Pasá al paso siguiente para conectar el DEA."]],
-        ["DEA retirado", "El DEA salió del compartimento 01 y está sobre el pecho de Ana. El DEA lee el corazón y decide la descarga, no Eva. Eva guía, registra y avisa.", "En el tablero de la tripulación, <b>Close case</b>."],
-        ["Registros en Tierra", "La jefa de tripulación cierra el caso. Tierra recibe y confirma los registros firmados, y verifica el hash y la firma de cada uno al llegar. La hora de la nave y la de Tierra quedan lado a lado.", ""],
-        ["Tormenta solar", "Un aviso de tormenta solar llega a todas las apps a la vez: ir al refugio de la cubierta B, donde las paredes de agua frenan la radiación.", ""]
-      ]
-    }
-  };
-  var STEPS = [
-    { hash: "normal-day", focus: "4B" },
-    { hash: "cardiac-arrest", focus: "3B", alarm: true },
-    { hash: "help-on-the-way", focus: "3B", alarm: true },
-    { hash: "aed-taken", focus: "1B", alarm: true },
-    { hash: "records-on-earth", focus: "4B" },
-    { hash: "solar-storm", focus: "4B" }
+  var SCENES = [
+    { id: "s1", en: "Normal day", es: "Día normal" },
+    { id: "s2", en: "Cardiac arrest", es: "Paro cardíaco", al: true },
+    { id: "s3", en: "Help on the way", es: "La ayuda va en camino", al: true },
+    { id: "s4", en: "AED taken", es: "DEA retirado", al: true },
+    { id: "s5", en: "Records on Earth", es: "Registros en la Tierra" },
+    { id: "s6", en: "Solar storm", es: "Tormenta solar", al: true }
   ];
-  // EN by default; a saved choice wins; ?lang=es always forces Spanish
-  var LANG_KEY = "eva-replay-lang", lang = "en";
-  try { if (localStorage.getItem(LANG_KEY) === "es") lang = "es"; } catch (e) {}
-  try { if (new URLSearchParams(location.search).get("lang") === "es") lang = "es"; } catch (e) {}
-  function t(k) { return T[lang][k]; }
-  function stepText(i, part) {
-    var v = T[lang].steps[i][part];
-    return Array.isArray(v) ? v[DATA && DATA.station ? 0 : 1] : v;
-  }
-  if (!DATA || !DATA.states || DATA.states.length < STEPS.length) { document.getElementById("cap").textContent = t("missing"); return; }
-  var $ = function (id) { return document.getElementById(id); };
-  var cur = 0, seat = "4B", lower = "ground", playing = false, timer = 0, mobile = false;
-  var SEATS = { "4B": "Ana Ruiz · 4B", "3B": "Leo Brandt · 3B", "1B": "Tomás Rey · 1B" };
-
-  // ---------------------------------------------------------------- frames that scale a fixed logical size
-  var slots = {
-    phone: { el: $("f-phone"), w: 390, h: 844, fixedH: true },
-    dash: { el: $("f-dash"), w: 1280 },
-    lower: { el: $("f-lower"), w: 1280 }
+  var PHONE = { s1: "home", s2: "emergency", s3: "emergency", s4: "emergency", s5: "home", s6: "storm" };
+  // the band's screen per scene (captured from the app at 640 × 360 in wristband mode)
+  var WRIST = { s1: "wrist", s2: "wrist-emergency", s3: "wrist-emergency", s4: "wrist-emergency", s5: "wrist", s6: "wrist-storm" };
+  var VIEWS = [
+    { id: "4B", kind: "phone", en: ["Ana · seat 4B", "Passenger phone · the patient"], es: ["Ana · asiento 4B", "Teléfono del pasajero · la paciente"] },
+    { id: "3B", kind: "phone", en: ["Leo · seat 3B", "Passenger phone · starts CPR"], es: ["Leo · asiento 3B", "Teléfono del pasajero · empieza la RCP"] },
+    { id: "1B", kind: "phone", en: ["Tomás · seat 1B", "Passenger phone · brings the AED"], es: ["Tomás · asiento 1B", "Teléfono del pasajero · trae el DEA"] },
+    { id: "dash", kind: "wide", en: ["Crew dashboard", "The ship hub's view of everyone"], es: ["Panel de la tripulación", "Lo que ve el hub de la nave"] },
+    { id: "station", kind: "wide", en: ["Emergency station", "The wall cabinet's screen"], es: ["Estación de emergencia", "La pantalla del gabinete"] },
+    { id: "ground", kind: "wide", en: ["Mission control · Earth", "Signed records, received and acknowledged"], es: ["Control de misión · Tierra", "Registros firmados, recibidos y confirmados"] },
+    { id: "w4B", kind: "wrist", seat: "4B", en: ["Wristband · Ana 4B", "The band's own screen · the patient"], es: ["Pulsera · Ana 4B", "La pantalla de la pulsera · la paciente"] },
+    { id: "w3B", kind: "wrist", seat: "3B", en: ["Wristband · Leo 3B", "The band's own screen · starts CPR"], es: ["Pulsera · Leo 3B", "La pantalla de la pulsera · empieza la RCP"] },
+    { id: "w1B", kind: "wrist", seat: "1B", en: ["Wristband · Tomás 1B", "The band's own screen · brings the AED"], es: ["Pulsera · Tomás 1B", "La pantalla de la pulsera · trae el DEA"] }
+  ];
+  // Wristband mode, the app's own rule (head.html): a landscape screen at most 480 px high and at least 8:5, or a
+  // tiny square. A band-shaped screen opens the chosen seat's band view full screen, with no menu.
+  // ?mode=wristband / ?mode=phone override it for this page.
+  var BAND = "(orientation: landscape) and (max-height: 480px) and (min-aspect-ratio: 8/5), (max-width: 340px) and (max-height: 340px)";
+  var T = {
+    en: { demo: "demo", h1: "Pick a view.", sub: "Each one opens full screen. Switch views or scenes any time from the small button in the corner.", lScene: "Scene", lView: "View", board: "All views side by side", site: "Back to the site", full: "Full screen isn't available here" },
+    es: { demo: "demo", h1: "Elegí una vista.", sub: "Cada una se abre en pantalla completa. Cambiá de vista o de escena cuando quieras desde el botón de la esquina.", lScene: "Escena", lView: "Vista", board: "Todas las vistas juntas", site: "Volver al sitio", full: "Pantalla completa no disponible acá" }
   };
-  function layout() {
-    mobile = window.matchMedia("(max-width: 999px)").matches;
-    // phone: 390 × 844, scaled to the room it has
-    var p = slots.phone, top = p.el.getBoundingClientRect().top;
-    var availH = mobile ? Infinity : window.innerHeight - top - 16 - 9;
-    var availW = mobile ? document.documentElement.clientWidth - 32 - 18 : 420;
-    p.scale = Math.min(1, availW / 390, availH / 844);
-    p.el.style.width = Math.round(390 * p.scale) + "px";
-    p.el.style.height = Math.round(844 * p.scale) + "px";
-    ["dash", "lower"].forEach(function (k) {
-      var s = slots[k], r = s.el.getBoundingClientRect();
-      s.scale = mobile ? 1 : Math.min(1, r.width / s.w);
-      s.lw = mobile ? r.width : s.w; s.lh = r.height / s.scale;
-    });
-    Object.keys(slots).forEach(function (k) { slots[k].el.querySelectorAll("iframe").forEach(function (f) { size(k, f); }); });
-  }
-  function size(k, f) {
-    var s = slots[k];
-    if (k === "phone") { f.style.width = "390px"; f.style.height = "844px"; f.style.transform = "scale(" + s.scale + ")"; return; }
-    f.style.width = s.lw + "px"; f.style.height = s.lh + "px";
-    f.style.transform = s.scale === 1 ? "none" : "scale(" + s.scale + ")";
-  }
+  var $ = function (id) { return document.getElementById(id); };
+  var lang = "en", scene = 0, view = 0;
+  try { if (localStorage.getItem("eva-replay-lang") === "es") lang = "es"; } catch (e) {}
+  var qs = new URLSearchParams(location.search);
+  if (qs.get("lang") === "es") lang = "es";
+  var forced = qs.get("mode") === "wristband" || qs.get("mode") === "phone" ? qs.get("mode") : null;
+  var bandMq = window.matchMedia ? matchMedia(BAND) : { matches: false };
+  function isBand() { return forced ? forced === "wristband" : bandMq.matches; }
+  var seat = "4B";
+  try { var ss = localStorage.getItem("eva-replay-seat"); if (["4B", "3B", "1B"].indexOf(ss) >= 0) seat = ss; } catch (e) {}
+  function viewIndex(id) { var k = -1; VIEWS.forEach(function (v, i) { if (v.id === id) k = i; }); return k; }
+  function seatOf(v) { return v.kind === "wrist" ? v.seat : v.kind === "phone" ? v.id : null; }
+  // in the Android app the site and the old board are not reachable: hide those links
+  var inApp = / EvaAndroid\//.test(navigator.userAgent) || location.hostname === "appassets.androidplatform.net";
 
-  // load every slot's new page hidden, then show them all in the same frame (the three-phones moment)
-  var batch = 0;
-  function swap(targets) {
-    var id = ++batch, pending = 0, fresh = [];
-    Object.keys(targets).forEach(function (k) {
-      var s = slots[k], src = targets[k];
-      var old = s.el.querySelector("iframe:not(.next)");
-      s.el.querySelectorAll(".placeholder").forEach(function (e) { e.remove(); });
-      if (!src) { s.el.querySelectorAll("iframe").forEach(function (f) { f.remove(); }); s.el.appendChild(placeholder()); return; }
-      if (old && old.getAttribute("data-src") === src) return;
-      s.el.querySelectorAll("iframe.next").forEach(function (f) { f.remove(); });
-      var f = document.createElement("iframe");
-      f.className = "next"; f.setAttribute("data-src", src); f.setAttribute("title", k === "phone" ? "Passenger phone" : k === "dash" ? "Crew dashboard" : "Ground or station");
-      f.setAttribute("tabindex", "0");
-      size(k, f);
-      pending++;
-      f.addEventListener("load", function once() { f.removeEventListener("load", once); if (--pending === 0) reveal(); });
-      f.src = "v/" + src;
-      s.el.appendChild(f);
-      fresh.push(f);
-    });
-    function reveal() {
-      if (id !== batch) return;
-      fresh.forEach(function (f) {
-        var host = f.parentNode; if (!host) return;
-        host.querySelectorAll("iframe:not(.next)").forEach(function (o) { if (o !== f) o.remove(); });
-        f.classList.remove("next");
-      });
-    }
-    setTimeout(reveal, 2500);
-  }
-  function placeholder() {
-    var d = document.createElement("div");
-    d.className = "placeholder";
-    d.innerHTML = t("ph");
-    return d;
-  }
-
-  // ---------------------------------------------------------------- render
-  var stepsEl = $("steps");
-  STEPS.forEach(function (s, i) {
-    var b = document.createElement("button");
-    b.type = "button"; b.className = "step" + (s.alarm ? " alarm" : "");
-    b.innerHTML = '<span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="l"></span>';
-    b.addEventListener("click", function () { stop(); go(i, true); });
-    stepsEl.appendChild(b);
-  });
-
-  function go(i, follow) {
-    cur = Math.max(0, Math.min(STEPS.length - 1, i));
-    var s = STEPS[cur], st = DATA.states[cur];
-    if (follow) seat = s.focus;
-    stepsEl.querySelectorAll(".step").forEach(function (b, j) {
-      if (j === cur) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
-      b.classList.toggle("done", j < cur);
-      // restart the progress line
-      if (j === cur && playing) { b.style.animation = "none"; void b.offsetWidth; b.style.animation = ""; }
-    });
-    $("cap").textContent = stepText(cur, 1);
-    $("hint").innerHTML = stepText(cur, 2);
-    try { history.replaceState(null, "", "#" + s.hash); } catch (e) {}
-    render();
-    layout();
-  }
-  function render() {
-    var st = DATA.states[cur], s = STEPS[cur];
-    document.querySelectorAll("#seats [data-seat]").forEach(function (b) {
-      var on = b.getAttribute("data-seat") === seat;
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-      b.classList.toggle("cue", !on && b.getAttribute("data-seat") === s.focus && cur > 0);
-    });
-    $("who").textContent = SEATS[seat];
-    document.querySelectorAll("#lower-seg [data-lower]").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lower") === lower ? "true" : "false"); });
-    $("lower-label").textContent = t(lower === "ground" ? "lGround" : "lStation");
-    document.querySelectorAll("#tabs [data-tab]").forEach(function (t) {
-      var show = $("stage").getAttribute("data-show"), sub = t.getAttribute("data-sub");
-      t.setAttribute("aria-selected", t.getAttribute("data-tab") === show && (!sub || sub === lower) ? "true" : "false");
-    });
-    swap({ phone: st.phone[seat], dash: st.dash, lower: lower === "ground" ? st.ground : st.station });
-  }
-
-  // ---------------------------------------------------------------- play / pause
-  function tick() { if (cur >= STEPS.length - 1) { stop(); return; } go(cur + 1, true); timer = setTimeout(tick, DWELL); }
-  function start() {
-    if (cur >= STEPS.length - 1) go(0, true);
-    playing = true; document.body.classList.add("playing");
-    document.body.style.setProperty("--dwell", DWELL + "ms");
-    $("play").setAttribute("aria-pressed", "true"); $("play").setAttribute("aria-label", t("pause"));
-    $("play-ic").innerHTML = '<path d="M3 2h4v12H3zM9 2h4v12H9z"/>';
-    go(cur, false);
-    timer = setTimeout(tick, DWELL);
-  }
-  function stop() {
-    playing = false; clearTimeout(timer); document.body.classList.remove("playing");
-    $("play").setAttribute("aria-pressed", "false"); $("play").setAttribute("aria-label", t("play"));
-    $("play-ic").innerHTML = '<path d="M4 2l10 6-10 6z"/>';
-  }
-  $("play").addEventListener("click", function () { playing ? stop() : start(); });
-  $("prev").addEventListener("click", function () { stop(); go(cur - 1, true); });
-  $("next").addEventListener("click", function () { stop(); go(cur + 1, true); });
-  document.addEventListener("keydown", function (e) {
-    if (e.target.matches && e.target.matches("input, textarea, select, summary")) return;
-    if (e.key === "ArrowRight") { stop(); go(cur + 1, true); }
-    else if (e.key === "ArrowLeft") { stop(); go(cur - 1, true); }
-  });
-
-  document.querySelectorAll("#seats [data-seat]").forEach(function (b) {
-    b.addEventListener("click", function () { seat = b.getAttribute("data-seat"); render(); });
-  });
-  document.querySelectorAll("#lower-seg [data-lower]").forEach(function (b) {
-    b.addEventListener("click", function () { lower = b.getAttribute("data-lower"); render(); });
-  });
-  document.querySelectorAll("#tabs [data-tab]").forEach(function (t) {
-    t.addEventListener("click", function () {
-      $("stage").setAttribute("data-show", t.getAttribute("data-tab"));
-      if (t.getAttribute("data-sub")) lower = t.getAttribute("data-sub");
-      render(); layout();
-    });
-  });
-
-  // ---------------------------------------------------------------- messages from the screens
-  window.addEventListener("message", function (e) {
-    var m = e.data;
-    if (!m || m.eva !== "replay") return;
-    if (m.type === "story") {
-      stop();
-      var a = m.action;
-      if ((a === "going" || a === "have-it") && cur < 2) go(2, false);
-      else if (a === "aed" && cur < 3) go(3, false);
-      else if (a === "close" && cur < 4) go(4, false);
-    } else if (m.type === "seat" && SEATS[m.seat]) {
-      seat = m.seat; render();
-    } else if (m.type === "key") {
-      stop(); go(cur + (m.key === "ArrowRight" ? 1 : -1), true);
-    }
-  });
-
-  function applyLang() {
+  function svgGo() { return '<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19L19 5M9 5h10v10"/></svg>'; }
+  function renderMenu() {
     document.documentElement.lang = lang;
-    document.querySelectorAll("[data-i18n]").forEach(function (e) { e.innerHTML = t(e.getAttribute("data-i18n")).replace("{STATION}", DATA.station ? t("station") : ""); });
-    document.querySelectorAll("[data-i18n-aria]").forEach(function (e) { e.setAttribute("aria-label", t(e.getAttribute("data-i18n-aria"))); });
-    $("play").setAttribute("aria-label", t(playing ? "pause" : "play"));
-    stepsEl.querySelectorAll(".step .l").forEach(function (l, i) { l.textContent = T[lang].steps[i][0]; });
-    document.querySelectorAll("#lang [data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === lang ? "true" : "false"); });
-    $("cap").textContent = stepText(cur, 1);
-    $("hint").innerHTML = stepText(cur, 2);
-    $("lower-label").textContent = t(lower === "ground" ? "lGround" : "lStation");
-    document.querySelectorAll(".placeholder").forEach(function (d) { d.innerHTML = t("ph"); });
-    layout();
+    document.querySelectorAll("[data-t]").forEach(function (e) { e.textContent = T[lang][e.getAttribute("data-t")]; });
+    document.querySelectorAll(".lang [data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
+    $("scenes").innerHTML = SCENES.map(function (s, i) {
+      return '<button data-i="' + i + '" class="' + (s.al ? "al" : "") + '" aria-pressed="' + (i === scene) + '">' + s[lang] + "</button>";
+    }).join("");
+    $("views").innerHTML = VIEWS.map(function (v, i) {
+      return '<button class="row" data-v="' + i + '"><span class="n">0' + (i + 1) + '</span><span class="t"><b>' + v[lang][0] + "</b><span>" + v[lang][1] + "</span></span>" + svgGo() + "</button>";
+    }).join("");
   }
-  document.querySelectorAll("#lang [data-lang]").forEach(function (b) {
-    b.addEventListener("click", function () {
-      lang = b.getAttribute("data-lang");
-      try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
-      applyLang();
-    });
+  function page() {
+    var s = SCENES[scene].id, v = VIEWS[view];
+    if (v.kind === "wrist") return "v/" + s + "-" + v.seat + "-" + WRIST[s] + ".html";
+    return "v/" + s + "-" + (v.kind === "phone" ? v.id + "-" + PHONE[s] : v.id) + ".html";
+  }
+  var hintT = 0;
+  function hint(text) { var h = $("hint"); h.textContent = text; h.classList.add("on"); clearTimeout(hintT); hintT = setTimeout(function () { h.classList.remove("on"); }, 1800); }
+  function open(push) {
+    var sv = seatOf(VIEWS[view]);
+    if (sv) { seat = sv; try { localStorage.setItem("eva-replay-seat", seat); } catch (e) {} }
+    document.body.classList.toggle("band", isBand() && VIEWS[view].kind === "wrist");
+    $("frame").src = page();
+    $("frame").className = VIEWS[view].kind === "phone" ? "phone" : VIEWS[view].kind === "wrist" ? "wrist" : "";
+    $("viewer").classList.add("on");
+    $("menu").style.display = "none";
+    var s = SCENES[scene];
+    $("scn").textContent = s[lang]; $("scn").className = s.al ? "al" : "";
+    var h = "#view=" + VIEWS[view].id + "&scene=" + s.id;
+    if (push !== false && location.hash !== h) history.replaceState(null, "", h);
+    wake();
+  }
+  function menu() {
+    $("viewer").classList.remove("on"); $("frame").src = "about:blank";
+    $("menu").style.display = ""; history.replaceState(null, "", location.pathname + location.search);
+    renderMenu();
+  }
+  function step(d) { scene = (scene + d + SCENES.length) % SCENES.length; open(); hint(SCENES[scene][lang]); }
+  function nextView() { view = (view + 1) % VIEWS.length; open(); hint(VIEWS[view][lang][0]); }
+  function full() {
+    var d = document, el = d.documentElement;
+    if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+    var req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) { try { var p = req.call(el); if (p && p.catch) p.catch(function () { hint(T[lang].full); }); } catch (e) { hint(T[lang].full); } }
+    else hint(T[lang].full);
+  }
+  // bar fades when idle, comes back on any touch or move
+  var idle = 0;
+  function wake() { $("bar").classList.remove("dim"); clearTimeout(idle); idle = setTimeout(function () { $("bar").classList.add("dim"); }, 2500); }
+  var shut = 0;
+  function expand(on) { $("bar").classList.toggle("open", on); $("bHandle").setAttribute("aria-expanded", String(on)); clearTimeout(shut); if (on) shut = setTimeout(function () { expand(false); }, 6000); }
+  ["mousemove", "touchstart", "keydown"].forEach(function (ev) { document.addEventListener(ev, wake, { passive: true }); });
+  $("bar").addEventListener("pointerenter", wake);
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.lang) { lang = b.dataset.lang; try { localStorage.setItem("eva-replay-lang", lang); } catch (x) {} renderMenu(); }
+    else if (b.dataset.i) { scene = +b.dataset.i; renderMenu(); }
+    else if (b.dataset.v) { view = +b.dataset.v; open(); }
+  });
+  $("bMenu").onclick = menu; $("bPrev").onclick = function () { step(-1); }; $("bNext").onclick = function () { step(1); };
+  $("bView").onclick = nextView; $("bFull").onclick = full;
+  $("bHandle").onclick = function () { expand(true); };
+  $("bar").addEventListener("click", function (e) { if (e.target.closest("button") && e.target.closest("button").id !== "bHandle") expand(true); });
+  document.addEventListener("keydown", function (e) {
+    if (!$("viewer").classList.contains("on")) return;
+    if (e.key === "ArrowRight") step(1); else if (e.key === "ArrowLeft") step(-1);
+    else if (e.key === "f" || e.key === "F") full(); else if (e.key === "Escape" && !document.fullscreenElement) menu();
+    else if (e.key === "v" || e.key === "V") nextView();
   });
 
-  window.addEventListener("resize", layout);
-  var startAt = 0;
-  STEPS.forEach(function (s, i) { if (location.hash === "#" + s.hash) startAt = i; });
-  applyLang();
-  go(startAt, true);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
-  window.addEventListener("hashchange", function () { STEPS.forEach(function (s, i) { if (location.hash === "#" + s.hash && i !== cur) { stop(); go(i, true); } }); });
+  // the captured screens talk to their parent: story buttons move the scenario, seat links switch phones
+  window.addEventListener("message", function (e) {
+    var m = e.data; if (!m || m.eva !== "replay") return;
+    if (m.type === "story") {
+      var a = m.action, to = -1;
+      if ((a === "going" || a === "have-it") && scene < 2) to = 2;
+      else if (a === "aed" && scene < 3) to = 3;
+      else if (a === "close" && scene < 4) to = 4;
+      if (to >= 0) { scene = to; open(); hint(SCENES[scene][lang]); }
+    } else if (m.type === "seat") {
+      var k = viewIndex((VIEWS[view].kind === "wrist" ? "w" : "") + m.seat); if (k >= 0) view = k; open();
+    } else if (m.type === "key") { step(m.key === "ArrowRight" ? 1 : -1); }
+  });
+
+  // deep links: #view=4B&scene=s2
+  function fromHash() {
+    var h = new URLSearchParams(location.hash.slice(1)), v = h.get("view"), s = h.get("scene");
+    if (!v) return false;
+    VIEWS.forEach(function (x, i) { if (x.id === v) view = i; });
+    SCENES.forEach(function (x, i) { if (x.id === s) scene = i; });
+    open(false); return true;
+  }
+  // a band-shaped screen: straight to the chosen seat's band, full screen; back to its phone when it is not
+  function toBand() {
+    var k = viewIndex("w" + (seatOf(VIEWS[view]) || seat));
+    if (k >= 0) { view = k; open(); }
+  }
+  function toPhone() {
+    var k = viewIndex(VIEWS[view].seat || seat);
+    if (k >= 0) { view = k; open(); }
+  }
+  renderMenu();
+  if (inApp) document.querySelectorAll(".foot a").forEach(function (a) { a.style.display = "none"; });
+  var opened = fromHash();
+  if (isBand() && (!opened || VIEWS[view].kind !== "wrist")) toBand();
+  if (!forced && bandMq.addEventListener) bandMq.addEventListener("change", function () {
+    if (bandMq.matches) toBand();
+    else if ($("viewer").classList.contains("on") && VIEWS[view].kind === "wrist") toPhone();
+  });
+  window.addEventListener("hashchange", function () { if (!fromHash()) { if (isBand()) toBand(); else menu(); } });
 })();
 </script>
-
-</body></html>
+</body>
+</html>

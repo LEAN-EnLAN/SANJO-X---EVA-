@@ -23,8 +23,8 @@ android {
         applicationId = "tech.sanjox.eva"
         minSdk = 26
         targetSdk = 36
-        versionCode = 304
-        versionName = "0.3.4"
+        versionCode = 305
+        versionName = "0.3.5"
     }
 
     signingConfigs {
@@ -71,7 +71,7 @@ android {
 }
 
 base {
-    archivesName.set("eva-v0.3.4")
+    archivesName.set("eva-v0.3.5")
 }
 
 // Robolectric runs offline against an android-all jar that Gradle resolves (Robolectric's own downloader
