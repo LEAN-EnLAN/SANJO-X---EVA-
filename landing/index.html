@@ -12,7 +12,7 @@ d.lang=l;if(l==="es"){d.setAttribute("data-i18n-wait","");setTimeout(function(){
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="team-rail.css">
 <style>
-/* Layout: Two Create type on pure white / pure black, with theme-matched asset families. Our own scroll engine scrubs: cabin parallax hero, sensors-record vs Eva-acts, Eva functions grid, wristband v2 studio steps, Case A/B scrollytelling, numbered-compartment emergency station, how-it-links diagram, layered solar alert, horizontal ship→Earth link, halftone arrival, product slabs, team rail, rising wordmark. */
+/* Layout: Two Create type on pure white / pure black, with theme-matched asset families. Our own scroll engine scrubs: film-loop hero (scenes from the team's 30 s video, shuffled per visit), sensors-record vs Eva-acts, Eva functions grid, wristband v2 studio steps, Case A/B scrollytelling, numbered-compartment emergency station, how-it-links diagram, layered solar alert, horizontal ship→Earth link, halftone arrival, product slabs, team rail, rising wordmark. */
 :root{
   --canvas:#ffffff; --ink:#0c0c0c; --rule:#e3e1dd; --muted:rgba(12,12,12,.58);
   --space:#000000; --space-ink:#f4f3f0; --space-muted:rgba(244,243,240,.62); --space-rule:#2a2a2a;
@@ -60,12 +60,25 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* 1 · Hero */
 .hero{height:240svh}
 .hero .ground{position:absolute;inset:0;background:var(--space);z-index:2;clip-path:inset(var(--it,0) var(--ir,0) var(--ib,0) var(--il,0) round calc(var(--radius) * (1 - var(--s,0))))}
-.hero .cab{position:absolute;inset:-6% 0 0 0;opacity:calc(.25 + .75*var(--s,0))}
-.hero .cab img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero .cab .bg{transform:translate(calc(var(--pmx,0)*-10px),calc(var(--q,0)*-3% + var(--pmy,0)*-8px)) scale(calc(1.07 - .06*var(--s,0)))}
-.hero .cab .mid{transform:translate(calc(var(--pmx,0)*-24px),calc(var(--q,0)*-8% + var(--pmy,0)*-16px)) scale(calc(1.11 - .1*var(--s,0)))}
-.hero .cab .fg{transform:translate(calc(var(--pmx,0)*-44px),calc(var(--q,0)*-14% + var(--pmy,0)*-28px)) scale(calc(1.18 - .16*var(--s,0)))}
-.hero .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,0) 55%);opacity:var(--s,0)}
+/* the hero film: two stacked muted <video>s cross-fade through the scenes of the team's 30 s video (shuffled on every load; see the inline script in the hero) */
+/* --fk (set by the scroll script) shrinks the whole frame to cover the small opening card, then grows it with the card, so the first view shows the full shot, not a crop of its centre */
+.hero .film{position:absolute;inset:0;background:#000;transform:translateY(calc(var(--q,0)*-4%)) scale(var(--fk,1))}
+.hero .film video,.hero .film img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .film video{opacity:0;transition:opacity .6s ease}
+.hero .film video.on{opacity:1}
+/* readability: the shade follows the visible card (the --it/--ir/--ib/--il clip insets) so the copy always sits on its darkest part */
+.hero .shade{position:absolute;top:var(--it,0);right:var(--ir,0);bottom:var(--ib,0);left:var(--il,0);pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.8) 0%,rgba(0,0,0,.62) 30%,rgba(0,0,0,.18) 62%,rgba(0,0,0,0) 82%),linear-gradient(0deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 30%),linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(0,0,0,0) 22%)}
+/* while the card is small the copy covers most of it, so the whole card is dimmed a little more; it lifts as the card opens */
+.hero .shade::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.32);opacity:calc(1 - var(--s,0))}
+@media (max-width:760px){.hero .shade{background:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(0,0,0,.64) 32%,rgba(0,0,0,.66) 64%,rgba(0,0,0,.3) 100%)}.hero .shade::after{background:rgba(0,0,0,.12)}}
+/* pause / play: a hairline ring in off-white, bottom-right of the visible card */
+.hero .hctl{position:absolute;z-index:2;right:calc(var(--ir,0px) + 16px);bottom:calc(var(--ib,0px) + 16px);width:34px;height:34px;padding:0;display:grid;place-items:center;border:1px solid rgba(244,243,240,.42);border-radius:50%;background:none;color:#f4f3f0;cursor:pointer;opacity:.72;transition:opacity .3s,border-color .3s,transform .3s var(--ease)}
+.hero .hctl:hover{opacity:1;border-color:#f4f3f0;transform:scale(1.06)}
+.hero .hctl:focus-visible{opacity:1;outline:2px solid #f4f3f0;outline-offset:3px}
+.hero .hctl svg{width:12px;height:12px;display:block}
+.hero .hctl .i-play,.hero .hctl.paused .i-pause{display:none}.hero .hctl.paused .i-play{display:block}
+.hero .hctl[hidden]{display:none}
 .hero .copy{position:absolute;z-index:3;top:50%;transform:translateY(-50%);left:var(--cl,40px);width:min(560px,80vw);color:var(--space-ink);display:grid;gap:18px}
 .hero .copy h1{font-family:var(--head);color:var(--h1-c);font-size:clamp(64px,12vw,170px);line-height:.9;letter-spacing:-.03em}
 .hero .copy p{font-size:var(--t-sec);line-height:1.05;letter-spacing:-.01em;color:var(--space-muted)}
@@ -567,6 +580,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .stars{animation:none;transform:none}
   .pinsec{height:auto!important}.pinsec .stage{position:relative;height:90svh}
   .hero .ground{clip-path:none}.chip,.hint{display:none}
+  .hero .film{transform:none}.hero .film video,.hero .hctl{transition:none}.hero .hctl:hover{transform:none}
   
   [data-reveal].pre{opacity:1;transform:none}
   .slab{position:relative;top:auto;transform:none;filter:none}
@@ -592,19 +606,52 @@ html.lswap main,html.lswap .foot{opacity:.15}
   <section class="pinsec hero" id="hero" aria-label="Eva">
     <div class="stage">
       <canvas id="heroSky" aria-hidden="true"></canvas>
-      <div class="chips" aria-hidden="true">
-        <div class="chip" style="left:5%;top:9%"><img class="tl" src="a/ic-eva-orb.webp" alt=""><img class="td" src="a/ic-eva-orb.webp" alt=""></div>
-        <div class="chip cut" style="left:13%;top:60%"><img class="tl" src="a/band2-cut-hero.webp" alt=""><img class="td" src="a/band2-cut-hero.webp" alt=""></div>
-        <div class="chip" style="right:6%;top:7%"><img class="tl" src="a/chip-mars-w.jpg" alt=""><img class="td" src="a/chip-mars-b.jpg" alt=""></div>
-        <div class="chip" style="right:12%;top:58%"><img class="tl" src="a/chip-earth-w.jpg" alt=""><img class="td" src="a/chip-earth-b.jpg" alt=""></div>
-        <div class="chip" style="left:38%;top:-3%"><img class="tl" src="a/chip-sun-w.jpg" alt=""><img class="td" src="a/chip-sun-b.jpg" alt=""></div>
-        <div class="chip" style="left:30%;bottom:-5%"><img class="tl" src="a/ic-heart.webp" alt=""><img class="td" src="a/ic-heart.webp" alt=""></div>
-        <div class="chip" style="right:30%;bottom:-4%"><img class="tl" src="a/ic-crew.webp" alt=""><img class="td" src="a/ic-crew.webp" alt=""></div>
-      </div>
       <div class="ground" id="ground">
-        <div class="cab"><img class="bg" src="a/cab-bg-b.jpg" alt="Calm spacecraft cabin with a planet in the window."><img class="mid" src="a/cab-mid-b.webp" alt=""><img class="fg" src="a/cab-fg-b.webp" alt=""></div>
+        <div class="film" id="heroFilm" aria-hidden="true">
+          <video muted playsinline disablepictureinpicture disableremoteplayback preload="auto" tabindex="-1"></video>
+          <video muted playsinline disablepictureinpicture disableremoteplayback preload="none" tabindex="-1"></video>
+          <noscript><img src="a/hero-window.jpg" alt=""></noscript>
+        </div>
         <div class="shade"></div>
+        <button class="hctl" id="heroPlay" type="button" aria-label="Pause the background video" hidden><svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 1.5v9M8.5 1.5v9" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.4 10.4 6 3 10.6Z" fill="currentColor"/></svg></button>
       </div>
+      <script>
+/* Hero film. On every load the scenes are shuffled and the film starts on the first of the shuffled list, so the hero differs per visit.
+   Two stacked <video>s cross-fade (~600 ms). Only the current clip and the next one are fetched. The still of the first scene is its poster, for the first paint.
+   Phones (<= 760 px wide) get 608x720 focal crops; the "route" scene has its glass text in the page language.
+   Reduced motion: one random still, no autoplay (the button can still start it). Paused while the hero is off-screen or the tab is hidden. */
+(()=>{
+const S=[{id:'window',fx:'46%'},{id:'detach',fx:'42%'},{id:'journal',fx:'36%'},{id:'flare',fx:'50%'},{id:'route',fx:'50%',l:1},{id:'alert',fx:'36%'}];
+const D=document, root=D.documentElement, film=D.getElementById('heroFilm'), V=[...film.querySelectorAll('video')], btn=D.getElementById('heroPlay');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, small=matchMedia('(max-width: 760px)').matches, FADE=600;
+for(let i=S.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[S[i],S[j]]=[S[j],S[i]]}
+/* don't open on a scene one of the last three visits opened on (a per-viewer convenience; without storage it is just random) */
+try{const seen=JSON.parse(localStorage.getItem('wm-hero-seen')||'[]').slice(0,3); const j=S.findIndex(x=>!seen.includes(x.id)); if(j>0)[S[0],S[j]]=[S[j],S[0]]; localStorage.setItem('wm-hero-seen',JSON.stringify([S[0].id,...seen.filter(x=>x!==S[0].id)].slice(0,3)))}catch(e){}
+const url=(sc,ext)=>'a/hero-'+sc.id+(sc.l?(root.lang==='es'?'-es':'-en'):'')+(small?'-m':'')+'.'+ext;
+const tr=t=>window.I18N?window.I18N.tr(t):t, focus=(v,sc)=>{v.style.objectPosition=(small?'50%':sc.fx)+' 50%'};
+let k=0, cur=0, userPaused=reduce, onScreen=true, fading=false, raf=0;
+V.forEach(v=>{v.muted=true;v.defaultMuted=true;v.playsInline=true;v.loop=true});
+const first=V[0]; first.poster=url(S[0],'jpg'); first.classList.add('on'); focus(first,S[0]);
+if(!reduce)first.src=url(S[0],'mp4');
+const want=()=>!userPaused&&onScreen&&!D.hidden;
+function label(){btn.classList.toggle('paused',userPaused);btn.setAttribute('aria-label',tr(userPaused?'Play the background video':'Pause the background video'))}
+function play(v){if(!v.getAttribute('src'))return; const p=v.play(); if(p)p.catch(e=>{if(e&&e.name==='NotAllowedError'){userPaused=true;label()}})}
+function prepNext(){const n=V[1-cur], sc=S[(k+1)%S.length], u=url(sc,'mp4'); if(n.getAttribute('src')!==u){n.preload='auto';n.setAttribute('src',u);focus(n,sc);n.load()}}
+function swap(){const v=V[cur], n=V[1-cur]; fading=true; n.currentTime=0; play(n); n.style.zIndex=2; v.style.zIndex=1; n.classList.add('on');
+  setTimeout(()=>{v.classList.remove('on'); v.pause(); fading=false; cur=1-cur; k=(k+1)%S.length; if(want())prepNext()},FADE+40)}
+function tick(){raf=0; if(!want())return; const v=V[cur], n=V[1-cur];
+  if(!fading&&v.duration&&v.currentTime>=v.duration-FADE/1000-.08&&n.readyState>=3)swap();
+  raf=requestAnimationFrame(tick)}
+function sync(){if(want()){const v=V[cur]; if(!v.getAttribute('src'))v.setAttribute('src',url(S[k],'mp4')); play(v); if(fading)play(V[1-cur]); if(!raf)raf=requestAnimationFrame(tick)}
+  else V.forEach(v=>v.pause()); label()}
+V.forEach(v=>v.addEventListener('playing',()=>{if(v===V[cur]&&!fading)prepNext()}));
+btn.addEventListener('click',()=>{userPaused=!userPaused; sync()});
+if('IntersectionObserver' in window)new IntersectionObserver(es=>{onScreen=es[es.length-1].isIntersecting; sync()}).observe(film.parentNode.parentNode);
+D.addEventListener('visibilitychange',sync);
+D.addEventListener('DOMContentLoaded',()=>{if(window.I18N&&window.I18N.on)window.I18N.on(label); label()});
+btn.hidden=false; label(); sync();
+})();
+      </script>
       <div class="copy" id="heroCopy"><h1>Eva</h1><p data-i18n>The Super Intelligence copilot that <b>guides</b>, <b>records</b> and <b>warns</b> in space.</p></div>
     </div>
   </section>
@@ -953,7 +1000,8 @@ html.lswap main,html.lswap .foot{opacity:.15}
       <p>Which images on this page are generated renders, and how they were made:</p>
       <ul>
         <li>Wristband renders: the studio views, the exploded view, the sensor base, the turntable, the passenger in the cabin and the ECG-check view. Generated from text prompts written by team Sanjo-X; the suit-mode layers are cut from the exploded render.</li>
-        <li>Scenes and icons: the cabin hero, the wrist scenes in Case A, the hero chips (planet, Earth, Sun, heart, crew), the planet and Earth globes, the arrival surface and the star fields. Generated from team prompts; some used earlier generated images as references.</li>
+        <li>Hero film: short loops cut from the team's 30 s video. Its shots were generated with Super Intelligence from team prompts and first frames; the route on the wristband's glass was added by the team, and the clips were trimmed and re-encoded locally with ffmpeg.</li>
+        <li>Scenes and icons: the wrist scenes in Case A, the planet and Earth globes, the arrival surface and the star fields. Generated from team prompts; some used earlier generated images as references.</li>
         <li>Emergency station images (front, wide and doors open): generated concept images the team shared as interim design references. They carry Spanish labels; the page overlays the product names.</li>
         <li>Post-processing, done locally with Python and Pillow: resizing, WebP conversion, edges blended into the page background and contact shadows. The ECG-check view is a studio render placed on black.</li>
         <li>Not generated: the "How it links" diagram, the screen overlays and the labels are hand-written SVG and HTML, the solar storm is drawn in code, and the 3D Sun texture is NASA's free model from NASA 3D Resources.</li>
@@ -983,7 +1031,7 @@ const ES={
 /* hero + statement */
 "The Super Intelligence copilot that <b>guides</b>, <b>records</b> and <b>warns</b> in space.":"La copiloto de Super Inteligencia que <b>guía</b>, <b>registra</b> y <b>alerta</b> en el espacio.",
 "Fifteen passengers. <span class=\"mk\">No doctor</span> on board. Earth <span class=\"mk\">minutes</span> away.":"Quince pasajeros. <span class=\"mk\">Ningún médico</span> a bordo. La Tierra, a <span class=\"mk\">minutos</span>.",
-"Calm spacecraft cabin with a planet in the window.":"Cabina tranquila de la nave con un planeta en la ventana.",
+"Pause the background video":"Pausar el video de fondo","Play the background video":"Reproducir el video de fondo",
 "Wristband":"Pulsera",
 "The only thing anyone wears: two magnetic modules, a sensor base on the skin and a screen on top with voice, the help button and ECG on demand.":"Lo único que lleva cada persona: dos módulos magnéticos, una base de sensores sobre la piel y arriba una pantalla con voz, el botón de ayuda y ECG a demanda.",
 "Emergency station":"Estación de emergencia",
@@ -1145,7 +1193,8 @@ const ES={
 "Images generated with Super Intelligence":"Imágenes generadas con Super Inteligencia",
 "Which images on this page are generated renders, and how they were made:":"Qué imágenes de esta página son renders generados y cómo se hicieron:",
 "Wristband renders: the studio views, the exploded view, the sensor base, the turntable, the passenger in the cabin and the ECG-check view. Generated from text prompts written by team Sanjo-X; the suit-mode layers are cut from the exploded render.":"Renders de la pulsera: las vistas de estudio, el despiece, la base de sensores, el giro 360°, el pasajero en la cabina y la vista del control de ECG. Generados a partir de prompts de texto escritos por el equipo Sanjo-X; las capas del modo traje están recortadas del despiece.",
-"Scenes and icons: the cabin hero, the wrist scenes in Case A, the hero chips (planet, Earth, Sun, heart, crew), the planet and Earth globes, the arrival surface and the star fields. Generated from team prompts; some used earlier generated images as references.":"Escenas e íconos: la cabina de la portada, las escenas de muñeca del Caso A, los chips de la portada (planeta, Tierra, Sol, corazón, tripulación), los globos del planeta y de la Tierra, la superficie de llegada y los campos de estrellas. Generados a partir de prompts del equipo; algunos usaron imágenes generadas antes como referencia.",
+"Hero film: short loops cut from the team's 30 s video. Its shots were generated with Super Intelligence from team prompts and first frames; the route on the wristband's glass was added by the team, and the clips were trimmed and re-encoded locally with ffmpeg.":"Película de la portada: bucles cortos recortados del video de 30 s del equipo. Sus tomas se generaron con Super Inteligencia a partir de prompts y primeros cuadros del equipo; la ruta en el vidrio de la pulsera la agregó el equipo, y los clips se recortaron y recodificaron localmente con ffmpeg.",
+"Scenes and icons: the wrist scenes in Case A, the planet and Earth globes, the arrival surface and the star fields. Generated from team prompts; some used earlier generated images as references.":"Escenas e íconos: las escenas de muñeca del Caso A, los globos del planeta y de la Tierra, la superficie de llegada y los campos de estrellas. Generados a partir de prompts del equipo; algunos usaron imágenes generadas antes como referencia.",
 "Emergency station images (front, wide and doors open): generated concept images the team shared as interim design references. They carry Spanish labels; the page overlays the product names.":"Imágenes de la estación de emergencia (frente, plano general y puertas abiertas): imágenes conceptuales generadas que el equipo compartió como referencias de diseño provisorias. Tienen rótulos en español; la página superpone los nombres del producto.",
 "Post-processing, done locally with Python and Pillow: resizing, WebP conversion, edges blended into the page background and contact shadows. The ECG-check view is a studio render placed on black.":"Posproducción, hecha localmente con Python y Pillow: cambio de tamaño, conversión a WebP, bordes fundidos con el fondo de la página y sombras de contacto. La vista del control de ECG es un render de estudio puesto sobre negro.",
 "Not generated: the \"How it links\" diagram, the screen overlays and the labels are hand-written SVG and HTML, the solar storm is drawn in code, and the 3D Sun texture is NASA's free model from NASA 3D Resources.":"No generado: el diagrama «Cómo se conecta», las pantallas superpuestas y los rótulos son SVG y HTML escritos a mano, la tormenta solar se dibuja con código y la textura del Sol 3D es el modelo gratuito de la NASA en NASA 3D Resources.",
@@ -1227,14 +1276,14 @@ const pins=[...document.querySelectorAll('.pinsec')]; onMeasure(()=>pins.forEach
 /* 1 · Hero */
 const hero=document.getElementById('hero'), hst=hero.querySelector('.stage'), ground=document.getElementById('ground'), copy=document.getElementById('heroCopy');
 const chips=[...hero.querySelectorAll('.chip')]; let H={};
-onMeasure(()=>{const sw=hst.clientWidth, sh=hst.clientHeight; const cw=sw<700?sw*.88:Math.min(sw*.56,720), ch=Math.min(sh-120,560); H={L:(sw-cw)/2,T:(sh-ch)/2,sw};
+onMeasure(()=>{const sw=hst.clientWidth, sh=hst.clientHeight; const cw=sw<700?sw*.88:Math.min(sw*.56,720), ch=Math.min(sh-120,560); H={L:(sw-cw)/2,T:(sh-ch)/2,sw,K:Math.max(cw/sw,ch/sh)};
   chips.forEach(c=>c.style.setProperty('--k',0));
   const s=hst.getBoundingClientRect(), cx=sw/2, cy=sh/2;
   chips.forEach((c,i)=>{const r=c.getBoundingClientRect();const tx=r.left-s.left+r.width/2-cx,ty=r.top-s.top+r.height/2-cy,d=Math.hypot(tx,ty)||1;c.style.setProperty('--fx',(tx/d*sw*.55).toFixed(1)+'px');c.style.setProperty('--fy',(ty/d*sh*.55).toFixed(1)+'px');c.style.setProperty('--turn',(i%2?-8:9)+'deg')})});
 add(y=>{const p=pinP(hero,y), s=reduce?1:io2(clamp((p-.02)/.45)), k=reduce?1:clamp(p/.55)**1.6, q=reduce?0:clamp((p-.5)/.5);
   const it=H.T*(1-s), il=H.L*(1-s);
   ground.style.setProperty('--it',it+'px');ground.style.setProperty('--ib',it+'px');ground.style.setProperty('--il',il+'px');ground.style.setProperty('--ir',il+'px');
-  hst.style.setProperty('--s',clamp((s-.5)/.5).toFixed(3));hst.style.setProperty('--q',q.toFixed(3));
+  hst.style.setProperty('--s',clamp((s-.5)/.5).toFixed(3));hst.style.setProperty('--q',q.toFixed(3));hst.style.setProperty('--fk',((H.K+(1-H.K)*s)*(1.04-.04*s)).toFixed(4));
   const sw=H.sw; copy.style.setProperty('--cl',(il+(sw<700?20:40)*(1-s)+20*s)+'px');copy.style.width=Math.min(560,Math.max(220,sw-2*il-(sw<700?40:80)))+'px';
   chips.forEach(c=>c.style.setProperty('--k',k.toFixed(3)))});
 
