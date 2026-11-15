@@ -1,13 +1,13 @@
 {% match mode %}
 {% when "helper_cpr" %}
 {% if let Some(cs) = case %}
-<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical-deep p-5 text-ink">
+<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical-deep p-5 text-ink" data-focus>
   <div class="flex items-center justify-between pt-1">
     <p class="text-xs uppercase tracking-label text-ink">Emergency · near you</p>
     <span class="grid size-11 place-items-center rounded-full bg-background/20 text-sm text-ink">{{ c.initials }}</span>
   </div>
   <div class="mt-1 flex flex-col gap-3">
-    <p class="text-6xl leading-none tracking-tight text-ink">{{ cs.name.split(' ').next().unwrap_or("") }} needs help</p>
+    <p class="text-5xl leading-none tracking-tight text-ink">{{ cs.name.split(' ').next().unwrap_or("") }} needs help</p>
     <div class="flex items-end justify-between gap-3">
       <p class="text-xl text-ink">Seat {{ cs.seat }} · {{ distance }} away</p>
       <span class="block h-16 w-24 shrink-0 overflow-hidden rounded-tile bg-background ring-1 ring-line"><img src="/static/img/wrist/wrist-alert.webp" alt="Your band shows the way too" class="size-full object-cover"></span>
@@ -18,9 +18,9 @@
     <p class="text-base text-ink">{{ direction }}</p>
   </div>
   <div class="flex flex-col gap-2 rounded-tile bg-background/15 px-4 py-3">
-    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Why</span><span>{{ cs.why }}</span></div>
-    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Next</span><span>{{ cs.next }}</span></div>
-    <p class="text-xs text-ink/70">How Eva decided · {{ cs.how }}</p>
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/90">Why</span><span>{{ cs.why }}</span></div>
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/90">Next</span><span>{{ cs.next }}</span></div>
+    <p class="text-xs text-ink/90">How Eva decided · {{ cs.how }}</p>
   </div>
   <p class="flex items-center gap-2 text-xs text-ink"><span class="size-2 shrink-0 animate-pulse rounded-full bg-ink"></span><span><span class="text-ink">AED:</span> station, corridor B · blinking{% if !aed_helper.is_empty() %} · {{ aed_helper }} is bringing it{% endif %}</span></p>
   <div class="mt-auto flex flex-col gap-3">
@@ -31,7 +31,7 @@
 {% endif %}
 {% when "helper_aed" %}
 {% if let Some(cs) = case %}
-<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical-deep p-5 text-ink">
+<section class="flex flex-1 flex-col gap-4 rounded-device bg-critical-deep p-5 text-ink" data-focus>
   <p class="pt-1 text-xs uppercase tracking-label text-ink">Emergency · bring the AED</p>
   <p class="text-5xl leading-none tracking-tight text-ink">Get the AED</p>
   <p class="text-xl text-ink">Emergency station, corridor B · then seat {{ cs.seat }}</p>
@@ -40,9 +40,9 @@
     <p class="text-base text-ink">Its light is blinking. Open the door, take the bag, walk fast to {{ cs.name.split(' ').next().unwrap_or("") }}.</p>
   </div>
   <div class="flex flex-col gap-2 rounded-tile bg-background/15 px-4 py-3">
-    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Why</span><span>The AED reads the heart and decides if a shock is needed.</span></div>
-    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/70">Next</span><span>Pads on the bare chest · follow the AED's voice.</span></div>
-    <p class="text-xs text-ink/70">How Eva decided · nearest trained person to the station</p>
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/90">Why</span><span>The AED reads the heart and decides if a shock is needed.</span></div>
+    <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-ink/90">Next</span><span>Pads on the bare chest · follow the AED's voice.</span></div>
+    <p class="text-xs text-ink/90">How Eva decided · nearest trained person to the station</p>
   </div>
   <div class="mt-auto flex flex-col gap-3">
     <button type="button" class="press inline-flex h-20 w-full items-center justify-center rounded-full bg-ink px-8 text-xl font-medium text-on-light" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"yes"}' hx-target="#screen">I have it</button>
@@ -52,7 +52,7 @@
 {% endif %}
 {% when "cpr" %}
 {% if let Some(cs) = case %}
-<div class="flex items-center justify-between pt-2">
+<div class="flex items-center justify-between pt-2" data-focus>
   <span class="inline-flex items-center gap-1 rounded-full border border-critical/50 bg-critical/15 px-2.5 py-0.5 text-xs font-medium text-critical">Emergency · {{ cs.name.split(' ').next().unwrap_or("") }}, {{ cs.seat }}</span>
   <span class="text-xs text-muted">Step {{ step }} of 4</span>
 </div>

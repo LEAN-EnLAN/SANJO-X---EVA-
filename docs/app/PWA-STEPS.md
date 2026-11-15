@@ -40,7 +40,7 @@ One short section per step. Each says what changed and why, so the reasoning liv
 
 ## Step 7 · Installable and offline
 
-**What.** The service worker cache is now `eva-shell-v2`. It precaches every app screen twice: once as a full page, for a cold start offline, and once as the htmx fragment, for tab navigation offline. It also precaches the hero photos and meal images. Fragment requests are cached separately, so offline navigation can never nest a whole page inside `#screen`. The manifest gained shortcuts (Plan, 30 s ECG) and a fuller description. Icons stay 192 / 512 / 512 maskable, with the mascot inside the maskable safe zone.
+**What.** The service worker cache is now `eva-shell-v3` (bumped whenever CSS or JS change, because static files are served cache-first). It precaches every app screen twice: once as a full page, for a cold start offline, and once as the htmx fragment, for tab navigation offline. It also precaches the hero photos and meal images. Fragment requests are cached separately, so offline navigation can never nest a whole page inside `#screen`. The manifest gained shortcuts (Plan, 30 s ECG) and a fuller description. Icons stay 192 / 512 / 512 maskable, with the mascot inside the maskable safe zone.
 
 **Why.** On the ship there is no store and the hub can drop out. Before this step, offline navigation fell back to the full `/app` page and swapped it into the screen area. Lighthouse 11.7.1 (the last version with the PWA category), headless Chromium, `/app`: **PWA 1.0, accessibility 1.0, best practices 1.0**. `/app/food` and `/app/ecg` score 1.0 on accessibility. `/dash` scores 1.0 after Step 8.
 
@@ -55,3 +55,9 @@ One short section per step. Each says what changed and why, so the reasoning liv
 **What.** Checked at 360 × 740, 390 × 844, 430 × 932 and 820 × 1180 for `/app`, and at 1280 × 800, 1440 × 900 and 1920 × 1080 for `/dash`. None has horizontal page scroll. On a tablet the app column widens to 42 rem. Below 380 px, Eva's mascot and greeting shrink so the composer fits. Below 1400 px, the roster's suit column folds into the seat line ("Seat 2A · suit mode"), so the battery column is never clipped.
 
 **Why.** Passengers use their own phones, so the narrowest common Android width is the floor. The crew lead's console is a laptop, so 1280 px is the floor there.
+
+## Step 10 · Emergency tasks are full screen
+
+**What.** When a person's screen carries an emergency task (go help, bring the AED, CPR), the tab bar is hidden and the screen keeps only the safe-area gap at the bottom (`[data-focus]` + CSS `:has()`).
+
+**Why.** At 390 × 844, "I can't" sat under the tab bar on the helper screen. During a cardiac case the helper must see both answers without scrolling, and nothing else should compete for the tap. It works like an iOS full-screen modal. The case banner and the server's `go-home` event bring the tab bar back when the task ends.

@@ -224,3 +224,11 @@ html, body { background: var(--color-background); color: var(--color-ink); font-
 .toast { background-color: color-mix(in oklab, currentColor 14%, var(--color-raised)); box-shadow: 0 8px 24px rgb(0 0 0 / 0.5); max-width: calc(100vw - 2rem); }
 /* when a new chat line scrolls into view it stops above Eva's composer dock and the tab bar */
 #chat > * { scroll-margin-bottom: calc(17rem + env(safe-area-inset-bottom, 0px)); }
+
+/* focus mode: while a person has an emergency task (go help, bring the AED, CPR) the screen is
+   theirs alone, like a full-screen modal: no tab bar, no room reserved for it */
+body:has(#screen [data-focus]) nav[aria-label="Main"] { display: none; }
+#screen:has([data-focus]) { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
+/* screens slide in from the side; clip (not hidden: no scroll container, sticky still works) so the
+   moving screen never widens the page and mobile browsers never zoom the layout out */
+body[data-view="app"] { overflow-x: clip; }

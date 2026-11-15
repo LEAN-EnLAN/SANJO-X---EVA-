@@ -4,7 +4,7 @@
 // - SSE (/sse), /link and /api GETs: network only (live data must not be stale).
 // - POSTs to journal / Eva tools / chat while offline: stored in IndexedDB and replayed
 //   when the page says it is back online (or on the next successful request).
-const CACHE = "eva-shell-v2";
+const CACHE = "eva-shell-v3";
 // screens of the astronaut app: cached as full pages (cold start offline) and as the
 // htmx fragments the tab bar swaps in (navigation offline)
 const SCREENS = ["/app", "/app/home", "/app/plan", "/app/eva", "/app/food", "/app/records", "/app/journal", "/app/checkin", "/app/ecg", "/app/band", "/app/emergency", "/app/storm"];
