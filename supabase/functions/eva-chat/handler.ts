@@ -139,7 +139,8 @@ export async function handler(req: Request): Promise<Response> {
   const turns: Turn[] = [...cleanHistory(body?.history), { role: "user", content: asUserData(verdict.text) }];
   try {
     const raw = await chat(key, `${SYSTEM_PROMPT}\n${lang}`, turns);
-    const text = guardReply(raw) || "Sorry, I have no answer for that. Ask me about space or health.";
+    let text = guardReply(raw) || "Sorry, I have no answer for that. Ask me about space or health.";
+    text = body?.lang === "es" ? text.replace(/Super Intelligence/g, "Super Inteligencia") : text.replace(/Super Inteligencia/g, "Super Intelligence");
     console.log(JSON.stringify({ ev: "eva-chat", uid: tag, decision: "model", topic: verdict.topic, role: auth.consume.role, inLen: verdict.text.length, outLen: text.length, ms: Date.now() - started }));
     return json(200, { text, source: "model", model: CHAT_MODEL }, origin);
   } catch (e) {

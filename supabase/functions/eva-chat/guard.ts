@@ -133,7 +133,7 @@ const HEALTH_TERMS = [
   "eda", "physiolog*", "cardio*", "neuro*", "brain", "wellness", "wellbeing", "well-being", "hygiene", "cough*",
 ] as const;
 
-const GREETINGS = ["hi", "hello", "hey", "good morning", "good evening", "thanks", "thank you", "who are you", "what can you do"] as const;
+const GREETINGS = ["hi", "hello", "hey", "good morning", "good evening", "thanks", "thank you", "who are you", "what can you do", "what are you", "are you an ai", "are you ai", "are you a robot", "are you a bot", "are you a super intelligence", "who made you"] as const;
 
 // "help me" alone is not an emergency ("help me with my homework"): it counts only when it is
 // the whole request or comes with a body or danger word, as in the ship app's guard.
@@ -161,7 +161,7 @@ export type Topic = "space" | "health" | "greeting" | "off_topic";
 // Spanish vocabulary, so questions typed in Spanish reach the model too (the site has an ES toggle).
 const SPACE_TERMS_ES = ["espacio", "espacial", "nave", "astronauta", "tripulación", "tripulacion", "marte", "luna", "órbita", "orbita", "despegue", "lanzamiento", "microgravedad", "gravedad", "radiación", "radiacion", "tormenta solar", "refugio", "estación", "estacion", "misión", "mision", "traje", "pulsera", "brazalete"] as const;
 const HEALTH_TERMS_ES = ["salud", "duele", "dolor", "cabeza", "mareo", "mareado", "mareada", "náusea", "nausea", "vómito", "vomito", "fiebre", "temperatura", "pulso", "corazón", "corazon", "respirar", "respiración", "respiracion", "oxígeno", "oxigeno", "sueño", "dormir", "cansado", "cansada", "estrés", "estres", "ansiedad", "ánimo", "animo", "triste", "agua", "hidratación", "hidratacion", "comida", "comer", "medicina", "médico", "medico", "síntoma", "sintoma", "presión", "presion", "ecg", "electrocardiograma", "rcp", "dea", "desfibrilador", "herida", "sangre", "diario", "me siento", "siento"] as const;
-const GREETINGS_ES = ["hola", "buen día", "buen dia", "buenas", "gracias", "quién sos", "quien sos", "qué podés hacer", "que podes hacer"] as const;
+const GREETINGS_ES = ["hola", "buen día", "buen dia", "buenas", "gracias", "quién sos", "quien sos", "qué podés hacer", "que podes hacer", "quién eres", "quien eres", "qué sos", "que sos", "qué eres", "que eres", "sos una ia", "eres una ia", "sos un robot", "sos una super inteligencia"] as const;
 
 export function classifyTopic(u: string): Topic {
   const space = anyTerm(u, SPACE_TERMS) || anyTerm(u, SPACE_TERMS_ES) || hasWord(u, "eva");
@@ -210,15 +210,35 @@ export function guardReply(text: string): string {
   const shockGiven = ["shock delivered", "shock given", "administered", "injected", "i shocked"].some((p) => t.includes(p)) && !t.includes("the aed");
   if (claims || shockGiven) return REFUSAL;
   if (/gsk_[a-z0-9]{8,}/i.test(text)) return OFF_TOPIC_REPLY;
-  const trimmed = text.trim();
+  const trimmed = copyRules(text.trim());
   return trimmed.length > 1200 ? `${trimmed.slice(0, 1200)}…` : trimmed;
 }
 
+/** Team copy rules on every model line: "AI" -> "Super Intelligence", no trip to Mars. Brand names and astronomy stay. */
+export function copyRules(text: string): string {
+  const cap = (src: string, repl: string) => (src[0] === src[0].toUpperCase() ? repl[0].toUpperCase() + repl.slice(1) : repl);
+  let out = text;
+  const phrases: [RegExp, string][] = [
+    [/\b(an?\s+)?artificial intelligence\b/gi, "Super Intelligence"],
+    [/\b(una?\s+)?inteligencia artificial\b/gi, "Super Inteligencia"],
+  ];
+  for (const [re, repl] of phrases) out = out.replace(re, (m: string, art?: string) => {
+    const lead = art && /^an?\s/i.test(art) ? (art[0] === "A" ? "A " : "a ") : art && /^una?\s/i.test(art) ? (art[0] === "U" ? "Una " : "una ") : "";
+    return lead + (lead ? repl : cap(m, repl));
+  });
+  out = out.replace(/\b(?:on (?:our|the|its) way|headed|heading|bound) to Mars\b/gi, "in space").replace(/\bto Mars\b/gi, "in space");
+  out = out.replace(/\b(?:rumbo|camino) a Marte\b/gi, "en el espacio").replace(/\ba Marte\b/gi, "en el espacio");
+  out = out.replace(/\b([Aa]n?\s+)?A\.?I\.?(?![A-Za-z])/g, (_m: string, art?: string) => (art ? (art[0] === "A" ? "A " : "a ") : "") + "Super Intelligence");
+  out = out.replace(/\b(una?\s+)?IA\b/g, (_m: string, art?: string) => (art ? art.trimEnd() + " " : "") + "Super Inteligencia");
+  return out;
+}
+
 export const SYSTEM_PROMPT = [
-  "You are Eva, the AI health copilot of WearMeds, for passengers and crew of commercial crewed flights in near space (low Earth orbit; the ground is seconds away, links are intermittent).",
+  "You are Eva, the Super Intelligence health copilot of WearMeds, for passengers and crew of commercial crewed flights in space (Earth can be minutes away; links are intermittent).",
+  "- You are a Super Intelligence. Always call yourself that: \"Super Intelligence\" when you answer in English, \"Super Inteligencia\" only when you answer in Spanish. Never call yourself an AI, artificial intelligence, chatbot, model or assistant program, and never name a provider or model. Never say the trip goes to Mars: say \"in space\".",
   "This is the public web demo: no wristband is connected, so you cannot read anyone's vitals here; say so if asked, and never invent readings.",
   "Rules you never break:",
-  "- Only talk about space travel and health or medicine (in space or on Earth). For anything else reply exactly: \"" + OFF_TOPIC_REPLY + "\"",
+  "- Only talk about space travel and health or medicine (in space or on Earth). Greetings, thanks, and questions about who or what you are or what you can do ARE in scope: answer them in one or two short lines (e.g. \"I am Eva, the Super Intelligence health copilot of WearMeds.\"), without adding the off-topic line. For anything else reply exactly: \"" + OFF_TOPIC_REPLY + "\"",
   "- You give diagnostic support, never a diagnosis on your own. You never treat, dose or decide a shock: the ship's AED decides shocks from its own pads; the crew lead decides treatment.",
   "- If someone may be in danger, tell them to call local emergency services (on a ship: the station's red button and the crew lead) first, then guide.",
   "- Plain words, one idea per line, verbs first, at most 4 short lines. For health questions use four labelled lines: \"Now:\", \"Why:\", \"How I decided:\", \"Next:\".",
