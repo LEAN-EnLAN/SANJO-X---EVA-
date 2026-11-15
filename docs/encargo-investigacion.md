@@ -1,4 +1,4 @@
-# HERMES — Encargo de investigación médica y arquitectura para una misión a Marte
+# Eva — Encargo de investigación médica y arquitectura para una misión a Marte
 
 ## 0. Cómo usar este archivo
 
@@ -10,7 +10,7 @@ No estamos buscando un prototipo barato para construir durante el hackathon. Bus
 
 Respondé en español claro. Las referencias y nombres comerciales pueden estar en inglés. Empezá por una síntesis corta y tablas; dejá el detalle en anexos. El equipo necesita comprender y comparar sin leer una pared de texto.
 
-### 0.1 Prioridad central: elegir los mejores componentes para HERMES
+### 0.1 Prioridad central: elegir los mejores componentes para Eva
 
 **El resultado principal debe ser una selección óptima y justificada de componentes, no un catálogo de piezas que simplemente podrían servir.** Investigá con amplitud, compará alternativas reales y recomendá una combinación concreta para esta misión. No hay una marca, tecnología, pantalla, procesador ni sensor favorito que debas confirmar.
 
@@ -27,13 +27,13 @@ Método obligatorio de selección:
 
 Optimizar energía, masa, volumen y complejidad sin reducir la calidad de las señales o la capacidad de respuesta exigidas por los casos clínicos seleccionados. Identificar opciones dominadas y, cuando haya compromisos reales, mostrar la frontera de alternativas en lugar de inventar un ganador absoluto.
 
-**Preferencia expresa del equipo: pantalla flexible.** Buscar activamente la mejor opción flexible táctil y compararla con la mejor plana. Elegir la flexible cuando cumpla los requisitos y resulte defendible para HERMES; no descartarla por ser menos habitual o más difícil de prototipar. Si solo una plana permite cumplir los requisitos o la flexible introduce compromisos incompatibles con la misión, recomendar la plana con evidencia y explicar la brecha concreta.
+**Preferencia expresa del equipo: pantalla flexible.** Buscar activamente la mejor opción flexible táctil y compararla con la mejor plana. Elegir la flexible cuando cumpla los requisitos y resulte defendible para Eva; no descartarla por ser menos habitual o más difícil de prototipar. Si solo una plana permite cumplir los requisitos o la flexible introduce compromisos incompatibles con la misión, recomendar la plana con evidencia y explicar la brecha concreta.
 
 ## 1. Proyecto y definición exacta
 
-Nombre de trabajo: **HERMES**.
+Nombre de trabajo: **Eva**.
 
-Expansión propuesta, sin necesidad de cambiarla ni investigarla ahora: **Human-centered Emergency Response and Medical Expertise System**.
+Expansión propuesta, sin necesidad de cambiarla ni investigarla ahora: **sin sigla: Eva es nombre propio (decisión del equipo)**.
 
 Definición del proyecto, conservar literalmente:
 

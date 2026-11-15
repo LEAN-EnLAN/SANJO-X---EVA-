@@ -1,6 +1,6 @@
 # Contexto del proyecto (generado desde el Drive)
 
-Generado: Sat 14/11/2026 21:35 (hora de Rosario) por `scripts/sync-context.sh`. No editar a mano: editá el Drive.
+Generado: Sat 14/11/2026 21:40 (hora de Rosario) por `scripts/sync-context.sh`. No editar a mano: editá el Drive.
 
 ---
 
@@ -96,7 +96,8 @@ Sáb 14/11 19:30 · (DESCARTADO a las 20:55) Design system del kit de Tomás: ma
 Sáb 14/11 20:55 · SE DESCARTA EL DESIGN SYSTEM DE TOMÁS: el equipo lo considera inútil. La landing y su wireframe se regeneran con un design system nuevo (pendiente de recibir). Las pantallas generadas con imágenes de Tomás quedan pendientes. El asistente se escribe Eva, nombre propio, en todo el material; los nombres anteriores (Vela, Hermes) quedan solo en este Registro y en la Bitácora · Lean.  
 Sáb 14/11 21:05 · LANDING Y WIREFRAME CON EL DESIGN SYSTEM TWOCREATE: lienzo crema \#f9f7f4, tinta \#0c0c0c, tipografía grotesca 400 en escalas grandes, sin botones rellenos ni esquinas redondeadas, dípticos de imagen ancha \+ detalle y wordmark final "Eva by WearMeds". Usa los 21 assets de Codex y la capa del enlace azul del preview de motion. Motion: estación que enciende cada bandeja con la instrucción en la pantalla, enlace entre pulseras, partículas solares y señal Tierra–Marte. Landing: https\://claude.ai/artifact/Ja6v2YathtvXUeaS7EcdRo · Wireframe: https\://claude.ai/artifact/UUnPWQ5vwBjevhU5DdG7u8 · Lean.  
 Sáb 14/11 21:20 · ENTORNO COMPARTIDO: tarea 11 (soporte de celular en muñeca) para Tomi. Repo público LEAN-EnLAN/sanjo-x-spaceapps-2026 con CLAUDE.md (reglas), HANDOFF.md y docs/CONTEXT.md regenerado desde el Drive al iniciar cada sesión. Una rama y una sesión en la nube por tarea de la Fase 2 (fase2/NN-nombre). Traspaso subido al Drive como "Traspaso entre sesiones". Las sesiones agregan abajo en este Registro, nunca editan lo de otros · Lean.  
-Sáb 14/11 22:15 · ENCARGO DE INVESTIGACIÓN DEL EQUIPO (anexo en Fase 2): se elimina la estación compartida; quedan brazalete y arnés como únicos dispositivos médicos personales, más el hub informático de la nave (IA offline). Monitoreo no invasivo; tratamiento invasivo solo ante emergencia mortal. Cuatro funciones: descarga (desfibrilación vestible con análisis de ritmo validado), procedimientos guiados, inyectable (vía y fármaco sin decidir) y bitácora. LoRa \+ hub, malla a evaluar. Pantalla táctil ≥ \~100 mm de lado activo, preferentemente flexible. Unos 15 pasajeros. Concepto actual reescrito con estos cambios. Quedan para decidir: nombre (HERMES en el encargo vs Eva), lenguaje ("trata" vs "guides, records and warns"), alerta solar y rehacer la estación en la landing · Equipo (encargo), registrado por Lean.
+Sáb 14/11 22:15 · ENCARGO DE INVESTIGACIÓN DEL EQUIPO (anexo en Fase 2): se elimina la estación compartida; quedan brazalete y arnés como únicos dispositivos médicos personales, más el hub informático de la nave (IA offline). Monitoreo no invasivo; tratamiento invasivo solo ante emergencia mortal. Cuatro funciones: descarga (desfibrilación vestible con análisis de ritmo validado), procedimientos guiados, inyectable (vía y fármaco sin decidir) y bitácora. LoRa \+ hub, malla a evaluar. Pantalla táctil ≥ \~100 mm de lado activo, preferentemente flexible. Unos 15 pasajeros. Concepto actual reescrito con estos cambios. Quedan para decidir: nombre (HERMES en el encargo vs Eva), lenguaje ("trata" vs "guides, records and warns"), alerta solar y rehacer la estación en la landing · Equipo (encargo), registrado por Lean.  
+Sáb 14/11 22:25 · NOMBRE: el asistente se llama Eva en todo el proyecto, incluido el encargo de investigación (que decía HERMES). Choque cerrado · Lean.
 
 ## **Propuestas pendientes de confirmar**
 
@@ -174,7 +175,7 @@ Eva es el asistente de salud de WearMeds para un viaje comercial a Marte con uno
 
 ## **Choques para decidir en equipo**
 
-* **Nombre:** el encargo usa HERMES como nombre de trabajo; el Registro fija Eva (sáb 20:55). Propuesta: Eva para el producto y HERMES solo como nombre del encargo.  
+* **Nombre: RESUELTO (sáb 22:25). Se llama Eva en todo, también en el encargo.**  
 * **Lenguaje:** la definición literal del encargo dice "totalmente autónomo… que prevenga, trate"; el Registro decidió "guides, records and warns". Con descarga e inyectable en el alcance, propuesta para el pitch: "Eva guides, records and warns; validated subsystems treat".  
 * **Estación:** la landing (Caso 02), los cuadros F1–F3, las capas de la estación y el documento de edge cases la incluyen. Hay que rehacer esa parte con el arnés.  
 * **Alerta solar:** ¿sigue en el alcance?  
