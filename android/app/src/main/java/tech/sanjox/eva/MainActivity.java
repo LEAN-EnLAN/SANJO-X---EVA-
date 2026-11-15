@@ -39,6 +39,8 @@ import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
 
+import androidx.webkit.WebViewAssetLoader;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.security.cert.CertificateEncodingException;
@@ -47,9 +49,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Full-screen WebView on the configured ship hub. Native pieces: mic/camera grants for the hub origin only, file
- * chooser with camera capture, trust-on-first-use certificate pinning, a native error screen, keep-screen-on,
- * back navigation through WebView history.
+ * Full-screen WebView on one of three {@link AppMode}s: the hosted demo (live Eva chat), the demo bundled in the APK
+ * (served by WebViewAssetLoader, works with no network) or a ship hub on the LAN. Native pieces: mic/camera grants
+ * for the hub origin only, file chooser with camera capture, trust-on-first-use certificate pinning for the hub
+ * only, a native error screen, keep-screen-on, back navigation through WebView history.
  */
 public class MainActivity extends Activity {
     private static final int REQ_MEDIA = 10;
@@ -57,7 +60,12 @@ public class MainActivity extends Activity {
     private static final int REQ_FILE = 20;
 
     private HubPrefs prefs;
+    /** The mode the user chose (remembered) and the one actually showing (online falls back to offline). */
+    private AppMode chosenMode;
+    private AppMode mode;
+    /** The hub, in {@link AppMode#HUB} only; null in the demo modes. */
     private HubConfig config;
+    private WebViewAssetLoader assetLoader;
     private WebView web;
     private View errorView;
     private TextView errorTitle;
@@ -82,8 +90,8 @@ public class MainActivity extends Activity {
     private AlertDialog trustDialog;
 
     private Object backCallback;
-    /** The v2 navy base (#070A14): window, WebView and system bars, so nothing flashes black around the page. */
-    static final int BACKGROUND = 0xFF070A14;
+    /** The landing's black: window, WebView and system bars, so nothing flashes around the page. */
+    static final int BACKGROUND = 0xFF000000;
     /** Whether the Eva status toast was shown for this load of the hub. */
     private boolean statusShown;
 
@@ -91,8 +99,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = new HubPrefs(this);
-        config = prefs.load();
-        if (config == null) {
+        if (!readMode()) {
             startActivity(new Intent(this, SetupActivity.class));
             finish();
             return;
@@ -115,6 +122,7 @@ public class MainActivity extends Activity {
         CaptureProvider.prune(this);
         setUpWebView();
         setUpBack();
+        announceFallback();
         load();
     }
 
@@ -134,17 +142,19 @@ public class MainActivity extends Activity {
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        // Back from Hub settings: reload only if the hub or seat changed.
-        HubConfig now = prefs.load();
-        if (now == null) {
+        // Back from settings: reload only if the mode, the hub or the seat changed.
+        AppMode wasChosen = chosenMode, wasMode = mode;
+        HubConfig wasConfig = config;
+        if (!readMode()) {
             openSettings();
-        } else if (!now.equals(config)) {
-            boolean hostChanged = !now.host.equals(config.host);
-            config = now;
+        } else if (chosenMode != wasChosen || (config != null && !config.equals(wasConfig))) {
+            if (wasConfig == null || config == null || !config.host.equals(wasConfig.host)) web.clearSslPreferences();
             applyOrientation();
-            if (hostChanged) web.clearSslPreferences();
             web.clearHistory();
+            announceFallback();
             load();
+        } else {
+            mode = wasMode; // same choice: keep what is showing (an online demo that fell back stays on the bundle)
         }
     }
 
@@ -167,6 +177,46 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 
+    /**
+     * Reads the remembered mode (and the hub for {@link AppMode#HUB}). The online demo opens the bundle when there is
+     * no network. False when there is nothing to open yet (first run, or a hub that no longer parses).
+     */
+    private boolean readMode() {
+        AppMode chosen = prefs.mode();
+        HubConfig hub = chosen == AppMode.HUB ? prefs.load() : null;
+        if (chosen == null || (chosen == AppMode.HUB && hub == null)) return false;
+        chosenMode = chosen;
+        config = hub;
+        mode = AppMode.effective(chosen, isOnline());
+        return true;
+    }
+
+    private void announceFallback() {
+        if (mode != chosenMode) Toast.makeText(this, R.string.offline_fallback_toast, Toast.LENGTH_LONG).show();
+    }
+
+    /** The current mode (for tests and the settings screen). */
+    AppMode mode() {
+        return mode;
+    }
+
+    /** Whether the current mode keeps this URL in the WebView: the hub's origin, or the demo's allow-list. */
+    private boolean inApp(String url) {
+        return mode == AppMode.HUB ? config.isSameOrigin(url) : mode.allowsInWebView(url);
+    }
+
+    private String startUrl() {
+        return mode == AppMode.HUB ? config.startUrl() : mode.demoStartUrl();
+    }
+
+    /** The hosted demo did not load (no route, DNS, server down): open the bundled copy and say so. */
+    private void fallBackToOffline() {
+        mode = AppMode.OFFLINE;
+        Toast.makeText(this, R.string.offline_fallback_toast, Toast.LENGTH_LONG).show();
+        web.clearHistory();
+        load();
+    }
+
     // ---------------------------------------------------------------- WebView
 
     // JavaScript is the app: Eva is an htmx PWA. Only the configured hub origin is loaded in the WebView
@@ -183,7 +233,11 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(true); // uploads of content:// photos picked or captured
         s.setSupportMultipleWindows(false);
-        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.3");
+        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.4");
+        // The demo replay is plain static pages: no file:// or content:// beyond uploads, and its player frames and
+        // fetches stay same-origin (the asset loader serves the bundle on an https origin, not file://).
+        s.setAllowFileAccessFromFileURLs(false);
+        s.setAllowUniversalAccessFromFileURLs(false);
         // Smoothness (APP-POLISH §8): the page owns overscroll (pull to refresh) and its own type scale; the
         // WebView is always full screen, so pre-rastering off-screen tiles avoids checkerboarding on fast scroll.
         // The default hardware layer is kept (no setLayerType anywhere).
@@ -194,15 +248,42 @@ public class MainActivity extends Activity {
         web.setHorizontalScrollBarEnabled(false);
         web.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, false);
         web.setBackgroundColor(BACKGROUND);
+        assetLoader = new WebViewAssetLoader.Builder()
+                .setDomain(AppMode.ASSET_HOST)
+                .addPathHandler(AppMode.ASSET_PREFIX, new WebViewAssetLoader.AssetsPathHandler(this))
+                .build();
         web.setWebViewClient(new HubClient());
         web.setWebChromeClient(new HubChrome());
         web.setDownloadListener((url, ua, cd, mime, len) -> openExternally(url));
+        // Long-press on the page (not on a link, an image or a field) opens the menu: settings, reload, leave.
+        web.setOnLongClickListener(v -> {
+            WebView.HitTestResult r = web.getHitTestResult();
+            if (r != null && !menuOnLongPress(r.getType())) return false;
+            showMenu(false);
+            return true;
+        });
         // Service workers are on by default in WebView; Eva's /sw.js registers itself when the origin is trusted.
+    }
+
+    /** A long-press on a link, an image or a field keeps the WebView's own behaviour; anywhere else opens the menu. */
+    static boolean menuOnLongPress(int hitType) {
+        switch (hitType) {
+            case WebView.HitTestResult.SRC_ANCHOR_TYPE:
+            case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+            case WebView.HitTestResult.IMAGE_TYPE:
+            case WebView.HitTestResult.EDIT_TEXT_TYPE:
+            case WebView.HitTestResult.PHONE_TYPE:
+            case WebView.HitTestResult.EMAIL_TYPE:
+            case WebView.HitTestResult.GEO_TYPE:
+                return false;
+            default:
+                return true;
+        }
     }
 
     /** Wristband (landscape) locks landscape; everything else follows the phone (auto-rotate flips the PWA). */
     private void applyOrientation() {
-        setRequestedOrientation(config != null && config.seat == Seat.WRIST
+        setRequestedOrientation(mode == AppMode.HUB && config != null && config.seat == Seat.WRIST
                 ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                 : ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
     }
@@ -225,7 +306,7 @@ public class MainActivity extends Activity {
 
     /** After the hub answers once: ask it whether Eva is online and say so for 3 seconds (same origin, same pin). */
     void showEvaStatus() {
-        if (statusShown || web == null) return;
+        if (statusShown || web == null || mode != AppMode.HUB) return;
         statusShown = true;
         web.evaluateJavascript(EvaStatus.FETCH_JS, value -> {
             String msg = EvaStatus.toastFor(EvaStatus.unquote(value));
@@ -238,7 +319,7 @@ public class MainActivity extends Activity {
         hideError();
         mainFrameFailed = false;
         certErrorShown = false;
-        web.loadUrl(config.startUrl());
+        web.loadUrl(startUrl());
     }
 
     private void openSettings() {
@@ -288,19 +369,19 @@ public class MainActivity extends Activity {
             return;
         }
         String hint = config.isHttps()
-                ? "Check that the hub is running with --tls (eva demo --tls) and that this phone is on the same Wi-Fi. If the hub was started without --tls, switch to http in Change hub."
-                : "Check that the hub is running (eva demo) and that this phone is on the same Wi-Fi. If the hub was started with --tls, switch to https in Change hub.";
+                ? "Check that the hub is running with --tls (eva demo --tls) and that this phone is on the same Wi-Fi. If the hub was started without --tls, switch to http in Settings."
+                : "Check that the hub is running (eva demo) and that this phone is on the same Wi-Fi. If the hub was started with --tls, switch to https in Settings.";
         showError(getString(R.string.error_unreachable_title),
                 "Eva could not open " + config.address() + ".\n" + hint,
                 config.origin() + " · " + description + " (" + code + ")");
     }
 
-    /** Hub navigation stays in the WebView; other links open in the browser. */
+    /** The hub's origin (or the demo's allow-list) stays in the WebView; other links open in the browser. */
     private final class HubClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
-            if (config.isSameOrigin(url)) return false;
+            if (inApp(url)) return false;
             String scheme = request.getUrl().getScheme();
             if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
                 if (!HubConfig.isCleartextAllowed(url)) return true; // blocked: http to a public host
@@ -316,6 +397,13 @@ public class MainActivity extends Activity {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
+            if (AppMode.ASSET_HOST.equals(HubConfig.hostOf(url))) {
+                // the bundled replay: only in the offline mode, only from the APK's assets
+                WebResourceResponse r = mode == AppMode.OFFLINE && assetLoader != null
+                        ? assetLoader.shouldInterceptRequest(request.getUrl()) : null;
+                return r != null ? r : new WebResourceResponse("text/plain", "utf-8", 404, "Not found",
+                        Collections.emptyMap(), new ByteArrayInputStream(new byte[0]));
+            }
             if (HubConfig.isCleartextAllowed(url)) return null;
             return new WebResourceResponse("text/plain", "utf-8", 403, "Cleartext blocked",
                     Collections.emptyMap(), new ByteArrayInputStream(new byte[0]));
@@ -323,12 +411,12 @@ public class MainActivity extends Activity {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (config.isSameOrigin(url)) mainFrameFailed = false;
+            if (inApp(url)) mainFrameFailed = false;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (!mainFrameFailed && config.isSameOrigin(url)) {
+            if (!mainFrameFailed && inApp(url)) {
                 hideError();
                 showEvaStatus();
             }
@@ -338,6 +426,15 @@ public class MainActivity extends Activity {
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             if (!request.isForMainFrame()) return;
             if (certErrorShown) return; // the follow-up of our own certificate cancel: keep its explanation
+            if (mode == AppMode.ONLINE) {
+                fallBackToOffline();
+                return;
+            }
+            if (mode == AppMode.OFFLINE) {
+                showError(getString(R.string.error_demo_title), getString(R.string.error_demo_detail),
+                        String.valueOf(error.getDescription()) + " (" + error.getErrorCode() + ")");
+                return;
+            }
             showUnreachable(String.valueOf(error.getDescription()), error.getErrorCode());
         }
 
@@ -362,6 +459,17 @@ public class MainActivity extends Activity {
     // ---------------------------------------------------------------- TLS: trust on first use
 
     private void handleSslError(SslErrorHandler handler, SslError error) {
+        if (!mode.allowsTofu()) {
+            // Demo modes: the hosted demo has a public CA certificate, so the system already verified it. Any error
+            // here is a real failure (or an interception): cancel, never prompt, never pin.
+            handler.cancel();
+            if (mode == AppMode.ONLINE && AppMode.isOnlineDemoHost(error.getUrl())) {
+                showCertError(getString(R.string.error_cert_invalid_title),
+                        "The demo site's certificate did not verify (" + describe(error) + "). Check the phone's date and "
+                                + "time, or open the Offline demo in settings.", AppMode.ONLINE_HOST);
+            }
+            return;
+        }
         String errorHost = HubConfig.hostOf(error.getUrl());
         String fp = Fingerprints.sha256(derOf(error.getCertificate()));
         boolean onlyTrustErrors = !error.hasError(SslError.SSL_DATE_INVALID)
@@ -382,7 +490,7 @@ public class MainActivity extends Activity {
                 showCertError(getString(R.string.error_cert_changed_title),
                         "The hub at " + config.host + " presented a different certificate from the one you trusted. "
                                 + "Eva did not connect.\n\nIf the hub's certificate was recreated (new data folder, new IP), "
-                                + "open Change hub, tap Forget next to the trusted certificate, and connect again. "
+                                + "open Settings, tap Forget next to the trusted certificate, and connect again. "
                                 + "Otherwise, someone else may be answering at this address.",
                         "pinned  " + prefs.pin(config.host) + "\nnow     " + fp);
                 return;
@@ -456,8 +564,8 @@ public class MainActivity extends Activity {
                 .setNegativeButton(R.string.dont_trust_button, (dlg, w) -> {
                     cancelPendingSsl();
                     showCertError(getString(R.string.error_cert_rejected_title),
-                            "Eva did not connect to " + config.host + ". Retry to see the fingerprint again, or use Change "
-                                    + "hub to pick another address or plain http.",
+                            "Eva did not connect to " + config.host + ". Retry to see the fingerprint again, or use "
+                                    + "Settings to pick another address or plain http.",
                             "SHA-256 " + fp);
                 })
                 .create();
@@ -481,7 +589,8 @@ public class MainActivity extends Activity {
     private final class HubChrome extends WebChromeClient {
         @Override
         public void onPermissionRequest(PermissionRequest request) {
-            boolean sameOrigin = config.isSameOrigin(request.getOrigin().toString());
+            // mic and camera for a ship hub only; the demo replay never needs them
+            boolean sameOrigin = mode == AppMode.HUB && config.isSameOrigin(request.getOrigin().toString());
             String[] wanted = MediaPolicy.supported(request.getResources());
             if (!sameOrigin || wanted.length == 0) {
                 request.deny();
@@ -522,7 +631,7 @@ public class MainActivity extends Activity {
 
     private void grantOrDeny(PermissionRequest request) {
         String[] grant = MediaPolicy.toGrant(request.getResources(),
-                config.isSameOrigin(request.getOrigin().toString()),
+                mode == AppMode.HUB && config.isSameOrigin(request.getOrigin().toString()),
                 checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED,
                 checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
         if (grant.length > 0) {
@@ -625,9 +734,16 @@ public class MainActivity extends Activity {
             web.goBack();
             return;
         }
+        showMenu(true);
+    }
+
+    /** Back at the root, or a long-press on the page: leave, or go back to settings (mode, hub, seat). */
+    void showMenu(boolean fromBack) {
         new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
-                .setTitle(R.string.leave_title)
-                .setPositiveButton(R.string.leave, (d, w) -> finish())
+                .setTitle(fromBack ? R.string.leave_title : R.string.menu_title)
+                .setPositiveButton(fromBack ? R.string.leave : R.string.reload, (d, w) -> {
+                    if (fromBack) finish(); else load();
+                })
                 .setNeutralButton(R.string.change_hub, (d, w) -> openSettings())
                 .setNegativeButton(R.string.stay, null)
                 .show();

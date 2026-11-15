@@ -15,8 +15,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 /**
- * First run and "Hub settings": hub address, http or https, seat, keep-screen-on, and the pinned certificate
- * (with Forget). Saving opens {@link MainActivity}.
+ * First run and "Eva settings": the three modes (online demo, recommended; offline demo; ship hub). The two demos
+ * open at once; the hub keeps its form: address, http or https, seat, keep-screen-on, and the pinned certificate
+ * (with Forget). The choice is remembered and opens {@link MainActivity}.
  */
 public class SetupActivity extends Activity {
     private HubPrefs prefs;
@@ -28,6 +29,7 @@ public class SetupActivity extends Activity {
     private Switch keepOn;
     private View pinRow;
     private TextView pinText;
+    private View hubForm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,19 @@ public class SetupActivity extends Activity {
         keepOn = findViewById(R.id.keep_on);
         pinRow = findViewById(R.id.pin_row);
         pinText = findViewById(R.id.pin_text);
+        hubForm = findViewById(R.id.hub_form);
+
+        AppMode current = prefs.mode();
+        findViewById(R.id.mode_online).setOnClickListener(v -> openDemo(AppMode.ONLINE));
+        findViewById(R.id.mode_offline).setOnClickListener(v -> openDemo(AppMode.OFFLINE));
+        findViewById(R.id.mode_hub).setOnClickListener(v -> {
+            boolean show = hubForm.getVisibility() != View.VISIBLE;
+            hubForm.setVisibility(show ? View.VISIBLE : View.GONE);
+            markSelected(show ? AppMode.HUB : prefs.mode());
+            if (show) address.requestFocus();
+        });
+        markSelected(current);
+        hubForm.setVisibility(current == AppMode.HUB ? View.VISIBLE : View.GONE);
 
         for (Seat s : Seat.values()) {
             RadioButton rb = (RadioButton) getLayoutInflater().inflate(R.layout.seat_option, seats, false);
@@ -83,6 +98,20 @@ public class SetupActivity extends Activity {
         } catch (PackageManager.NameNotFoundException ignored) {
             // version label stays empty
         }
+    }
+
+    /** The remembered (or open) mode gets the teal hairline. */
+    private void markSelected(AppMode m) {
+        findViewById(R.id.mode_online).setSelected(m == AppMode.ONLINE);
+        findViewById(R.id.mode_offline).setSelected(m == AppMode.OFFLINE);
+        findViewById(R.id.mode_hub).setSelected(m == AppMode.HUB);
+    }
+
+    private void openDemo(AppMode m) {
+        prefs.setMode(m);
+        startActivity(new Intent(this, MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        finish();
     }
 
     private void checkSeat(Seat seat) {

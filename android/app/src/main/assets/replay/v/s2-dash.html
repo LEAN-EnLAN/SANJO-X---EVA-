@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en" data-eva-mode="rules" style="--ease-spring-snappy: linear(0.0000, 0.0238, 0.0879, 0.1689, 0.2613, 0.3670, 0.4626, 0.5534, 0.6369, 0.7181, 0.7828, 0.8380, 0.8881, 0.9253, 0.9550, 0.9799, 0.9969, 1.0092, 1.0176, 1.0232, 1.0258, 1.0266, 1.0260, 1.0245, 1.0224, 1.0197, 1.0171, 1.0146, 1.0121, 1.0097, 1.0077, 1.0059, 1.0043, 1.0031, 1.0021, 1.0012, 1.0006, 1.0001, 0.9998, 0.9995, 0.9994); --dur-spring-snappy: 452ms; --ease-spring-gentle: linear(0.0000, 0.0251, 0.0838, 0.1609, 0.2508, 0.3371, 0.4201, 0.4974, 0.5677, 0.6306, 0.6861, 0.7346, 0.7786, 0.8142, 0.8446, 0.8704, 0.8922, 0.9105, 0.9259, 0.9387, 0.9500, 0.9588, 0.9661, 0.9721, 0.9771, 0.9813, 0.9846, 0.9874, 0.9898, 0.9917, 0.9932, 0.9945, 0.9955, 0.9963, 0.9970, 0.9976, 0.9981, 0.9984, 0.9987, 0.9990, 0.9992); --dur-spring-gentle: 725ms; --ease-spring-bouncy: linear(0.0000, 0.0799, 0.2707, 0.5129, 0.7564, 0.9655, 1.1196, 1.2120, 1.2471, 1.2361, 1.1939, 1.1357, 1.0744, 1.0198, 0.9781, 0.9515, 0.9396, 0.9399, 0.9489, 0.9627, 0.9780, 0.9921, 1.0033, 1.0108, 1.0146, 1.0152, 1.0134, 1.0101, 1.0064, 1.0027, 0.9998, 0.9977, 0.9965, 0.9962, 0.9965, 0.9973, 0.9982, 0.9991, 0.9999, 1.0005, 1.0008); --dur-spring-bouncy: 960ms; --ease-spring-slow: linear(0.0000, 0.0306, 0.1004, 0.1887, 0.2828, 0.3782, 0.4642, 0.5420, 0.6110, 0.6712, 0.7232, 0.7677, 0.8056, 0.8376, 0.8646, 0.8880, 0.9068, 0.9226, 0.9357, 0.9466, 0.9557, 0.9633, 0.9696, 0.9748, 0.9791, 0.9828, 0.9858, 0.9882, 0.9903, 0.9919, 0.9933, 0.9945, 0.9954, 0.9962, 0.9969, 0.9974, 0.9979, 0.9982, 0.9985, 0.9988, 0.9990); --dur-spring-slow: 1124ms; --ease-spring-swift: linear(0.0000, 0.0253, 0.0916, 0.1720, 0.2705, 0.3619, 0.4503, 0.5409, 0.6153, 0.6876, 0.7446, 0.7935, 0.8388, 0.8729, 0.9036, 0.9262, 0.9444, 0.9602, 0.9713, 0.9807, 0.9872, 0.9920, 0.9959, 0.9984, 1.0002, 1.0013, 1.0020, 1.0023, 1.0025, 1.0024, 1.0023, 1.0021, 1.0019, 1.0016, 1.0014, 1.0012, 1.0010, 1.0008, 1.0007, 1.0005, 1.0004); --dur-spring-swift: 416ms; --ease-spring-glide: linear(0.0000, 0.0284, 0.0944, 0.1765, 0.2679, 0.3588, 0.4447, 0.5211, 0.5918, 0.6540, 0.7082, 0.7548, 0.7935, 0.8275, 0.8562, 0.8804, 0.9001, 0.9171, 0.9314, 0.9432, 0.9530, 0.9610, 0.9678, 0.9734, 0.9781, 0.9818, 0.9850, 0.9876, 0.9898, 0.9916, 0.9931, 0.9943, 0.9953, 0.9961, 0.9968, 0.9974, 0.9978, 0.9982, 0.9985, 0.9988, 0.9990); --dur-spring-glide: 1311ms;"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+
+
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="../static/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../static/icons/icon-192.png">
+
+
+
+<link rel="preload" href="../static/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap"><link rel="stylesheet" href="../static/css/app.css">
+
+
+
+
+
+
+
+<title>Eva · ship hub</title>
+<style>      .htmx-indicator{opacity:0}      .htmx-request .htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      .htmx-request.htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}      </style><script src="../static/js/motion.js" defer=""></script><script src="../static/js/replay.js" defer=""></script></head>
+<body class="min-h-dvh bg-background text-ink antialiased" data-view="dash" data-replay-state="s2" data-replay-view="dash">
+<div class="flex min-h-dvh">
+  <div class="hidden"></div>
+  <div class="hidden"></div>
+  <nav class="hidden w-18 shrink-0 border-r border-line bg-surface md:block" aria-label="Sections">
+   <div class="sticky top-0 flex h-dvh flex-col items-center gap-2 py-5">
+    <a href="#top" title="Overview" class="relative grid size-11 place-items-center rounded-full bg-ink text-on-light"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"></path></svg></a>
+    <a href="#roster" title="Passengers" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"></path></svg></a>
+    <a href="#case" title="Cases" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M12 20s-8-4.7-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.3 12 20 12 20z"></path><path d="M7 12h2.5l1.5-2.5 2 5 1.5-2.5H17"></path></svg></a>
+    <a href="#alerts" title="Alerts" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 18v-6a6 6 0 0 1 12 0v6"></path><path d="M4 18h16v3H4zM12 2v2M4.5 5l1.5 1.5M19.5 5L18 6.5"></path></svg></a>
+    <a href="#sync" title="Ground link" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M9 15l-4 4M7 9l4-4 8 8-4 4z"></path><path d="M14 4l2-2M20 10l2-2"></path><path d="M3 13a8 8 0 0 0 8 8"></path></svg></a>
+    <a href="#station" title="Medical station" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M13 3L5 14h6l-1 7 8-11h-6z"></path></svg></a>
+    <a href="#mesh" title="Mesh" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><circle cx="12" cy="12" r="2"></circle><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8"></path></svg></a>
+    <a href="#" title="Records report" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink" data-replay="live-only"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v4h4M9 12h6M9 16h6"></path></svg></a>
+    <a href="#about" title="About &amp; credits" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink" onclick="document.getElementById('about').open=true"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 11v5M12 8h.01"></path></svg></a>
+    <a href="#" title="Astronaut app" class="mt-auto grid size-11 place-items-center rounded-full text-muted hover:text-ink" data-replay="missing"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+   </div>
+  </nav>
+  <div class="flex min-w-0 flex-1 flex-col" id="top">
+    <header class="flex flex-wrap items-center gap-3 border-b border-line px-4 py-4 md:px-6">
+      <span class="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-ink pr-4 pl-1.5 text-on-light" data-konami-tap="">
+        <span class="grid size-8 place-items-center rounded-full bg-on-light"><span class="size-3 rounded-full bg-brand"></span></span>
+        <span class="text-sm font-semibold tracking-tight">Eva</span><span class="text-xs text-on-light/70">by WearMeds</span>
+      </span>
+      <span class="hidden h-11 min-w-0 flex-1 items-center gap-3 rounded-full border border-line bg-surface px-4 text-sm text-muted lg:flex"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><span class="truncate">Ship hub · ship · offline-first</span></span>
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="#" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised" data-replay="live-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v4h4M9 12h6M9 16h6"></path></svg>Report</a>
+        <a href="#" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised" data-replay="live-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>CSV</a>
+        <a href="#" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised" data-replay="live-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>JSON</a>
+      </div>
+      <span class="badge badge-dot h-8 px-3 text-warn border border-line" data-eva-chip="" data-online-text="Eva online" title="On-board rules" data-tone="warn"><span data-eva-chip-text="">On-board rules</span><span class="hidden text-muted xl:inline" data-eva-hint="">Started with --offline</span></span>
+      <span class="ml-auto flex items-center gap-2.5">
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium text-info border border-line">MO</span>
+        <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Mara Okoye</span><span class="text-xs text-muted">Crew lead</span></span>
+      </span>
+    </header>
+
+    <main class="flex flex-col gap-6 p-4 md:p-6">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="flex flex-col gap-2">
+          <p class="text-xs uppercase tracking-label text-muted">Saturday · day 96 in space · ship time 13:59</p>
+          <h1 class="text-4xl tracking-tight text-ink">Good afternoon, Mara</h1>
+        </div>
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <a href="#case" class="press flex h-14 items-center gap-3 rounded-full border border-line bg-surface py-1 pr-4 pl-1 ring-1 ring-info/20" aria-label="Eva: open the case card">
+            <span class="eva-mascot relative inline-grid shrink-0 place-items-center size-12" data-eva="" data-state="alert" style="--eva-y: -2.0000; --eva-s: 1.0025; --eva-r: 0.0000; --eva-glow: 1.0000; --eva-gs: 1.1095; --eva-sx: 1.0000; --eva-sy: 1.0000;"><img src="../static/img/eva/eva-alert.webp" alt="Eva, the health copilot" class="eva-body relative size-full object-contain" draggable="false" decoding="async" style="opacity: 1;"></span>
+            <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status="">Guiding an emergency</span></span>
+          </a>
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted"><span class="pic size-7" aria-hidden="true"><img src="../static/img/icons/hub.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>Hub · hosts the Super Intelligence · stores everything</span>
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted"><span class="pic size-7" aria-hidden="true"><img src="../static/img/icons/lora.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>Eva Link mesh · <span data-mesh-count="">5 online</span></span>
+          
+        </div>
+      </div>
+
+      <div id="kpis"><section class="rounded-card border border-line bg-surface px-0 py-5">
+  <div class="grid grid-cols-2 gap-y-5 divide-line md:grid-cols-5 md:divide-x">
+  
+    <div class="relative flex items-start justify-between gap-3 px-6 before:absolute before:top-[-1.25rem] before:left-6 before:h-1 before:w-10 before:rounded-full before:bg-eva">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs uppercase tracking-label text-muted">Passengers OK</p>
+        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-1" aria-label="11"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 1;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="slot"><span class="col" style="--d: 1;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span><span class="ml-1 text-base text-muted">/ 15</span></p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge bg-critical/15 text-critical">Ana in care</span></p>
+      </div>
+      <span class="pic size-11" aria-hidden="true"><img src="../static/img/icons/crew.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>
+    </div>
+  
+    <div class="relative flex items-start justify-between gap-3 px-6 before:absolute before:top-[-1.25rem] before:left-6 before:h-1 before:w-10 before:rounded-full before:bg-eva">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs uppercase tracking-label text-muted">Open alerts</p>
+        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-2" aria-label="1"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 1;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span></p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge bg-critical/15 text-critical">No pulse</span></p>
+      </div>
+      <span class="pic size-11" aria-hidden="true"><img src="../static/img/icons/alert.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>
+    </div>
+  
+    <div class="relative flex items-start justify-between gap-3 px-6 before:absolute before:top-[-1.25rem] before:left-6 before:h-1 before:w-10 before:rounded-full before:bg-eva">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs uppercase tracking-label text-muted">Watching</p>
+        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-3" aria-label="3"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 3;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span></p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge border border-line text-warn">ECG · battery · skin</span></p>
+      </div>
+      <span class="pic size-11" aria-hidden="true"><img src="../static/img/icons/wristband.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>
+    </div>
+  
+    <div class="relative flex items-start justify-between gap-3 px-6 before:absolute before:top-[-1.25rem] before:left-6 before:h-1 before:w-10 before:rounded-full before:bg-eva">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs uppercase tracking-label text-muted">Ground delay</p>
+        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-4" aria-label="1.9" class="flash-tint"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 1.0000;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="sep">.</span><span class="slot"><span class="col" style="--d: 9.0000;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span><span class="ml-1 text-base text-muted">s one way</span></p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge border border-line text-muted">Near-space uplink · in contact</span></p>
+      </div>
+      <span class="pic size-11" aria-hidden="true"><img src="../static/img/icons/earth.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>
+    </div>
+  
+    <div class="relative flex items-start justify-between gap-3 px-6 before:absolute before:top-[-1.25rem] before:left-6 before:h-1 before:w-10 before:rounded-full before:bg-eva">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs uppercase tracking-label text-muted">Records</p>
+        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-5" aria-label="8"><span class="count" aria-hidden="true"><span class="slot"><span class="col" style="--d: 8;"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span><span class="ml-1 text-base text-muted">acknowledged</span></p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge border border-line text-info">0 queued · 2 sent</span></p>
+      </div>
+      <span class="pic size-11" aria-hidden="true"><img src="../static/img/icons/logbook.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>
+    </div>
+  
+  </div>
+</section></div>
+      <div id="roster"><section class="flex flex-col gap-6 rounded-card border border-line bg-surface p-5">
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl text-ink">Passengers now</h2>
+        <span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">15 on board</span>
+        <span class="flex items-center gap-1.5 text-xs text-muted"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>live</span>
+      </div>
+      <div class="flex rounded-full bg-raised p-1 text-xs">
+        <span class="rounded-full bg-ink px-3 py-1.5 text-on-light">All · 15</span>
+        <span class="rounded-full px-3 py-1.5 text-muted">Needs attention · 4</span>
+        <span class="rounded-full px-3 py-1.5 text-muted">Suit mode · 3</span>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4 text-xs text-muted">
+      <span class="flex flex-wrap gap-x-5 gap-y-2"><span class="flex items-center gap-2"><span class="size-3 rounded-full bg-critical"></span>Needs help now</span><span class="flex items-center gap-2"><span class="size-3 rounded-full bg-warn"></span>Watching</span><span class="flex items-center gap-2"><span class="size-3 rounded-full bg-ok"></span>All good</span></span>
+      <span class="flex items-center gap-5"><span class="flex items-center gap-2"><span class="h-3 w-5 rounded-full ring-1 ring-ok/40"></span>Usual pulse range</span><span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"></path><path d="M6 8h4M14 8h4"></path></svg>Joined</span><span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"></path></svg>Suit mode</span></span>
+    </div>
+  </div>
+
+  
+  <section class="flex flex-col gap-2">
+    <header class="flex items-center gap-2 px-4"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"></span><span class="text-xs uppercase tracking-label text-ink">Needs help now</span><span class="text-xs text-muted tabular-nums">1</span>
+      <span class="ml-auto hidden gap-4 text-xs uppercase tracking-label text-muted xl:flex"><span class="w-32">Status</span><span class="w-52">Pulse · last 2 h</span><span class="w-20">SpO₂</span><span class="w-28">Skin temp</span><span class="w-24">Wrist ECG</span><span class="w-24">Band</span><span class="w-36">Battery</span></span></header>
+    <article class="flex flex-col rounded-tile border border-critical/50 bg-critical/10">
+  <div class="flex items-center gap-4 overflow-x-auto px-4 py-3">
+    <div class="min-w-40 flex-1">
+      <span class="flex min-w-0 items-center gap-3">
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium bg-critical/20 text-critical border border-line">AR</span>
+        <span class="flex min-w-0 flex-col leading-tight"><span class="truncate text-sm text-ink">Ana Ruiz</span><span class="text-xs text-muted">Seat 4B</span></span>
+      </span>
+    </div>
+    <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge bg-critical/15 text-critical"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"><span class="absolute inset-0 animate-ping rounded-full bg-critical"></span></span>In care</span></div>
+    <div class="w-52 shrink-0">
+      <span class="flex items-center gap-3">
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-critical">No pulse</span><span class="truncate text-xs text-critical">since 14:01</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="6.666666" rx="4" class="fill-ok/15"></rect><polyline points="0.0,6.3 3.8,7.0 7.6,7.7 11.4,8.3 15.2,9.0 19.0,6.7 22.8,7.3 26.5,8.0 30.3,8.7 34.1,6.3 37.9,7.0 41.7,7.7 45.5,8.3 49.3,9.0 53.1,6.7 56.9,7.3 60.7,8.0 64.5,8.7 68.2,7.7 72.0,9.7 75.8,7.7 79.6,7.0 83.4,7.7 87.2,31.0 91.0,31.0" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-critical"></polyline><circle cx="91" cy="31" r="3.5" class="fill-current text-critical"></circle></svg>
+      </span>
+    </div>
+    <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-critical">—</span><span class="truncate text-xs text-critical">no reading</span></span></div>
+    <div class="w-28 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">33.6<span class="ml-1 text-xs text-muted">°C</span></span><span class="truncate text-xs text-muted">usual</span></span></div>
+    <div class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="font-mono text-sm tabular-nums text-ink">13:59</span><span class="truncate text-xs text-muted">regular</span></span></div>
+    <div class="hidden w-24 shrink-0 min-[1400px]:block"><span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"></path><path d="M6 8h4M14 8h4"></path></svg>Joined</span></div>
+    <div class="w-36 shrink-0">
+      <span class="flex flex-col gap-1">
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 66%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">66%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 70%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">70%</span></span>
+      </span>
+    </div>
+  </div>
+  
+  <div class="flex flex-wrap items-center gap-3 border-t px-4 py-2.5 border-critical/30">
+    <span class="grid size-6 shrink-0 place-items-center rounded-full text-info border border-line"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"></path></svg></span>
+    <p class="min-w-0 flex-1 truncate text-sm text-ink">No pulse, no movement, no answer · emergency flow started · the AED decides shocks</p>
+    
+    <span class="flex shrink-0 flex-wrap items-center gap-2">
+      <span class="inline-flex h-8 items-center gap-2 rounded-full bg-background/60 pr-3 pl-1"><span class="inline-grid size-8 shrink-0 place-items-center rounded-full text-xs font-medium text-info border border-line">LB</span><span class="text-xs text-ink">Leo · CPR</span><span class="text-xs text-muted tabular-nums">108 bpm</span></span><span class="inline-flex h-8 items-center gap-2 rounded-full bg-background/60 pr-3 pl-1"><span class="inline-grid size-8 shrink-0 place-items-center rounded-full text-xs font-medium text-info border border-line">TR</span><span class="text-xs text-ink">Tomás · AED</span><span class="text-xs text-muted tabular-nums">117 bpm</span></span>
+      <a href="#case" class="inline-flex h-8 items-center justify-center gap-2 rounded-full bg-ink px-3 text-xs font-medium text-on-light">Open case <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+    </span>
+    
+  </div>
+  
+</article>
+  </section>
+  
+
+  <section class="flex flex-col gap-2">
+    <header class="flex items-center gap-2 px-4"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-warn"></span><span class="text-xs uppercase tracking-label text-ink">Watching</span><span class="text-xs text-muted tabular-nums">3</span><span class="truncate text-xs text-muted">· not in danger · Eva is following up</span></header>
+    <article class="flex flex-col rounded-tile border border-transparent bg-raised">
+  <div class="flex items-center gap-4 overflow-x-auto px-4 py-3">
+    <div class="min-w-40 flex-1">
+      <span class="flex min-w-0 items-center gap-3">
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium text-warn border border-line">PN</span>
+        <span class="flex min-w-0 flex-col leading-tight"><span class="truncate text-sm text-ink">Priya Nair</span><span class="text-xs text-muted">Seat 4A</span></span>
+      </span>
+    </div>
+    <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge border border-line text-warn">ECG review</span></div>
+    <div class="w-52 shrink-0">
+      <span class="flex items-center gap-3">
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">69<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for her</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="26" rx="4" class="fill-ok/15"></rect><polyline points="0.0,20.6 3.8,23.2 7.6,14.1 11.4,16.7 15.2,19.3 19.0,21.9 22.8,12.8 26.5,15.4 30.3,18.0 34.1,20.6 37.9,23.2 41.7,14.1 45.5,16.7 49.3,19.3 53.1,21.9 56.9,12.8 60.7,15.4 64.5,18.0 68.2,18.0 72.0,23.2 75.8,16.7 79.6,18.0 83.4,19.3 87.2,20.6 91.0,19.3" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="19.3" r="3.5" class="fill-current text-info"></circle></svg>
+      </span>
+    </div>
+    <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">98<span class="ml-1 text-xs text-muted">%</span></span><span class="truncate text-xs text-muted">normal</span></span></div>
+    <div class="w-28 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">34.0<span class="ml-1 text-xs text-muted">°C</span></span><span class="truncate text-xs text-muted">usual</span></span></div>
+    <div class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="font-mono text-sm tabular-nums text-warn">12:40</span><span class="truncate text-xs text-warn">review</span></span></div>
+    <div class="hidden w-24 shrink-0 min-[1400px]:block"><span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"></path><path d="M6 8h4M14 8h4"></path></svg>Joined</span></div>
+    <div class="w-36 shrink-0">
+      <span class="flex flex-col gap-1">
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 58%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">58%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 62%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">62%</span></span>
+      </span>
+    </div>
+  </div>
+  
+  <div class="flex flex-wrap items-center gap-3 border-t px-4 py-2.5 border-line">
+    <span class="grid size-6 shrink-0 place-items-center rounded-full text-info border border-line"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"></path></svg></span>
+    <p class="min-w-0 flex-1 truncate text-sm text-ink">Pulse uneven twice this morning · wrist ECG sent to the ground for review</p>
+    
+  </div>
+  
+</article><article class="flex flex-col rounded-tile border border-transparent bg-raised">
+  <div class="flex items-center gap-4 overflow-x-auto px-4 py-3">
+    <div class="min-w-40 flex-1">
+      <span class="flex min-w-0 items-center gap-3">
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium text-warn border border-line">DL</span>
+        <span class="flex min-w-0 flex-col leading-tight"><span class="truncate text-sm text-ink">Diego Luna</span><span class="text-xs text-muted">Seat 5A</span></span>
+      </span>
+    </div>
+    <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge border border-line text-warn">Battery low</span></div>
+    <div class="w-52 shrink-0">
+      <span class="flex items-center gap-3">
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">76<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for him</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="5" height="26" rx="4" class="fill-ok/15"></rect><polyline points="0.0,13.3 3.8,15.6 7.6,18.0 11.4,9.7 15.2,12.1 19.0,14.5 22.8,16.8 26.5,19.2 30.3,10.9 34.1,13.3 37.9,15.6 41.7,18.0 45.5,9.7 49.3,12.1 53.1,14.5 56.9,16.8 60.7,19.2 64.5,10.9 68.2,13.3 72.0,13.3 75.8,16.8 79.6,19.2 83.4,18.0 87.2,14.5 91.0,14.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="14.454546" r="3.5" class="fill-current text-info"></circle></svg>
+      </span>
+    </div>
+    <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">98<span class="ml-1 text-xs text-muted">%</span></span><span class="truncate text-xs text-muted">normal</span></span></div>
+    <div class="w-28 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">34.2<span class="ml-1 text-xs text-muted">°C</span></span><span class="truncate text-xs text-muted">usual</span></span></div>
+    <div class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="font-mono text-sm tabular-nums text-ink">08:06</span><span class="truncate text-xs text-muted">regular</span></span></div>
+    <div class="hidden w-24 shrink-0 min-[1400px]:block"><span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"></path><path d="M6 8h4M14 8h4"></path></svg>Joined</span></div>
+    <div class="w-36 shrink-0">
+      <span class="flex flex-col gap-1">
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-warn" style="--pct: 14%"></span></span><span class="w-9 text-right text-xs tabular-nums text-warn">14%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 52%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">52%</span></span>
+      </span>
+    </div>
+  </div>
+  
+  <div class="flex flex-wrap items-center gap-3 border-t px-4 py-2.5 border-line">
+    <span class="grid size-6 shrink-0 place-items-center rounded-full text-info border border-line"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"></path></svg></span>
+    <p class="min-w-0 flex-1 truncate text-sm text-ink">Sensor base at 14%, about 1 h left · spare base in the med bay, drawer B2</p>
+    
+  </div>
+  
+</article><article class="flex flex-col rounded-tile border border-transparent bg-raised">
+  <div class="flex items-center gap-4 overflow-x-auto px-4 py-3">
+    <div class="min-w-40 flex-1">
+      <span class="flex min-w-0 items-center gap-3">
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium text-warn border border-line">KM</span>
+        <span class="flex min-w-0 flex-col leading-tight"><span class="truncate text-sm text-ink">Kwame Mensah</span><span class="text-xs text-muted">Seat 6A</span></span>
+      </span>
+    </div>
+    <div class="w-32 shrink-0"><span class="inline-flex items-center gap-1 badge border border-line text-warn">Skin warm</span></div>
+    <div class="w-52 shrink-0">
+      <span class="flex items-center gap-3">
+        <span class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">70<span class="ml-1 text-xs text-muted">bpm</span></span><span class="truncate text-xs text-muted">normal for him</span></span></span>
+        <svg viewBox="0 0 96 36" class="h-9 w-24 shrink-0" preserveAspectRatio="none" aria-hidden="true"><rect x="0" width="96" y="6.130434" height="24.869566" rx="4" class="fill-ok/15"></rect><polyline points="0.0,5.0 3.8,7.3 7.6,9.5 11.4,11.8 15.2,14.0 19.0,6.1 22.8,8.4 26.5,10.7 30.3,12.9 34.1,5.0 37.9,7.3 41.7,9.5 45.5,11.8 49.3,14.0 53.1,6.1 56.9,8.4 60.7,10.7 64.5,12.9 68.2,9.5 72.0,14.0 75.8,12.9 79.6,14.0 83.4,17.4 87.2,20.8 91.0,19.7" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" class="stroke-info"></polyline><circle cx="91" cy="19.695652" r="3.5" class="fill-current text-info"></circle></svg>
+      </span>
+    </div>
+    <div class="w-20 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-ink">98<span class="ml-1 text-xs text-muted">%</span></span><span class="truncate text-xs text-muted">normal</span></span></div>
+    <div class="w-28 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="text-base tabular-nums text-warn">35.6<span class="ml-1 text-xs text-muted">°C</span></span><span class="truncate text-xs text-warn">warmer than usual</span></span></div>
+    <div class="w-24 shrink-0"><span class="flex flex-col gap-0.5 leading-tight"><span class="font-mono text-sm tabular-nums text-ink">08:06</span><span class="truncate text-xs text-muted">regular</span></span></div>
+    <div class="hidden w-24 shrink-0 min-[1400px]:block"><span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"></path><path d="M6 8h4M14 8h4"></path></svg>Joined</span></div>
+    <div class="w-36 shrink-0">
+      <span class="flex flex-col gap-1">
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Base</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 60%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">60%</span></span>
+        <span class="flex items-center gap-2"><span class="w-11 text-xs text-muted">Screen</span><span class="relative h-2 w-10 overflow-hidden rounded-full bg-hatch"><span class="spring-w absolute inset-y-0 left-0 w-(--pct) rounded-full bg-ok" style="--pct: 70%"></span></span><span class="w-9 text-right text-xs tabular-nums text-muted">70%</span></span>
+      </span>
+    </div>
+  </div>
+  
+  <div class="flex flex-wrap items-center gap-3 border-t px-4 py-2.5 border-line">
+    <span class="grid size-6 shrink-0 place-items-center rounded-full text-info border border-line"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"></path></svg></span>
+    <p class="min-w-0 flex-1 truncate text-sm text-ink">Skin 1.6 °C above his usual · asked him to drink water and rest · recheck in 30 min</p>
+    
+  </div>
+  
+</article>
+    
+  </section>
+
+  <section class="flex flex-col gap-2">
+    <header class="flex items-center gap-2 px-4"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span><span class="text-xs uppercase tracking-label text-ink">All good</span><span class="text-xs text-muted tabular-nums">11</span><span class="truncate text-xs text-muted">· pulse and SpO₂ normal for each person</span></header>
+    <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">MO</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Mara Okoye</span><span class="text-xs text-muted">Seat 1A</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">71<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted">Crew lead · usual for her</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">TR</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Tomás Rey</span><span class="text-xs text-muted">Seat 1B</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">117<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-info">AED helper · pulse up, fine</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">LB</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Leo Brandt</span><span class="text-xs text-muted">Seat 3B</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">108<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-info">CPR helper · pulse up, fine</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">YS</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Yuki Sato</span><span class="text-xs text-muted">Seat 2A</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">71<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted"><span class="text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"></path></svg></span>Suit drill until 14:30</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">OH</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Omar Haddad</span><span class="text-xs text-muted">Seat 2B</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">73<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted"><span class="text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"></path></svg></span>Suit drill until 14:30</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">SR</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Sofia Rossi</span><span class="text-xs text-muted">Seat 6B</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted"><span class="text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"></path></svg></span>Suit drill until 14:30</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">LV</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Lena Vogel</span><span class="text-xs text-muted">Seat 3A</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">64<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for her</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">CM</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Chloé Martin</span><span class="text-xs text-muted">Seat 5B</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for her</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">IP</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Ivan Petrov</span><span class="text-xs text-muted">Seat 7A</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">62<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for him</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">HK</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Hana Kim</span><span class="text-xs text-muted">Seat 7B</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">68<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for her</p>
+      </article>
+      
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">NC</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Noah Clark</span><span class="text-xs text-muted">Seat 8A</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">73<span class="ml-1 text-xs text-muted">bpm</span></span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">98<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs text-muted">Usual for him</p>
+      </article>
+      
+    </div>
+  </section>
+</section></div>
+
+      <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
+        <div class="flex flex-col gap-6 xl:col-span-8">
+          <div id="case">
+<section class="flex flex-col gap-5 rounded-card border p-5 border-critical/50 bg-critical/5">
+  <header class="flex flex-wrap items-center gap-3">
+    <span class="eva-mascot relative inline-grid shrink-0 place-items-center size-12" data-eva="" data-state="alert" style="--eva-y: -2.0000; --eva-s: 1.0075; --eva-r: 0.0000; --eva-glow: 1.0000; --eva-gs: 1.1281;"><img src="../static/img/eva/eva-alert.webp" alt="Eva, the health copilot" class="eva-body relative size-full object-contain" draggable="false" decoding="async"></span>
+    <span class="flex min-w-0 flex-1 flex-col leading-tight">
+      <span class="flex items-center gap-2 text-sm text-ink">Eva<span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"><span class="absolute inset-0 animate-ping rounded-full bg-ok"></span></span><span class="text-xs text-muted">live · offline rules · browser voice</span></span>
+      <span class="truncate text-xs text-muted">Guiding Ana Ruiz's case · 6 s</span>
+    </span>
+    
+    <button type="button" class="inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-xs text-ink hover:bg-raised" data-story="close">Close case</button>
+    
+  </header>
+  
+  <div class="flex flex-col gap-2 rounded-tile border border-critical/50 bg-critical/10 p-3">
+    <div class="flex items-center gap-2"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"><span class="absolute inset-0 animate-ping rounded-full bg-critical"></span></span><span class="text-sm text-ink">Ana Ruiz · seat 4B · No pulse</span><span class="ml-auto text-xs text-muted">6 s</span></div>
+    
+    <div class="flex flex-wrap gap-1.5"><span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-background/60 px-2.5 text-xs text-ink"><span class="size-1.5 rounded-full bg-info"></span>Leo Brandt · CPR · 3 m</span><span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-background/60 px-2.5 text-xs text-ink"><span class="size-1.5 rounded-full bg-info"></span>Tomás Rey · AED · 2 m</span></div>
+    
+  </div>
+  <div class="grid gap-2 md:grid-cols-2">
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-critical">What to do now</span><p class="text-sm leading-snug text-ink">Start CPR. Stand clear when the AED says so.</p></div>
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-info">Why</span><p class="text-sm leading-snug text-ink">Ana's heart may not be pumping. CPR and the AED give the best chance.</p></div>
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-info">How Eva decided</span><p class="text-sm leading-snug text-ink">Her band: no pulse, no movement, no answer. The AED decides shocks.</p></div>
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-info">What comes next</span><p class="text-sm leading-snug text-ink">CPR on the helper's band · AED coming · then the AED's voice.</p></div>
+  </div>
+  <div class="flex flex-col">
+    <div class="grid grid-cols-12 gap-4 px-3 pb-3 text-xs uppercase tracking-label text-muted">
+      <span class="col-span-3 md:col-span-2">Ship time</span><span class="col-span-9 md:col-span-10 pl-7">What happened</span>
+    </div>
+    <ol class="flex flex-col">
+      
+      <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3 bg-critical/10">
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:05</span>
+        
+        <div class="relative flex gap-4 col-span-9 md:col-span-10">
+          <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-critical"></span></span>
+          <div class="flex min-w-0 flex-col gap-0.5"><p class="text-sm text-ink">No pulse at Ana's wrist</p><p class="text-xs text-muted">Wristband: no pulse, no movement, no answer · Eva sounded the alarm</p></div>
+        </div>
+      </li>
+      
+      <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3">
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">14:01:05</span>
+        
+        <div class="relative flex gap-4 col-span-9 md:col-span-10">
+          <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background bg-info"></span></span>
+          <div class="flex min-w-0 flex-col gap-0.5"><p class="text-sm text-ink">Eva sent 2 helpers</p><p class="text-xs text-muted">Leo Brandt (3B, 3 m) to help now · Tomás Rey (1B, 2 m) to get the AED from the emergency station, corridor B</p></div>
+        </div>
+      </li>
+      
+    </ol>
+  </div>
+  
+</section></div>
+          <div id="alerts"><section class="rounded-card border border-line bg-surface p-5">
+  <header class="mb-4 flex items-center justify-between gap-3"><h2 class="flex items-center gap-3 text-base text-ink"><span class="pic size-10" aria-hidden="true"><img src="../static/img/icons/alert.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>Alerts</h2><span class="inline-flex h-8 items-center gap-1 rounded-full border border-line px-3 text-xs text-muted">This week</span></header>
+  <div class="grid gap-6 md:grid-cols-12">
+    <div class="flex flex-col gap-3 md:col-span-5">
+      <p class="text-4xl tracking-tight text-ink">12<span class="ml-2 text-base text-muted">this week</span></p>
+      <ul class="flex flex-col gap-2 text-xs text-muted">
+        <li class="flex items-center gap-2"><span class="size-3 shrink-0 rounded-full bg-ink"></span>Solved on board<span class="ml-auto pl-2 text-ink tabular-nums">9</span></li>
+        <li class="flex items-center gap-2"><span class="size-3 shrink-0 rounded-full bg-info"></span>Open or watching<span class="ml-auto pl-2 text-ink tabular-nums">3</span></li>
+      </ul>
+      <span class="inline-flex h-9 items-center gap-2 self-start rounded-full border border-line bg-surface px-3.5 text-xs text-muted"><span class="size-2 rounded-full bg-info"></span>Eva filtered 23 minor events</span>
+    </div>
+    <div class="flex h-40 items-end gap-2 md:col-span-7 md:border-l md:border-line md:pl-6">
+      
+      <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+        <div class="spring-h relative flex h-(--h) w-full flex-col overflow-visible rounded-tile bg-raised" style="--h: 25%">
+          
+        </div>
+        <span class="text-xs text-muted">Mon</span>
+      </div>
+      
+      <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+        <div class="spring-h relative flex h-(--h) w-full flex-col overflow-visible rounded-tile bg-raised" style="--h: 50%">
+          
+        </div>
+        <span class="text-xs text-muted">Tue</span>
+      </div>
+      
+      <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+        <div class="spring-h relative flex h-(--h) w-full flex-col overflow-visible rounded-tile bg-raised" style="--h: 25%">
+          
+        </div>
+        <span class="text-xs text-muted">Wed</span>
+      </div>
+      
+      <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+        <div class="spring-h relative flex h-(--h) w-full flex-col overflow-visible rounded-tile bg-raised" style="--h: 50%">
+          
+        </div>
+        <span class="text-xs text-muted">Thu</span>
+      </div>
+      
+      <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+        <div class="spring-h relative flex h-(--h) w-full flex-col overflow-visible rounded-tile bg-raised" style="--h: 75%">
+          
+        </div>
+        <span class="text-xs text-muted">Fri</span>
+      </div>
+      
+      <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+        <div class="spring-h relative flex h-(--h) w-full flex-col overflow-visible rounded-tile bg-raised" style="--h: 75%">
+          <span class="absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-ink px-2 py-0.5 text-xs text-on-light">3</span><div class="h-1/4 rounded-t-tile bg-hatch-info"></div><div class="flex-1 rounded-b-tile bg-elevated bg-hatch"></div>
+        </div>
+        <span class="text-xs text-ink">Today</span>
+      </div>
+      
+      <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+        <div class="spring-h relative flex h-(--h) w-full flex-col overflow-visible rounded-tile bg-raised" style="--h: 4%">
+          
+        </div>
+        <span class="text-xs text-muted">Sun</span>
+      </div>
+      
+    </div>
+  </div>
+  <div class="mt-5 flex flex-col gap-2 border-t border-line pt-4">
+    <p class="text-xs uppercase tracking-label text-muted">Today</p>
+    
+    <div class="flex items-center gap-4 rounded-tile bg-raised px-4 py-2.5">
+      <span class="font-mono text-sm text-muted">14:01</span>
+      <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"><span class="absolute inset-0 animate-ping rounded-full bg-critical"></span></span>
+      <span class="w-32 truncate text-sm text-ink">Ana Ruiz</span>
+      <span class="min-w-0 flex-1 truncate text-sm text-muted">No pulse at the wrist</span>
+      <span class="inline-flex items-center gap-1 badge bg-critical/15 text-critical">Open</span>
+    </div>
+    
+    <div class="flex items-center gap-4 rounded-tile bg-raised px-4 py-2.5">
+      <span class="font-mono text-sm text-muted">12:40</span>
+      <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-warn"></span>
+      <span class="w-32 truncate text-sm text-ink">Priya Nair</span>
+      <span class="min-w-0 flex-1 truncate text-sm text-muted">Wrist ECG uneven</span>
+      <span class="inline-flex items-center gap-1 badge border border-line text-warn">Review</span>
+    </div>
+    
+    <div class="flex items-center gap-4 rounded-tile bg-raised px-4 py-2.5">
+      <span class="font-mono text-sm text-muted">11:15</span>
+      <span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-warn"></span>
+      <span class="w-32 truncate text-sm text-ink">Diego Luna</span>
+      <span class="min-w-0 flex-1 truncate text-sm text-muted">Sensor base battery low</span>
+      <span class="inline-flex items-center gap-1 badge border border-line text-warn">Watching</span>
+    </div>
+    
+  </div>
+</section></div>
+        </div>
+        <div class="flex flex-col gap-6 xl:col-span-4">
+          <div id="sync"><section class="flex flex-col gap-4 rounded-card border border-line bg-surface p-5">
+  <div class="flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3"><span class="pic size-12" aria-hidden="true"><img src="../static/img/icons/earth-link.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span><h2 class="text-base text-ink">Ground sync</h2></div>
+    <span class="inline-flex items-center gap-1 rounded-full border border-info/40 px-2.5 py-0.5 text-xs font-medium text-info">Link open</span>
+    
+  </div>
+  
+  <ol class="grid grid-cols-3 gap-2">
+    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile bg-raised px-4 py-3 text-ink"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Saved<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/logbook.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">0</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">signed on board</span></li>
+    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile border border-info/40 px-4 py-3 text-info"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Sent<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/send.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">2</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">≈ 3.9 s round trip</span></li>
+    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile bg-ink px-4 py-3 text-on-light"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Confirmed<span class="pic pic-bare size-7" aria-hidden="true"><img src="../static/img/icons/ack.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span></span><span class="text-2xl tracking-tight tabular-nums">8</span></div><span class="text-xs text-muted">acknowledged</span></li>
+  </ol>
+  
+  <ul class="flex flex-col divide-y divide-line">
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="font-mono text-muted">14:01</span>
+      <span class="min-w-0 flex-1 truncate text-ink">4B · Leo Brandt (3B, 3 m) to help now · Tomás Rey (1B, 2 m) to get the AED from the emergency station, corridor B</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="font-mono text-muted">14:01</span>
+      <span class="min-w-0 flex-1 truncate text-ink">4B · Ana Ruiz · Wristband: no pulse, no movement, no answer · Eva sounded the alarm</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="font-mono text-muted">13:59</span>
+      <span class="min-w-0 flex-1 truncate text-ink">4B · Ana Ruiz · wrist ECG 30 s · regular</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="font-mono text-muted">12:40</span>
+      <span class="min-w-0 flex-1 truncate text-ink">4A · Priya Nair · wrist ECG, irregular · review asked</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="font-mono text-muted">11:15</span>
+      <span class="min-w-0 flex-1 truncate text-ink">5A · Diego Luna · sensor base battery low</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="font-mono text-muted">09:30</span>
+      <span class="min-w-0 flex-1 truncate text-ink">Cabin dose log · morning</span>
+      <span class="inline-flex shrink-0 items-center gap-1 badge border border-line text-ok">Acknowledged</span>
+    </li>
+    
+  </ul>
+  
+  <div class="flex flex-col gap-2 rounded-tile bg-raised p-3 text-xs">
+    <div class="flex items-center justify-between"><span class="text-muted">Eva Link · Near-space uplink</span><span class="text-ink tabular-nums">RTO 6462 ms</span></div>
+    <div class="grid grid-cols-4 gap-2 text-center">
+      <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">alarm</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">guidance</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">vitals</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">0</span><span class="text-muted">logs</span></span>
+    </div>
+    <div class="flex items-center justify-between text-muted"><span>Sent 9138 B · lost datagrams 15</span><span>2 in flight</span></div>
+    
+    <div class="flex flex-wrap gap-1.5"><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">hello · 60 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">ping · 10.3 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">pong · 10.7 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">vitals · 18.1 B avg</span><span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">record · 220.7 B avg</span></div>
+    
+  </div>
+  
+  
+</section></div>
+          
+          <div id="station"><section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5" aria-labelledby="station-tile-h">
+  <header class="flex items-center justify-between gap-3">
+    <h2 id="station-tile-h" class="flex items-center gap-3 text-base text-ink"><span class="pic size-10" aria-hidden="true"><img src="../static/img/icons/aed.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>Medical station</h2>
+    
+    <span class="inline-flex items-center gap-1 badge border border-line text-ok" data-station-status=""><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>Online</span>
+  </header>
+  <p class="text-xs text-muted">Corridor B · numbered compartments · a client of this hub</p>
+  
+  <div class="grid grid-cols-6 gap-1.5" role="img" aria-label="Compartments as last reported">
+    <span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums bg-station text-on-light" title="01 · lit">01</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="02 · idle">02</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="03 · idle">03</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="04 · idle">04</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="05 · idle">05</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="06 · idle">06</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="07 · idle">07</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="08 · idle">08</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="09 · idle">09</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="10 · idle">10</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="11 · idle">11</span><span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums border border-line text-muted" title="12 · idle">12</span>
+  </div>
+  
+  <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
+    <dt class="text-muted">Last event</dt>
+    <dd class="min-w-0 text-ink" data-station-last=""><span class="text-muted">None yet</span></dd>
+    
+    <dt class="text-muted">Battery</dt>
+    <dd class="flex items-center gap-2 text-ink"><span class="h-1.5 w-20 overflow-hidden rounded-full bg-line"><span class="spring-w block h-full rounded-full bg-ok" style="width: 96%"></span></span><span class="tabular-nums">96%</span></dd>
+    <dt class="text-muted">Reports</dt>
+    <dd class="text-ink"><span class="tabular-nums">0</span> signed</dd>
+    
+  </dl>
+  <a href="#" class="inline-flex h-8 w-fit items-center gap-2 rounded-full border border-line px-3 text-xs text-ink hover:bg-raised" data-replay="missing"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Open the station screen</a>
+</section></div>
+          <div id="mesh"><section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
+  <header class="flex items-center justify-between gap-3">
+    <h2 class="flex items-center gap-3 text-base text-ink"><span class="pic size-10" aria-hidden="true"><img src="../static/img/icons/hub.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>Eva Link mesh</h2>
+    <span class="inline-flex items-center gap-1 rounded-full border border-ok/40 px-2.5 py-0.5 text-xs font-medium text-ok"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>5 online</span>
+  </header>
+  <p class="text-xs text-muted">Apps talk through this hub · RTT every 2 s</p>
+  <ul class="flex flex-col divide-y divide-line">
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">1</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Medical station · corridor B</span><span class="text-muted">station · 46 in / 41 out</span></span>
+      <span class="font-mono tabular-nums text-ink">96.2 ms</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">2</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 4B</span><span class="text-muted">app · 4B · 47 in / 84 out</span></span>
+      <span class="font-mono tabular-nums text-ink">3.3 ms</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">3</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 3B</span><span class="text-muted">app · 3B · 47 in / 84 out</span></span>
+      <span class="font-mono tabular-nums text-ink">3.7 ms</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">4</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">App · 1B</span><span class="text-muted">app · 1B · 47 in / 84 out</span></span>
+      <span class="font-mono tabular-nums text-ink">2.9 ms</span>
+    </li>
+    
+    <li class="flex items-center gap-3 py-2 text-xs">
+      <span class="inline-grid size-7 shrink-0 place-items-center rounded-full bg-elevated font-mono text-ink">5</span>
+      <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">Dashboard</span><span class="text-muted">dash · 47 in / 84 out</span></span>
+      <span class="font-mono tabular-nums text-ink">2.4 ms</span>
+    </li>
+    
+    
+  </ul>
+  <p class="text-xs text-muted">0 frames relayed between clients</p>
+</section></div>
+        </div>
+      </div>
+    </main>
+    <footer class="flex flex-wrap items-center gap-2 border-t border-line bg-surface px-4 py-2.5 text-xs text-muted md:px-6">
+      <span>Decision-support functions after Russell et al., npj Microgravity 9:46 (2023) · <a href="https://doi.org/10.1038/s41526-023-00284-1" class="text-info underline underline-offset-2">doi:10.1038/s41526-023-00284-1</a></span>
+      <span class="ml-auto">Eva guides, records and warns · the AED decides shocks</span>
+      <details class="w-full" id="about">
+        <summary class="inline-flex h-8 cursor-pointer items-center gap-2 rounded-full border border-line px-3 text-xs text-ink hover:bg-raised">About &amp; credits</summary>
+        <div class="max-w-3xl pt-3 pb-2">
+<div class="flex flex-col gap-3 text-sm text-ink">
+  <p><span class="text-muted">What Eva does.</span> Eva gives diagnostic support: she reads the wristband, records, guides and warns. The crew lead confirms, and the ship's AED decides shocks.</p>
+  <p><span class="text-muted">Credits.</span> Eva by WearMeds · team Sanjo-X. Code written by the team. Decision-support functions after Russell et al., npj Microgravity 9:46 (2023).</p>
+</div></div>
+      </details>
+    </footer>
+  </div>
+</div>
+<div id="dev-panel" class="pointer-events-none fixed inset-0 z-50 hidden" aria-hidden="true"></div>
+<div id="toast" class="pointer-events-none fixed inset-x-0 top-[max(1rem,env(safe-area-inset-top))] z-[60] flex justify-center px-4" role="status" aria-live="polite"></div>
+
+</body></html>

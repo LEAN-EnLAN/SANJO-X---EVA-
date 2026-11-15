@@ -23,8 +23,8 @@ android {
         applicationId = "tech.sanjox.eva"
         minSdk = 26
         targetSdk = 36
-        versionCode = 303
-        versionName = "0.3.3"
+        versionCode = 304
+        versionName = "0.3.4"
     }
 
     signingConfigs {
@@ -71,7 +71,7 @@ android {
 }
 
 base {
-    archivesName.set("eva-v0.3.3")
+    archivesName.set("eva-v0.3.4")
 }
 
 // Robolectric runs offline against an android-all jar that Gradle resolves (Robolectric's own downloader
@@ -99,6 +99,8 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
+    // WebViewAssetLoader: the bundled offline replay is served from https://appassets.androidplatform.net, not file://
+    implementation("androidx.webkit:webkit:1.12.1")
     robolectricAndroidAll("org.robolectric:android-all-instrumented:14-robolectric-10818077-i7")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.16.1")

@@ -2,21 +2,34 @@
 
 Phase 3 deliverable **03 · Final · Mobile APK, tested**.
 
-The APK is a small native wrapper (Java, no Capacitor/Cordova, no AndroidX) around the **ship hub**: the laptop on the local network that runs `eva demo`. It doesn't contain the server. It opens `http(s)://<hub>:8080/app?seat=…` in a full-screen WebView and adds what a browser tab can't: a hub and seat picker, trust-on-first-use certificate pinning, mic and camera grants for the hub only, a native "hub unreachable" screen, and keep-screen-on.
+The APK is a small native wrapper (Java, no Capacitor/Cordova; its only library is `androidx.webkit` for the asset loader). Since 0.3.4 it works **without a ship hub**: the first screen offers the **online demo** (recommended), the **offline demo** bundled in the APK, or a **ship hub**, the laptop on the local network that runs `eva demo`. It doesn't contain the server. It opens `http(s)://<hub>:8080/app?seat=…` in a full-screen WebView and adds what a browser tab can't: a hub and seat picker, trust-on-first-use certificate pinning, mic and camera grants for the hub only, a native "hub unreachable" screen, and keep-screen-on.
 
 | | |
 |---|---|
 | Package | `tech.sanjox.eva` (debug: `tech.sanjox.eva.debug`, can be installed alongside) |
-| Version | 0.3.3 (code 303) |
+| Version | 0.3.4 (code 304) |
 | SDK | minSdk 26 (Android 8.0), targetSdk / compileSdk 36 (Android 16) |
-| Size | release 270 KB, debug 398 KB |
+| Size | release 2.1 MB, debug 3.3 MB (the offline replay is 3.6 MB of assets, compressed) |
 | Signing | release: own keystore (RSA 3072, v2 scheme), cert SHA-256 `55:F1:78:EE:7A:AE:7E:AD:80:83:5D:AA:59:EE:47:0A:5E:D7:B9:29:00:FD:19:4A:B7:7F:42:50:58:88:44:D7` |
 | Source | `android/` (Gradle wrapper 8.14.7, AGP 8.13.2) |
 
+## Modes (0.3.4)
+
+| Mode | Opens | Network and trust |
+|---|---|---|
+| **Try the demo (online)**, recommended, first choice | `https://eva-wearmeds.vercel.app/app/`: the guided replay of the real app; Eva's chat is live through `/api/eva/chat` | normal system TLS (public CA); **no** trust-on-first-use, an SSL error just cancels. The WebView keeps only `/app/…` and `/api/…` on that exact host; anything else opens in the browser (intents and other schemes are dropped). Mic and camera are never granted in the demos. |
+| **Offline demo** | the same replay bundled in `assets/replay/`, served by `WebViewAssetLoader` at `https://appassets.androidplatform.net/assets/replay/index.html` (not `file://`) | no network needed. `replay.js` never calls `/api` on the asset host (nor on `file:`), so Eva answers with the captured replies. |
+| **Connect to a ship hub** | the hub form as before (address, http/https, seat, keep-screen-on, pinned certificate) | unchanged: TOFU pinning for the hub only, LAN-only cleartext. |
+
+- The choice is remembered (installs from 0.3.3 that saved a hub stay on it). The online demo opens the offline one, with a toast, when the phone has no network at launch or when the site's main page fails to load.
+- Back to settings: back at the root (Leave / **Settings**), a long-press on the page background (Reload / **Settings**), the error screen, or the launcher shortcut **Eva settings**.
+- Refresh the bundle after a new replay: copy `scratchpad/webdemo/out/` into `android/app/src/main/assets/replay/` (drop `_local.html`) and wrap `index.html` in a UTF-8 document skeleton (`<!doctype html>`, `<meta charset="utf-8">`, the viewport meta): the asset loader sends no charset, and the hosted page relies on Vercel's header.
+- Live chat from the offline bundle (falling back to Vercel when online) is **not** enabled: `/api/eva/chat` answers a CORS preflight with 405 and refuses foreign origins with 403.
+
 ## Install
 
-1. Copy `eva-v0.3.3.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.3.apk`). It is signed with the same key as 0.3.1 and 0.3.2, so it installs over them.
-   **Update the hub too**: the APK is only a WebView around the hub; the copy rules v3 wording ships in the `eva` 0.3.3 binary. If the phone still shows the old look after the hub update, Android Settings → Apps → Eva → Storage → Clear cache (the service worker cache `eva-shell-v9` normally evicts the old one).
+1. Copy `eva-v0.3.4.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.4.apk`). It is signed with the same key as 0.3.1–0.3.3, so it installs over them. Open it and tap **Try the demo (online)**, or **Offline demo** with no network: no hub needed.
+   **Hub mode: update the hub too**: there the APK is only a WebView around the hub; the copy rules v3 wording ships in the `eva` 0.3.3 binary. If the phone still shows the old look after the hub update, Android Settings → Apps → Eva → Storage → Clear cache (the service worker cache `eva-shell-v9` normally evicts the old one).
 2. Open it from Files. Android asks to allow **Install unknown apps** for the app that opens it (Files, Chrome, the chat app): allow it, go back, tap **Install**. Play Protect may warn about an unknown developer: choose **Install anyway**.
 3. To switch between the debug and release builds, or to a build signed with another key, uninstall first. Debug and release have different package names, so both can be installed at the same time.
 
@@ -100,16 +113,27 @@ Needs JDK 17+ (tested with OpenJDK 21) and the Android SDK packages `platforms;a
 ```bash
 cd android
 echo "sdk.dir=/path/to/android-sdk" > local.properties        # or export ANDROID_HOME
-./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.3-debug.apk
+./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.4-debug.apk
 
 # signed release: keystore and passwords OUTSIDE the repo
 EVA_SIGNING_PROPS=/secure/place/signing.properties ./gradlew lintRelease assembleRelease
-#   → app/build/outputs/apk/release/eva-v0.3.3-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
+#   → app/build/outputs/apk/release/eva-v0.3.4-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
 ```
 
 `signing.properties` holds `storeFile=`, `storePassword=`, `keyAlias=`, `keyPassword=`. The 0.3.1 release keystore (`eva-release.p12`, alias `eva`) and its password file were created outside the repo, both mode 600. **Back them up**: an update signed with a different key has to be installed after uninstalling the old app. `.gitignore` excludes build outputs, `local.properties` and `*.jks`, `*.keystore`, `*.p12` and `signing.properties`.
 
 To make a new key: `keytool -genkeypair -keystore eva-release.p12 -storetype PKCS12 -alias eva -keyalg RSA -keysize 3072 -validity 10000`.
+
+## Test results 0.3.4 (15/11/2026)
+
+| check | result |
+|---|---|
+| JVM unit + Robolectric | **78 / 78 pass**. New: `AppModeTest` (9: saved ids, online → offline without network, TOFU only for the hub, start pages, the online and offline allow-lists incl. look-alike hosts, other ports, cleartext, user info and `..`), `DemoModeRobolectricTest` (14: three modes on setup, remembered choice, upgrade from a hub-only install, online demo URL and settings, allow-list and external links, **no trust prompt or pin for the demo host** while the hub still asks, fallback to the bundle on a main-frame error and with no network at launch, mic/camera denied in demos, the bundle served from assets with the right MIME types, the long-press menu) |
+| `lintDebug`, `lintRelease` | 0 errors |
+| `apksigner verify --print-certs` | release verifies (v2), signer SHA-256 `55:F1:78:EE:…:44:D7`, the same key as 0.3.1–0.3.3 |
+| `aapt2 dump badging` | `tech.sanjox.eva` 0.3.4/304, min 26, target 36; 154 files under `assets/replay/` |
+| Replay in Chromium with the WebView user agent | bundled copy and hosted site at 412 × 915 and 640 × 360: no page errors; `window.parent.document.documentElement.lang` read from a screen frame returns `es` after choosing ES (no throw); bundled chat goes to the captured answer with **0** `/api` calls; hosted chat makes 1 call and shows Eva's live reply |
+| Emulator | none on the build machine (no `/dev/kvm`, no system image) |
 
 ## Test results 0.3.3 (15/11/2026)
 

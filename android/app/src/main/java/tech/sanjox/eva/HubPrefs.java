@@ -3,7 +3,7 @@ package tech.sanjox.eva;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/** The remembered hub choice, the keep-screen-on setting and the pinned certificate fingerprints. */
+/** The remembered mode (online demo, offline demo or hub), the hub choice, keep-screen-on and the pinned certificates. */
 public final class HubPrefs {
     private static final String FILE = "eva_hub";
     private static final String K_ADDRESS = "address";
@@ -11,6 +11,7 @@ public final class HubPrefs {
     private static final String K_SEAT = "seat";
     private static final String K_KEEP_ON = "keep_screen_on";
     private static final String K_PIN = "pin.";
+    private static final String K_MODE = "mode";
 
     private final SharedPreferences sp;
 
@@ -30,8 +31,24 @@ public final class HubPrefs {
         }
     }
 
+    /** Saves the hub and makes {@link AppMode#HUB} the remembered mode. */
     public void save(HubConfig c) {
-        sp.edit().putString(K_ADDRESS, c.address()).putString(K_SCHEME, c.scheme).putString(K_SEAT, c.seat.id).apply();
+        sp.edit().putString(K_ADDRESS, c.address()).putString(K_SCHEME, c.scheme).putString(K_SEAT, c.seat.id)
+                .putString(K_MODE, AppMode.HUB.id).apply();
+    }
+
+    /**
+     * The remembered mode, or null on first run. Installs from before 0.3.4 saved only a hub: they stay on it.
+     */
+    public AppMode mode() {
+        String id = sp.getString(K_MODE, null);
+        if (id == null) return sp.getString(K_ADDRESS, null) != null ? AppMode.HUB : null;
+        return AppMode.fromId(id, null);
+    }
+
+    /** Remember a demo mode (the hub mode is saved with {@link #save(HubConfig)}). */
+    public void setMode(AppMode m) {
+        sp.edit().putString(K_MODE, m.id).apply();
     }
 
     public String lastAddress() {

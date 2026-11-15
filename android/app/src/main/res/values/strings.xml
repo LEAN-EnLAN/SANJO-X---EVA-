@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Eva</string>
-    <string name="setup_title">Connect to the ship hub</string>
-    <string name="setup_lead">The laptop running <tt>eva demo</tt> is the ship hub. Enter the address it prints, on the same Wi-Fi as this phone.</string>
+    <string name="setup_title">Open Eva</string>
+    <string name="setup_lead">Try Eva right away, or connect to a ship hub on your network.</string>
+    <string name="mode_online">Try the demo (online)</string>
+    <string name="mode_online_detail">Recommended. The real app as a guided replay, with live Eva chat. Needs internet.</string>
+    <string name="mode_offline">Offline demo</string>
+    <string name="mode_offline_detail">The same replay, inside the app. Works with no network; Eva answers with recorded replies.</string>
+    <string name="mode_hub">Connect to a ship hub</string>
+    <string name="mode_hub_detail">The laptop running <tt>eva demo</tt> is the ship hub. Enter the address it prints, on the same Wi-Fi as this phone.</string>
+    <string name="recommended">Recommended</string>
+    <string name="offline_fallback_toast">No connection to the online demo · opening the offline demo</string>
+    <string name="error_demo_title">The demo did not open</string>
+    <string name="error_demo_detail">The offline demo is inside the app, so this should not happen. Retry, or reinstall Eva.</string>
+    <string name="menu_title">Eva</string>
+    <string name="reload">Reload</string>
     <string name="hub_address">Hub address</string>
     <string name="hub_address_hint">192.168.0.10:8080</string>
     <string name="hub_address_help">IP or name and port. A full URL (https://…/app?seat=3B) also works.</string>
@@ -19,8 +31,8 @@
     <string name="version_label">Eva %1$s · Sanjo-X</string>
     <string name="forget_cert">Forget</string>
     <string name="connect">Connect</string>
-    <string name="settings_shortcut_short">Hub settings</string>
-    <string name="settings_shortcut_long">Change the ship hub or seat</string>
+    <string name="settings_shortcut_short">Eva settings</string>
+    <string name="settings_shortcut_long">Demo mode, ship hub or seat</string>
 
     <string name="error_unreachable_title">Can\'t reach the ship hub</string>
     <string name="error_offline_title">No network</string>
@@ -28,7 +40,7 @@
     <string name="error_cert_rejected_title">Certificate not trusted</string>
     <string name="error_cert_invalid_title">Certificate rejected</string>
     <string name="retry">Retry</string>
-    <string name="change_hub">Change hub</string>
+    <string name="change_hub">Settings</string>
 
     <string name="trust_title">Trust this hub?</string>
     <string name="trust_button">Trust</string>

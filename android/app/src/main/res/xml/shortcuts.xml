@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Long-press the Eva launcher icon → "Hub settings". -->
+<!-- Long-press the Eva launcher icon → "Eva settings" (demo mode, hub, seat). -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:shortcutId="hub_settings"
