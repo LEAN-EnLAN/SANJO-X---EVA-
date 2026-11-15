@@ -41,19 +41,32 @@ fn with_cookie(seat: &str, body: String) -> Response {
 }
 
 fn page(state: &Shared, seat: &str, tab: &'static str, screen: String, headers: &HeaderMap) -> Response {
+    let tint = match tab {
+        "plan" | "journal" => "mood",
+        "food" => "food",
+        "records" => "oxygen",
+        "emergency" => "critical",
+        _ => "eva",
+    };
+    page_t(state, seat, tab, tint, screen, headers)
+}
+
+/// Like [`page`], with an explicit tint (screens that are not tabs: vitals, ECG, band…).
+fn page_t(state: &Shared, seat: &str, tab: &'static str, tint: &'static str, screen: String, headers: &HeaderMap) -> Response {
     if is_htmx(headers) {
         return with_cookie(seat, screen);
     }
     let seats = state.world.read().expect("world").passengers.iter().map(|p| (p.seat.clone(), p.name.clone())).collect();
-    with_cookie(seat, render(&AppPage { c: common(state, seat), tab, screen, seats }))
+    with_cookie(seat, render(&AppPage { c: common(state, seat), tab, tint, screen, seats }))
 }
 
 pub fn home_screen(state: &Shared, seat: &str) -> String {
     let live = LiveCard::build(state, seat).map(|l| render(&l)).unwrap_or_default();
+    let hero = LiveHero::build(state, seat).map(|l| render(&l)).unwrap_or_default();
     let banner = render(&Banner::build(state, seat));
     let now = state.now();
     let next = state.world.read().expect("world").reminders.iter().filter(|r| r.seat == seat && !r.done && r.at_ms >= now).min_by_key(|r| r.at_ms).map(|r| (clock::hhmm(r.at_ms), r.text.clone()));
-    render(&HomeScreen { c: common(state, seat), live, banner, next, water: tool_vals(seat, "log_water", serde_json::json!({"ml": 250})) })
+    render(&HomeScreen { c: common(state, seat), live, hero, banner, next, water: tool_vals(seat, "log_water", serde_json::json!({"ml": 250})) })
 }
 
 pub async fn app_home(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
@@ -163,7 +176,7 @@ pub fn storm_screen(state: &Shared, seat: &str) -> String {
 pub async fn app_storm(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
     let seat = resolve_seat(&state, &q, &headers);
     let s = storm_screen(&state, &seat);
-    page(&state, &seat, "home", s, &headers)
+    page_t(&state, &seat, "home", "temp", s, &headers)
 }
 
 pub fn records_screen(state: &Shared, seat: &str) -> String {
@@ -195,19 +208,30 @@ pub async fn app_food(State(state): State<Shared>, Query(q): Query<SeatQ>, heade
 pub async fn app_checkin(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
     let seat = resolve_seat(&state, &q, &headers);
     let s = render(&CheckinScreen::build(&state, &seat));
-    page(&state, &seat, "home", s, &headers)
+    page_t(&state, &seat, "home", "mood", s, &headers)
 }
 
 pub async fn app_ecg(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
     let seat = resolve_seat(&state, &q, &headers);
     let s = render(&EcgScreen::build(&state, &seat));
-    page(&state, &seat, "home", s, &headers)
+    page_t(&state, &seat, "home", "heart", s, &headers)
 }
 
 pub async fn app_band(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
     let seat = resolve_seat(&state, &q, &headers);
     let s = BandScreen::build(&state, &seat).map(|b| render(&b)).unwrap_or_default();
-    page(&state, &seat, "home", s, &headers)
+    page_t(&state, &seat, "home", "brand", s, &headers)
+}
+
+/// The domain tint of a vitals detail screen.
+pub fn vital_tint(k: &str) -> &'static str {
+    match k {
+        "lungs" => "oxygen",
+        "temperature" => "temp",
+        "sleep" => "sleep",
+        "water" => "water",
+        _ => "heart",
+    }
 }
 
 #[derive(Deserialize, Default)]
@@ -218,8 +242,9 @@ pub struct VitalsQ {
 
 pub async fn app_vitals(State(state): State<Shared>, Query(q): Query<VitalsQ>, headers: HeaderMap) -> Response {
     let seat = resolve_seat(&state, &SeatQ { seat: q.seat.clone() }, &headers);
-    let s = VitalsScreen::build(&state, &seat, q.k.as_deref().unwrap_or("heart")).map(|v| render(&v)).unwrap_or_default();
-    page(&state, &seat, "home", s, &headers)
+    let k = q.k.as_deref().unwrap_or("heart");
+    let s = VitalsScreen::build(&state, &seat, k).map(|v| render(&v)).unwrap_or_default();
+    page_t(&state, &seat, "home", vital_tint(k), s, &headers)
 }
 
 pub async fn app_about(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {

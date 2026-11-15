@@ -38,14 +38,15 @@ pub fn mood_word(v: impl Val<u8>) -> &'static str {
     crate::model::mood_word(v.val())
 }
 
+/// Badge fill and text for a tone: the tone at 16 % behind the tone's own text, no border.
 pub fn badge(tone: &str) -> &'static str {
     match tone {
-        "ok" => "border-ok/40 bg-ok/10 text-ok",
-        "warn" => "border-warn/40 bg-warn/10 text-warn",
-        "critical" => "border-critical/50 bg-critical/15 text-critical",
-        "info" => "border-info/40 bg-info/10 text-info",
-        "brand" => "border-brand/40 bg-brand/10 text-brand",
-        _ => "border-line text-muted",
+        "ok" => "bg-ok/15 text-ok",
+        "warn" => "bg-warn/15 text-warn",
+        "critical" => "bg-critical/15 text-critical",
+        "info" => "bg-info/15 text-info",
+        "brand" => "bg-brand/15 text-brand",
+        _ => "bg-white/8 text-muted",
     }
 }
 pub fn dot(tone: &str) -> &'static str {
@@ -146,8 +147,36 @@ pub fn pic(name: &str, class: &str) -> String {
     format!(r#"<span class="pic {class}" aria-hidden="true"><img src="/static/img/icons/{name}.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>"#)
 }
 
+/// Filled variants for the active tab (own drawings).
+fn ic_fill(name: &str) -> Option<&'static str> {
+    Some(match name {
+        "home-fill" => r#"<path d="M3.2 10.6 12 3l8.8 7.6V21h-6.3v-6.3h-5V21H3.2z" fill="currentColor" stroke="none"/>"#,
+        "list-fill" => r##"<rect x="3" y="3.5" width="18" height="17" rx="4" fill="currentColor" stroke="none"/><path d="M10 8.5h7M10 12h7M10 15.5h7M6.5 8.5h.01M6.5 12h.01M6.5 15.5h.01" stroke="#0A0E1A"/>"##,
+        "utensils-fill" => r#"<path d="M5 3v5.2a2.2 2.2 0 0 0 1.4 2V21h1.8V10.2A2.2 2.2 0 0 0 9.6 8.2V3H8.4v5H7.7V3H6.9v5h-.7V3z" fill="currentColor" stroke="none"/><path d="M18.4 3c-2.6.9-4.3 3.7-4.3 7.9h2.6V21h1.7z" fill="currentColor" stroke="none"/>"#,
+        "records-fill" => r##"<rect x="4.5" y="2.5" width="15" height="19" rx="3" fill="currentColor" stroke="none"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4" stroke="#0A0E1A"/>"##,
+        _ => return None,
+    })
+}
+
+/// A tab icon: line variant plus filled variant (CSS shows the filled one when active).
+pub fn tab_ic(name: &str) -> String {
+    format!(r#"<span class="ic-line">{}</span><span class="ic-fill">{}</span>"#, ic(name, 24), ic(&format!("{name}-fill"), 24))
+}
+
+/// A vitals ring (§3.1) as SVG: track + gradient arc. `pct` 0–100, `grad` a domain name.
+pub fn ring_svg(grad: &str, pct: impl Val<u32>, stroke: f32) -> String {
+    let r = 50.0 - stroke / 2.0;
+    format!(
+        r#"<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="g-{grad}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--g1-{grad})"/><stop offset="1" stop-color="var(--g2-{grad})"/></linearGradient></defs><circle class="ring-track" cx="50" cy="50" r="{r}" fill="none" stroke-width="{stroke}"/><circle class="ring-arc" cx="50" cy="50" r="{r}" fill="none" stroke="url(#g-{grad})" stroke-width="{stroke}" stroke-linecap="round" pathLength="100" style="--pct:{p}"/></svg>"#,
+        p = pct.val().min(100)
+    )
+}
+
 /// Our own minimal stroke icons.
 pub fn ic(name: &str, size: u32) -> String {
+    if let Some(body) = ic_fill(name) {
+        return format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0">{body}</svg>"#);
+    }
     let body = match name {
         "mic" => r#"<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>"#,
         "bell" => r#"<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>"#,
@@ -207,6 +236,8 @@ pub fn ic(name: &str, size: u32) -> String {
         "share" => r#"<path d="M12 4v11M7.5 8.5L12 4l4.5 4.5M5 13v6h14v-6"/>"#,
         "speaker" => r#"<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>"#,
         "stop" => r#"<rect x="7" y="7" width="10" height="10" rx="2"/>"#,
+        "shield" => r#"<path d="M12 3l7 3v5.5c0 4.6-3 8.1-7 9.5-4-1.4-7-4.9-7-9.5V6z"/><path d="M9 12l2 2 4-4"/>"#,
+        "arrow-up" => r#"<path d="M12 19V5M6 11l6-6 6 6"/>"#,
         // medical station compartments (own drawings)
         "probe" => r#"<path d="M9 3h6l1 7a4 4 0 0 1-8 0z"/><path d="M12 14v3a4 4 0 0 0 4 4h3"/><path d="M10 7h4"/>"#,
         "bandage" => r#"<rect x="2.5" y="8" width="19" height="8" rx="4" transform="rotate(-35 12 12)"/><path d="M10.5 10.5h.01M13.5 13.5h.01M13.5 10.5h.01M10.5 13.5h.01"/>"#,
@@ -216,7 +247,7 @@ pub fn ic(name: &str, size: u32) -> String {
         "drip" => r#"<path d="M8 3h8v7a4 4 0 0 1-8 0z"/><path d="M8 7h8M12 14v3M12 17a3 3 0 0 0 3 3h4"/>"#,
         _ => r#"<circle cx="12" cy="12" r="8"/>"#,
     };
-    format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0">{body}</svg>"#)
+    format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0">{body}</svg>"#)
 }
 
 /// One-lead ECG trace as SVG polyline points: P wave, QRS spike, T wave.

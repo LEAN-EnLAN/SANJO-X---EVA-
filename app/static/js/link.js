@@ -103,7 +103,7 @@
         var line = text || ((ALARM[code] || "Alarm") + (subject ? " · " + subject : ""));
         if (window.Eva) window.Eva.toast(line, "bad");
         document.dispatchEvent(new CustomEvent("eva:alarm", { detail: { subject: subject, code: code, text: line } }));
-        if (navigator.vibrate) try { navigator.vibrate([200, 100, 200]); } catch (e) {}
+        if (window.EvaFx) window.EvaFx.haptic("emergency"); else if (navigator.vibrate) try { navigator.vibrate([120, 60, 120, 60, 400]); } catch (e) {}
         break;
       }
       case T.TEXT: {
@@ -118,7 +118,10 @@
   function status() {
     var dot = document.querySelector("[data-link-dot]"), txt = document.querySelector("[data-link-rtt]");
     if (dot) { dot.classList.toggle("bg-ok", link.open); dot.classList.toggle("bg-faint", !link.open); }
-    if (txt) txt.textContent = link.open ? ("Mesh " + link.nodes.length + (link.hubRtt !== null ? " · " + link.hubRtt + " ms" : "")) : "Offline";
+    // the pill says "Link" or "Offline"; the mesh size and round trip live in its title
+    if (txt) txt.textContent = link.open ? "Link" : "Offline";
+    var pill = document.getElementById("mesh-indicator");
+    if (pill) pill.title = link.open ? ("Eva Link to the ship hub · " + link.nodes.length + " on the mesh" + (link.hubRtt !== null ? " · " + link.hubRtt + " ms" : "")) : "Eva Link offline";
     document.querySelectorAll("[data-mesh-count]").forEach(function (el) { el.textContent = link.nodes.length + " online"; });
   }
 

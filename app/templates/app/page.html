@@ -5,23 +5,28 @@
 {% include "head.html" %}
 <title>Eva · {{ c.first }}</title>
 </head>
-<body class="min-h-dvh bg-background text-ink antialiased" data-view="app" data-seat="{{ c.seat }}">
-<div id="splash" class="fixed inset-0 z-50 grid place-items-center bg-background" aria-hidden="true"><img src="/static/img/splash.webp" alt="" class="h-full max-h-dvh w-auto max-w-full object-contain" width="1024" height="1536" fetchpriority="high"><span class="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-full bg-background/80 px-2 py-0.5 text-xs text-muted">Eva by WearMeds</span></div>
-<script>try{if(sessionStorage.getItem("eva-splash"))document.getElementById("splash").remove();else sessionStorage.setItem("eva-splash","1")}catch(e){}</script>
+<body class="min-h-dvh text-ink antialiased" data-view="app" data-seat="{{ c.seat }}" data-tint="{{ tint }}">
+<div id="splash" class="fixed inset-0 z-50 grid place-items-center bg-background" aria-hidden="true"><img src="/static/img/splash.webp" alt="" class="h-full max-h-dvh w-auto max-w-full object-contain" width="1024" height="1536" fetchpriority="high"><span class="splash-mark absolute bottom-[max(2rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 font-display text-2xl font-semibold tracking-tight text-ink">Eva</span></div>
+<script>try{if(sessionStorage.getItem("eva-splash")||document.documentElement.getAttribute("data-mode")==="wristband")document.getElementById("splash").remove();else sessionStorage.setItem("eva-splash","1")}catch(e){}</script>
 <noscript><style>#splash{display:none}</style></noscript>
-<div class="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-2xl" hx-ext="sse" sse-connect="/sse/app?seat={{ c.seat }}">
-  <header class="flex items-center justify-between gap-3 px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-1 text-sm">
-    <button type="button" class="min-h-11 min-w-11 tabular-nums text-ink" data-konami-tap title="Ship time">{{ c.time }}</button>
-    <label class="flex min-w-0 items-center gap-2 text-xs text-muted">
-      <span class="sr-only">Who is using this app</span>
-      <select class="h-9 max-w-48 truncate rounded-full border border-line bg-surface px-3 text-xs text-ink" onchange="location.href='/app?seat='+this.value">
-        {% for (s, n) in seats %}<option value="{{ s }}" {% if s == &c.seat %}selected{% endif %}>{{ s }} · {{ n }}</option>{% endfor %}
-      </select>
-    </label>
-    <span class="flex min-w-11 items-center justify-end gap-1.5 text-xs text-muted" id="mesh-indicator" title="Eva Link to the ship hub"><span class="size-1.5 rounded-full bg-faint" data-link-dot></span><span data-link-rtt>LoRa</span></span>
+<div id="app-shell" class="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-2xl" hx-ext="sse" sse-connect="/sse/app?seat={{ c.seat }}">
+  <header class="app-header flex h-14 items-center justify-between gap-3 px-5 pt-[env(safe-area-inset-top)] box-content">
+    <button type="button" class="press flex min-h-12 items-center gap-2 rounded-full pr-2 text-label font-semibold text-ink" data-seat-open aria-haspopup="dialog" aria-label="Who is using this app: {{ c.name }}, seat {{ c.seat }}"><span class="avatar" aria-hidden="true">{{ c.initials }}</span>{{ c.first }}</button>
+    <div class="flex items-center gap-2">
+      <button type="button" class="num min-h-12 min-w-12 text-label text-muted" data-konami-tap title="Ship time">{{ c.time }}</button>
+      <span class="link-pill" id="mesh-indicator" title="Eva Link to the ship hub"><span class="size-2 rounded-full bg-faint" data-link-dot></span><span data-link-rtt>Link</span></span>
+    </div>
   </header>
+  <template id="seat-sheet">
+    <h2 class="text-h2 text-ink">Who is using this app</h2>
+    <p class="mt-1 mb-4 text-label text-muted">Pick a seat. Each person sees their own wristband.</p>
+    <div class="rows">
+      {% for (s, n) in seats %}<a href="/app?seat={{ s }}" class="row press{% if s == &c.seat %} bg-raised{% endif %}"{% if s == &c.seat %} aria-current="true"{% endif %}><span class="avatar size-10 text-sm" aria-hidden="true">{{ s }}</span><span class="flex flex-1 flex-col"><span class="text-body font-medium">{{ n }}</span><span class="text-label text-muted">Seat {{ s }}</span></span>{% if s == &c.seat %}<span class="text-eva">{{ crate::web::ui::ic("check", 20)|safe }}</span>{% endif %}</a>{% endfor %}
+    </div>
+  </template>
 
   <div class="hidden" sse-swap="eva" hx-swap="none"></div>
+  <div class="hidden" sse-swap="eva-status" hx-swap="none"></div>
   <div class="hidden" hx-trigger="sse:go-home" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" data-nav="tab"></div>
   {% for s in ["eva", "emergency", "journal", "storm", "records", "plan", "food", "ecg", "band", "checkin"] %}
   <div class="hidden" hx-trigger="sse:go-{{ s }}" hx-get="/app/{{ s }}?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push"></div>
@@ -29,25 +34,28 @@
 
   <main id="screen" class="flex flex-1 flex-col gap-4 px-5 pt-2 pb-dock">{{ screen|safe }}</main>
 
-  <nav class="fixed inset-x-0 bottom-tabbar z-40 mx-auto flex w-full max-w-md px-5" aria-label="Main">
-    <div class="relative flex w-full items-center justify-around rounded-full bg-raised/95 py-3 ring-1 ring-line backdrop-blur-md" data-tabbar>
-      <span class="tab-pill pointer-events-none absolute top-3 left-0 size-11 rounded-full bg-ink opacity-0" data-tab-pill aria-hidden="true"></span>
-      <a {% call u::go("/app/home", c.seat, "tab") %} data-tab="home" aria-label="Home" {% if tab == "home" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("home", 20)|safe }}</a>
-      <a {% call u::go("/app/plan", c.seat, "tab") %} data-tab="plan" aria-label="Today's plan" {% if tab == "plan" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("list", 20)|safe }}</a>
-      <a {% call u::go("/app/eva", c.seat, "tab") %} data-tab="eva" aria-label="Eva" {% if tab == "eva" %}aria-current="page"{% endif %} class="tab-eva press relative -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 ring-line">{% call m::face(c.mood, "size-11") %}</a>
-      <a {% call u::go("/app/food", c.seat, "tab") %} data-tab="food" aria-label="Food and water" {% if tab == "food" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("utensils", 20)|safe }}</a>
-      <a {% call u::go("/app/records", c.seat, "tab") %} data-tab="records" aria-label="Logbook" {% if tab == "records" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("records", 20)|safe }}</a>
+  <div class="tab-fade" aria-hidden="true"></div>
+  <nav class="fixed inset-x-0 bottom-tabbar z-40 mx-auto flex w-full max-w-md px-4" aria-label="Main">
+    <div class="tabbar relative flex w-full items-center justify-around px-2" data-tabbar data-active="{{ tab }}">
+      <span class="tab-pill pointer-events-none absolute left-0" data-tab-pill aria-hidden="true"></span>
+      <a {% call u::go("/app/home", c.seat, "tab") %} data-tab="home" aria-label="Home" {% if tab == "home" %}aria-current="page"{% endif %} class="tab">{{ crate::web::ui::tab_ic("home")|safe }}<span class="tab-label" aria-hidden="true">Home</span></a>
+      <a {% call u::go("/app/plan", c.seat, "tab") %} data-tab="plan" aria-label="Today's plan" {% if tab == "plan" %}aria-current="page"{% endif %} class="tab">{{ crate::web::ui::tab_ic("list")|safe }}<span class="tab-label" aria-hidden="true">Plan</span></a>
+      <a {% call u::go("/app/eva", c.seat, "tab") %} data-tab="eva" aria-label="Eva" {% if tab == "eva" %}aria-current="page"{% endif %} class="tab-eva press relative grid place-items-center">{% call m::face(c.mood, "size-12") %}</a>
+      <a {% call u::go("/app/food", c.seat, "tab") %} data-tab="food" aria-label="Food and water" {% if tab == "food" %}aria-current="page"{% endif %} class="tab">{{ crate::web::ui::tab_ic("utensils")|safe }}<span class="tab-label" aria-hidden="true">Food</span></a>
+      <a {% call u::go("/app/records", c.seat, "tab") %} data-tab="records" aria-label="Logbook" {% if tab == "records" %}aria-current="page"{% endif %} class="tab">{{ crate::web::ui::tab_ic("records")|safe }}<span class="tab-label" aria-hidden="true">Logbook</span></a>
     </div>
   </nav>
 </div>
 
 <div id="sheet" class="fixed inset-0 z-50 hidden" aria-hidden="true">
-  <div class="sheet-backdrop absolute inset-0 bg-background/70" data-sheet-close></div>
-  <section class="sheet-panel absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-md flex-col rounded-t-card border-t border-x border-line bg-surface" role="dialog" aria-modal="true" aria-label="Eva's tools">
-    <div class="flex shrink-0 cursor-grab touch-none justify-center pt-3 pb-2" data-sheet-grab><span class="h-1.5 w-10 rounded-full bg-elevated"></span></div>
+  <div class="sheet-backdrop absolute inset-0" data-sheet-close></div>
+  <section class="sheet-panel absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-md flex-col" role="dialog" aria-modal="true" aria-label="Eva's tools">
+    <div class="flex shrink-0 cursor-grab touch-none justify-center pt-3 pb-2" data-sheet-grab><span class="h-[5px] w-9 rounded-full bg-white/25"></span></div>
     <div id="sheet-body" class="overflow-y-auto overscroll-contain px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))]"></div>
   </section>
 </div>
+<template id="skel-default"><div class="flex flex-col gap-4" aria-hidden="true" data-skel><div class="skel h-[220px] rounded-[32px]"></div><div class="skel h-16 rounded-[18px]"></div><div class="skel h-16 rounded-[18px]"></div><div class="skel h-16 rounded-[18px]"></div></div></template>
+<div id="takeover" aria-hidden="true"><span class="tk-disc"></span><span class="tk-ring"></span><span class="tk-ring"></span></div>
 {% include "dev/slot.html" %}
 </body>
 </html>

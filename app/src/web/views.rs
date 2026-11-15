@@ -67,6 +67,8 @@ pub fn common(state: &Shared, seat: &str) -> AppCommon {
 pub struct AppPage {
     pub c: AppCommon,
     pub tab: &'static str,
+    /// the screen's domain tint (body[data-tint]): eva, heart, mood, food, oxygen, …
+    pub tint: &'static str,
     pub screen: String,
     pub seats: Vec<(String, String)>,
 }
@@ -76,6 +78,7 @@ pub struct AppPage {
 pub struct HomeScreen {
     pub c: AppCommon,
     pub live: String,
+    pub hero: String,
     pub banner: String,
     pub next: Option<(String, String)>,
     /// hx-vals for the quick "+ water" button
@@ -118,6 +121,64 @@ impl LiveCard {
     }
     pub fn skin_read(&self) -> String {
         format!("Skin · {}", if self.p.skin_word() == "usual" { "normal" } else { self.p.skin_word() })
+    }
+    /// heart ring: 40–120 bpm mapped onto 20–100 % of the circle (a calm pulse sits mid-arc)
+    pub fn hr_pct(&self) -> u32 {
+        hr_pct(self.p.vitals.hr)
+    }
+    pub fn spo2_pct(&self) -> u32 {
+        spo2_pct(self.p.vitals.spo2)
+    }
+    pub fn skin_pct(&self) -> u32 {
+        skin_pct(self.p.vitals.skin_c())
+    }
+    /// one heartbeat in ms (the ring's lub-dub period)
+    pub fn beat_ms(&self) -> u32 {
+        beat_ms(self.p.vitals.hr)
+    }
+    pub fn batt_pct(&self, v: impl ui::Val<u8>) -> u32 {
+        v.val() as u32
+    }
+}
+
+pub fn hr_pct(hr: u16) -> u32 {
+    if hr == 0 {
+        0
+    } else {
+        (20.0 + ((hr as f32 - 40.0) / 80.0).clamp(0.0, 1.0) * 80.0).round() as u32
+    }
+}
+pub fn spo2_pct(spo2: u8) -> u32 {
+    if spo2 == 0 {
+        0
+    } else {
+        (((spo2 as f32 - 90.0) / 10.0).clamp(0.05, 1.0) * 100.0).round() as u32
+    }
+}
+pub fn skin_pct(c: f32) -> u32 {
+    (((c - 30.0) / 8.0).clamp(0.05, 1.0) * 100.0).round() as u32
+}
+pub fn beat_ms(hr: u16) -> u32 {
+    if hr == 0 {
+        1000
+    } else {
+        60_000 / hr.max(20) as u32
+    }
+}
+
+/// The top of Eva's home hero card: status title, badge and her last line (SSE `live-hero`).
+#[derive(Template)]
+#[template(path = "app/_hero.html")]
+pub struct LiveHero {
+    pub p: Passenger,
+    pub all_good: bool,
+}
+
+impl LiveHero {
+    pub fn build(state: &Shared, seat: &str) -> Option<Self> {
+        let w = state.world.read().expect("world");
+        let p = w.passenger(seat)?.clone();
+        Some(LiveHero { all_good: p.group == Group::Ok, p })
     }
 }
 

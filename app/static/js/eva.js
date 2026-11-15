@@ -104,6 +104,8 @@
       return;
     }
     var tgt = e.detail.target;
+    // on the wristband the track stays where it is; only its live parts redraw
+    if (document.documentElement.getAttribute("data-mode") === "wristband") { document.dispatchEvent(new CustomEvent("wrist:refresh")); return; }
     if (tgt && tgt.id === "toast" && document.getElementById("screen") && !document.getElementById("chat")) {
       if (M()) M().expect("refresh");
       htmx.ajax("GET", location.pathname + location.search, { target: "#screen" });
@@ -204,6 +206,9 @@
     var btn = e.target.closest && e.target.closest("[data-eva-mic]");
     if (!btn) return;
     e.preventDefault();
+    // on her on-board rules Eva cannot transcribe: say so instead of failing silently
+    if (rulesMode()) { toast("Voice needs Eva online · type or use the chips", "bad"); return; }
+    if (window.EvaFx) window.EvaFx.haptic("tap");
     if (!navigator.mediaDevices || !window.MediaRecorder) return browserDictation();
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
       chunks = [];
@@ -219,7 +224,7 @@
         fd.append("file", blob, "voice." + ((rec.mimeType || "").indexOf("ogg") >= 0 ? "ogg" : "webm"));
         fetch("/api/eva/stt", { method: "POST", body: fd }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (res) {
           if (res.ok && res.j.text) chatPost(res.j.text);
-          else { toast("Voice needs the server's Groq key. Type instead, or use dictation.", "bad"); M() && M().setMood("idle"); }
+          else { toast("Voice needs Eva online · type or use the chips", "bad"); M() && M().setMood("idle"); }
         }).catch(function () { toast("Could not reach Eva", "bad"); });
       };
       rec.start();
@@ -227,8 +232,14 @@
       M() && M().setMood("listening");
     }).catch(function () { toast("Microphone blocked", "bad"); });
   });
+  function rulesMode() { return document.documentElement.getAttribute("data-eva-mode") === "rules"; }
+  // photo / video buttons explain themselves in rules mode instead of opening the camera
+  document.addEventListener("click", function (e) {
+    var l = e.target.closest && e.target.closest("label:has([data-eva-photo]), label:has([data-eva-video])");
+    if (l && rulesMode()) { e.preventDefault(); toast("Photos and video need Eva online · type or use the chips", "bad"); }
+  }, true);
   document.addEventListener("pointerup", function () {
-    if (rec && rec.state === "recording") rec.stop();
+    if (rec && rec.state === "recording") { rec.stop(); if (window.EvaFx) window.EvaFx.haptic([8, 40, 8]); }
     document.querySelectorAll("[data-eva-mic].is-recording").forEach(function (b) { b.classList.remove("is-recording"); });
   });
 

@@ -27,6 +27,9 @@ fn app_events(state: &Shared, seat: &str, e: UiEvent) -> Vec<Event> {
             if let Some(l) = LiveCard::build(state, seat) {
                 out.push(ev("live", render(&l)));
             }
+            if let Some(h) = LiveHero::build(state, seat) {
+                out.push(ev("live-hero", render(&h)));
+            }
             out.push(ev("banner", render(&Banner::build(state, seat))));
         }
         UiEvent::Emergency { seat: patient } => {

@@ -3,6 +3,6 @@
 {% macro go(path, seat, nav) %}href="{{ path }}?seat={{ seat }}" hx-get="{{ path }}?seat={{ seat }}" hx-target="#screen" hx-push-url="true" data-nav="{{ nav }}"{% endmacro %}
 {# tool: attributes for a button that runs one of Eva's tools through the same endpoint Eva uses #}
 {% macro tool(b) %}hx-post="/api/eva/tool" hx-vals="{{ b.vals }}" hx-target="#toast" hx-swap="innerHTML"{% if !b.confirm.is_empty() %} hx-confirm="{{ b.confirm }}"{% endif %}{% if !b.then.is_empty() %} data-then="{{ b.then }}"{% endif %} data-tool="{{ b.name }}"{% endmacro %}
-{# hero: the photo on a large detail view (Codex kit, 1200×800, 3:2, never cropped). A title may sit on the
-   empty left side. The AI-generated notice lives in the README, not on screen. #}
-{% macro hero(file, alt, title) %}<figure class="relative shrink-0 overflow-hidden rounded-card bg-background ring-1 ring-line"><img src="/static/img/hero/{{ file }}.webp" alt="{{ alt }}" class="block aspect-3/2 w-full object-cover" width="1200" height="800" decoding="async">{% if !title.is_empty() %}<figcaption class="absolute top-4 left-4 w-1/2 text-2xl leading-tight tracking-tight text-ink">{{ title }}</figcaption>{% endif %}</figure>{% endmacro %}
+{# hero: a photo hero card (Codex kit, 1200×800) that fills the card at 4:3 under a bottom scrim, title
+   bottom-left. The AI-generated notice lives in the README, not on screen. #}
+{% macro hero(file, alt, title) %}<figure class="card-hero relative shrink-0 p-0"><img src="/static/img/hero/{{ file }}.webp" alt="{{ alt }}" class="block aspect-4/3 w-full object-cover" width="1200" height="800" decoding="async"><span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,#070A14E6_100%)]" aria-hidden="true"></span>{% if !title.is_empty() %}<figcaption class="absolute bottom-5 left-6 right-6 text-h1 text-ink">{{ title }}</figcaption>{% endif %}</figure>{% endmacro %}

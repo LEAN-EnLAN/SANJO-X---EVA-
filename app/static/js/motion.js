@@ -10,7 +10,7 @@
   "use strict";
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   var css = getComputedStyle(document.documentElement);
-  var NAMES = ["snappy", "gentle", "bouncy", "slow"];
+  var NAMES = ["snappy", "gentle", "bouncy", "slow", "swift", "glide"];
 
   function token(name) {
     function n(k, d) { var v = parseFloat(css.getPropertyValue("--spring-" + name + "-" + k)); return isFinite(v) ? v : d; }
@@ -36,14 +36,17 @@
   });
 
   // ---- one rAF loop for all active springs
-  var active = new Set(), raf = 0, last = 0;
+  // fx.js registers per-frame work here too (EvaMotion.onFrame): never a second rAF loop
+  var active = new Set(), frames = new Set(), raf = 0, last = 0;
   function loop(now) {
     var dt = Math.min(0.064, (now - (last || now)) / 1000); last = now;
     active.forEach(function (s) { if (s._step(dt)) active.delete(s); });
-    raf = active.size ? requestAnimationFrame(loop) : 0;
+    frames.forEach(function (f) { if (f(dt, now) === false) frames.delete(f); });
+    raf = (active.size || frames.size) ? requestAnimationFrame(loop) : 0;
     if (!raf) last = 0;
   }
   function wake(s) { active.add(s); if (!raf) raf = requestAnimationFrame(loop); }
+  function onFrame(f) { frames.add(f); if (!raf) raf = requestAnimationFrame(loop); }
 
   function Spring(value, cfg, onUpdate) {
     this.x = value; this.v = 0; this.target = value;
@@ -84,7 +87,7 @@
     var el = e.target.closest && e.target.closest(".press");
     if (!el || reduced.matches) return;
     var s = el._press || (el._press = varSpring(el, "--press", 1, "snappy"));
-    s.set(0.95, "snappy");
+    s.set(el.classList.contains("card") || el.classList.contains("card-hero") ? 0.98 : 0.96, "snappy");
     function up() { s.set(1, "bouncy"); el.removeEventListener("pointerup", up); el.removeEventListener("pointerleave", up); el.removeEventListener("pointercancel", up); }
     el.addEventListener("pointerup", up); el.addEventListener("pointerleave", up); el.addEventListener("pointercancel", up);
   }, { passive: true });
@@ -213,7 +216,7 @@
     else setTimeout(preloadStates, 1200);
   });
 
-  window.EvaMotion = { Spring: Spring, token: token, varSpring: varSpring, setMood: setMood, mountMascots: mountMascots, reduced: reduced, linearFor: linearFor, states: Object.keys(STATES) };
+  window.EvaMotion = { Spring: Spring, token: token, varSpring: varSpring, setMood: setMood, mountMascots: mountMascots, reduced: reduced, linearFor: linearFor, states: Object.keys(STATES), onFrame: onFrame, lastKind: "push" };
 
   // ================================================================ app navigation motion
   // Screens: push slides in from the right, back from the left, tabs cross-fade with a
@@ -222,16 +225,20 @@
   // drags the screen with the finger; let go and it either completes (back) or springs home.
   function scr() { return document.getElementById("screen"); }
   function vset(prop) { return function (x) { var el = scr(); if (el) el.style.setProperty(prop, x.toFixed(4)); }; }
-  var S = { x: new Spring(0, "gentle", vset("--scr-x")), o: new Spring(1, "gentle", vset("--scr-o")), s: new Spring(1, "gentle", vset("--scr-s")) };
+  var S = { x: new Spring(0, "swift", vset("--scr-x")), y: new Spring(0, "swift", vset("--scr-y")), o: new Spring(1, "swift", vset("--scr-o")), s: new Spring(1, "swift", vset("--scr-s")) };
   var pendingNav = null;
 
+  // push: from +28 % width, opacity 0 → 1; back: from −18 %; tab: cross-fade with an 8 px rise
+  // (no horizontal slide); morph: a view transition moved the shared element, so stay still.
   function enter(kind) {
     var w = Math.min(window.innerWidth, 640);
-    if (kind === "refresh" || reduced.matches) { S.x.track(0, 0); S.o.track(1, 0); S.s.track(1, 0); return; }
-    if (kind === "back") { S.x.track(-w * 0.25, 0); S.o.track(0.4, 0); S.x.set(0, "gentle"); S.o.set(1, "gentle"); }
-    else if (kind === "tab") { S.x.track(0, 0); S.s.track(0.985, 0); S.o.track(0, 0); S.s.set(1, "snappy"); S.o.set(1, "snappy"); }
-    else if (kind === "fade") { S.o.track(0, 0); S.o.set(1, "gentle"); }
-    else { S.x.track(w * 0.3, 0); S.o.track(0.3, 0); S.x.set(0, "gentle"); S.o.set(1, "gentle"); }
+    window.EvaMotion.lastKind = kind;
+    if (kind === "refresh" || kind === "morph" || reduced.matches) { S.x.track(0, 0); S.y.track(0, 0); S.o.track(1, 0); S.s.track(1, 0); return; }
+    S.y.track(0, 0); S.s.track(1, 0);
+    if (kind === "back") { S.x.track(-w * 0.18, 0); S.o.track(0, 0); S.x.set(0, "swift"); S.o.set(1, "swift"); }
+    else if (kind === "tab") { S.x.track(0, 0); S.y.track(8, 0); S.o.track(0, 0); S.y.set(0, "swift"); S.o.set(1, "swift"); }
+    else if (kind === "fade") { S.x.track(0, 0); S.o.track(0, 0); S.o.set(1, "swift"); }
+    else { S.x.track(w * 0.28, 0); S.o.track(0, 0); S.x.set(0, "swift"); S.o.set(1, "swift"); }
   }
   function navOf(elt) {
     var n = elt && elt.closest && elt.closest("[data-nav]");
@@ -290,6 +297,8 @@
     var bar = document.querySelector("[data-tabbar]");
     if (!bar) return;
     var p = location.pathname.replace(/^\/app\/?/, "") || "home";
+    var prev = bar.getAttribute("data-active");
+    bar.setAttribute("data-active", p);
     bar.querySelectorAll("[data-tab]").forEach(function (a) {
       if (a.getAttribute("data-tab") === p) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
@@ -297,16 +306,21 @@
     if (!el) return;
     if (!pill) {
       pill = { x: varSpring(el, "--pill-x", 0, "gentle"), o: varSpring(el, "--pill-o", 0, "snappy"), s: varSpring(el, "--pill-s", 1, "bouncy") };
-      if (cur) { pill.x.track(cur.offsetLeft, 0); pill.o.track(1, 0); }
+      if (cur) { pill.x.track(cur.offsetLeft + (cur.offsetWidth - 56) / 2, 0); pill.o.track(1, 0); }
       bar.setAttribute("data-pill-ready", "");
       return;
     }
     if (!cur) { pill.o.set(0, "snappy"); return; }
-    var from = pill.x.x, to = cur.offsetLeft;
+    var from = pill.x.x, to = cur.offsetLeft + (cur.offsetWidth - 56) / 2;
     if (pill.o.x < 0.05) pill.x.track(to, 0); else pill.x.set(to, "gentle");
     pill.o.set(1, "snappy");
-    // stretch a little while it travels, like a drop of liquid
-    if (Math.abs(to - from) > 4 && !reduced.matches) { pill.s.track(1.25, 0); pill.s.set(1, "bouncy"); }
+    // stretch a little while it travels, like a drop of liquid; the new icon pops in
+    if (Math.abs(to - from) > 4 && !reduced.matches) {
+      pill.s.track(1.35, 0); pill.s.set(1, "bouncy");
+      var ic = cur.querySelector(".ic-fill");
+      if (ic && prev !== p) { var pop = varSpring(ic, "scale", 0.8, "bouncy"); pop.onUpdate = function (x) { ic.style.transform = "scale(" + x.toFixed(3) + ")"; }; pop.track(0.8, 0); pop.set(1, "bouncy"); }
+    }
+    if (prev !== p && navigator.vibrate) try { navigator.vibrate(6); } catch (e) {}
   }
   window.addEventListener("resize", function () { if (pill) { pill = null; syncTabs(); } });
 
@@ -318,7 +332,7 @@
     if (!sheet) {
       sheet = varSpring(host, "--sheet-y", 100, "gentle");
       var base = sheet.onUpdate;
-      sheet.onUpdate = function (y) { base(y); if (y >= 99.5 && sheet.target >= 100) { host.classList.add("hidden"); host.setAttribute("aria-hidden", "true"); } };
+      sheet.onUpdate = function (y) { base(y); document.documentElement.style.setProperty("--sheet-y", y.toFixed(2)); if (y >= 99.5 && sheet.target >= 100) { host.classList.add("hidden"); host.setAttribute("aria-hidden", "true"); document.documentElement.classList.remove("sheet-open"); } };
       dragSheet(host);
     }
     return sheet;
@@ -329,6 +343,7 @@
     if (sp.x >= 99) sp.track(100, 0);
     sp.set(0, "gentle");
     host.classList.remove("hidden"); host.setAttribute("aria-hidden", "false");
+    document.documentElement.classList.add("sheet-open");
     var f = host.querySelector("button, input, a"); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 50);
   }
   function closeSheet() { var sp = sheetSpring(); if (sp && sp.target !== 100) sp.set(100, "snappy"); }
@@ -394,8 +409,12 @@
         }
         draw(spin.x);
       }
+      var floor = el.querySelector("[data-spin-floor]"), sheen = el.querySelector("[data-spin-sheen]");
       function draw(x) {
         var i = Math.floor(x), f = x - i, a = mod(i), b = mod(i + 1);
+        var ang = x / n * Math.PI * 2;
+        if (floor) floor.style.transform = "scaleX(" + (1 + 0.08 * Math.cos(ang)).toFixed(3) + ")";
+        if (sheen) sheen.style.transform = "translateX(" + (((x / n) % 1 + 1) % 1 * 250 - 100).toFixed(1) + "%)";
         var fb = Math.min(1, Math.max(0, (f - 0.3) / 0.4));
         imgs.forEach(function (im, k) {
           im.style.opacity = k === a ? "1" : k === b ? fb.toFixed(3) : "0";
@@ -422,12 +441,16 @@
         var dt = (e.timeStamp - down.t) / 1000; down.t = e.timeStamp;
         // drag right turns the near side to the right (frames count the other way)
         spin.track(down.p0 - (e.clientX - down.x0) / down.ppf, dt);
+        // haptic detent each time the nearest frame changes (≥ 40 ms apart)
+        var near = Math.round(spin.x);
+        if (near !== down.near && e.timeStamp - (down.tick || 0) > 40) { down.near = near; down.tick = e.timeStamp; if (navigator.vibrate) try { navigator.vibrate(4); } catch (er) {} }
       });
+      // a flick coasts up to ¾ of a turn and eases onto a frame on a soft spring
       function release(e) {
         if (!down || e.pointerId !== down.id) return;
         down = null;
-        var coast = Math.max(-2, Math.min(2, spin.v * 0.18));
-        spin.set(Math.round(spin.x + coast), "gentle");
+        var coast = Math.max(-6, Math.min(6, spin.v * 0.35));
+        spin.set(Math.round(spin.x + coast), { mass: 1, stiffness: 60, damping: 16 });
       }
       stage.addEventListener("pointerup", release);
       stage.addEventListener("pointercancel", release);
@@ -439,11 +462,13 @@
         b.addEventListener("click", function () { step(parseInt(b.getAttribute("data-spin-step"), 10) || 1); });
       });
       setTimeout(fill, 1200);
+      // first appearance: one slow full turn, then the hint fades
+      if (!reduced.matches && !document.documentElement.classList.contains("lite")) setTimeout(function () { fill(); spin.set(spin.target + n, { mass: 1, stiffness: 18, damping: 9 }); setTimeout(used, 2400); }, 700);
     });
   }
   document.addEventListener("DOMContentLoaded", function () { mountSpin(document); });
   document.addEventListener("htmx:load", function (e) { mountSpin(e.target); });
 
   document.addEventListener("DOMContentLoaded", function () { syncTabs(); edgeSwipe(); grow(document, "push"); });
-  window.EvaMotion.enter = enter; window.EvaMotion.expect = expect; window.EvaMotion.openSheet = openSheet; window.EvaMotion.closeSheet = closeSheet; window.EvaMotion.syncTabs = syncTabs;
+  window.EvaMotion.enter = enter; window.EvaMotion.S = S; window.EvaMotion.expect = expect; window.EvaMotion.openSheet = openSheet; window.EvaMotion.closeSheet = closeSheet; window.EvaMotion.syncTabs = syncTabs;
 })();
