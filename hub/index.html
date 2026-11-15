@@ -1,794 +1,826 @@
-<title>Eva Research Hub</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="claude:viewport-fit-sides" content="cover">
+<script>(function(){var d=document.documentElement,l="en";try{var q=new URLSearchParams(location.search).get("lang");if(q==="es"||q==="en")l=q;else{var s=localStorage.getItem("wm-lang");if(s==="es"||s==="en")l=s}}catch(e){}d.lang=l})()</script>
+<title>Eva Research Hub</title>
+<meta name="description" content="The sources behind Eva by WearMeds: the challenge's official resources, NASA data, health science, space weather, prior work and the build.">
+<meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    color-scheme: light;
-    --bg: #ffffff;
-    --ink: #0c0c0c;
-    --muted: #666462;
-    --rule: #e3e1dd;
-    --paper: #ffffff;
-    --paper-ink: #0c0c0c;
-    --paper-muted: #6b6966;
-    --paper-rule: #dedbd6;
-    --paper-line: rgba(12, 12, 12, 0.07);
-    --paper-hover: #f6f4f0;
-    --glass-hi: rgba(255, 255, 255, 0.66);
-    --glass: rgba(255, 255, 255, 0.40);
-    --glass-edge: rgba(255, 255, 255, 0.85);
-    --glass-line: rgba(255, 255, 255, 0.45);
-    --glass-ink: #0c0c0c;
-    --glass-muted: rgba(12, 12, 12, 0.66);
-    --shadow: rgba(12, 12, 12, 0.16);
-    --focus: #0c0c0c;
-    --art-filter: none;
+:root{
+  color-scheme:dark;
+  --bg:#000000; --ink:#f4f3f0; --muted:#9b9996; --rule:#2a2a2a; --rule-hi:#3d3d3d; --faint:#6f6d6a;
+  --teal:#1FE5C4; --orange:#F28A1A; --tip:#0b0b0b;
+  --font:"PP Neue Montreal","Inter",Arial,sans-serif;
+  --t-display:clamp(44px,7.71vw,111px); --t-sec:clamp(24px,3.085vw,44.4px);
+  --t-label:clamp(18px,1.9vw,26px); --t-util:clamp(15px,1.25vw,18px);
+  --gl:max(16px,env(safe-area-inset-left)); --gr:max(16px,env(safe-area-inset-right));
+  --ease:cubic-bezier(.645,.045,.355,1); --out:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000000;--ink:#f4f3f0}}
+:root[data-theme="dark"]{--bg:#000000;--ink:#f4f3f0}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-weight:400;font-size:var(--t-util);line-height:1.35;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+::selection{background:var(--ink);color:var(--bg)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.u{background-image:linear-gradient(currentColor,currentColor);background-size:0 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .45s var(--ease)}
+.u:hover,.u:focus-visible{background-size:100% 1px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:var(--gl);top:-60px;z-index:600;padding:8px 12px;border:1px solid var(--rule-hi);background:var(--bg)}
+.skip:focus{top:12px}
 
-    --font: "PP Neue Montreal", "Inter", Arial, sans-serif;
-    --fs-display: clamp(38px, 7.708vw, 111px);
-    --fs-section: clamp(26px, 3.085vw, 44.4px);
-    --fs-label: clamp(20px, 2.315vw, 33.3px);
-    --fs-utility: clamp(15px, 1.543vw, 22.2px);
-    --gutter-l: max(20px, env(safe-area-inset-left));
-    --gutter-r: max(20px, env(safe-area-inset-right));
-    --stage-h: 400px;
-    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg: #000000;
-      --ink: #f4f3f1;
-      --muted: #9b9996;
-      --rule: #3d3d3d;
-      --paper: #131313;
-      --paper-ink: #f4f3f1;
-      --paper-muted: #a3a19d;
-      --paper-rule: #2e2e2e;
-      --paper-line: rgba(255, 255, 255, 0.06);
-      --paper-hover: #1c1c1c;
-      --glass-hi: rgba(0, 0, 0, 0.62);
-      --glass: rgba(0, 0, 0, 0.36);
-      --glass-edge: rgba(255, 255, 255, 0.22);
-      --glass-line: rgba(255, 255, 255, 0.12);
-      --glass-ink: #f7f6f4;
-      --glass-muted: rgba(247, 246, 244, 0.70);
-      --shadow: rgba(0, 0, 0, 0.7);
-      --focus: #f4f3f1;
-      --art-filter: brightness(0.8) saturate(1.05);
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --bg: #000000;
-    --ink: #f4f3f1;
-    --muted: #9b9996;
-    --rule: #3d3d3d;
-    --paper: #131313;
-    --paper-ink: #f4f3f1;
-    --paper-muted: #a3a19d;
-    --paper-rule: #2e2e2e;
-    --paper-line: rgba(255, 255, 255, 0.06);
-    --paper-hover: #1c1c1c;
-    --glass-hi: rgba(0, 0, 0, 0.62);
-    --glass: rgba(0, 0, 0, 0.36);
-    --glass-edge: rgba(255, 255, 255, 0.22);
-    --glass-line: rgba(255, 255, 255, 0.12);
-    --glass-ink: #f7f6f4;
-    --glass-muted: rgba(247, 246, 244, 0.70);
-    --shadow: rgba(0, 0, 0, 0.7);
-    --focus: #f4f3f1;
-    --art-filter: brightness(0.8) saturate(1.05);
-  }
+/* nav */
+.nav{position:sticky;top:0;z-index:400;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 var(--gr) 0 var(--gl);background:var(--bg);border-bottom:1px solid var(--rule)}
+.brand{font-size:clamp(20px,2vw,28px);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand span{color:var(--muted)}
+.navl{display:flex;gap:clamp(14px,2vw,28px);font-size:15px;color:var(--muted)}
+.navl a:hover,.navl a:focus-visible{color:var(--ink)}
+@media (max-width:820px){.navl{display:none}}
+.lpick{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+.lpick button{min-width:38px;height:28px;padding:0 10px;border:1px solid var(--rule-hi);border-radius:14px;color:var(--muted);transition:border-color .3s,color .3s}
+.lpick button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
 
-  *, *::before, *::after { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font);
-    font-weight: 400;
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: inherit; text-decoration: none; }
-  ::selection { background: var(--ink); color: var(--bg); }
-  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+/* hero */
+.hero{padding:clamp(28px,5vw,64px) var(--gr) 0 var(--gl)}
+.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 18px}
+.eyebrow b{font-weight:400;color:var(--orange)}
+h1{margin:0;font-weight:400;font-size:var(--t-display);line-height:1;letter-spacing:-.02em;max-width:12em;text-wrap:balance}
+.lede{margin:24px 0 0;max-width:40em;color:var(--muted);font-size:var(--t-label);line-height:1.15;letter-spacing:-.01em}
+.lede em{font-style:normal;color:var(--ink)}
+.ship{margin:40px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--rule)}
+.ship li{border-bottom:1px solid var(--rule);min-width:0}
+@media (max-width:1100px){.ship{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:620px){.ship{grid-template-columns:repeat(2,1fr)}}
+.ship a{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:16px 16px 16px 0;font-size:var(--t-label);letter-spacing:-.01em;transition:color .3s,padding-left .3s var(--out)}
+.ship li+li a{padding-left:16px;border-left:1px solid var(--rule)}
+@media (max-width:1100px){.ship li:nth-child(3n+1) a{padding-left:0;border-left:0}}
+@media (max-width:620px){.ship li a{padding-left:16px;border-left:1px solid var(--rule)}.ship li:nth-child(odd) a{padding-left:0;border-left:0}}
+.ship a:hover,.ship a:focus-visible{color:var(--teal)}
+.ar{font-size:.7em;color:var(--muted)}
 
-  .page { overflow-x: clip; min-height: 100vh; background: var(--bg); }
+/* sections */
+.sec{margin-top:clamp(72px,9vw,120px)}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;min-height:64px;padding:14px var(--gr) 14px var(--gl);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.sh h2{margin:0;font-weight:400;font-size:var(--t-sec);line-height:1.02;letter-spacing:-.01em}
+.sh .aside{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:.6em;text-align:right}
+.pad{padding-left:var(--gl);padding-right:var(--gr)}
 
-  /* Navigation band */
-  .nav {
-    position: sticky; top: 0; z-index: 400;
-    height: 72px;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 var(--gutter-r) 0 var(--gutter-l);
-    background: var(--bg);
-    border-bottom: 1px solid var(--rule);
-    font-size: var(--fs-section); line-height: 1.02; letter-spacing: -0.01em;
-  }
-  .ulink {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-size: 0 1px; background-position: 0 100%; background-repeat: no-repeat;
-    transition: background-size 0.45s cubic-bezier(0.645, 0.045, 0.355, 1);
-  }
-  .ulink:hover { background-size: 100% 1px; }
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));margin:0;list-style:none}
+.stat{position:relative;padding:22px 20px 26px 0;border-bottom:1px solid var(--rule)}
+.stat .num{display:block;text-align:left;white-space:nowrap;font-size:clamp(48px,5.4vw,80px);line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums;transition:color .3s}
+.stat .num small{font-size:.42em;letter-spacing:-.01em;margin-left:.18em}
+.stat .num:hover,.stat.on .num,.stat .num:focus-visible{color:var(--teal)}
+.stat .lbl{display:block;margin-top:10px;max-width:17em;color:var(--muted)}
+.stat .src{display:inline-block;margin-top:10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.stat .src::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;border:1px solid var(--orange);margin-right:7px;vertical-align:1px}
+.tip{position:absolute;z-index:50;left:0;top:calc(100% - 14px);width:calc(100% - 8px);max-width:340px;padding:12px 14px;background:var(--tip);border:1px solid var(--rule-hi);font-size:14px;line-height:1.35;color:var(--ink);opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .25s,transform .25s var(--out),visibility 0s .25s}
+.tip a{color:var(--teal);overflow-wrap:anywhere}
+.tip .k{display:block;margin-top:6px;color:var(--muted);font-size:13px}
+.stat:hover .tip,.stat:focus-within .tip,.stat.on .tip{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .25s var(--out)}
+.subh{margin:44px 0 0;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stats.build .num{font-size:clamp(36px,4vw,60px)}
+@media (max-width:620px){.stats{grid-template-columns:1fr 1fr;column-gap:14px}.stat{padding:18px 0 20px}.stat .num{font-size:40px}.stats.build .num{font-size:30px}.stat .lbl{font-size:14px}.stat .src{font-size:10px;letter-spacing:.06em}}
 
-  /* Promise */
-  .promise {
-    padding: 20px var(--gutter-r) 0 var(--gutter-l);
-    margin: 0;
-    font-size: var(--fs-display); line-height: 1.02; letter-spacing: -0.01em; font-weight: 400;
-    max-width: 1300px;
-  }
-  .promise span { display: inline; }
-  @media (min-width: 900px) { .promise span { display: block; } }
-  .intro {
-    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 40px;
-    padding: 40px var(--gutter-r) 0 var(--gutter-l);
-    font-size: var(--fs-utility); line-height: 1.1; color: var(--muted);
-  }
-  .intro p { margin: 0; max-width: 36em; }
+/* flow */
+.flow{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:0 clamp(20px,4vw,64px);padding-top:28px}
+@media (max-width:860px){.flow{grid-template-columns:1fr}}
+.ftabs{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+@media (max-width:860px){.ftabs{flex-direction:row;flex-wrap:wrap;border-top:0;gap:8px}}
+.ftab{display:flex;gap:12px;align-items:baseline;text-align:left;padding:14px 0;border-bottom:1px solid var(--rule);color:var(--muted);transition:color .3s,padding-left .3s var(--out)}
+.ftab i{font-style:normal;font-size:12px;letter-spacing:.08em;color:var(--faint)}
+.ftab[aria-selected="true"]{color:var(--ink);padding-left:8px}
+.ftab[aria-selected="true"] i{color:var(--orange)}
+.ftab:hover{color:var(--ink)}
+@media (max-width:860px){.ftab{padding:8px 12px;border:1px solid var(--rule-hi);border-radius:18px;font-size:14px}.ftab i{display:none}.ftab[aria-selected="true"]{padding-left:12px;border-color:var(--ink)}}
+.fpanel{position:relative;min-height:300px}
+@media (max-width:860px){.fpanel{margin-top:22px;min-height:0}}
+.fsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr)}
+@media (max-width:860px){.fsteps{grid-template-columns:1fr}}
+.fstep{position:relative;padding:18px 22px 22px 0;border-top:1px solid var(--rule)}
+.fstep::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--teal)}
+.fpanel.run .fstep::before{animation:wire .6s var(--ease) forwards}
+.fpanel.run .fstep:nth-child(2)::before{animation-delay:.45s}
+.fpanel.run .fstep:nth-child(3)::before{animation-delay:.9s}
+@keyframes wire{to{width:100%}}
+.fstep .k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.fstep .k b{font-weight:400;color:var(--orange);margin-right:8px}
+.fstep p{margin:10px 0 0;font-size:var(--t-label);line-height:1.12;letter-spacing:-.01em}
+.fstep:nth-child(3) p{color:var(--teal)}
+.fpanel.run .fstep{animation:step .5s var(--out) both}
+.fpanel.run .fstep:nth-child(2){animation-delay:.45s}
+.fpanel.run .fstep:nth-child(3){animation-delay:.9s}
+@keyframes step{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fnote{margin:18px 0 0;color:var(--muted);font-size:14px;max-width:46em}
+.link3{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:36px 0 0;padding-top:16px;border-top:1px solid var(--rule);font-size:15px;color:var(--muted)}
+.link3 b{font-weight:400;color:var(--ink)}
+.link3 .hub b{color:var(--teal)}
+.link3 .arr{color:var(--rule-hi)}
 
-  /* Ruled section header */
-  .section { margin-top: 120px; }
-  .section-head {
-    display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
-    min-height: 72px;
-    padding: max(14.4px, 1vw) var(--gutter-r) 14px var(--gutter-l);
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-  }
-  .section-head h2 {
-    margin: 0; font-weight: 400;
-    font-size: var(--fs-section); line-height: 1.02; letter-spacing: -0.01em;
-  }
-  .section-head .aside {
-    font-size: var(--fs-section); line-height: 1.02; letter-spacing: -0.01em;
-    text-transform: uppercase; color: var(--muted); white-space: nowrap;
-  }
+/* source toolbar */
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding-top:22px}
+.search{flex:1 1 260px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--rule-hi);padding:6px 0}
+.search:focus-within{border-color:var(--teal)}
+.search svg{flex:none;color:var(--muted)}
+.search input{flex:1;min-width:0;background:none;border:0;color:var(--ink);font:inherit;font-size:var(--t-label);letter-spacing:-.01em;padding:4px 0;outline:none}
+.search input::placeholder{color:var(--faint)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:32px;padding:0 13px;border:1px solid var(--rule-hi);border-radius:16px;font-size:13px;color:var(--muted);transition:border-color .3s,color .3s}
+.chip[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;flex:none}
+.chip .dot{margin-right:7px;vertical-align:1px}
+.dot.star{border:1px solid var(--orange)}
+.dot.eva{background:var(--teal)}
+.count{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.tog{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tog:hover{color:var(--ink)}
 
-  /* Folder grid */
-  .grid {
-    list-style: none; margin: 0;
-    padding: 60px var(--gutter-r) 0 var(--gutter-l);
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
-    gap: 72px 20px;
-  }
+/* folders */
+.folders{padding-top:34px;display:grid;gap:26px}
+.folder{position:relative;padding-top:15px}
+.folder .tab{position:absolute;left:0;top:0;width:190px;height:16px;color:var(--rule-hi);pointer-events:none;transition:color .4s,transform .4s var(--out)}
+.folder .tab path{fill:none;stroke:currentColor;stroke-width:1;vector-effect:non-scaling-stroke}
+.folder.open .tab{color:var(--teal)}
+.folder:not(.open):hover .tab{transform:translateY(-3px)}
+.fh{width:100%;display:grid;grid-template-columns:auto 1fr auto auto;align-items:baseline;gap:14px;text-align:left;padding:14px 0 16px;border-top:1px solid var(--rule-hi)}
+.fh .ix{font-size:13px;letter-spacing:.08em;color:var(--orange)}
+.fh .nm{font-size:var(--t-sec);line-height:1.02;letter-spacing:-.01em}
+.fh .hint{font-size:14px;color:var(--muted);text-align:right}
+.fh .pm{position:relative;width:18px;height:18px;align-self:center}
+.fh .pm::before,.fh .pm::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--ink);transition:transform .4s var(--out)}
+.fh .pm::after{transform:rotate(90deg)}
+.folder.open .fh .pm::after{transform:rotate(0)}
+@media (max-width:600px){.fh{grid-template-columns:auto 1fr auto}.fh .hint{grid-column:2/3;text-align:left;margin-top:-6px}.fh .pm{grid-row:1;grid-column:3}}
+.folder.none{opacity:.38}
+.fbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--ease)}
+.folder.open .fbody{grid-template-rows:1fr}
+.fbody>div{overflow:hidden;min-height:0}
+.cards{list-style:none;margin:0;padding:4px 0 26px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:0 24px}
+.card{padding:16px 0 18px;border-top:1px solid var(--rule);opacity:0;transform:translateY(14px);transition:opacity .45s var(--out),transform .45s var(--out)}
+.folder.open .card{opacity:1;transform:none;transition-delay:calc(var(--i,0) * 35ms + 120ms)}
+.card[hidden]{display:none}
+.badges{display:flex;flex-wrap:wrap;gap:6px 14px;min-height:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.badges span{display:inline-flex;align-items:center;gap:6px}
+.card h3{margin:8px 0 0;font-weight:400;font-size:clamp(18px,1.6vw,22px);line-height:1.15;letter-spacing:-.01em}
+.card h3 a{transition:color .3s}
+.card h3 a:hover,.card h3 a:focus-visible{color:var(--teal)}
+.card h3 .ar{margin-left:5px}
+.card .one{margin:6px 0 0;color:var(--muted);font-size:15px}
+.card .meta{margin:8px 0 0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.more{margin-top:10px;font-size:13px;color:var(--teal);display:inline-flex;gap:8px;align-items:center}
+.more::after{content:"+";transition:transform .3s var(--out)}
+.more[aria-expanded="true"]::after{transform:rotate(45deg)}
+.use{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
+.use.on{grid-template-rows:1fr}
+.use>p{overflow:hidden;margin:0;min-height:0}
+.use>p span{display:block;margin-top:8px;padding-left:12px;border-left:1px solid var(--teal);font-size:15px;line-height:1.35}
+mark{background:none;color:var(--teal)}
+.empty{margin:0;padding:6px 0 22px;color:var(--muted)}
+.note{margin:22px 0 0;color:var(--muted);font-size:14px;max-width:52em}
 
-  .folder { position: relative; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .folder.is-open { z-index: 20; }
-  .stage {
-    position: relative;
-    height: var(--stage-h);
-  }
-  .folder.in .stage { animation: rise 0.9s var(--ease) both; }
-  .folder.in .files { animation: deal 1s var(--ease) 0.12s both; }
-  @keyframes rise { from { transform: translateY(40px); } to { transform: none; } }
-  @keyframes deal { from { transform: translateY(70px); } to { transform: none; } }
+/* decisions */
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:150px 1fr;gap:6px 24px;padding:14px 0;border-bottom:1px solid var(--rule)}
+@media (max-width:600px){.tl li{grid-template-columns:1fr}}
+.tl .when{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums}
+.tl li.new .when{color:var(--orange)}
+.tl .what{font-size:16px}
+.tl li.extra{display:none}
+.tl.all li.extra{display:grid;animation:step .4s var(--out) both}
+.tlbtn{margin-top:16px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;gap:10px;align-items:center}
+.tlbtn::after{content:"+";color:var(--teal);transition:transform .3s var(--out)}
+.tlbtn[aria-expanded="true"]::after{transform:rotate(45deg)}
 
-  .tilt {
-    position: absolute; inset: 0;
-    --mx: 0; --my: 0;
-    transform: perspective(1400px) rotateX(calc(var(--my) * -3deg)) rotateY(calc(var(--mx) * 4deg));
-    transition: transform 0.5s var(--ease);
-  }
-  .folder:has(.front:focus-visible) .stage { outline: 2px solid var(--focus); outline-offset: 8px; }
+/* footer */
+footer{margin-top:clamp(80px,10vw,140px);padding:0 var(--gr) 32px var(--gl);border-top:1px solid var(--rule)}
+.fn{margin:0;padding:22px 0 0 1.2em;display:grid;gap:10px;font-size:13px;color:var(--muted);max-width:60em}
+.fn a{color:var(--ink);word-break:break-word}
+.mark{margin-top:40px}
+.mark svg{display:block;width:100%;height:auto}
+.fl{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;margin-top:14px;font-size:13px;color:var(--muted)}
 
-  /* Back panel with generated art */
-  .back {
-    position: absolute; left: 0; right: 0; top: 36px; bottom: 0;
-    overflow: hidden;
-    clip-path: polygon(0 0, 36% 0, calc(36% + 26px) 26px, 100% 26px, 100% 100%, 0 100%);
-    background: var(--rule);
-  }
-  .back canvas {
-    position: absolute; inset: -12px;
-    width: calc(100% + 24px); height: calc(100% + 24px);
-    display: block;
-    filter: var(--art-filter);
-    transform: translate(calc(var(--mx) * -8px), calc(var(--my) * -8px));
-    transition: transform 0.5s var(--ease);
-  }
-  .back-index {
-    position: absolute; left: 14px; top: 5px; z-index: 1;
-    font-size: 14px; line-height: 1; letter-spacing: 0.02em;
-    color: #fff; mix-blend-mode: difference;
-  }
-
-  /* Files */
-  .files {
-    list-style: none; margin: 0; padding: 0;
-    position: absolute; inset: 0;
-    z-index: 2;
-    --step: calc(min(54px, (var(--stage-h) - 170px) / max(1, var(--n) - 1)));
-    transition: z-index 0s linear 0s;
-  }
-  .folder.is-open .files { z-index: 4; transition: z-index 0s linear 0.16s; }
-  .files li { display: contents; }
-  .file {
-    position: absolute; left: 8%; top: 0;
-    width: 84%; height: 150px;
-    display: flex; flex-direction: column;
-    padding: 11px 14px 0;
-    background-color: var(--paper);
-    background-image: repeating-linear-gradient(180deg, transparent 0 13px, var(--paper-line) 13px 14px);
-    background-size: 100% 70px; background-position: 0 66px; background-repeat: repeat-x;
-    color: var(--paper-ink);
-    border: 1px solid var(--paper-rule);
-    box-shadow: 0 10px 28px -12px var(--shadow);
-    --c: calc(var(--i) - (var(--n) - 1) / 2);
-    --tx: calc(var(--c) * 5px);
-    --ty: calc(62px + var(--i) * 9px);
-    --tr: calc(var(--c) * 1.1deg);
-    transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--tr));
-    transform-origin: 50% 100%;
-    transition: transform 0.7s var(--ease) calc(var(--i) * 28ms), background-color 0.2s;
-  }
-  .folder:not(.is-open):hover .file,
-  .folder:not(.is-open):focus-within .file {
-    --ty: calc(44px + var(--i) * 13px);
-    --tr: calc(var(--c) * 1.8deg);
-  }
-  .folder.is-open .file {
-    --tx: calc(-9.5% + var(--i) * 4px);
-    --ty: calc(6px + var(--i) * var(--step));
-    --tr: calc(var(--c) * -0.8deg);
-  }
-  .file:hover { background-color: var(--paper-hover); }
-  .file:focus-visible { outline-offset: -4px; }
-  .file-top { display: flex; align-items: baseline; gap: 10px; }
-  .file-title {
-    flex: 1; min-width: 0;
-    font-size: 17px; line-height: 1.15;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .file-arrow { font-size: 17px; line-height: 1; transition: transform 0.3s var(--ease); }
-  .file:hover .file-arrow, .file:focus-visible .file-arrow { transform: translate(2px, -2px); }
-  .file-meta {
-    display: flex; justify-content: space-between; gap: 10px;
-    margin-top: 5px;
-    font-size: 12.5px; line-height: 1.2; color: var(--paper-muted);
-    white-space: nowrap;
-  }
-  .file-meta span:first-child { overflow: hidden; text-overflow: ellipsis; }
-  .file-state { text-transform: uppercase; letter-spacing: 0.04em; }
-
-  /* Glass front panel */
-  .front {
-    -webkit-appearance: none; appearance: none;
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
-    height: 252px; width: 100%;
-    margin: 0; border: 0; border-radius: 0;
-    padding: 42px 22px 20px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    text-align: left; font: inherit; color: var(--glass-ink);
-    background: linear-gradient(180deg, var(--glass-hi) 0%, var(--glass) 70%);
-    -webkit-backdrop-filter: blur(22px) saturate(1.5);
-    backdrop-filter: blur(22px) saturate(1.5);
-    box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 0 0 1px var(--glass-line);
-    clip-path: polygon(0 24px, 58% 24px, calc(58% + 24px) 0, 100% 0, 100% 100%, 0 100%);
-    transform-origin: 50% 100%;
-    transform: perspective(1000px) rotateX(var(--fx, 0deg));
-    transition: transform 0.75s var(--ease);
-    cursor: pointer;
-  }
-  .front:focus-visible { outline: none; }
-  .folder:not(.is-open):hover .front,
-  .folder:not(.is-open):focus-within .front { --fx: -16deg; }
-  .folder.is-open .front { --fx: -62deg; transition-duration: 0.85s; }
-  .front-plus {
-    position: absolute; right: 18px; top: 3px;
-    font-size: 24px; line-height: 1;
-    transition: transform 0.5s var(--ease);
-  }
-  .folder.is-open .front-plus { transform: rotate(45deg); }
-  .front-label {
-    display: block;
-    font-size: var(--fs-label); line-height: 1.1; text-transform: uppercase;
-    padding-right: 10px;
-  }
-  .front-foot { display: block; }
-  .front-meta { display: block; font-size: 17px; line-height: 1.2; }
-  .front-row {
-    display: flex; justify-content: space-between; align-items: center; gap: 12px;
-    margin-top: 10px; padding-top: 10px;
-    border-top: 1px solid var(--glass-line);
-    font-size: 12.5px; line-height: 1; letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--glass-muted);
-  }
-  .pips { display: inline-flex; gap: 4px; }
-  .pip { width: 10px; height: 10px; border: 1px solid currentColor; }
-  .pip.on { background: var(--glass-ink); border-color: var(--glass-ink); }
-
-  /* Caption row */
-  .caption {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-top: 16px; padding-top: 10px;
-    border-top: 1px solid var(--rule);
-    font-size: var(--fs-utility); line-height: 1.1;
-  }
-  .caption .hint { text-transform: uppercase; color: var(--muted); }
-  .folder:hover .caption .hint { color: var(--ink); }
-
-  /* Progress rows */
-  .rows { list-style: none; margin: 0; padding: 0; }
-  .row {
-    display: grid;
-    grid-template-columns: minmax(64px, 7%) 1fr minmax(180px, 24%) minmax(120px, 12%);
-    gap: 4px 20px; align-items: baseline;
-    padding: 14px var(--gutter-r) 14px var(--gutter-l);
-    border-bottom: 1px solid var(--rule);
-    font-size: var(--fs-label); line-height: 1.1;
-  }
-  .row .num { color: var(--muted); }
-  .row .owner { color: var(--muted); }
-  .row .status { text-transform: uppercase; text-align: right; white-space: nowrap; }
-  .row.is-open .status { color: var(--muted); }
-  .row.is-done .task { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: var(--muted); }
-
-  /* Footer */
-  .footer { padding-top: 180px; }
-  .mark {
-    margin: 0 var(--gutter-r) 0 var(--gutter-l);
-    padding: 14px 0;
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-  }
-  .mark svg { display: block; width: 100%; height: auto; fill: currentColor; }
-  .foot-line {
-    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px;
-    padding: 14px var(--gutter-r) max(28px, env(safe-area-inset-bottom)) var(--gutter-l);
-    font-size: var(--fs-utility); line-height: 1.1;
-  }
-  .foot-line .muted { color: var(--muted); }
-
-  @media (max-width: 700px) {
-    :root {
-      --gutter-l: max(16px, env(safe-area-inset-left));
-      --gutter-r: max(16px, env(safe-area-inset-right));
-      --stage-h: 390px;
-    }
-    .section { margin-top: 80px; }
-    .grid { padding-top: 40px; gap: 56px 20px; }
-    .row {
-      grid-template-columns: 44px 1fr auto;
-      grid-template-areas: "num task task" ". owner status";
-      gap: 4px 12px;
-      font-size: 20px;
-    }
-    .row .num { grid-area: num; }
-    .row .task { grid-area: task; }
-    .row .owner { grid-area: owner; font-size: 16px; }
-    .row .status { grid-area: status; font-size: 16px; }
-    .footer { padding-top: 120px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 1ms !important; animation-delay: 0s !important;
-      transition-duration: 1ms !important; transition-delay: 0s !important;
-    }
-    .tilt, .back canvas { transform: none !important; }
-  }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .card{opacity:1;transform:none}
+}
 </style>
+</head>
+<body>
+<a class="skip" href="#sources" data-i18n="skip">Skip to sources</a>
+<header class="nav">
+  <a class="brand u" href="https://eva-wearmeds.vercel.app/" data-i18n="brand">Eva <span>· Research hub</span></a>
+  <nav class="navl" aria-label="Sections" data-i18n-aria="sections">
+    <a class="u" href="#numbers" data-i18n="nNumbers">Numbers</a>
+    <a class="u" href="#flow" data-i18n="nFlow">Data flow</a>
+    <a class="u" href="#sources" data-i18n="nSources">Sources</a>
+    <a class="u" href="#decisions" data-i18n="nDecisions">Decisions</a>
+  </nav>
+  <div class="lpick" role="group" aria-label="Language" data-i18n-aria="language">
+    <button type="button" data-l="en" lang="en" aria-pressed="true">EN</button>
+    <button type="button" data-l="es" lang="es" aria-pressed="false">ES</button>
+  </div>
+</header>
 
-<div class="page">
-  <header class="nav">
-    <a class="ulink" href="#top" aria-label="Eva, back to top">Eva</a>
-    <a class="ulink" href="#research">Research</a>
-  </header>
+<main id="top">
+  <section class="hero" aria-labelledby="h1">
+    <p class="eyebrow" data-i18n="eyebrow"><b>Sanjo-X</b> · NASA Space Apps 2026 · Rosario</p>
+    <h1 id="h1" data-i18n="h1">Every claim, sourced.</h1>
+    <p class="lede" data-i18n="lede">The research behind <em>Eva by WearMeds</em>, our answer to <em>Create Health Monitoring Software for Astronauts on Space Missions</em>. Eva reads, records, supports diagnosis and warns. The AED decides the shock.</p>
+    <ul class="ship" aria-label="Live deliverables" data-i18n-aria="deliverables">
+      <li><a href="https://eva-wearmeds.vercel.app/"><span data-i18n="dLanding">Landing</span><span class="ar" aria-hidden="true">↗</span></a></li>
+      <li><a href="https://eva-wearmeds.vercel.app/pitch/"><span data-i18n="dPitch">Pitch</span><span class="ar" aria-hidden="true">↗</span></a></li>
+      <li><a href="https://eva-wearmeds.vercel.app/video/"><span data-i18n="dVideo">30 s video</span><span class="ar" aria-hidden="true">↗</span></a></li>
+      <li><a href="https://eva-wearmeds.vercel.app/app/"><span data-i18n="dApp">App demo</span><span class="ar" aria-hidden="true">↗</span></a></li>
+      <li><a href="https://eva-wearmeds.vercel.app/download/"><span data-i18n="dApk">Android APK</span><span class="ar" aria-hidden="true">↗</span></a></li>
+      <li><a href="https://github.com/LEAN-EnLAN/SANJO-X---EVA-" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span class="ar" aria-hidden="true">↗</span></a></li>
+    </ul>
+  </section>
 
-  <main id="top">
-    <h1 class="promise">
-      <span>Every finding, every</span>
-      <span>decision, everything</span>
-      <span>we built for Eva.</span>
-    </h1>
-    <div class="intro">
-      <p>Team Sanjo-X · NASA Space Apps Challenge 2026. Open a folder to pull out its documents; each one opens in a new tab.</p>
-      <p id="summary">Six folders</p>
-    </div>
+  <section class="sec" id="numbers" aria-labelledby="numbers-h">
+    <div class="sh"><h2 id="numbers-h" data-i18n="numbersH">Why it matters</h2><span class="aside" data-i18n="numbersA">Hover or tap a number</span></div>
+    <ul class="stats pad" id="stats"></ul>
+    <p class="subh pad" data-i18n="buildH">Measured on our build</p>
+    <ul class="stats build pad" id="bstats"></ul>
+  </section>
 
-    <section class="section" id="research" aria-labelledby="research-title">
-      <div class="section-head">
-        <h2 id="research-title">Research</h2>
-        <span class="aside" id="research-count">06 folders</span>
+  <section class="sec" id="flow" aria-labelledby="flow-h">
+    <div class="sh"><h2 id="flow-h" data-i18n="flowH">How Eva uses the data</h2><span class="aside" data-i18n="flowA">Source → Eva → result</span></div>
+    <div class="flow pad">
+      <div class="ftabs" role="tablist" aria-label="Data sources" data-i18n-aria="flowTabs" id="ftabs"></div>
+      <div class="fpanel" role="tabpanel" id="fpanel" tabindex="0">
+        <ol class="fsteps" id="fsteps"></ol>
+        <p class="fnote" id="fnote"></p>
       </div>
-      <ul class="grid" id="grid"></ul>
-    </section>
+    </div>
+    <p class="link3 pad">
+      <span data-i18n="lkBand"><b>Wristband</b> reads</span><span class="arr" aria-hidden="true">→</span>
+      <span class="hub" data-i18n="lkHub"><b>Ship hub</b> hosts the Super Intelligence · stores everything</span><span class="arr" aria-hidden="true">→</span>
+      <span data-i18n="lkEarth"><b>Earth</b> receives and acknowledges the signed records</span>
+    </p>
+  </section>
 
-    <section class="section" id="progress" aria-labelledby="progress-title">
-      <div class="section-head">
-        <h2 id="progress-title">Progress</h2>
-        <span class="aside" id="progress-count">Phase 2</span>
+  <section class="sec" id="sources" aria-labelledby="sources-h">
+    <div class="sh"><h2 id="sources-h" data-i18n="sourcesH">Sources</h2><span class="aside" id="fcount"></span></div>
+    <div class="bar pad">
+      <label class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor"/><path d="M16 16l5 5" stroke="currentColor"/></svg>
+        <span class="sr" data-i18n="searchL">Search sources</span>
+        <input id="q" type="search" autocomplete="off" placeholder="Search: radiation, OSDR, CPR…" data-i18n-ph="searchP">
+      </label>
+      <div class="chips" role="group" aria-label="Filters" data-i18n-aria="filters">
+        <button type="button" class="chip" id="fStar" aria-pressed="false"><span class="dot star" aria-hidden="true"></span><span data-i18n="chipStar">Challenge page</span></button>
+        <button type="button" class="chip" id="fEva" aria-pressed="false"><span class="dot eva" aria-hidden="true"></span><span data-i18n="chipEva">Linked to Eva</span></button>
       </div>
-      <ol class="rows" id="rows"></ol>
-    </section>
-  </main>
+      <button type="button" class="tog" id="toggleAll">Open all</button>
+      <span class="count" id="rcount" aria-live="polite"></span>
+    </div>
+    <div class="folders pad" id="folders"></div>
+    <p class="note pad" data-i18n="srcNote">Sources marked “Challenge page” are listed on the Resources tab of the official challenge page. Team working notes are listed by title only.</p>
+  </section>
 
-  <footer class="footer">
-    <div class="mark">
-      <svg viewBox="0 0 1400 318" role="img" aria-label="Sanjo-X">
-        <text x="0" y="238" font-family="Inter, Arial, sans-serif" font-size="318" textLength="1400" lengthAdjust="spacingAndGlyphs">Sanjo-X</text>
-      </svg>
+  <section class="sec" id="decisions" aria-labelledby="dec-h">
+    <div class="sh"><h2 id="dec-h" data-i18n="decH">Decisions</h2><span class="aside" data-i18n="decA">Latest first · Rosario time</span></div>
+    <div class="pad">
+      <ol class="tl" id="tl"></ol>
+      <button type="button" class="tlbtn" id="tlbtn" aria-expanded="false" aria-controls="tl"></button>
     </div>
-    <div class="foot-line">
-      <span>Source of truth: the team Drive</span>
-      <span class="muted">Eva · Phase 2 · November 2026</span>
-    </div>
-  </footer>
-</div>
+  </section>
+</main>
+
+<footer>
+  <ol class="fn">
+    <li data-i18n="fn1">Challenge resources come from the Resources tab of the official 2026 challenge page, <a class="u" href="https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/" target="_blank" rel="noopener noreferrer">spaceappschallenge.org/2026/challenges/health-monitoring-software</a>, read on 15 Nov 2026. That page notes that NASA does not endorse non-U.S. Government entities.</li>
+    <li data-i18n="fn2">Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. No NASA endorsement is implied. Build figures: seeded link simulation, release build, 15 Nov 2026.</li>
+  </ol>
+  <div class="mark"><svg viewBox="0 0 1400 120" role="img" aria-label="Eva by WearMeds"><text x="0" y="104" textLength="1400" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="PP Neue Montreal, Inter, Arial, sans-serif" font-size="132">Eva by WearMeds</text></svg></div>
+  <div class="fl"><span data-i18n="foot1">Public research hub · Team Sanjo-X · Rosario</span><span data-i18n="foot2">Updated 15 November 2026</span></div>
+</footer>
 
 <script>
 (function () {
   "use strict";
+  var root = document.documentElement;
+  var lang = root.lang === "es" ? "es" : "en";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var HUB = "https://eva-wearmeds.vercel.app";
 
-  var DOC = "https://docs.google.com/document/d/";
-  function doc(id) { return DOC + id + "/edit"; }
+  /* ---------- static strings: [EN, ES] ---------- */
+  var S = {
+    skip: ["Skip to sources", "Ir a las fuentes"],
+    brand: ['Eva <span>· Research hub</span>', 'Eva <span>· Investigación</span>'],
+    sections: ["Sections", "Secciones"], language: ["Language", "Idioma"],
+    nNumbers: ["Numbers", "Cifras"], nFlow: ["Data flow", "Flujo de datos"], nSources: ["Sources", "Fuentes"], nDecisions: ["Decisions", "Decisiones"],
+    eyebrow: ['<b>Sanjo-X</b> · NASA Space Apps 2026 · Rosario', '<b>Sanjo-X</b> · NASA Space Apps 2026 · Rosario'],
+    h1: ["Every claim, sourced.", "Cada dato, con su fuente."],
+    lede: ["The research behind <em>Eva by WearMeds</em>, our answer to <em>Create Health Monitoring Software for Astronauts on Space Missions</em>. Eva reads, records, supports diagnosis and warns. The AED decides the shock.",
+           "La investigación detrás de <em>Eva by WearMeds</em>, nuestra respuesta a <em>Create Health Monitoring Software for Astronauts on Space Missions</em>. Eva lee, registra, apoya el diagnóstico y avisa. El DEA decide la descarga."],
+    deliverables: ["Live deliverables", "Entregables en vivo"],
+    dLanding: ["Landing", "Landing"], dPitch: ["Pitch", "Pitch"], dVideo: ["30 s video", "Video de 30 s"], dApp: ["App demo", "Demo de la app"], dApk: ["Android APK", "APK de Android"],
+    numbersH: ["Why it matters", "Por qué importa"], numbersA: ["Hover or tap a number", "Tocá un número"],
+    buildH: ["Measured on our build", "Medido en nuestro desarrollo"],
+    flowH: ["How Eva uses the data", "Cómo usa Eva los datos"], flowA: ["Source → Eva → result", "Fuente → Eva → resultado"], flowTabs: ["Data sources", "Fuentes de datos"],
+    lkBand: ["<b>Wristband</b> reads", "<b>La pulsera</b> lee"],
+    lkHub: ["<b>Ship hub</b> hosts the Super Intelligence · stores everything", "<b>El hub de la nave</b> aloja la Super Inteligencia · guarda todo"],
+    lkEarth: ["<b>Earth</b> receives and acknowledges the signed records", "<b>La Tierra</b> recibe y confirma los registros firmados"],
+    sourcesH: ["Sources", "Fuentes"], searchL: ["Search sources", "Buscar fuentes"],
+    searchP: ["Search: radiation, OSDR, CPR…", "Buscar: radiación, OSDR, RCP…"],
+    filters: ["Filters", "Filtros"], chipStar: ["Challenge page", "Página del desafío"], chipEva: ["Linked to Eva", "Vinculadas a Eva"],
+    openAll: ["Open all", "Abrir todas"], closeAll: ["Close all", "Cerrar todas"],
+    srcNote: ["Sources marked “Challenge page” are listed on the Resources tab of the official challenge page. Team working notes are listed by title only.",
+              "Las fuentes marcadas «Página del desafío» figuran en la pestaña Resources de la página oficial del desafío. Las notas de trabajo del equipo se listan solo por título."],
+    decH: ["Decisions", "Decisiones"], decA: ["Latest first · Rosario time", "Recientes primero · hora de Rosario"],
+    fn1: ['Challenge resources come from the Resources tab of the official 2026 challenge page, <a class="u" href="https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/" target="_blank" rel="noopener noreferrer">spaceappschallenge.org/2026/challenges/health-monitoring-software</a>, read on 15 Nov 2026. That page notes that NASA does not endorse non-U.S. Government entities.',
+          'Los recursos del desafío vienen de la pestaña Resources de la página oficial del desafío 2026, <a class="u" href="https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/" target="_blank" rel="noopener noreferrer">spaceappschallenge.org/2026/challenges/health-monitoring-software</a>, consultada el 15/11/2026. Esa página aclara que la NASA no respalda a entidades ajenas al Gobierno de EE. UU.'],
+    fn2: ["Eva is a concept for NASA Space Apps Challenge 2026 and is not a medical device. No NASA endorsement is implied. Build figures: seeded link simulation, release build, 15 Nov 2026.",
+          "Eva es un concepto para el NASA Space Apps Challenge 2026 y no es un dispositivo médico. No implica respaldo de la NASA. Cifras del desarrollo: simulación de enlace con semilla, compilación release, 15/11/2026."],
+    foot1: ["Public research hub · Team Sanjo-X · Rosario", "Centro de investigación público · Equipo Sanjo-X · Rosario"],
+    foot2: ["Updated 15 November 2026", "Actualizado el 15 de noviembre de 2026"],
+    sources: ["sources", "fuentes"], of: ["of", "de"], shown: ["shown", "visibles"], folders: ["folders", "carpetas"],
+    howEva: ["How Eva uses it", "Cómo la usa Eva"], howRef: ["How it informs Eva", "Cómo informa a Eva"], bRef: ["Informs Eva", "Informa a Eva"], titles: ["Titles", "Títulos"], noMatch: ["No match in this folder.", "Sin resultados en esta carpeta."],
+    showAll: ["Show all", "Ver todas"], showLess: ["Show fewer", "Ver menos"],
+    bStar: ["Challenge page", "Página del desafío"], bEva: ["Used by Eva", "Usada por Eva"], bInternal: ["Internal · title only", "Interno · solo título"],
+    src: ["Source", "Fuente"], kSrc: ["Source", "Fuente"], kEva: ["Eva", "Eva"], kRes: ["Result", "Resultado"]
+  };
+  function t(k) { var v = S[k]; return v ? v[lang === "es" ? 1 : 0] : k; }
+  function L(o) { return o == null ? "" : (typeof o === "string" ? o : (lang === "es" ? o.es : o.en)); }
 
+  /* ---------- sources (f: folder, ch: listed on the challenge page, e: how Eva uses it) ---------- */
+  var RUSSELL = "https://doi.org/10.1038/s41526-023-00284-1";
+  var AHA = "https://olis.oregonlegislature.gov/liz/2013R1/Downloads/CommitteeMeetingDocument/4759";
   var FOLDERS = [
-    {
-      name: "Decisions", status: "wip", noun: "docs", seed: 11,
-      palette: ["#0d1b4c", "#2f3fd1", "#9b7bff", "#ffc9a8"],
-      files: [
-        { t: "Registro de decisiones e IA", m: "Doc · Decision log", u: doc("1FoxLKt0NPCAk9odVmSA9fDhpt1ehqYbUEJBkpeE9G_U"), d: 0 },
-        { t: "Bitácora del proyecto", m: "Doc · Project diary", u: doc("1B9wELOyk1TcahQLVJTe_lSVPQ551TNZHn2ebxuW_BUQ"), d: 0 },
-        { t: "00 · LEEME", m: "Doc · Start here", u: doc("1kx8kXyDjkLznPdqTOViRES5Dn0y1vCQFItNFjxV4fyM"), d: 1 },
-        { t: "Traspaso entre sesiones", m: "Doc · Session handoff", u: doc("1R70tEOtScRwHedXh8yb8kJI8o4Mid3Vsn8TcvXdLh10"), d: 1 },
-        { t: "06 · Concepto actual: Eva", m: "Doc · Current concept", u: doc("1M2ll0OgTznUeJLpwHmY7HVFUhyIqtuhWTD9awS11oJk"), d: 1 }
-      ]
-    },
-    {
-      name: "Phase 1 · Research", status: "done", noun: "docs", seed: 23,
-      palette: ["#06343a", "#0f8b8d", "#7fd6c2", "#f3e6c4"],
-      files: [
-        { t: "01 Enfermedades", m: "Doc · Conditions in orbit", u: doc("1PftKznSB53vllz42P6Tl2jSi2bVCfnDD1AujxuQNTf4"), d: 1 },
-        { t: "02 Datos por enfermedad", m: "Doc · Data per condition", u: doc("10ByhVWohYAAz4Z-KdTwerTOtyG78z9O7uhvX_CyR7pI"), d: 1 },
-        { t: "03 Dispositivos y datos NASA", m: "Doc · Devices and NASA data", u: doc("1HlE0Ztc34XIh5FrFa2bRHYWE6aamlWutZmmuQ3Y2ISE"), d: 1 },
-        { t: "05 Patrones ganadores", m: "Doc · Winning patterns", u: doc("1omJZ7HeSavV-wE_l1p_4qyvcCKIuQCf6K3-dIm-3dAM"), d: 1 },
-        { t: "07 Entregables", m: "Doc · Deliverables", u: doc("1ryFDiJvk-ORy0g143NN7U0ySvpan4zzNgkubQvJJWQE"), d: 1 }
-      ]
-    },
-    {
-      name: "Similar projects", status: "wip", noun: "docs", seed: 37,
-      palette: ["#3a0a0a", "#b3261e", "#ff7a3d", "#ffe1b8"],
-      files: [
-        { t: "04 Proyectos base (Lean)", m: "Doc · Base projects", u: doc("1kEXKCYfA6BRXqRiWiGqeD5aHvv_ixeQsry00Y3irzNs"), d: 0 },
-        { t: "04 Evaluación de repos", m: "Doc · Repo review", u: doc("1-CvVMwAMqPaPDFSN9pNwLIYzGYgalxeh0VpNTD8AIXc"), d: 1 },
-        { t: "04 NASA Hermes y el patrón", m: "Doc · The Hermes pattern", u: doc("1wNckWqya6cDkdRjHZEZLf49EUrGTUTIvzP0gZFHXj7I"), d: 1 },
-        { t: "Rosario winners analysis", m: "Doc · Past winners", u: doc("145Wv12WxHBFrVuG4UUiMWpvZBRPAkjtjT_Pv1B0IkzQ"), d: 1 }
-      ]
-    },
-    {
-      name: "Product & scope", status: "wip", noun: "docs", seed: 41,
-      palette: ["#0b2a17", "#1f7a3a", "#9ad94f", "#eef7c8"],
-      files: [
-        { t: "06 Alcance", m: "Doc · Scope", u: doc("1VC1Y408MquRD8S5KuzMpEPZYWFIaqYH5fmJ6nHvW4SY"), d: 1 },
-        { t: "06 Ideas de innovación", m: "Doc · Innovation ideas", u: doc("12FQtH7mqGxN9JvikN7feQ8OjmENLRQcWaAzeYfTUeRw"), d: 1 },
-        { t: "06 Copiloto plan", m: "Doc · Copilot plan", u: doc("1FSa70Jb7S_GyTVVifqfHN91LmSvgqFF84vnXXUognAk"), d: 0 },
-        { t: "Edge cases: how Eva responds", m: "Doc · Edge cases", u: doc("1CNWBJEB4Js406_LJ3AJqSkPxbjGQzrc1j6EciFRMesU"), d: 0 },
-        { t: "Research brief: medicine & architecture", m: "Doc · Team brief", u: doc("1pSradgUdKCN5O2YeCmGXNlE20-SyGAsuZZhEqzMcr90"), d: 0 }
-      ]
-    },
-    {
-      name: "NASA data & sources", status: "done", noun: "sources", seed: 53,
-      palette: ["#050816", "#1b2a8f", "#3fa7ff", "#ff6f61"],
-      files: [
-        { t: "Datos NASA", m: "Folder · Team Drive", u: "https://drive.google.com/drive/folders/173x9Ko2tuMrHpLWJY-luS5omgTWfZWo8", d: 1 },
-        { t: "Inspiration4 · OSD-575", m: "Data · NASA OSDR", u: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-575", d: 1 },
-        { t: "Inspiration4 · OSD-569", m: "Data · NASA OSDR", u: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-569", d: 1 },
-        { t: "NASA DONKI", m: "Tool · Space weather events", u: "https://ccmc.gsfc.nasa.gov/tools/DONKI/", d: 1 },
-        { t: "NOAA GOES X-ray flares", m: "Feed · NOAA SWPC JSON", u: "https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json", d: 1 },
-        { t: "nasa/hermes", m: "Code · GitHub", u: "https://github.com/nasa/hermes", d: 1 }
-      ]
-    },
-    {
-      name: "Built", status: "wip", noun: "builds", seed: 67,
-      palette: ["#1a1320", "#7a1f6b", "#e04dbb", "#f6d3ff"],
-      files: [
-        { t: "Landing", m: "Page · Artifact", u: "https://claude.ai/artifact/Ja6v2YathtvXUeaS7EcdRo", d: 1 },
-        { t: "Wireframe", m: "Page · Artifact", u: "https://claude.ai/artifact/UUnPWQ5vwBjevhU5DdG7u8", d: 1 },
-        { t: "Prototype", m: "App · Artifact", u: "https://claude.ai/artifact/DjrUadizcmVevJFVpCqR4m", d: 0 },
-        { t: "Repo (pending)", m: "Code · GitHub", u: "https://github.com/LEAN-EnLAN/sanjo-x-spaceapps-2026", d: 0 }
-      ]
-    }
+    { id: "challenge", n: { en: "Challenge resources", es: "Recursos del desafío" }, h: { en: "NASA HRP · CSA", es: "HRP de la NASA · CSA" } },
+    { id: "data", n: { en: "NASA data", es: "Datos de la NASA" }, h: { en: "OSDR · NLSP · HHP", es: "OSDR · NLSP · HHP" } },
+    { id: "science", n: { en: "Health science & standards", es: "Ciencia y normas de salud" }, h: { en: "Russell 2023 · IMM · NASA-STD-3001", es: "Russell 2023 · IMM · NASA-STD-3001" } },
+    { id: "weather", n: { en: "Space weather", es: "Clima espacial" }, h: { en: "DONKI · GOES · HESPERIA", es: "DONKI · GOES · HESPERIA" } },
+    { id: "prior", n: { en: "Prior work", es: "Trabajos previos" }, h: { en: "Ames · ARCHeR · JPL", es: "Ames · ARCHeR · JPL" } },
+    { id: "build", n: { en: "Our build", es: "Lo que construimos" }, h: { en: "Live links · code", es: "Enlaces en vivo · código" } }
+  ];
+  var SRC = [
+    /* Challenge resources */
+    { r: 1, f: "challenge", ch: 1, u: "https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/", m: "NASA Space Apps · 2026",
+      t: { en: "The challenge brief", es: "La consigna del desafío" },
+      d: { en: "Software that gathers health indicators so astronauts can assess and act on their health.", es: "Software que reúna indicadores de salud para que los astronautas evalúen su salud y actúen." },
+      e: { en: "Eva is our answer: she reads the wristband, records, supports diagnosis and warns.", es: "Eva es nuestra respuesta: lee la pulsera, registra, apoya el diagnóstico y avisa." } },
+    { r: 1, f: "challenge", ch: 1, u: "https://www.nasa.gov/hrp/hazards/", m: "NASA HRP",
+      t: { en: "5 Hazards of Human Spaceflight", es: "Los 5 peligros del vuelo espacial tripulado" },
+      d: { en: "Radiation, isolation, distance from Earth, gravity fields, hostile closed environments.", es: "Radiación, aislamiento, distancia de la Tierra, campos de gravedad y ambientes cerrados hostiles." },
+      e: { en: "Three of Eva's flows answer three hazards: radiation (solar-event shelter), isolation (journal), distance from Earth (runs on board, offline).", es: "Tres flujos de Eva responden a tres peligros: radiación (refugio ante evento solar), aislamiento (diario) y distancia de la Tierra (funciona a bordo, sin conexión)." } },
+    { f: "challenge", ch: 1, u: "https://www.nasa.gov/hrp/risks/", m: "NASA HRP",
+      t: { en: "Risks of Human Spaceflight", es: "Riesgos del vuelo espacial tripulado" },
+      d: { en: "NASA's health and performance risks, each linked to detailed reports.", es: "Los riesgos de salud y desempeño de la NASA, cada uno con sus informes." } },
+    { f: "challenge", ch: 1, u: "https://www.nasa.gov/hrp/ongoing-hrp-research/", m: "NASA HRP",
+      t: { en: "Ongoing HRP Research in Space", es: "Investigación en curso del HRP en el espacio" },
+      d: { en: "Current HRP studies, including ARCHeR on Artemis II.", es: "Estudios actuales del HRP, entre ellos ARCHeR en Artemis II." } },
+    { f: "challenge", ch: 1, u: "https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp", m: { en: "CSA · partner agency", es: "CSA · agencia socia" },
+      t: { en: "Monitoring Radiation for Astronaut Health", es: "Monitoreo de radiación para la salud de los astronautas" },
+      d: { en: "How the Canadian Space Agency measures neutron radiation in space.", es: "Cómo la Agencia Espacial Canadiense mide la radiación de neutrones en el espacio." } },
+    { f: "challenge", ch: 1, u: "https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp", m: { en: "CSA · partner agency", es: "CSA · agencia socia" },
+      t: { en: "Why Do We Conduct Science Experiments in Space?", es: "¿Por qué hacemos experimentos científicos en el espacio?" },
+      d: { en: "What research on the ISS teaches about the human body.", es: "Lo que la investigación en la ISS enseña sobre el cuerpo humano." } },
+    { f: "challenge", u: "https://www.nasa.gov/hrp/", m: { en: "NASA · named in the brief", es: "NASA · nombrado en la consigna" },
+      t: { en: "NASA Human Research Program (HRP)", es: "Programa de Investigación Humana de la NASA (HRP)" },
+      d: { en: "NASA's program for keeping crews healthy and performing in space.", es: "El programa de la NASA para que las tripulaciones se mantengan sanas y rindan en el espacio." } },
+    { r: 1, f: "challenge", u: "https://humanresearchroadmap.nasa.gov/", m: "NASA HRP",
+      t: { en: "Human Research Roadmap · Evidence Reports", es: "Human Research Roadmap · informes de evidencia" },
+      d: { en: "HRP's map of risks and gaps, with the evidence report behind each.", es: "El mapa de riesgos y vacíos del HRP, con el informe de evidencia de cada uno." },
+      e: { en: "Background for the risks Eva addresses.", es: "Contexto de los riesgos que aborda Eva." } },
+
+    /* NASA data */
+    { f: "data", u: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-575", m: "NASA OSDR",
+      t: { en: "Inspiration4 · OSD-575 metabolic panel", es: "Inspiration4 · OSD-575 panel metabólico" },
+      d: { en: "Serum metabolic panel of the Inspiration4 crew, before and after flight.", es: "Panel metabólico en suero de la tripulación de Inspiration4, antes y después del vuelo." },
+      e: { en: "Personal baseline vs lab range: at R+1, 16 of 72 changes against each person's baseline, 7 of 72 against lab ranges (exploratory: 4 crew).", es: "Base personal vs rango de laboratorio: en R+1, 16 de 72 cambios contra la base de cada persona y 7 de 72 contra los rangos (exploratorio: 4 tripulantes)." } },
+    { f: "data", u: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-569", m: "NASA OSDR",
+      t: { en: "Inspiration4 · OSD-569 blood count", es: "Inspiration4 · OSD-569 hemograma" },
+      d: { en: "Whole-blood measurements and complete blood count of the same crew.", es: "Mediciones en sangre entera y hemograma completo de la misma tripulación." },
+      e: { en: "Same personal-baseline analysis, alongside OSD-575.", es: "El mismo análisis de base personal, junto con OSD-575." } },
+    { f: "data", u: "https://osdr.nasa.gov/bio/repo/search?q=&data_source=cgene,alsda,esa&data_type=study", m: "NASA OSDR",
+      t: { en: "OSDR study search", es: "Búsqueda de estudios en OSDR" },
+      d: { en: "One search across GeneLab, ALSDA and ESA studies.", es: "Una búsqueda en estudios de GeneLab, ALSDA y la ESA." } },
+    { f: "data", u: "https://osdr.nasa.gov/bio/repo/search?q=&data_source=cgene&data_type=study", m: "NASA OSDR",
+      t: { en: "GeneLab", es: "GeneLab" },
+      d: { en: "Spaceflight omics studies, now part of OSDR.", es: "Estudios ómicos de vuelo espacial, hoy parte de OSDR." } },
+    { f: "data", u: "https://osdr.nasa.gov/bio/repo/search?q=&data_source=alsda&data_type=study", m: "NASA OSDR",
+      t: { en: "Ames Life Sciences Data Archive (ALSDA)", es: "Ames Life Sciences Data Archive (ALSDA)" },
+      d: { en: "Life-science data from NASA missions, now part of OSDR.", es: "Datos de ciencias de la vida de misiones NASA, hoy parte de OSDR." } },
+    { f: "data", u: "https://science.nasa.gov/biological-physical/data/", m: "NASA BPS",
+      t: { en: "Biological & Physical Sciences · Data", es: "Ciencias Biológicas y Físicas · Datos" },
+      d: { en: "The home of OSDR and NASA's space biology data.", es: "La casa de OSDR y de los datos de biología espacial de la NASA." } },
+    { f: "data", u: "https://www.nasa.gov/hrp/nlsp/", m: "NASA HRP",
+      t: { en: "NASA Life Sciences Portal (NLSP)", es: "Portal de Ciencias de la Vida de la NASA (NLSP)" },
+      d: { en: "Human research data from spaceflight and ground analogs, since 1961.", es: "Datos de investigación humana de vuelos y análogos en tierra, desde 1961." } },
+    { f: "data", u: "https://nlsp.nasa.gov/resources/standard-measures", m: "NASA NLSP",
+      t: { en: "Standard Measures", es: "Standard Measures" },
+      d: { en: "A baseline set of health measures from astronauts and analog crews.", es: "Un conjunto base de medidas de salud de astronautas y tripulaciones análogas." } },
+    { f: "data", u: "https://nlsp.nasa.gov/explore/data/details/6eaf1654-72d4-5d71-a9dd-a02e674c6473?dataType=MISSIONS", m: "NASA NLSP",
+      t: { en: "Head-down-tilt bedrest campaigns", es: "Campañas de reposo en cama con inclinación" },
+      d: { en: "Bedrest studies that mimic microgravity's fluid shift on Earth.", es: "Estudios de reposo en cama que imitan en la Tierra el desplazamiento de fluidos de la microgravedad." } },
+    { f: "data", u: "https://www.nasa.gov/directorates/esdmd/hhp/human-health-and-performance-data-sharing/", m: "NASA HHP",
+      t: { en: "Human Health and Performance data sharing", es: "Datos compartidos de Salud y Desempeño Humano" },
+      d: { en: "How NASA shares human health and performance data with researchers.", es: "Cómo comparte la NASA sus datos de salud y desempeño humano con investigadores." } },
+    { f: "data", u: "https://hrpdatachallenge.org/", m: "NASA HRP",
+      t: { en: "HRP Data Challenge · Artemis II", es: "HRP Data Challenge · Artemis II" },
+      d: { en: "HRP prize competition on methods for Artemis II human research data.", es: "Concurso del HRP sobre métodos para los datos de investigación humana de Artemis II." } },
+    { f: "data", u: "https://api.nasa.gov/", m: "NASA",
+      t: { en: "NASA APIs", es: "APIs de la NASA" },
+      d: { en: "NASA's open API portal; DONKI is served from here.", es: "El portal de APIs abiertas de la NASA; DONKI se sirve desde acá." } },
+    { f: "data", u: "https://ntrs.nasa.gov/", m: "NASA",
+      t: { en: "NASA Technical Reports Server (NTRS)", es: "NASA Technical Reports Server (NTRS)" },
+      d: { en: "NASA's library of technical reports and papers.", es: "La biblioteca de informes técnicos y artículos de la NASA." } },
+
+    /* Health science & standards */
+    { f: "science", u: RUSSELL, m: "npj Microgravity 9:46 · 2023 · CC BY 4.0",
+      t: { en: "Russell et al. 2023 · main source", es: "Russell et al. 2023 · fuente principal" },
+      d: { en: "The value of a clinical decision support system for Earth-independent medical operations.", es: "El valor de un sistema de apoyo a la decisión clínica para operaciones médicas independientes de la Tierra." },
+      e: { en: "Eva answers in its format: Now · Why · How I decided · Next. Source of most figures above (a perspective with a preliminary analysis).", es: "Eva responde en su formato: Ahora · Por qué · Cómo lo decidí · Después. Fuente de la mayoría de las cifras de arriba (artículo de perspectiva con un análisis preliminar)." } },
+    { r: 1, f: "science", u: "https://www.nasa.gov/nasa-integrated-medical-model-imm-overview/", m: "NASA",
+      t: { en: "Integrated Medical Model (IMM)", es: "Integrated Medical Model (IMM)" },
+      d: { en: "Monte Carlo model of 100 medical conditions that forecasts in-flight risk.", es: "Modelo Monte Carlo de 100 condiciones médicas que prevé el riesgo en vuelo." },
+      e: { en: "Medical event modelling that inspires Eva's case logic.", es: "Modelado de eventos médicos que inspira la lógica de casos de Eva." } },
+    { r: 1, f: "science", u: "https://www.nasa.gov/directorates/esdmd/hhp/human-system-risk-board/", m: "NASA HHP",
+      t: { en: "Human System Risk Board", es: "Human System Risk Board" },
+      d: { en: "Sets and reassesses NASA's 29 human-system risks.", es: "Define y revisa los 29 riesgos del sistema humano de la NASA." },
+      e: { en: "Frames the risks Eva addresses.", es: "Enmarca los riesgos que aborda Eva." } },
+    { r: 1, f: "science", u: "https://www.nasa.gov/reference/nasa-std-3001v1/", m: "NASA OCHMO",
+      t: { en: "NASA-STD-3001 Vol. 1 · Crew Health", es: "NASA-STD-3001 Vol. 1 · Salud de la tripulación" },
+      d: { en: "NASA's space flight human-system standard for crew health.", es: "La norma de sistema humano de la NASA para la salud de la tripulación." },
+      e: { en: "A standard our design is checked against.", es: "Una norma contra la que revisamos el diseño." } },
+    { r: 1, f: "science", u: "https://www.nasa.gov/reference/nasa-std-3001v2/", m: "NASA OCHMO",
+      t: { en: "NASA-STD-3001 Vol. 2 · Human Factors & Habitability", es: "NASA-STD-3001 Vol. 2 · Factores humanos y habitabilidad" },
+      d: { en: "Human factors, habitability and environmental health.", es: "Factores humanos, habitabilidad y salud ambiental." },
+      e: { en: "A standard our design is checked against.", es: "Una norma contra la que revisamos el diseño." } },
+    { f: "science", u: "https://www.nasa.gov/ochmo/human-spaceflight-and-aviation-standards/", m: "NASA OCHMO",
+      t: { en: "Human Spaceflight and Aviation Standards", es: "Normas de vuelo espacial tripulado y aviación" },
+      d: { en: "Where NASA's chief health and medical office keeps its standards.", es: "Donde la oficina médica principal de la NASA publica sus normas." } },
+    { f: "science", u: "https://www.nasa.gov/humans-in-space/the-human-body-in-space/", m: "NASA",
+      t: { en: "The Human Body in Space", es: "El cuerpo humano en el espacio" },
+      d: { en: "A plain-language guide to what spaceflight does to the body.", es: "Guía en lenguaje simple sobre lo que el vuelo espacial le hace al cuerpo." } },
+    { f: "science", u: "https://ntrs.nasa.gov/citations/20230006218", m: "NASA NTRS · 2023",
+      t: { en: "SANS briefing for astronaut candidates", es: "Informe sobre SANS para candidatos a astronauta" },
+      d: { en: "Spaceflight-associated neuro-ocular syndrome, explained.", es: "El síndrome neuro-ocular asociado al vuelo espacial, explicado." } },
+    { f: "science", u: "https://pmc.ncbi.nlm.nih.gov/articles/PMC12322577/", m: "Laryngoscope Investig. Otolaryngol. · 2025",
+      t: { en: "Khan et al. 2025 · sinus illness on the ISS", es: "Khan et al. 2025 · afecciones nasosinusales en la ISS" },
+      d: { en: "Congestion and sinonasal illness in ISS astronauts.", es: "Congestión y afecciones nasosinusales en astronautas de la ISS." } },
+    { r: 1, f: "science", u: AHA, m: { en: "American Heart Association · fact sheet", es: "American Heart Association · hoja informativa" },
+      t: { en: "AHA · Sudden Cardiac Arrest", es: "AHA · Paro cardíaco súbito" },
+      d: { en: "Survival falls 7–10% for every minute without CPR and defibrillation.", es: "La supervivencia cae 7–10% por cada minuto sin RCP ni desfibrilación." },
+      e: { en: "Why Eva's 10-second rule sends the nearest passenger to start CPR at once.", es: "Por qué la regla de 10 segundos de Eva manda al pasajero más cercano a empezar la RCP de inmediato." } },
+
+    /* Space weather */
+    { f: "weather", u: "https://ccmc.gsfc.nasa.gov/tools/DONKI/", m: "NASA CCMC",
+      t: { en: "NASA DONKI", es: "NASA DONKI" },
+      d: { en: "NASA's database of space weather events.", es: "La base de datos de eventos de clima espacial de la NASA." },
+      e: { en: "Feeds the solar-event flow: “get ready”, then “go to the shelter” (simulated in the demo).", es: "Alimenta el flujo de evento solar: «prepárense» y luego «vayan al refugio» (simulado en la demo)." } },
+    { f: "weather", u: "https://api.nasa.gov/", m: "NASA API · /DONKI/SEP",
+      t: { en: "DONKI · Solar Energetic Particles", es: "DONKI · Partículas solares energéticas" },
+      d: { en: "SEP event records through NASA's API.", es: "Registros de eventos SEP a través de la API de la NASA." },
+      e: { en: "Input for the solar-event alert (simulated in the demo).", es: "Entrada para la alerta de evento solar (simulada en la demo)." } },
+    { f: "weather", u: "https://api.nasa.gov/", m: "NASA API · /DONKI/FLR",
+      t: { en: "DONKI · Solar Flares", es: "DONKI · Fulguraciones solares" },
+      d: { en: "Flare records with class and timing.", es: "Registros de fulguraciones con clase y horario." },
+      e: { en: "Flare class for the “get ready” alert (simulated in the demo).", es: "Clase de fulguración para la alerta «prepárense» (simulada en la demo)." } },
+    { f: "weather", u: "https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json", m: "NOAA SWPC · JSON",
+      t: { en: "NOAA GOES X-ray flares", es: "NOAA GOES fulguraciones de rayos X" },
+      d: { en: "Latest flare feed from NOAA's GOES satellites.", es: "Último registro de fulguraciones de los satélites GOES de NOAA." },
+      e: { en: "Flare input for the solar-event flow.", es: "Entrada de fulguraciones para el flujo de evento solar." } },
+    { f: "weather", u: "https://www.swpc.noaa.gov/products/goes-proton-flux", m: "NOAA SWPC",
+      t: { en: "NOAA GOES proton flux", es: "NOAA GOES flujo de protones" },
+      d: { en: "Real-time proton flux at geostationary orbit.", es: "Flujo de protones en tiempo real en órbita geoestacionaria." },
+      e: { en: "Rising proton flux triggers “go to the shelter”.", es: "El aumento del flujo de protones dispara «vayan al refugio»." } },
+    { r: 1, f: "weather", u: "https://ccmc.gsfc.nasa.gov/models/HESPERIA_REleASE~v3/", m: "NASA CCMC",
+      t: { en: "HESPERIA REleASE v3", es: "HESPERIA REleASE v3" },
+      d: { en: "Forecasts solar energetic protons 30–90 min ahead from electron data.", es: "Pronostica protones solares energéticos con 30–90 min de anticipación a partir de electrones." },
+      e: { en: "Studied for earlier solar-event warnings; not integrated yet.", es: "Estudiado para avisar antes de un evento solar; todavía no integrado." } },
+    { f: "weather", u: "https://science.nasa.gov/heliophysics/focus-areas/space-weather/", m: "NASA Science",
+      t: { en: "Space Weather", es: "Clima espacial" },
+      d: { en: "NASA's overview of space weather and its effects.", es: "El panorama de la NASA sobre el clima espacial y sus efectos." } },
+    { f: "weather", u: "https://www.dlr.de/en/latest/news/2026/astrorad-vest-can-significantly-reduce-radiation-exposure-for-humans-in-space", m: "DLR · 2026",
+      t: { en: "AstroRad vest · MARE experiment", es: "Chaleco AstroRad · experimento MARE" },
+      d: { en: "Radiation-protection vest flown on a phantom on Artemis I.", es: "Chaleco de protección radiológica que voló en un maniquí en Artemis I." } },
+
+    /* Prior work */
+    { r: 1, f: "prior", u: "https://www.nasa.gov/centers-and-facilities/ames/ames-science/ames-space-biosciences/a-clinical-decision-support-system-for-earth-independent-medical-operations/", m: "NASA Ames · HRP",
+      t: { en: "Clinical Decision Support for Earth-Independent Medical Operations", es: "Apoyo a la decisión clínica para operaciones médicas independientes de la Tierra" },
+      d: { en: "NASA Ames project on on-board medical guidance for deep-space crews.", es: "Proyecto de NASA Ames sobre guía médica a bordo para tripulaciones en el espacio profundo." },
+      e: { en: "The closest NASA precedent, with Russell et al. Eva takes the idea to people with no medical training.", es: "El antecedente NASA más cercano, junto con Russell et al. Eva lleva la idea a personas sin formación médica." } },
+    { r: 1, f: "prior", u: "https://www.nasa.gov/image-detail/amf-jsc2025e075542_alt/", m: { en: "NASA · image", es: "NASA · imagen" },
+      t: { en: "ARCHeR wrist actigraph", es: "Actígrafo de muñeca de ARCHeR" },
+      d: { en: "The Artemis II crew wore the ActLumus actigraph for sleep, activity and light.", es: "La tripulación de Artemis II usó el actígrafo ActLumus para sueño, actividad y luz." },
+      e: { en: "The gap Eva fills: ARCHeR records for analysis after the mission; Eva alerts and guides in the moment.", es: "El vacío que llena Eva: ARCHeR registra para analizar después de la misión; Eva avisa y guía en el momento." } },
+    { f: "prior", u: "https://pesquisaparainovacao.fapesp.br/4031", m: "FAPESP",
+      t: { en: "ActLumus on Artemis · Pesquisa para Inovação", es: "ActLumus en Artemis · Pesquisa para Inovação" },
+      d: { en: "The Brazilian actigraph behind ARCHeR.", es: "El actígrafo brasileño detrás de ARCHeR." } },
+    { f: "prior", u: "https://agencia.fapesp.br/58065", m: "Agência FAPESP",
+      t: { en: "The ActLumus actigraph · Agência FAPESP", es: "El actígrafo ActLumus · Agência FAPESP" },
+      d: { en: "Motion, sleep, light and temperature on one wrist device.", es: "Movimiento, sueño, luz y temperatura en un solo dispositivo de muñeca." } },
+    { r: 1, f: "prior", u: "https://github.com/nasa/hermes", m: "NASA JPL · GitHub · Apache-2.0",
+      t: { en: "nasa/hermes", es: "nasa/hermes" },
+      d: { en: "JPL's lightweight spacecraft commanding and telemetry framework.", es: "El framework liviano de comandos y telemetría de naves del JPL." },
+      e: { en: "Pattern reference for the link to Earth (“the dictionary is the contract”). No code copied.", es: "Referencia de patrón para el enlace con la Tierra («el diccionario es el contrato»). Sin código copiado." } },
+    { f: "prior", u: "https://github.com/nasa/", m: "GitHub",
+      t: { en: "NASA on GitHub", es: "La NASA en GitHub" },
+      d: { en: "NASA's open-source code.", es: "El código abierto de la NASA." } },
+
+    /* Our build */
+    { f: "build", u: HUB + "/", m: "eva-wearmeds.vercel.app", t: { en: "Landing", es: "Landing" }, d: { en: "Eva in one page, EN/ES.", es: "Eva en una página, EN/ES." } },
+    { f: "build", u: HUB + "/pitch/", m: "/pitch/", t: { en: "Pitch", es: "Pitch" }, d: { en: "Six slides, arrow keys, sources inside.", es: "Seis diapositivas, flechas del teclado, fuentes incluidas." } },
+    { f: "build", u: HUB + "/video/", m: "/video/", t: { en: "30 s video", es: "Video de 30 s" }, d: { en: "EN and ES, with captions.", es: "En inglés y español, con subtítulos." } },
+    { f: "build", u: HUB + "/app/", m: "/app/", t: { en: "App demo", es: "Demo de la app" }, d: { en: "Every view full screen, live Eva chat, voice and photo.", es: "Cada vista en pantalla completa, chat con Eva, voz y foto." } },
+    { f: "build", u: HUB + "/download/", m: "/download/", t: { en: "Android APK", es: "APK de Android" }, d: { en: "Online demo, offline demo, or connect to a ship hub.", es: "Demo en línea, demo sin conexión o conexión a un hub de nave." } },
+    { f: "build", u: "https://github.com/LEAN-EnLAN/SANJO-X---EVA-", m: "GitHub", t: { en: "Source code", es: "Código fuente" }, d: { en: "One Rust binary, Android wrapper, docs and tests.", es: "Un binario en Rust, contenedor Android, documentación y tests." } },
+    { f: "build", u: HUB + "/wireframes/", m: "/wireframes/", t: { en: "Wireframes", es: "Wireframes" }, d: { en: "Early screens of the app.", es: "Primeras pantallas de la app." } },
+    { r: 1, f: "build", u: "https://developers.google.com/health-ai-developer-foundations/medgemma", m: "Google for Developers",
+      t: { en: "MedGemma", es: "MedGemma" },
+      d: { en: "Google's open models for medical text and images.", es: "Los modelos abiertos de Google para texto e imágenes médicas." },
+      e: { en: "Planned base of Eva's on-board reasoning layer; needs validation before any promise.", es: "Base prevista de la capa de razonamiento a bordo de Eva; requiere validación antes de prometer nada." } },
+    { f: "build", u: "https://science.nasa.gov/3d-resources/", m: "NASA Science",
+      t: { en: "NASA 3D Resources", es: "NASA 3D Resources" },
+      d: { en: "Source of the 3D Sun model on the landing.", es: "Origen del modelo 3D del Sol en la landing." } },
+    { f: "build", u: null, internal: 1, m: { en: "Team document · internal", es: "Documento del equipo · interno" },
+      t: { en: "Team research notes", es: "Notas de investigación del equipo" },
+      d: { en: "Diseases, data per disease, devices, scope, edge cases, medical variables.", es: "Enfermedades, datos por enfermedad, dispositivos, alcance, casos límite, variables médicas." },
+      e: { en: "01 Enfermedades · 02 Datos por enfermedad · 03 Dispositivos y datos NASA · 04 Proyectos base · 04 Evaluación de repos · 06 Concepto actual: Eva · 06 Alcance · 06 Ideas de innovación · Edge cases: how Eva responds · Variables médicas por casos",
+           es: "01 Enfermedades · 02 Datos por enfermedad · 03 Dispositivos y datos NASA · 04 Proyectos base · 04 Evaluación de repos · 06 Concepto actual: Eva · 06 Alcance · 06 Ideas de innovación · Edge cases: how Eva responds · Variables médicas por casos" } }
   ];
 
-  var TASKS = [
-    ["01", "Winners analysis", "Lean", "done"],
-    ["02", "Energy budget", "Tomi", "open"],
-    ["03", "Acute cases", "Hassi & Naza", "draft"],
-    ["04", "Medical variables", "Hassi & Naza", "draft"],
-    ["05", "Screens", "Tomi", "open"],
-    ["06", "Happy path mockup", "Lean", "open"],
-    ["07", "Scalability", "Naza", "open"],
-    ["08", "Landing", "Lean", "done"],
-    ["09", "AI models rationale", "Lean", "open"],
-    ["10", "30 s video", "Lean", "open"],
-    ["11", "Wrist phone mount", "Tomi", "open"]
+  /* ---------- key numbers ---------- */
+  var STATS = [
+    { n: "5", l: { en: "hazards of human spaceflight mapped by NASA", es: "peligros del vuelo espacial tripulado según la NASA" }, s: "NASA HRP", u: "https://www.nasa.gov/hrp/hazards/", k: { en: "Listed on the challenge page.", es: "Figura en la página del desafío." } },
+    { n: "29", l: { en: "human-system risks tracked for crewed missions", es: "riesgos del sistema humano seguidos en misiones tripuladas" }, s: "Human System Risk Board", u: "https://www.nasa.gov/directorates/esdmd/hhp/human-system-risk-board/" },
+    { n: "20+", x: "min", l: { en: "one-way delay to Earth in deep space", es: "de demora de ida a la Tierra en el espacio profundo" }, s: "Russell et al. 2023", u: RUSSELL },
+    { n: "~40", x: "h", l: { en: "of medical training for an ISS crew medical officer", es: "de formación médica de un oficial médico de la ISS" }, s: "Russell et al. 2023", u: RUSSELL },
+    { n: "100+", l: { en: "medical conditions relevant to spaceflight", es: "condiciones médicas relevantes para el vuelo espacial" }, s: "Russell et al. 2023", u: RUSSELL, k: { en: "NASA's IMM also models 100 conditions.", es: "El IMM de la NASA también modela 100 condiciones." } },
+    { n: "≥34%", l: { en: "fewer deaths with decision support in a simulated 26-month mission", es: "menos muertes con apoyo a la decisión en una misión simulada de 26 meses" }, s: "Russell et al. 2023", u: RUSSELL, k: { en: "Preliminary analysis; clinical validity not yet peer-reviewed.", es: "Análisis preliminar; su validez clínica aún no fue revisada por pares." } },
+    { n: "7–10%", l: { en: "survival lost per minute without CPR and defibrillation", es: "de supervivencia perdida por minuto sin RCP ni desfibrilación" }, s: "American Heart Association", u: AHA, k: { en: "AHA “Sudden Cardiac Arrest” fact sheet.", es: "Hoja informativa «Sudden Cardiac Arrest» de la AHA." } },
+    { n: "16", x: { en: "vs 7", es: "vs 7" }, l: { en: "of 72 changes flagged: personal baseline vs lab range", es: "de 72 cambios detectados: base personal vs rango de laboratorio" }, s: "NASA OSDR OSD-575", u: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-575", k: { en: "Our analysis, Inspiration4 R+1. Exploratory: 4 crew, 3 baseline points.", es: "Análisis propio, Inspiration4 R+1. Exploratorio: 4 tripulantes, 3 puntos de base." } }
+  ];
+  var REPO = "https://github.com/LEAN-EnLAN/SANJO-X---EVA-/blob/main/docs/app/";
+  var BSTATS = [
+    { n: "152", l: { en: "automated tests, break tests included", es: "tests automáticos, incluidos los de ruptura" }, s: "docs/app/TESTING.md", u: REPO + "TESTING.md" },
+    { n: "600/600", l: { en: "records delivered in every simulated link profile", es: "registros entregados en todos los perfiles de enlace simulados" }, s: "docs/app/BENCHMARKS.md", u: REPO + "BENCHMARKS.md", k: { en: "Including a 5-minute outage.", es: "Incluso con un corte de 5 minutos." } },
+    { n: { en: "1.8", es: "1,8" }, x: "s", l: { en: "“no pulse” alarm to Earth on the near-space profile", es: "alarma «sin pulso» hasta la Tierra en el perfil de espacio cercano" }, s: "docs/app/BENCHMARKS.md", u: REPO + "BENCHMARKS.md", k: { en: "3.4 s in a simulated solar storm.", es: "3,4 s en una tormenta solar simulada." } },
+    { n: { en: "16.7×", es: "16,7×" }, l: { en: "smaller vitals sample: 11 bytes vs 184 as JSON", es: "más chica la muestra de signos: 11 bytes vs 184 en JSON" }, s: "docs/app/BENCHMARKS.md", u: REPO + "BENCHMARKS.md" }
   ];
 
-  var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var fineMQ = window.matchMedia("(hover: hover) and (pointer: fine)");
+  /* ---------- data flow ---------- */
+  var FLOW = [
+    { tab: { en: "Inspiration4 · OSDR", es: "Inspiration4 · OSDR" },
+      a: { en: "Blood panels of a real crew, before and after flight (OSD-575, OSD-569).", es: "Paneles de sangre de una tripulación real, antes y después del vuelo (OSD-575, OSD-569)." },
+      b: { en: "Compares each value with the person's own baseline, not only lab ranges.", es: "Compara cada valor con la base de la propia persona, no solo con rangos de laboratorio." },
+      c: { en: "16 of 72 changes seen, against 7 of 72 by lab range.", es: "16 de 72 cambios detectados, contra 7 de 72 por rango." },
+      x: { en: "Exploratory: 4 crew, 3 baseline points. The wristband applies the same idea to pulse, SpO₂, temperature, EDA and movement.", es: "Exploratorio: 4 tripulantes, 3 puntos de base. La pulsera aplica la misma idea a pulso, SpO₂, temperatura, EDA y movimiento." } },
+    { tab: { en: "DONKI · NOAA GOES", es: "DONKI · NOAA GOES" },
+      a: { en: "Flare class and proton flux from NASA and NOAA.", es: "Clase de fulguración y flujo de protones de la NASA y NOAA." },
+      b: { en: "Opens a solar-event case and guides each person, turn by turn.", es: "Abre un caso de evento solar y guía a cada persona, paso a paso." },
+      c: { en: "“Get ready”, then “Go to the shelter”.", es: "«Prepárense» y luego «Vayan al refugio»." },
+      x: { en: "Simulated in the demo. HESPERIA forecasts are being studied for earlier warnings.", es: "Simulado en la demo. Se estudian los pronósticos de HESPERIA para avisar antes." } },
+    { tab: { en: "AHA · cardiac arrest", es: "AHA · paro cardíaco" },
+      a: { en: "Survival falls 7–10% per minute without CPR and defibrillation.", es: "La supervivencia cae 7–10% por minuto sin RCP ni desfibrilación." },
+      b: { en: "No pulse, no movement, no answer: sends the nearest passenger to start CPR and lights the AED at the station.", es: "Sin pulso, sin movimiento, sin respuesta: manda al pasajero más cercano a empezar la RCP y enciende el DEA en la estación." },
+      c: { en: "Within 10 s everyone knows what to do. The AED decides the shock.", es: "En 10 s todos saben qué hacer. El DEA decide la descarga." },
+      x: { en: "Eva gives diagnostic support only; no tool in the app can give a shock or a treatment.", es: "Eva solo apoya el diagnóstico; ninguna herramienta de la app puede dar una descarga ni un tratamiento." } },
+    { tab: { en: "Russell et al. 2023", es: "Russell et al. 2023" },
+      a: { en: "Decision support for crews far from Earth.", es: "Apoyo a la decisión para tripulaciones lejos de la Tierra." },
+      b: { en: "Structures every answer the same way.", es: "Estructura cada respuesta de la misma forma." },
+      c: { en: "Now · Why · How I decided · Next.", es: "Ahora · Por qué · Cómo lo decidí · Después." },
+      x: { en: "The crew or Earth confirms. It is diagnostic support, not a diagnosis.", es: "La tripulación o la Tierra confirman. Es apoyo al diagnóstico, no un diagnóstico." } },
+    { tab: { en: "HRP · isolation", es: "HRP · aislamiento" },
+      a: { en: "Isolation and confinement, one of NASA's five hazards.", es: "Aislamiento y confinamiento, uno de los cinco peligros de la NASA." },
+      b: { en: "Keeps a voice journal and mood check-ins with each person.", es: "Lleva un diario por voz y registros de ánimo con cada persona." },
+      c: { en: "“I feel alone” → Eva answers, logs it and suggests a concrete step.", es: "«Me siento solo» → Eva responde, lo registra y sugiere un paso concreto." },
+      x: { en: "Journal text stays private in the signed log.", es: "El texto del diario queda privado dentro del registro firmado." } },
+    { tab: { en: "nasa/hermes · link", es: "nasa/hermes · enlace" },
+      a: { en: "JPL's telemetry pattern: the dictionary is the contract.", es: "El patrón de telemetría del JPL: el diccionario es el contrato." },
+      b: { en: "Signs every event on board (Ed25519 hash chain) and queues it.", es: "Firma cada evento a bordo (cadena hash Ed25519) y lo encola." },
+      c: { en: "The ship hub stores and forwards; Earth receives and acknowledges.", es: "El hub de la nave guarda y reenvía; la Tierra recibe y confirma." },
+      x: { en: "Pattern only, no code copied.", es: "Solo el patrón, sin código copiado." } }
+  ];
 
-  function el(tag, cls, text) {
-    var n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text != null) n.textContent = text;
-    return n;
-  }
+  /* ---------- decisions ---------- */
+  var DEC = [
+    { w: { en: "Sun 15/11", es: "Dom 15/11" }, nw: 1, d: { en: "The challenge's resources (NASA HRP, CSA) and the team's source list join this hub.", es: "Los recursos del desafío (HRP de la NASA, CSA) y la lista de fuentes del equipo se suman a este hub." } },
+    { w: { en: "Sun 15/11", es: "Dom 15/11" }, nw: 1, d: { en: "Copy rules v3: “Super Intelligence”, “in space”, ECG with two fingers of the same hand on the two metal pads.", es: "Reglas de copy v3: «Super Inteligencia», «en el espacio», ECG con dos dedos de la misma mano sobre las dos placas metálicas." } },
+    { w: { en: "Sun 15/11", es: "Dom 15/11" }, d: { en: "Link: the ship hub hosts the Super Intelligence and stores everything; wristbands, phones and the station are clients.", es: "Enlace: el hub de la nave aloja la Super Inteligencia y guarda todo; pulseras, teléfonos y la estación son clientes." } },
+    { w: { en: "Sun 15/11 07:15", es: "Dom 15/11 07:15" }, d: { en: "Eva is the innovation; none of her tools can give a shock or a treatment.", es: "Eva es la innovación; ninguna de sus herramientas puede dar una descarga ni un tratamiento." } },
+    { w: { en: "Sun 15/11 07:10", es: "Dom 15/11 07:10" }, d: { en: "Comms designed for near space: seconds of latency, intermittent links.", es: "Comunicaciones pensadas para el espacio cercano: segundos de latencia, enlaces intermitentes." } },
+    { w: { en: "Sun 15/11 07:10", es: "Dom 15/11 07:10" }, d: { en: "The real app: Rust + htmx, one binary, local and reliable first.", es: "La app real: Rust + htmx, un solo binario, primero local y confiable." } },
+    { w: { en: "Sun 15/11 03:00", es: "Dom 15/11 03:00" }, d: { en: "The wristband is the only device on the body; the AED at the station decides the shock.", es: "La pulsera es el único dispositivo en el cuerpo; el DEA de la estación decide la descarga." } },
+    { w: { en: "Sun 15/11 02:25", es: "Dom 15/11 02:25" }, d: { en: "Main source: Russell et al. 2023, cited in every deliverable.", es: "Fuente principal: Russell et al. 2023, citada en cada entregable." } },
+    { w: { en: "Sun 15/11 00:05", es: "Dom 15/11 00:05" }, d: { en: "Edge cases: cardiac arrest, depressurisation, solar alert. Validated rhythm analysis decides the shock.", es: "Casos límite: paro cardíaco, despresurización, alerta solar. El análisis validado del ritmo decide la descarga." } },
+    { w: { en: "Sat 14/11 18:20", es: "Sáb 14/11 18:20" }, d: { en: "Final name: Eva. Wearables under the WearMeds brand.", es: "Nombre final: Eva. Wearables bajo la marca WearMeds." } },
+    { w: { en: "Sat 14/11 15:30", es: "Sáb 14/11 15:30" }, d: { en: "Simple, well-built IoT. Eva “guides, records and warns”.", es: "IoT simple y bien hecho. Eva «guía, registra y avisa»." } },
+    { w: { en: "Sat 14/11 13:20", es: "Sáb 14/11 13:20" }, d: { en: "100% own code: open source gives patterns, never lines.", es: "100% código propio: el código abierto aporta patrones, nunca líneas." } },
+    { w: { en: "Sat 14/11 11:05", es: "Sáb 14/11 11:05" }, d: { en: "Challenge chosen: Create Health Monitoring Software for Astronauts on Space Missions.", es: "Desafío elegido: Create Health Monitoring Software for Astronauts on Space Missions." } }
+  ];
+  var DEC_SHOW = 4;
+
+  /* ---------- helpers ---------- */
+  function el(tag, cls, html) { var n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function fold(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+  function hi(text, q) {
+    var e = esc(text); if (!q) return e;
+    var i = fold(text).indexOf(q);
+    if (i < 0) return e;
+    return esc(text.slice(0, i)) + "<mark>" + esc(text.slice(i, i + q.length)) + "</mark>" + esc(text.slice(i + q.length));
+  }
+  function ext(u) { return u && /^https?:/.test(u) && u.indexOf(HUB) !== 0; }
+  function closeTips() { document.querySelectorAll(".stat.on").forEach(function (x) { x.classList.remove("on"); x.querySelector(".num").setAttribute("aria-expanded", "false"); }); }
 
-  /* ---------- Abstract art painter: value noise + fbm + two domain-warp passes ---------- */
-  function hash2(x, y, s) {
-    var h = (Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(s, 1442695041)) | 0;
-    h = Math.imul(h ^ (h >>> 13), 1274126177);
-    h ^= h >>> 16;
-    return (h >>> 0) / 4294967295;
-  }
-  function vnoise(x, y, s) {
-    var xi = Math.floor(x), yi = Math.floor(y);
-    var xf = x - xi, yf = y - yi;
-    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
-    var a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s);
-    var c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s);
-    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
-  }
-  function fbm(x, y, s) {
-    var sum = 0, amp = 0.5, f = 1;
-    for (var o = 0; o < 5; o++) {
-      sum += amp * vnoise(x * f, y * f, s + o * 31);
-      f *= 2.03; amp *= 0.5;
-      // rotate the lattice a little each octave to hide grid alignment
-      var nx = x * 0.8 - y * 0.6, ny = x * 0.6 + y * 0.8; x = nx; y = ny;
-    }
-    return sum / 0.97;
-  }
-  function hexToRgb(h) {
-    var n = parseInt(h.slice(1), 16);
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  }
-  function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
-  function ramp(stops, t) {
-    var seg = t * (stops.length - 1);
-    var i = Math.min(stops.length - 2, Math.floor(seg));
-    var k = seg - i, a = stops[i], b = stops[i + 1];
-    return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+  /* ---------- static i18n ---------- */
+  function applyStatic() {
+    root.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(function (n) { n.innerHTML = t(n.getAttribute("data-i18n")); });
+    document.querySelectorAll("[data-i18n-aria]").forEach(function (n) { n.setAttribute("aria-label", t(n.getAttribute("data-i18n-aria"))); });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function (n) { n.setAttribute("placeholder", t(n.getAttribute("data-i18n-ph"))); });
+    document.querySelectorAll(".lpick button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-l") === lang ? "true" : "false"); });
+    document.title = lang === "es" ? "Investigación de Eva" : "Eva Research Hub";
   }
 
-  var artCache = new Map();
-  function paintArt(seed, palette) {
-    var key = seed + ":" + palette.join(",");
-    if (artCache.has(key)) return artCache.get(key);
-    var W = 240, H = 190;
-    var c = document.createElement("canvas");
-    c.width = W; c.height = H;
-    var ctx = c.getContext("2d");
-    var img = ctx.createImageData(W, H);
-    var data = img.data;
-    var stops = palette.map(hexToRgb);
-    var ox = hash2(seed, 1, 7) * 50, oy = hash2(seed, 2, 7) * 50;
-    var sc = 2.2 + hash2(seed, 3, 7) * 1.4;
-    var p = 0;
-    for (var y = 0; y < H; y++) {
-      for (var x = 0; x < W; x++) {
-        var px = ox + (x / W) * sc * (W / H), py = oy + (y / H) * sc;
-        // first warp
-        var qx = fbm(px, py, seed);
-        var qy = fbm(px + 5.2, py + 1.3, seed);
-        // second warp
-        var rx = fbm(px + 3.8 * qx + 1.7, py + 3.8 * qy + 9.2, seed + 3);
-        var ry = fbm(px + 3.8 * qx + 8.3, py + 3.8 * qy + 2.8, seed + 3);
-        var f = fbm(px + 3.8 * rx, py + 3.8 * ry, seed + 5);
-        var t = clamp01((f - 0.26) / 0.52);
-        t = t * t * (3 - 2 * t);
-        var ql = clamp01((Math.sqrt(qx * qx + qy * qy) - 0.45) / 0.55);
-        var col = ramp(stops, clamp01(t * 0.82 + ql * 0.18));
-        var hl = clamp01((rx - 0.55) * 2.4) * 0.45;
-        var top = stops[stops.length - 1];
-        var shade = 0.8 + 0.3 * f;
-        var grain = (hash2(x, y, seed + 9) - 0.5) * 7;
-        data[p++] = Math.min(255, (col[0] + (top[0] - col[0]) * hl) * shade + grain);
-        data[p++] = Math.min(255, (col[1] + (top[1] - col[1]) * hl) * shade + grain);
-        data[p++] = Math.min(255, (col[2] + (top[2] - col[2]) * hl) * shade + grain);
-        data[p++] = 255;
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    artCache.set(key, c);
-    return c;
-  }
-
-  /* ---------- Build folders ---------- */
-  var grid = document.getElementById("grid");
-  var folders = [];
-  var current = null;
-
-  FOLDERS.forEach(function (f, idx) {
-    var n = f.files.length;
-    var done = f.files.filter(function (x) { return x.d; }).length;
-    var id = "folder-" + (idx + 1);
-
-    var li = el("li", "folder");
-    li.dataset.status = f.status;
-
-    var stage = el("div", "stage");
-    var tilt = el("div", "tilt");
-
-    var back = el("div", "back");
-    back.setAttribute("aria-hidden", "true");
-    var canvas = document.createElement("canvas");
-    canvas.width = 240; canvas.height = 190;
-    back.appendChild(canvas);
-    back.appendChild(el("span", "back-index", pad(idx + 1)));
-
-    var btn = el("button", "front");
-    btn.type = "button";
-    btn.setAttribute("aria-expanded", "false");
-    btn.setAttribute("aria-controls", id + "-files");
-    var plus = el("span", "front-plus", "+");
-    plus.setAttribute("aria-hidden", "true");
-    var label = el("span", "front-label", f.name);
-    var foot = el("span", "front-foot");
-    var meta = el("span", "front-meta", n + " " + f.noun + " · " + done + " done");
-    var row = el("span", "front-row");
-    var pips = el("span", "pips");
-    pips.setAttribute("role", "img");
-    pips.setAttribute("aria-label", done + " of " + n + " complete");
-    f.files.forEach(function (x) { pips.appendChild(el("span", "pip" + (x.d ? " on" : ""))); });
-    var st = el("span", "front-status", f.status === "done" ? "Done" : "In progress");
-    row.appendChild(pips); row.appendChild(st);
-    foot.appendChild(meta); foot.appendChild(row);
-    btn.appendChild(plus); btn.appendChild(label); btn.appendChild(foot);
-
-    var list = el("ul", "files");
-    list.id = id + "-files";
-    list.setAttribute("aria-label", f.name + " files");
-    list.style.setProperty("--n", n);
-    list.inert = true;
-    f.files.forEach(function (x, i) {
-      var item = el("li");
-      var a = el("a", "file");
-      a.href = x.u;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.style.setProperty("--i", i);
-      var top = el("span", "file-top");
-      top.appendChild(el("span", "file-title", x.t));
-      var arr = el("span", "file-arrow", "↗");
-      arr.setAttribute("aria-hidden", "true");
-      top.appendChild(arr);
-      var m = el("span", "file-meta");
-      m.appendChild(el("span", null, x.m));
-      m.appendChild(el("span", "file-state", x.d ? "■ Done" : "□ Open"));
-      a.appendChild(top); a.appendChild(m);
-      a.setAttribute("aria-label", x.t + ", " + x.m + ", " + (x.d ? "done" : "open") + " (opens in a new tab)");
-      item.appendChild(a);
-      list.appendChild(item);
-    });
-
-    // DOM order: back, front button, files (so Tab goes button -> files); z-index sets visual stacking
-    tilt.appendChild(back);
-    tilt.appendChild(btn);
-    tilt.appendChild(list);
-    stage.appendChild(tilt);
-
-    var cap = el("div", "caption");
-    cap.setAttribute("aria-hidden", "true");
-    cap.appendChild(el("span", null, pad(idx + 1)));
-    var hint = el("span", "hint", "+ Open");
-    cap.appendChild(hint);
-
-    li.appendChild(stage);
-    li.appendChild(cap);
-    grid.appendChild(li);
-
-    folders.push({ el: li, btn: btn, list: list, hint: hint, tilt: tilt, canvas: canvas, data: f });
-  });
-
-  function setOpen(F, open) {
-    F.el.classList.toggle("is-open", open);
-    F.btn.setAttribute("aria-expanded", open ? "true" : "false");
-    F.list.inert = !open;
-    F.hint.textContent = open ? "× Close" : "+ Open";
-    if (open) current = F;
-    else if (current === F) current = null;
-  }
-  function toggle(F) {
-    var willOpen = !F.el.classList.contains("is-open");
-    if (willOpen && current && current !== F) setOpen(current, false);
-    setOpen(F, willOpen);
-  }
-
-  folders.forEach(function (F) {
-    F.el.addEventListener("click", function (e) {
-      if (e.target.closest("a")) return;
-      toggle(F);
-    });
-
-    // pointer parallax
-    var raf = 0, mx = 0, my = 0;
-    F.el.addEventListener("pointermove", function (e) {
-      if (reduceMQ.matches || !fineMQ.matches) return;
-      var r = F.el.getBoundingClientRect();
-      mx = ((e.clientX - r.left) / r.width) * 2 - 1;
-      my = ((e.clientY - r.top) / r.height) * 2 - 1;
-      if (!raf) raf = requestAnimationFrame(function () {
-        raf = 0;
-        F.tilt.style.setProperty("--mx", mx.toFixed(3));
-        F.tilt.style.setProperty("--my", my.toFixed(3));
+  /* ---------- stats ---------- */
+  function renderStats(list, host, pre) {
+    host.innerHTML = "";
+    list.forEach(function (s, i) {
+      var li = el("li", "stat"), id = pre + i;
+      var b = el("button", "num", esc(L(s.n)) + (s.x ? "<small>" + esc(L(s.x)) + "</small>" : "")); b.type = "button"; b.setAttribute("aria-describedby", id); b.setAttribute("aria-expanded", "false");
+      li.appendChild(b);
+      li.appendChild(el("span", "lbl", esc(L(s.l))));
+      li.appendChild(el("span", "src", esc(s.s)));
+      var tip = el("div", "tip", esc(t("src")) + ': <a class="u" href="' + esc(s.u) + '" target="_blank" rel="noopener noreferrer">' + esc(s.s) + " ↗</a>" + (s.k ? '<span class="k">' + esc(L(s.k)) + "</span>" : ""));
+      tip.id = id; tip.setAttribute("role", "tooltip");
+      li.appendChild(tip);
+      b.addEventListener("click", function () {
+        var on = !li.classList.contains("on");
+        closeTips();
+        if (on) { li.classList.add("on"); b.setAttribute("aria-expanded", "true"); }
       });
-    });
-    F.el.addEventListener("pointerleave", function () {
-      F.tilt.style.setProperty("--mx", 0);
-      F.tilt.style.setProperty("--my", 0);
-    });
-  });
-
-  document.addEventListener("click", function (e) {
-    if (current && !current.el.contains(e.target)) setOpen(current, false);
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && current) {
-      var F = current;
-      setOpen(F, false);
-      F.btn.focus();
-    }
-  });
-
-  /* ---------- Paint art once per folder, staggered across frames ---------- */
-  var q = folders.slice();
-  (function next() {
-    var F = q.shift();
-    if (!F) return;
-    var art = paintArt(F.data.seed, F.data.palette);
-    F.canvas.getContext("2d").drawImage(art, 0, 0);
-    requestAnimationFrame(next);
-  })();
-
-  /* ---------- Entrance when scrolled into view (transform only, never hidden) ---------- */
-  if (!reduceMQ.matches && "IntersectionObserver" in window) {
-    var vh = window.innerHeight;
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
-      });
-    }, { threshold: 0.12 });
-    folders.forEach(function (F, i) {
-      var r = F.el.getBoundingClientRect();
-      if (r.top < vh && r.bottom > 0) {
-        F.el.querySelector(".stage").style.animationDelay = (i % 3) * 90 + "ms";
-        F.el.classList.add("in");
-      } else {
-        io.observe(F.el);
-      }
+      host.appendChild(li);
     });
   }
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeTips(); });
+  document.addEventListener("click", function (e) { if (!e.target.closest(".stat")) closeTips(); });
 
-  /* ---------- Progress rows ---------- */
-  var rows = document.getElementById("rows");
-  var doneCount = 0;
-  TASKS.forEach(function (t) {
-    var li = el("li", "row is-" + t[3]);
-    li.appendChild(el("span", "num", t[0]));
-    li.appendChild(el("span", "task", t[1]));
-    li.appendChild(el("span", "owner", t[2]));
-    var mark = t[3] === "done" ? "● " : t[3] === "draft" ? "◐ " : "○ ";
-    li.appendChild(el("span", "status", mark + t[3]));
-    rows.appendChild(li);
-    if (t[3] === "done") doneCount++;
+  /* ---------- flow ---------- */
+  var flowIx = 0;
+  var ftabs = document.getElementById("ftabs"), fpanel = document.getElementById("fpanel"), fsteps = document.getElementById("fsteps"), fnote = document.getElementById("fnote");
+  function renderFlowTabs() {
+    ftabs.innerHTML = "";
+    FLOW.forEach(function (f, i) {
+      var b = el("button", "ftab", "<i>" + pad(i + 1) + "</i><span>" + esc(L(f.tab)) + "</span>");
+      b.type = "button"; b.id = "ft" + i; b.setAttribute("role", "tab"); b.setAttribute("aria-controls", "fpanel");
+      b.addEventListener("click", function () { selectFlow(i, false); });
+      b.addEventListener("keydown", function (e) {
+        var k = e.key, n = null;
+        if (k === "ArrowDown" || k === "ArrowRight") n = (i + 1) % FLOW.length;
+        else if (k === "ArrowUp" || k === "ArrowLeft") n = (i - 1 + FLOW.length) % FLOW.length;
+        else if (k === "Home") n = 0; else if (k === "End") n = FLOW.length - 1;
+        if (n != null) { e.preventDefault(); selectFlow(n, true); }
+      });
+      ftabs.appendChild(b);
+    });
+    selectFlow(flowIx, false, true);
+  }
+  function selectFlow(i, focus, quiet) {
+    flowIx = i;
+    ftabs.querySelectorAll(".ftab").forEach(function (b, j) { b.setAttribute("aria-selected", j === i ? "true" : "false"); b.tabIndex = j === i ? 0 : -1; });
+    if (focus) ftabs.children[i].focus();
+    fpanel.setAttribute("aria-labelledby", "ft" + i);
+    var f = FLOW[i], K = [t("kSrc"), t("kEva"), t("kRes")];
+    fsteps.innerHTML = [f.a, f.b, f.c].map(function (x, j) { return '<li class="fstep"><span class="k"><b>' + pad(j + 1) + "</b>" + esc(K[j]) + "</span><p>" + esc(L(x)) + "</p></li>"; }).join("");
+    fnote.textContent = L(f.x);
+    fpanel.classList.remove("run");
+    if (!reduce.matches && !quiet) { void fpanel.offsetWidth; fpanel.classList.add("run"); }
+  }
+
+  /* ---------- folders ---------- */
+  var openState = {}; FOLDERS.forEach(function (f, i) { openState[f.id] = i === 0; });
+  var savedState = null;
+  var q = document.getElementById("q"), fStar = document.getElementById("fStar"), fEva = document.getElementById("fEva"), toggleAll = document.getElementById("toggleAll");
+  var host = document.getElementById("folders");
+  var TAB = '<svg class="tab" viewBox="0 0 190 16" aria-hidden="true"><path d="M0.5 16 V0.5 H168 L183.5 16"/></svg>';
+
+  function renderFolders() {
+    host.innerHTML = "";
+    FOLDERS.forEach(function (f, fi) {
+      var items = SRC.filter(function (s) { return s.f === f.id; });
+      var sec = el("section", "folder" + (openState[f.id] ? " open" : ""));
+      sec.dataset.id = f.id;
+      var bid = "fb-" + f.id, hid = "fh-" + f.id;
+      var btn = el("button", "fh", '<span class="ix">' + pad(fi + 1) + '</span><span class="nm">' + esc(L(f.n)) + '</span><span class="hint"><span class="cnt"></span> · ' + esc(L(f.h)) + '</span><span class="pm" aria-hidden="true"></span>');
+      btn.type = "button"; btn.id = hid; btn.setAttribute("aria-expanded", openState[f.id] ? "true" : "false"); btn.setAttribute("aria-controls", bid);
+      btn.addEventListener("click", function () { setOpen(f.id, !openState[f.id]); });
+      sec.appendChild(btn);
+      sec.insertAdjacentHTML("beforeend", TAB);
+      var body = el("div", "fbody"); body.id = bid; body.setAttribute("role", "region"); body.setAttribute("aria-labelledby", hid);
+      var inner = el("div"), ul = el("ul", "cards");
+      items.forEach(function (s, i) { var li = el("li", "card"); li.style.setProperty("--i", i); li._s = s; ul.appendChild(li); });
+      inner.appendChild(ul); inner.appendChild(el("p", "empty", esc(t("noMatch")))); body.appendChild(inner); sec.appendChild(body);
+      if (!openState[f.id]) body.setAttribute("inert", "");
+      host.appendChild(sec);
+    });
+    filter();
+  }
+
+  function cardHTML(s, qq) {
+    var b = [];
+    if (s.ch) b.push('<span><span class="dot star" aria-hidden="true"></span>' + esc(t("bStar")) + "</span>");
+    if (s.e && !s.internal) b.push('<span><span class="dot ' + (s.r ? "star" : "eva") + '" aria-hidden="true"' + (s.r ? ' style="border-color:var(--teal)"' : "") + '></span>' + esc(t(s.r ? "bRef" : "bEva")) + "</span>");
+    if (s.internal) b.push("<span>" + esc(t("bInternal")) + "</span>");
+    var title = hi(L(s.t), qq);
+    var h = s.u ? '<a href="' + esc(s.u) + '"' + (ext(s.u) ? ' target="_blank" rel="noopener noreferrer"' : "") + ">" + title + '<span class="ar" aria-hidden="true">↗</span></a>' : title;
+    var html = '<div class="badges">' + b.join("") + "</div><h3>" + h + '</h3><p class="one">' + hi(L(s.d), qq) + '</p><p class="meta">' + esc(L(s.m)) + "</p>";
+    if (s.e) html += '<button type="button" class="more" aria-expanded="false">' + esc(t(s.internal ? "titles" : (s.r ? "howRef" : "howEva"))) + '</button><div class="use"><p><span>' + hi(L(s.e), qq) + "</span></p></div>";
+    return html;
+  }
+
+  function setOpen(id, on) {
+    openState[id] = on;
+    var sec = host.querySelector('.folder[data-id="' + id + '"]');
+    if (!sec) return;
+    sec.classList.toggle("open", on);
+    sec.querySelector(".fh").setAttribute("aria-expanded", on ? "true" : "false");
+    var body = sec.querySelector(".fbody");
+    if (on) body.removeAttribute("inert"); else body.setAttribute("inert", "");
+    syncToggleAll();
+  }
+  function syncToggleAll() { toggleAll.textContent = FOLDERS.every(function (f) { return openState[f.id]; }) ? t("closeAll") : t("openAll"); }
+  toggleAll.addEventListener("click", function () {
+    var all = FOLDERS.every(function (f) { return openState[f.id]; });
+    FOLDERS.forEach(function (f) { setOpen(f.id, !all); });
   });
-  document.getElementById("progress-count").textContent = pad(doneCount) + " / " + TASKS.length + " done";
+  host.addEventListener("click", function (e) {
+    var m = e.target.closest(".more"); if (!m) return;
+    var on = m.getAttribute("aria-expanded") !== "true";
+    m.setAttribute("aria-expanded", on ? "true" : "false"); m.nextElementSibling.classList.toggle("on", on);
+  });
 
-  var totalFiles = 0, totalDone = 0;
-  FOLDERS.forEach(function (f) { totalFiles += f.files.length; f.files.forEach(function (x) { totalDone += x.d; }); });
-  document.getElementById("research-count").textContent = pad(FOLDERS.length) + " folders";
-  document.getElementById("summary").textContent =
-    totalFiles + " documents and sources · " + totalDone + " done · " + (TASKS.length - doneCount) + " Phase 2 tasks to go";
+  function filter() {
+    var qq = fold(q.value.trim()), star = fStar.getAttribute("aria-pressed") === "true", eva = fEva.getAttribute("aria-pressed") === "true";
+    var active = !!(qq || star || eva), shown = 0;
+    if (active && !savedState) savedState = Object.assign({}, openState);
+    host.querySelectorAll(".folder").forEach(function (sec) {
+      var n = 0;
+      sec.querySelectorAll(".card").forEach(function (li) {
+        var s = li._s;
+        var hay = fold([s.t.en, s.t.es, s.d.en, s.d.es, L(s.m), s.e ? s.e.en + " " + s.e.es : "", s.u || ""].join(" "));
+        var ok = (!qq || hay.indexOf(qq) >= 0) && (!star || s.ch) && (!eva || (s.e && !s.internal));
+        li.hidden = !ok;
+        if (ok) { n++; li.innerHTML = cardHTML(s, qq); }
+      });
+      shown += n;
+      sec.querySelector(".cnt").textContent = pad(n);
+      sec.querySelector(".empty").style.display = n ? "none" : "";
+      sec.classList.toggle("none", active && n === 0);
+      if (active) setOpen(sec.dataset.id, n > 0);
+    });
+    if (!active && savedState) { var st = savedState; savedState = null; FOLDERS.forEach(function (f) { setOpen(f.id, st[f.id]); }); }
+    document.getElementById("rcount").textContent = active ? (shown + " " + t("of") + " " + SRC.length + " " + t("shown")) : (SRC.length + " " + t("sources"));
+    document.getElementById("fcount").textContent = pad(FOLDERS.length) + " " + t("folders");
+    syncToggleAll();
+  }
+  q.addEventListener("input", filter);
+  q.addEventListener("keydown", function (e) { if (e.key === "Escape") { q.value = ""; filter(); } });
+  [fStar, fEva].forEach(function (b) { b.addEventListener("click", function () { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); filter(); }); });
+
+  /* ---------- decisions ---------- */
+  var tl = document.getElementById("tl"), tlbtn = document.getElementById("tlbtn");
+  function renderDec() {
+    tl.innerHTML = DEC.map(function (d, i) { return '<li class="' + (d.nw ? "new " : "") + (i >= DEC_SHOW ? "extra" : "") + '"><span class="when">' + esc(L(d.w)) + '</span><span class="what">' + esc(L(d.d)) + "</span></li>"; }).join("");
+    syncDec();
+  }
+  function syncDec() {
+    var all = tl.classList.contains("all");
+    tlbtn.setAttribute("aria-expanded", all ? "true" : "false");
+    tlbtn.textContent = all ? t("showLess") : t("showAll") + " · " + DEC.length;
+  }
+  tlbtn.addEventListener("click", function () { tl.classList.toggle("all"); syncDec(); });
+
+  /* ---------- language ---------- */
+  function renderAll() {
+    applyStatic();
+    renderStats(STATS, document.getElementById("stats"), "tip-s");
+    renderStats(BSTATS, document.getElementById("bstats"), "tip-b");
+    renderFlowTabs();
+    renderFolders();
+    renderDec();
+  }
+  document.querySelectorAll(".lpick button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var l = b.getAttribute("data-l"); if (l === lang) return;
+      lang = l; try { localStorage.setItem("wm-lang", l); } catch (e) {}
+      renderAll();
+    });
+  });
+  renderAll();
 })();
 </script>
+</body>
+</html>
