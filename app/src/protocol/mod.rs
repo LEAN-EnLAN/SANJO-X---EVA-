@@ -74,6 +74,7 @@ impl Endpoint {
 
     /// Queue one vitals sample for `stream` (delta-encoded, latest-wins).
     pub fn send_vitals(&mut self, now_ms: u64, stream: u32, ts_s: u64, s: &VitalsSample) -> u32 {
+        self.queue.purge_stale(Priority::Vitals, now_ms);
         let payload = self.enc.encode(stream, ts_s, s);
         self.queue.push_with(MsgType::Vitals, Priority::Vitals, payload, None, Some(now_ms + self.vitals_ttl_ms))
     }

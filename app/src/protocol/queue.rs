@@ -13,7 +13,7 @@
 
 use super::frame::{Frame, MsgType, Priority, FLAG_RETX};
 use super::stats::ByteStats;
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::{BTreeMap, HashSet, VecDeque};
 
 /// Smoothed RTT estimator (RFC 6298 constants).
 #[derive(Debug, Clone, Copy)]
@@ -146,6 +146,18 @@ impl SendQueue {
         seq
     }
 
+    /// Drop expired frames at the head of one class. During a contact gap
+    /// nothing is polled, so the sender calls this when it queues a new
+    /// sample: a long outage keeps at most one TTL's worth of vitals in memory.
+    /// O(expired) because frames of a class are queued in expiry order.
+    pub fn purge_stale(&mut self, prio: Priority, now_ms: u64) {
+        let q = &mut self.queues[prio as usize];
+        while q.front().is_some_and(|x| x.expires_ms.is_some_and(|e| e <= now_ms)) {
+            q.pop_front();
+            self.dropped_stale += 1;
+        }
+    }
+
     /// Frames to put on the wire now, highest priority first, within `budget` bytes.
     /// Due retransmissions of a class go before new frames of the same class.
     pub fn poll(&mut self, now_ms: u64, budget: usize) -> Vec<Frame> {
@@ -240,12 +252,20 @@ impl SendQueue {
     }
 }
 
+/// How many delivered reliable seqs a receiver remembers for dedup. A replay
+/// older than this is caught one level up (the ground's mirror drops a record
+/// it already has by chain seq + hash).
+pub const DEDUP_WINDOW: usize = 65_536;
+
 /// Receiver-side helper: remembers which reliable seqs were already delivered
-/// (retransmits after a lost ack must not create duplicates) and batches acks.
+/// (retransmits after a lost ack, or replayed frames, must not create
+/// duplicates) and batches acks. O(1) per frame.
 #[derive(Debug, Default, Clone)]
 pub struct Receiver {
-    seen: VecDeque<u32>,
+    seen: HashSet<u32>,
+    order: VecDeque<u32>,
     pending_acks: Vec<u32>,
+    pub duplicates: u64,
 }
 
 impl Receiver {
@@ -254,13 +274,18 @@ impl Receiver {
         if !f.is_reliable() {
             return true;
         }
-        self.pending_acks.push(f.seq);
-        if self.seen.contains(&f.seq) {
+        if self.pending_acks.len() < 4_096 {
+            self.pending_acks.push(f.seq);
+        }
+        if !self.seen.insert(f.seq) {
+            self.duplicates += 1;
             return false;
         }
-        self.seen.push_back(f.seq);
-        if self.seen.len() > 4096 {
-            self.seen.pop_front();
+        self.order.push_back(f.seq);
+        if self.order.len() > DEDUP_WINDOW {
+            if let Some(old) = self.order.pop_front() {
+                self.seen.remove(&old);
+            }
         }
         true
     }
@@ -331,6 +356,20 @@ mod tests {
         q.push_with(MsgType::Vitals, Priority::Vitals, vec![1; 6], None, Some(5_000));
         assert!(q.poll(6_000, 1_000).is_empty());
         assert_eq!(q.dropped_stale, 1);
+    }
+
+    #[test]
+    fn long_outage_keeps_at_most_one_ttl_of_vitals() {
+        let mut q = SendQueue::new(1);
+        // one sample a second for an hour, nothing polled (link down)
+        for t in (0..3_600_000u64).step_by(1_000) {
+            q.purge_stale(Priority::Vitals, t);
+            q.push_with(MsgType::Vitals, Priority::Vitals, vec![1; 6], None, Some(t + 30_000));
+        }
+        assert!(q.depth().vitals <= 31, "{} vitals kept", q.depth().vitals);
+        assert_eq!(q.dropped_stale as usize, 3_600 - q.depth().vitals);
+        q.purge_stale(Priority::Vitals, 3_700_000);
+        assert_eq!(q.depth().vitals, 0);
     }
 
     #[test]

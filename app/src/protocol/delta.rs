@@ -198,12 +198,16 @@ impl DeltaDecoder {
             if id != kf_id {
                 return Err(DeltaError::NeedKeyframe(stream));
             }
-            let ts_s = kf_ts + r.uvar()?;
+            // hostile input must not overflow (a panic in debug builds, garbage in release)
+            let ts_s = kf_ts.checked_add(r.uvar()?).ok_or(WireError::Invalid("timestamp overflow"))?;
             let mask = r.uvar()?;
+            if mask >> NFIELDS != 0 {
+                return Err(DeltaError::Wire(WireError::Invalid("unknown vitals field")));
+            }
             let mut f = kf.fields();
             for (i, v) in f.iter_mut().enumerate() {
                 if mask & (1 << i) != 0 {
-                    *v += r.ivar()?;
+                    *v = v.checked_add(r.ivar()?).ok_or(WireError::Invalid("field overflow"))?;
                 }
             }
             Ok(StreamSample { stream, ts_s, sample: VitalsSample::from_fields(f), keyframe: false })
@@ -260,6 +264,37 @@ mod tests {
         enc.force_keyframe(5);
         let kf = enc.encode(5, 5, &sample(76));
         assert!(dec.decode(&kf).unwrap().keyframe);
+    }
+
+    #[test]
+    fn hostile_deltas_error_instead_of_overflowing() {
+        let mut enc = DeltaEncoder::new(10);
+        let mut dec = DeltaDecoder::new();
+        dec.decode(&enc.encode(1, u64::MAX - 1, &sample(70))).unwrap();
+        // ts overflow
+        let mut w = Writer::new();
+        w.u8(0).uvar(1).uvar(10).uvar(0);
+        assert!(dec.decode(&w.buf).is_err());
+        // field overflow: i64::MAX added to hr
+        let mut dec = DeltaDecoder::new();
+        dec.decode(&enc.encode(2, 5, &sample(70))).unwrap();
+        let mut w = Writer::new();
+        w.u8(1).uvar(2).uvar(0).uvar(1).ivar(i64::MAX);
+        let _ = dec.decode(&w.buf); // kf_id may differ; must not panic either way
+        let mut dec = DeltaDecoder::new();
+        let mut w = Writer::new();
+        w.u8(0x80).uvar(3).uvar(0);
+        for _ in 0..10 {
+            w.ivar(i64::MAX);
+        }
+        dec.decode(&w.buf).unwrap();
+        let mut w = Writer::new();
+        w.u8(0).uvar(3).uvar(0).uvar(1).ivar(i64::MAX);
+        assert!(dec.decode(&w.buf).is_err());
+        // unknown field bits
+        let mut w = Writer::new();
+        w.u8(0).uvar(3).uvar(0).uvar(1 << 20);
+        assert!(dec.decode(&w.buf).is_err());
     }
 
     #[test]
