@@ -4,7 +4,7 @@
   <p class="text-h3 text-ink">Wristband</p>
   <span class="size-11"></span>
 </div>
-{# 360° turn: 8 turntable frames (Codex v2 renders, AI-generated; notice in README.md).
+{# 360° turn: 8 turntable frames (Codex v2 renders, generated with Super Intelligence; notice in README.md).
    motion.js [data-spin]: drag or swipe turns it on the gentle spring; arrow buttons and keys
    step 45°; reduced motion keeps one still frame and the arrows. #}
 <div class="relative shrink-0 overflow-hidden rounded-hero bg-[#F4F2F0] e2" data-spin="000,045,090,135,180,225,270,315" data-morph="band-hero">
@@ -13,16 +13,16 @@
     <img src="/static/img/band/spin-000.webp" alt="The wristband: screen part on the sensor base, four fabric straps" class="absolute inset-0 size-full object-contain" width="720" height="642" decoding="async" draggable="false" data-spin-frame>
   </div>
   <span class="pointer-events-none absolute inset-y-0 left-0 w-2/5 bg-[linear-gradient(100deg,transparent,#FFFFFF33,transparent)]" data-spin-sheen aria-hidden="true"></span>
-  <span class="badge badge-dot pointer-events-none absolute top-4 left-4 {% if suit %}bg-info/20 text-[#1B5FA8]{% else %}bg-ok/25 text-[#14714A]{% endif %}">{% if suit %}Suit mode{% else %}Joined{% endif %}</span>
+  <span class="badge badge-dot pointer-events-none absolute top-4 left-4 {% if suit %} text-[#0B6AA6]{% else %} text-[#0A6B5A]{% endif %} border border-line">{% if suit %}Suit mode{% else %}Joined{% endif %}</span>
   <span class="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-label font-semibold text-on-light/60 motion-reduce:hidden" style="opacity: var(--hint-o, 1)" data-spin-hint>Drag to turn</span>
-  <button type="button" class="press absolute bottom-3 left-3 inline-grid size-12 place-items-center rounded-full bg-[#0A0E1A]/70 text-white" aria-label="Turn left" data-spin-step="-1">{{ crate::web::ui::ic("back", 24)|safe }}</button>
-  <button type="button" class="press absolute right-3 bottom-3 inline-grid size-12 place-items-center rounded-full bg-[#0A0E1A]/70 text-white" aria-label="Turn right" data-spin-step="1">{{ crate::web::ui::ic("chevron", 24)|safe }}</button>
+  <button type="button" class="press absolute bottom-3 left-3 inline-grid size-12 place-items-center rounded-full bg-[#0C0C0C]/70 text-white" aria-label="Turn left" data-spin-step="-1">{{ crate::web::ui::ic("back", 24)|safe }}</button>
+  <button type="button" class="press absolute right-3 bottom-3 inline-grid size-12 place-items-center rounded-full bg-[#0C0C0C]/70 text-white" aria-label="Turn right" data-spin-step="1">{{ crate::web::ui::ic("chevron", 24)|safe }}</button>
 </div>
 <h1 class="flex items-center gap-3 text-h2 text-ink">{{ crate::web::ui::pic("magnet", "size-11")|safe }}{% if suit %}Your suit is between the parts.{% else %}Two parts, held by magnets.{% endif %}</h1>
 
 <section class="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none]" aria-label="The two parts">
   {% for (f, t, sub, alt) in [("band", "Two parts", "Screen part on the sensor base", "The wristband: the screen part sitting on the sensor base"), ("pins", "Pins touch", "The base charges the screen part", "Two gold pins on the screen part above the base's contact pads"), ("straps", "Fabric straps", "Magnets hold the parts", "Close-up of the fabric straps and magnets"), ("cabin", "On board", "Snug on the wrist, all day", "The wristband on an arm, a hand on the cabin rail")] %}
-  <figure class="relative h-[200px] w-[240px] shrink-0 snap-start overflow-hidden rounded-card bg-[radial-gradient(80%_60%_at_50%_40%,#2A3152,#0F1424)] e1"><img src="/static/img/band/gallery-{{ f }}.webp" alt="{{ alt }}" class="size-full object-cover" width="640" height="427" loading="lazy" decoding="async"><span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,#070A14E6)]" aria-hidden="true"></span><figcaption class="absolute right-4 bottom-3 left-4 flex flex-col"><span class="text-h3 text-ink">{{ t }}</span><span class="text-label text-muted">{{ sub }}</span></figcaption></figure>
+  <figure class="relative h-[200px] w-[240px] shrink-0 snap-start overflow-hidden rounded-card bg-[radial-gradient(80%_60%_at_50%_40%,#141414,#0B0B0B)] e1"><img src="/static/img/band/gallery-{{ f }}.webp" alt="{{ alt }}" class="size-full object-cover" width="640" height="427" loading="lazy" decoding="async"><span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,#000000E6)]" aria-hidden="true"></span><figcaption class="absolute right-4 bottom-3 left-4 flex flex-col"><span class="text-h3 text-ink">{{ t }}</span><span class="text-label text-muted">{{ sub }}</span></figcaption></figure>
   {% endfor %}
 </section>
 

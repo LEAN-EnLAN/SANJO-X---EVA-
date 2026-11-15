@@ -2,7 +2,7 @@
 
 ```bash
 cd app
-cargo test                       # 131 tests, ~10 s (debug build): unit, flows, station, guard, break tests
+cargo test                       # 152 tests, ~10 s (debug build): unit, flows, station, guard, break tests
 cargo test --test break_protocol -- --nocapture   # prints fuzz seeds and outage figures
 scripts/e2e/run.sh               # Playwright happy path in headless Chromium (from the repo root)
 EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture   # live Groq check + topic guard precision/recall, needs GROQ_API_KEY
@@ -69,7 +69,7 @@ headers: { "content-type": it.type, "x-eva-replayed": "1", "x-eva-idem": it.idem
 | step | checks |
 |---|---|
 | demo is up | both nodes answer `/healthz`; uplink switched to the LAN profile so the run takes seconds |
-| open 4B, 3B, 1B, crew `/dash`, `/station`, ground `/dash` | six browser contexts (three phones 390×844, two laptops, the station at 1280×800); the station shows 12 compartments and "Hub online", the dashboard tile "Online" |
+| open 4B, 3B, 1B, crew `/dash`, `/station`, ground `/dash` | six browser contexts (three phones 390×844, two laptops, the station at 1280×800); the station shows every compartment of the demo cabinet and "Hub online", the dashboard tile "Online" |
 | ask Eva | typed question; answer in the Now / Why / How I decided / Next format |
 | log water | Eva chip "+1 glass" → +250 ml on the passenger |
 | log a mood | journal slider + a feeling → `log_mood` on the chain |
@@ -96,6 +96,6 @@ Last run: **14/14 steps in 16 s**, 22 records signed on the ship (station report
 - **App alarms over `/link`** (the Help button through the mesh) are not deduplicated by seq; a replay while the case is open is a no-op (the case already exists), after it closes it would reopen one.
 - **Topic guard keywords are a heuristic**: mixed requests go to the classifier; with the classifier down, a mixed request that leans in scope reaches Eva's scoped prompt and output check (ADR-012). Rate limits are in memory and reset on restart.
 - **Groq TTS** needs the Orpheus terms accepted by an org admin; until then the voice is the browser's (explicit fallback, RUNNING.md).
-- **UI copy**: the app home says "Day 96 of 212 · to Mars"; ADR-002 says near space. For the UI owner.
+- **UI copy**: fixed in 0.3.3 (team copy rules v3): the home and wrist headers say "Day 96 · in space".
 - **Hub down is simulated in one process**: the toggle stops the hub's relay, heartbeat and rules, but the same binary still serves the pages and the dev panel, and `AppState::air` stands in for the LoRa radio. The station's fallback logic is the real one (`StationDevice`); the radio and the failure are not.
 - **SSE weight**: each dashboard refresh re-renders seven fragments (~111 KB/s per dashboard at 15 bands); fine on the ship LAN, heavy for a narrow ground link (use `/api/state` in CBOR there).

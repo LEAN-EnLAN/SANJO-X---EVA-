@@ -1,6 +1,7 @@
 //! **The ship's medical station** as a client of the hub (ADR-011).
 //!
-//! The station is a wall cabinet with 12 numbered compartments, an Eva screen,
+//! The station is a wall cabinet with numbered compartments (configurable for
+//! each ship; the layout lives in [`COMPARTMENTS`]), an Eva screen,
 //! door and item sensors, a red emergency button, a LoRa radio and a backup
 //! battery. It is a *client* node of the hub, like the wristbands and phones:
 //! it says `Hello` on `/link` with role `Station`, the hub sends it
@@ -75,8 +76,10 @@ pub struct CompartmentDef {
     pub full: u8,
 }
 
-/// The 12 compartments, as on the cabinet (3 × 4, numbered row by row).
-pub const COMPARTMENTS: [CompartmentDef; 12] = [
+/// The demo ship's compartments, numbered row by row as on the cabinet.
+/// Configurable per ship: the UI and the API read this list, never a fixed
+/// count (the wire format caps it at [`STATION_COMPARTMENTS`]).
+pub const COMPARTMENTS: &[CompartmentDef] = &[
     CompartmentDef { n: 1, label: "AED", contents: "AED · spare pads · spare battery", item: "AED", icon: Icon::Pic("aed"), full: 1 },
     CompartmentDef { n: 2, label: "Breathing", contents: "Oxygen · mask · bag-valve mask", item: "oxygen kit", icon: Icon::Pic("lungs"), full: 3 },
     CompartmentDef { n: 3, label: "Diagnostics", contents: "Monitor · thermometer · glucometer", item: "diagnostic kit", icon: Icon::Pic("temperature"), full: 5 },
@@ -90,6 +93,7 @@ pub const COMPARTMENTS: [CompartmentDef; 12] = [
     CompartmentDef { n: 11, label: "Airway", contents: "Airways · suction unit", item: "airway kit", icon: Icon::Line("airway"), full: 4 },
     CompartmentDef { n: 12, label: "Hygiene", contents: "Gloves · goggles · waste bags · sharps bin", item: "hygiene kit", icon: Icon::Line("hand"), full: 6 },
 ];
+const _: () = assert!(COMPARTMENTS.len() <= STATION_COMPARTMENTS as usize, "more compartments than the wire format carries");
 
 pub fn def(n: u8) -> Option<&'static CompartmentDef> {
     COMPARTMENTS.get((n as usize).wrapping_sub(1))

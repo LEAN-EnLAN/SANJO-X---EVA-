@@ -429,7 +429,9 @@ const SPACE: &[&str] = &[
 const EVA_SYSTEM: &[&str] = &[
     "wearmeds", "wristband", "band", "bracelet", "sensor", "sensors", "battery", "charge", "charging", "app", "journal", "diary", "reminder", "remind", "export", "report", "summary", "seat",
     "station", "medical station", "compartment", "alert", "alerts", "alarm", "check-in", "checkin", "screen", "records", "log", "logs", "uplink", "who are you", "what can you do", "how do you work",
-    "your name", "what are you",
+    "your name", "what are you", "are you an ai", "are you a robot", "are you a bot", "are you human", "super intelligence",
+    // Spanish
+    "quién eres", "quien eres", "qué eres", "que eres", "super inteligencia",
 ];
 const SMALLTALK: &[&str] = &[
     "hi", "hello", "hey", "thanks", "thank you", "good morning", "good afternoon", "good evening", "good night", "ok", "okay", "yes", "no", "bye", "goodbye", "cool", "great", "sure", "please",
@@ -549,7 +551,7 @@ pub fn normalise(text: &str) -> String {
 
 // ------------------------------------------------------------------ layer 2: classifier
 
-pub const CLASSIFIER_PROMPT: &str = "You are a strict topic filter for Eva, the AI health copilot on a crewed spacecraft in low Earth orbit. \
+pub const CLASSIFIER_PROMPT: &str = "You are a strict topic filter for Eva, the Super Intelligence health copilot on a crewed spacecraft in low Earth orbit. \
 Decide if the user's message is in scope.\n\
 In scope: space, spaceflight, the spacecraft and this mission, astronomy and Earth seen from orbit, health, medicine (questions about medicines are fine; Eva gives decision support), the body, symptoms, sleep, food, water, exercise, mood and wellbeing, first aid, and the Eva system itself (the WearMeds wristband, the medical station, journal, reminders, records, the link to Earth). Greetings and thanks are in scope (smalltalk).\n\
 Out of scope: coding, homework, politics, sports, celebrities, films, music, shopping, finance, general trivia, and creative writing that is not about space or health.\n\
@@ -768,15 +770,115 @@ pub fn check_output(text: &str) -> Option<Verdict> {
     }
 }
 
-/// Layer 4 applied: the reply, or the redirect (logged) when it drifted.
+/// Layer 4 applied: the reply (with the copy rules applied), or the redirect
+/// (logged) when it drifted.
 pub fn guard_output(state: &Shared, seat: &str, stage: &str, text: &str) -> String {
     match check_output(text) {
         Some(v) => {
             log_filtered(state, seat, &format!("{stage}-output"), &v, "", 0);
             REDIRECT.to_string()
         }
-        None => text.to_string(),
+        None => copy_rules(text),
     }
+}
+
+// ------------------------------------------------------------------ copy rules (team v3)
+
+/// Wording Eva never uses, with what she says instead (team copy rules v3):
+/// she is a Super Intelligence, never "AI", and the trip is "in space", never
+/// to Mars. Matched case-insensitively on word boundaries; EN and ES.
+const COPY_PHRASES: &[(&str, &str)] = &[
+    ("ai-generated", "generated with Super Intelligence"),
+    ("an artificial intelligence", "a Super Intelligence"),
+    ("artificial intelligence", "Super Intelligence"),
+    ("una inteligencia artificial", "una Super Inteligencia"),
+    ("inteligencia artificial", "Super Inteligencia"),
+    ("on the way to mars", "in space"),
+    ("on our way to mars", "in space"),
+    ("on its way to mars", "in space"),
+    ("en route to mars", "in space"),
+    ("heading to mars", "in space"),
+    ("headed to mars", "in space"),
+    ("going to mars", "in space"),
+    ("bound for mars", "in space"),
+    ("flying to mars", "in space"),
+    ("travelling to mars", "in space"),
+    ("traveling to mars", "in space"),
+    ("trip to mars", "trip in space"),
+    ("journey to mars", "journey in space"),
+    ("mission to mars", "mission in space"),
+    ("flight to mars", "flight in space"),
+    ("voyage to mars", "voyage in space"),
+    ("mars mission", "space mission"),
+    ("mars trip", "space trip"),
+    ("· to mars", "· in space"),
+    ("rumbo a marte", "en el espacio"),
+    ("camino a marte", "en el espacio"),
+    ("viaje a marte", "viaje en el espacio"),
+    ("misión a marte", "misión en el espacio"),
+    ("vuelo a marte", "vuelo en el espacio"),
+];
+/// Whole-word, case-sensitive acronyms (so "OpenAI" or "aide" never match).
+const COPY_ACRONYMS: &[(&str, &str)] = &[("A.I.", "Super Intelligence"), ("AI", "Super Intelligence"), ("IA", "Super Inteligencia")];
+
+fn boundary(text: &str, a: usize, b: usize) -> bool {
+    let before = text[..a].chars().next_back().is_none_or(|c| !c.is_alphanumeric());
+    let after = text[b..].chars().next().is_none_or(|c| !c.is_alphanumeric());
+    before && after
+}
+
+fn capitalise_like(matched: &str, repl: &str) -> String {
+    if matched.chars().next().is_some_and(char::is_uppercase) {
+        let mut c = repl.chars();
+        c.next().map(|f| f.to_uppercase().chain(c).collect()).unwrap_or_default()
+    } else {
+        repl.to_string()
+    }
+}
+
+/// Apply the copy rules to a line Eva is about to say: "AI" / "artificial
+/// intelligence" become "Super Intelligence" (ES "Super Inteligencia"), and a
+/// trip "to Mars" becomes "in space". Everything else is left as it is.
+pub fn copy_rules(text: &str) -> String {
+    let mut out = text.to_string();
+    for (phrase, repl) in COPY_PHRASES {
+        let mut from = 0;
+        loop {
+            // ASCII lower-casing keeps byte offsets, so indices map back to `out`
+            let lower = out.to_ascii_lowercase();
+            let Some(i) = lower[from..].find(phrase) else { break };
+            let (a, b) = (from + i, from + i + phrase.len());
+            if boundary(&out, a, b) {
+                let r = capitalise_like(&out[a..b], repl);
+                out.replace_range(a..b, &r);
+                from = a + r.len();
+            } else {
+                from = b;
+            }
+        }
+    }
+    for (acr, repl) in COPY_ACRONYMS {
+        let mut from = 0;
+        while let Some(i) = out[from..].find(acr) {
+            let (mut a, b) = (from + i, from + i + acr.len());
+            if !boundary(&out, a, b) {
+                from = b;
+                continue;
+            }
+            // "an AI" -> "a Super Intelligence"
+            let mut r = repl.to_string();
+            for (an, art) in [("an ", "a "), ("An ", "A "), ("AN ", "A ")] {
+                if out[..a].ends_with(an) && boundary(&out, a - an.len(), a - 1) {
+                    a -= an.len();
+                    r = format!("{art}{repl}");
+                    break;
+                }
+            }
+            out.replace_range(a..b, &r);
+            from = a + r.len();
+        }
+    }
+    out
 }
 
 // ------------------------------------------------------------------ vision and voice
@@ -957,6 +1059,31 @@ mod tests {
             assert!(check_output(fine).is_none(), "{fine}");
         }
         assert_eq!(redact_secrets("key a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8 ok"), "key *** ok");
+    }
+
+    #[test]
+    fn copy_rules_say_super_intelligence_and_in_space() {
+        assert_eq!(copy_rules("I'm an AI health copilot."), "I'm a Super Intelligence health copilot.");
+        assert_eq!(copy_rules("An AI can help."), "A Super Intelligence can help.");
+        assert_eq!(copy_rules("I am not a person, I'm artificial intelligence."), "I am not a person, I'm Super Intelligence.");
+        assert_eq!(copy_rules("Soy una inteligencia artificial y una IA amable."), "Soy una Super Inteligencia y una Super Inteligencia amable.");
+        assert_eq!(copy_rules("Day 96 of the trip to Mars."), "Day 96 of the trip in space.");
+        assert_eq!(copy_rules("We're on our way to Mars."), "We're in space.");
+        assert_eq!(copy_rules("Day 96 · to Mars"), "Day 96 · in space");
+        assert_eq!(copy_rules("Seguimos rumbo a Marte."), "Seguimos en el espacio.");
+        // left alone: other words, brand names, astronomy
+        for fine in ["Your pulse is 72 bpm, normal for you.", "OpenAI and said aide.", "Mars is the fourth planet from the Sun.", "AIDS awareness"] {
+            assert_eq!(copy_rules(fine), fine);
+        }
+    }
+
+    #[test]
+    fn questions_about_what_eva_is_stay_in_scope() {
+        for q in ["are you an ai?", "who are you", "what are you exactly", "¿quién eres?", "are you a super intelligence?"] {
+            assert!(matches!(classify_local(q), Local::In(..)), "{q}");
+        }
+        assert!(!CLASSIFIER_PROMPT.contains(" AI "));
+        assert!(CLASSIFIER_PROMPT.contains("Super Intelligence"));
     }
 
     #[test]

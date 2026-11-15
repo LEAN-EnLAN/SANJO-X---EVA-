@@ -35,13 +35,13 @@ Design source of truth: the app wireframes (`design/app-wireframes`, tokens in `
 
 - Product copy in **English**. Eva **guides, records and warns**, gives *diagnostic support*, never decides a shock: **the AED decides**. No harness, no injector.
 - The Groq key is read **only** from `GROQ_API_KEY` at runtime; never in the repo, logs, docs or browser code.
-- AI-generated images are declared in this README (below), in the repo README and in the release notes, not on screen.
+- Images generated with Super Intelligence are declared in this README (below), in the repo README and in the release notes, not on screen.
 
-## AI-generated images
+## Images generated with Super Intelligence
 
-Every illustration in the app is AI-generated concept art made for team Sanjo-X (NASA Space Apps Challenge 2026, Rosario): the 3D icons, Eva's mascot states, the app icon, the launch screen, the large detail photos and the wristband v2 renders (`static/img/icons`, `eva`, `hero`, `band`, `splash*`, `static/icons`). The wristband renders in `static/img/band` are the home card, the ECG photo, the parts and suit-mode views on `/app/band`, the two emergency thumbnails and the 8 frames of the 360° turn, cropped and resized from the Codex v2 kit. The team wrote the prompts with Claude, and the images were generated with an OpenAI image model through Codex. They are illustrative, show no real person or device, and contain no NASA insignia or branding. This notice replaces on-screen labels: the app itself shows none.
+Every illustration in the app is concept art generated with Super Intelligence, made for team Sanjo-X (NASA Space Apps Challenge 2026, Rosario): the 3D icons, Eva's mascot states, the app icon, the launch screen, the large detail photos and the wristband v2 renders (`static/img/icons`, `eva`, `hero`, `band`, `splash*`, `static/icons`). The wristband renders in `static/img/band` are the home card, the parts and suit-mode views on `/app/band` (the screen part also illustrates the ECG until a one-hand ECG image exists), the two emergency thumbnails and the 8 frames of the 360° turn, cropped and resized from the Codex v2 kit. The team wrote the prompts with Claude, and the images were generated with an OpenAI image model through Codex. They are illustrative, show no real person or device, and contain no NASA insignia or branding. This notice replaces on-screen labels: the app itself shows none.
 
 
 ## Fonts
 
-Sora and Inter (both SIL Open Font License 1.1, from Google Fonts, latin subset) are self-hosted in `static/fonts/` so the app works offline.
+The type stack is the landing's ("PP Neue Montreal", Inter, Arial). PP Neue Montreal is not shipped, so Inter renders: it is self-hosted in `static/fonts/` (SIL Open Font License 1.1, from Google Fonts, latin subset) so the app works offline. The colours are the landing's palette (pure black, off-white, grey, #2a2a2a hairlines, teal for Eva, orange accents, red for alarms); the tokens live in `styles/app.css`.

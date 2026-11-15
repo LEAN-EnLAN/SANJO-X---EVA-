@@ -212,7 +212,7 @@ public class MainActivityRobolectricTest {
         assertTrue(web(a).getSettings().getDomStorageEnabled());
         assertFalse(web(a).getSettings().getMediaPlaybackRequiresUserGesture());
         // smoothness settings (APP-POLISH §8) and the user agent
-        assertTrue(web(a).getSettings().getUserAgentString().endsWith(" EvaAndroid/0.3.2"));
+        assertTrue(web(a).getSettings().getUserAgentString().endsWith(" EvaAndroid/0.3.3"));
         assertEquals(100, web(a).getSettings().getTextZoom());
         assertEquals(View.OVER_SCROLL_NEVER, web(a).getOverScrollMode());
         assertFalse(web(a).isVerticalScrollBarEnabled());

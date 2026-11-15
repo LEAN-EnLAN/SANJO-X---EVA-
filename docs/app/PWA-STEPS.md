@@ -96,10 +96,28 @@ One short section per step. Each says what changed and why, so the reasoning liv
 
 **What.** `GET /api/eva/status` and an `eva-status` SSE event; the Eva tab chip and banner, the dashboard pill and the dev-panel row read it. The binary loads `GROQ_API_KEY` from `--env-file`, `./.env`, or `.env`/`eva.env` next to it (RUNNING.md).
 
-**Why.** On a teammate's laptop without the key, Eva silently fell back and looked "disabled". Now the app says she is on her on-board rules (never "broken", never "AI"), what still works, and the exact fix, and a key in a file next to the program is enough.
+**Why.** On a teammate's laptop without the key, Eva silently fell back and looked "disabled". Now the app says she is on her on-board rules (never "broken"), what still works, and the exact fix, and a key in a file next to the program is enough.
 
 ## Step 17 · Wristband mode
 
 **What.** The same PWA becomes the band's UI on a small wide screen. An inline script in `head.html` decides before the first paint (landscape ≤ 480 px high and ≥ 8:5, or tiny) and jumps to the twin URL; `wrist.js` flips on rotation without reloading and rewrites every `/app/*` load into `#screen` to its `/app/wrist*` twin in one `htmx:configRequest` listener, so every existing trigger (SSE `go-emergency`, `go-storm`, `go-home`, banners, follow-ups) works unchanged. `/app/wrist` is one horizontal scroll-snap track of five pages (face, vitals, Eva quick-ask, 30 s ECG, Help); emergency and storm takeovers reuse the phone's view models. Everything is in `rem` and the root font size follows the screen height. The manifest's orientation is `any`; the service worker (`eva-shell-v8`) caches the wrist screens.
 
 **Why.** The band's screen module is a small 16:9 display, and the demo needs to show it without new hardware: a phone in landscape, or devtools at 640 × 360, is the band. One shell and one set of routes means the phone, the band, the dashboard and the station move together on the same SSE events. Black background because the real display is OLED behind black glass. Help needs a 2 s hold because a wrist gets bumped. Haptics carry more than on the phone, because a wrist is felt, not watched.
+
+## Step 18 · Copy rules v3 (0.3.3)
+
+**What.** Every screen, tool text, offline answer, the system prompt and the guard follow the team's copy rules v3. Eva is a **Super Intelligence** (never "AI"); the trip is **in space** (the home and band headers read "Day 96 · in space", the dashboard eyebrow "day 96 in space"); helpers are **the nearest passenger**; the station shows **numbered compartments** with no count on screen (the layout is the `station::COMPARTMENTS` list and the tap API checks against it); the ECG is **two fingers of the same hand on the two metal pads, about 30 s**. The ECG photo with two hands is gone: the ECG screens show the screen part (its two side pads) until a one-hand image exists. The dashboard labels say the hub **hosts the Super Intelligence · stores everything** and Earth **receives and acknowledges the signed records**. Layer 4 of the guard (`guard::copy_rules`) rewrites "AI" / "artificial intelligence" (and ES "IA" / "inteligencia artificial") and "to Mars" trip phrases in every model, vision and voice line before anyone sees or hears it; offline Eva answers "who / what are you" as the Super Intelligence health copilot. Service worker `eva-shell-v9`.
+
+**Why.** Team decision Sun 15/11: one wording across the landing, the app, the decks and the report.
+
+## Step 19 · The landing's palette (0.3.3)
+
+**What.** The passenger app, wristband mode, the crew and ground dashboards, the station screen and the Android wrapper's native screens use the landing's palette, set once in the tokens of `styles/app.css`: pure black canvas (`#000000`), off-white ink (`#f4f3f0`), grey secondary text (`#9b9996`), `#2a2a2a` hairlines instead of navy glows, teal `#1fe5c4` for Eva and positive states, orange `#f28a1a` accents, the landing's `#7fd4ff`, `#ffb347` and `#ffd84a` for data, and red (`#ff2a1f`, full-bleed `#e0241a → #a3160f`, deep `#c41a12`) for alarms only. Type follows the landing's stack ("PP Neue Montreal", Inter, Arial) at weight 400 for headlines; Sora is gone. Layout, components and motion are unchanged. Contrast: ink 18.9:1 and grey 6.0–7.4:1 on every surface; white on the emergency reds 4.7–7.8:1; alarm red on black 5.6:1. Before/after screenshots of the key screens are in the scratchpad (`app-palette/`).
+
+**Why.** The user asked for the app to be congruent with the landing: one palette from the landing to the phone, the band, the station and the dashboards.
+
+## Step 20 · No coloured blocks (0.3.3)
+
+**What.** Eva sits straight on the black canvas everywhere: the halo, the three-blob aurora and the teal disc behind her (home card, Eva screen, tab bar, About, journal, check-in, records, wristband, station, dashboards) are gone, and the splash, the PWA icons and the Android splash mark are Eva on pure black with no glow. The home card, cards, tiles, chips, pills, badges and the storm / patient cards are black with `#2a2a2a` hairlines (amber or red hairlines where a warning or an alarm needs one); tinted fills are gone except the alarm reds. Chat: Eva's lines on a very dark neutral surface with a hairline, the person's lines in a hairline bubble with a thin teal edge, no green fills. The mic and send buttons are teal outlines. Primary buttons are the landing's inverse (off-white on black). Still coloured on purpose: the full-bleed emergency screens and Help buttons (alarm red), the station's lit compartment (the cabinet's teal light), data meters and the journal's mood orb.
+
+**Why.** User feedback on the Eva chat: the coloured blocks behind Eva looked like an animated-infographics channel. The landing's way is black, hairlines and a little teal.

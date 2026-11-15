@@ -159,7 +159,7 @@
   doc.addEventListener("visibilitychange", function () { html.classList.toggle("is-hidden", doc.hidden); if (!doc.hidden) refreshStatus(); });
 
   // ---------------------------------------------------------------- celebration burst (§3.8)
-  var COLORS = { water: ["#7DE3FF", "#2E9BFF"], mood: ["#C08BFF", "#6C5CFF"], heart: ["#FF7A59", "#FF2D6F"], food: ["#C6F06A", "#3DDC97"], eva: ["#5EF0D6", "#38B6FF"] };
+  var COLORS = { water: ["#7FD4FF", "#5BBDEB"], mood: ["#7FD4FF", "#0A8A74"], heart: ["#F28A1A", "#D9740C"], food: ["#1FE5C4", "#1FE5C4"], eva: ["#1FE5C4", "#7FD4FF"] };
   function burst(el, n, tone) {
     if (reduced.matches || !M()) { haptic("success"); return; }
     n = n || 36; if (html.classList.contains("lite")) n = Math.round(n / 2);
@@ -170,7 +170,7 @@
     cv.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:80";
     doc.body.appendChild(cv);
     var ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
-    var cols = (COLORS[tone] || COLORS.eva).concat(["#FFD166"]), ps = [];
+    var cols = (COLORS[tone] || COLORS.eva).concat(["#FFD84A"]), ps = [];
     for (var i = 0; i < n; i++) {
       var a = (-90 + (Math.random() - 0.5) * 120) * Math.PI / 180, v = 320 + Math.random() * 300;
       ps.push({ x: ox, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: Math.random() * 6, vr: (Math.random() - 0.5) * 12, k: i % 3, c: cols[i % cols.length] });
@@ -244,7 +244,7 @@
     doc.querySelectorAll("[data-eva-chip]").forEach(function (c) {
       c.setAttribute("data-tone", s.mode === "online" ? "ok" : "warn");
       var w = c.querySelector("[data-eva-chip-text]"); if (w) w.textContent = s.mode === "online" ? (c.getAttribute("data-online-text") || "Online") : "On-board rules";
-      c.classList.toggle("bg-ok/15", s.mode === "online"); c.classList.toggle("text-ok", s.mode === "online"); c.classList.toggle("bg-warn/15", s.mode !== "online"); c.classList.toggle("text-warn", s.mode !== "online");
+      c.classList.toggle("text-ok", s.mode === "online"); c.classList.toggle("text-warn", s.mode !== "online");
     });
     doc.querySelectorAll("[data-eva-hint]").forEach(function (h) { h.textContent = s.hint || ""; });
     doc.querySelectorAll("[data-eva-reason]").forEach(function (h) { h.hidden = h.getAttribute("data-eva-reason") !== s.reason; });
@@ -279,7 +279,7 @@
     var tk = doc.getElementById("takeover");
     haptic(kind === "storm" ? "warn" : "emergency");
     if (!tk) return;
-    theme(kind === "storm" ? "#5A3A06" : "#B3122A");
+    theme(kind === "storm" ? "#3A2810" : "#C41A12");
     if (reduced.matches || !M()) return;
     tk.classList.toggle("is-storm", kind === "storm");
     tk.classList.add("is-on"); tk.classList.remove("is-rings");
@@ -300,7 +300,7 @@
     if (d.type === "eva-status") { e.preventDefault(); try { applyStatus(JSON.parse(d.data), true); } catch (er) {} }
     else if (d.type === "go-emergency") takeover("emergency");
     else if (d.type === "go-storm") takeover("storm");
-    else if (d.type === "go-home") theme("#070A14");
+    else if (d.type === "go-home") theme("#000000");
   });
   // a case is open but this person is elsewhere: a short tap every 8 s on home, at most 5 times
   var nudges = 0;
@@ -331,13 +331,13 @@
     if (t.id === "screen") {
       setTint(); stagger(t);
       if (t.querySelector("[data-celebrate]")) setTimeout(function () { burst(t.querySelector("[data-celebrate]"), 36, t.querySelector("[data-celebrate]").getAttribute("data-celebrate")); }, 400);
-      if (!t.querySelector("[data-focus]") && !t.querySelector("[data-storm-active]")) theme("#070A14");
-      if (t.querySelector("[data-focus]") || t.querySelector("[data-storm-active]")) theme(t.querySelector("[data-storm-active]") ? "#5A3A06" : "#B3122A");
+      if (!t.querySelector("[data-focus]") && !t.querySelector("[data-storm-active]")) theme("#000000");
+      if (t.querySelector("[data-focus]") || t.querySelector("[data-storm-active]")) theme(t.querySelector("[data-storm-active]") ? "#3A2810" : "#C41A12");
     }
   });
   doc.addEventListener("DOMContentLoaded", function () {
     mount(doc); refreshStatus();
-    if (doc.querySelector("#screen [data-focus]")) theme("#B3122A");
+    if (doc.querySelector("#screen [data-focus]")) theme("#C41A12");
   });
   window.addEventListener("load", function () { setTimeout(probeFrames, 600); });
   // seat picker: the avatar chip opens a sheet with one row per seat

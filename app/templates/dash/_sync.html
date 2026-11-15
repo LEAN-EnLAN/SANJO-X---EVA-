@@ -1,8 +1,8 @@
 <section class="flex flex-col gap-4 rounded-card border border-line bg-surface p-5">
   <div class="flex items-center justify-between gap-3">
     <div class="flex items-center gap-3">{{ crate::web::ui::pic("earth-link", "size-12")|safe }}<h2 class="text-base text-ink">{% if ground %}From the ship{% else %}Ground sync{% endif %}</h2></div>
-    {% if link.connected && link.up %}<span class="inline-flex items-center gap-1 rounded-full border border-info/40 bg-info/10 px-2.5 py-0.5 text-xs font-medium text-info">Link open</span>
-    {% else if link.connected %}<span class="inline-flex items-center gap-1 rounded-full border border-warn/40 bg-warn/10 px-2.5 py-0.5 text-xs font-medium text-warn">Contact gap · queued</span>
+    {% if link.connected && link.up %}<span class="inline-flex items-center gap-1 rounded-full border border-info/40 px-2.5 py-0.5 text-xs font-medium text-info">Link open</span>
+    {% else if link.connected %}<span class="inline-flex items-center gap-1 rounded-full border border-warn/40 px-2.5 py-0.5 text-xs font-medium text-warn">Contact gap · queued</span>
     {% else %}<span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">{% if ground %}Waiting for the ship{% else %}No ground link{% endif %}</span>{% endif %}
   </div>
   {% if ground %}
@@ -14,7 +14,7 @@
   {% else %}
   <ol class="grid grid-cols-3 gap-2">
     <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile bg-raised px-4 py-3 text-ink"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Saved{{ crate::web::ui::pic("logbook", "pic-bare size-7")|safe }}</span><span class="text-2xl tracking-tight tabular-nums">{{ signed }}</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">signed on board</span></li>
-    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile border border-info/40 bg-info/10 px-4 py-3 text-info"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Sent{{ crate::web::ui::pic("send", "pic-bare size-7")|safe }}</span><span class="text-2xl tracking-tight tabular-nums">{{ sent }}</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">{% if link.rtt_ms > 0.0 %}≈ {{ "{:.1}"|format(link.rtt_ms / 1000.0) }} s round trip{% else %}waiting{% endif %}</span></li>
+    <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile border border-info/40 px-4 py-3 text-info"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Sent{{ crate::web::ui::pic("send", "pic-bare size-7")|safe }}</span><span class="text-2xl tracking-tight tabular-nums">{{ sent }}</span><span class="absolute top-1/2 -right-2 z-10 grid size-4 -translate-y-1/2 place-items-center rounded-full bg-background text-xs text-muted">›</span></div><span class="text-xs text-muted">{% if link.rtt_ms > 0.0 %}≈ {{ "{:.1}"|format(link.rtt_ms / 1000.0) }} s round trip{% else %}waiting{% endif %}</span></li>
     <li class="flex flex-col gap-3"><div class="relative flex h-20 flex-col justify-between rounded-tile bg-ink px-4 py-3 text-on-light"><span class="flex items-center justify-between gap-1 text-xs uppercase tracking-label">Confirmed{{ crate::web::ui::pic("ack", "pic-bare size-7")|safe }}</span><span class="text-2xl tracking-tight tabular-nums">{{ acked }}</span></div><span class="text-xs text-muted">acknowledged</span></li>
   </ol>
   {% endif %}
@@ -43,6 +43,6 @@
   </div>
   {% endif %}
   {% for msg in messages %}
-  <p class="flex items-start gap-2 rounded-tile bg-info/5 px-3 py-2 text-xs text-ink"><span class="text-info">{{ crate::web::ui::ic("satellite", 13)|safe }}</span><span><span class="text-muted">{{ msg.from }} → {{ msg.to }} ·</span> {{ msg.text }}</span></p>
+  <p class="flex items-start gap-2 rounded-tile px-3 py-2 text-xs text-ink border border-line"><span class="text-info">{{ crate::web::ui::ic("satellite", 13)|safe }}</span><span><span class="text-muted">{{ msg.from }} → {{ msg.to }} ·</span> {{ msg.text }}</span></p>
   {% endfor %}
 </section>

@@ -11,7 +11,7 @@
   function toast(text, tone) {
     var host = document.getElementById("toast");
     if (!host) return;
-    var cls = tone === "bad" ? "border-critical/50 bg-critical/15 text-critical" : "border-ok/40 bg-ok/10 text-ok";
+    var cls = tone === "bad" ? "border-critical/50 bg-critical/15 text-critical" : "border-ok/40 text-ok";
     host.innerHTML = '<p class="toast pointer-events-auto rounded-full border px-4 py-2 text-sm ' + cls + '" data-toast></p>';
     host.firstChild.textContent = text;
     settleToast(host.firstChild);

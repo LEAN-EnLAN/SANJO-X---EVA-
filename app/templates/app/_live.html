@@ -26,10 +26,10 @@
 <a {% call u::go("/app/band", p.seat, "push") %} class="card press flex flex-col gap-3" data-tint="brand" data-morph-src="band">
   <div class="flex items-center justify-between gap-2">
     <h2 class="text-h3 text-ink">Your wristband</h2>
-    <span class="badge badge-dot {% if p.suit() %}bg-info/15 text-info{% else %}bg-ok/15 text-ok{% endif %}">{% if p.suit() %}Suit mode{% else %}Joined{% endif %}</span>
+    <span class="badge badge-dot {% if p.suit() %} text-info{% else %} text-ok{% endif %} border border-line">{% if p.suit() %}Suit mode{% else %}Joined{% endif %}</span>
   </div>
   <div class="flex items-center gap-4">
-    <span class="band-thumb relative block size-24 shrink-0 overflow-hidden rounded-tile bg-[radial-gradient(80%_60%_at_50%_40%,#2A3152,#0F1424)]"><img src="/static/img/band/card.webp" alt="Your wristband" class="float size-full object-cover" width="192" height="160" decoding="async" draggable="false"></span>
+    <span class="band-thumb relative block size-24 shrink-0 overflow-hidden rounded-tile bg-[radial-gradient(80%_60%_at_50%_40%,#141414,#0B0B0B)]"><img src="/static/img/band/card.webp" alt="Your wristband" class="float size-full object-cover" width="192" height="160" decoding="async" draggable="false"></span>
     <div class="flex min-w-0 flex-1 flex-col gap-3">
       <div class="flex flex-col gap-1.5"><span class="flex items-baseline justify-between text-label"><span class="text-ink">Screen</span><span class="num text-muted">{{ p.vitals.screen_batt }}%</span></span><span class="meter{% if p.vitals.screen_batt < 20 %} is-low{% endif %}" data-grow style="--pct: {{ p.vitals.screen_batt }}"><i></i></span></div>
       <div class="flex flex-col gap-1.5"><span class="flex items-baseline justify-between text-label"><span class="text-ink">Sensor</span><span class="num {% if p.vitals.base_batt < 20 %}text-warn{% else %}text-muted{% endif %}">{{ p.vitals.base_batt }}%</span></span><span class="meter{% if p.vitals.base_batt < 20 %} is-low{% endif %}" data-grow style="--pct: {{ p.vitals.base_batt }}"><i></i></span></div>

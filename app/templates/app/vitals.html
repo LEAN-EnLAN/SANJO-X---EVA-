@@ -6,7 +6,7 @@
 </div>
 <figure class="card-hero relative shrink-0 p-0" data-tint="{{ crate::web::pages::vital_tint(kind) }}">
   <img src="/static/img/hero/{{ hero }}.webp" alt="{{ hero_alt }}" class="block aspect-4/3 w-full object-cover" width="1200" height="800" decoding="async" style="view-transition-name: vital-hero">
-  <span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,#070A14F0_100%)]" aria-hidden="true"></span>
+  <span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,#000000F0_100%)]" aria-hidden="true"></span>
   <figcaption class="absolute right-6 bottom-5 left-6 flex flex-col gap-2">
     <span class="badge badge-dot self-start {{ crate::web::ui::badge(tone) }}">{{ word }}</span>
     <h1 class="flex items-baseline gap-2 text-ink"><span class="text-vital-xl" data-count="detail-{{ kind }}" style="view-transition-name: vital-value">{{ value }}</span>{% if !unit.is_empty() %}<span class="text-xl font-medium text-muted">{{ unit }}</span>{% endif %}</h1>

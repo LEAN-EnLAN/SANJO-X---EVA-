@@ -1,7 +1,7 @@
 {% if part == "face" %}
 <div class="w-time-block">
   <p class="w-time num" data-wrist-time aria-label="Ship time {{ time }}"><span>{{ self.hh() }}</span><span class="w-colon">:</span><span>{{ self.mm() }}</span></p>
-  <p class="w-day">Day {{ day }} · to Mars</p>
+  <p class="w-day">Day {{ day }} · in space</p>
 </div>
 <div class="w-vcol">
   <p class="w-vrow{% if self.hr_bad() %} is-bad{% endif %}" style="--beat: {{ l.beat_ms() }}ms"><span class="w-dot beating" style="background: var(--color-heart)"></span><span class="w-vnum num" data-count="w-heart">{% if l.p.vitals.hr == 0 %}—{% else %}{{ l.p.vitals.hr }}{% endif %}</span><span class="w-vunit">bpm</span></p>

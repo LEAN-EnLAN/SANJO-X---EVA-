@@ -34,6 +34,6 @@
   <input id="tf-plan-reminder" name="arg.text" required maxlength="200" autocomplete="off" placeholder="{{ reminder.placeholder }}" class="h-10 min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-muted focus-visible:outline-none">
   <label class="sr-only" for="tf-plan-in">In</label>
   <select id="tf-plan-in" name="arg.in_min" data-int class="h-10 rounded-full border border-line bg-raised px-2 text-xs text-ink"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="60">1 h</option><option value="120">2 h</option></select>
-  <button type="submit" class="press inline-grid size-12 shrink-0 place-items-center rounded-full bg-grad-mood text-on-light e2" aria-label="{{ reminder.label }}">{{ crate::web::ui::ic("plus", 16)|safe }}</button>
+  <button type="submit" class="press inline-grid size-12 shrink-0 place-items-center rounded-full text-mood shadow-[inset_0_0_0_1px_#2A2A2A]" aria-label="{{ reminder.label }}">{{ crate::web::ui::ic("plus", 16)|safe }}</button>
 </form>
 <button type="button" class="btn-secondary press" {% call u::tool(summary) %}>{{ crate::web::ui::ic(summary.icon, 16)|safe }}{{ summary.label }}</button>

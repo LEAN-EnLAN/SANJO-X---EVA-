@@ -89,9 +89,9 @@ pub fn registry() -> Vec<ToolDef> {
         ToolDef { name: "add_journal_entry", description: "Save a private journal entry in the person's words. Shared with the crew lead only if shared=true.", parameters: || json!({"type":"object","properties":{"text":{"type":"string","maxLength":4000},"valence":{"type":"integer","minimum":1,"maximum":5},"labels":{"type":"array","items":{"type":"string","maxLength":40},"maxItems":12},"affects":{"type":"array","items":{"type":"string","maxLength":40},"maxItems":12},"shared":{"type":"boolean","default":false}},"required":["text"],"additionalProperties":false}) },
         ToolDef { name: "log_meal", description: "Log a meal from a text description or from a photo already described by the vision pipeline.", parameters: || json!({"type":"object","properties":{"text":{"type":"string","maxLength":500},"kind":{"type":"string","enum":["Breakfast","Lunch","Dinner","Snack"]},"kcal":{"type":"integer","minimum":0,"maximum":3000},"from_photo":{"type":"boolean"}},"required":["text"],"additionalProperties":false}) },
         ToolDef { name: "log_water", description: "Add water the person drank, in millilitres.", parameters: || json!({"type":"object","properties":{"ml":{"type":"integer","minimum":50,"maximum":2000}},"required":["ml"],"additionalProperties":false}) },
-        ToolDef { name: "start_ecg_check", description: "Start an on-demand 30 second wrist ECG: the person rests one finger of each hand on the two metal pads of the wristband's screen part.", parameters: || json!({"type":"object","properties":{},"additionalProperties":false}) },
-        ToolDef { name: "request_help", description: "Open an emergency case and send the nearest trained passenger to help. Use when someone may be in danger. Eva guides; it never decides a shock.", parameters: || json!({"type":"object","properties":{"seat":{"type":"string","description":"Who needs help. Defaults to the person talking."},"reason":{"type":"string","maxLength":200}},"required":["reason"],"additionalProperties":false}) },
-        ToolDef { name: "call_aed_runner", description: "Send the nearest trained passenger to fetch the AED from the emergency station in corridor B. The AED, not Eva, decides whether to shock.", parameters: || json!({"type":"object","properties":{"seat":{"type":"string","description":"Who the AED is for."}},"required":["seat"],"additionalProperties":false}) },
+        ToolDef { name: "start_ecg_check", description: "Start an on-demand 30 second wrist ECG: the person rests two fingers of the same hand (the index and the little finger lifted) on the two metal pads of the wristband's screen part for about 30 seconds.", parameters: || json!({"type":"object","properties":{},"additionalProperties":false}) },
+        ToolDef { name: "request_help", description: "Open an emergency case and send the nearest passenger to help. Use when someone may be in danger. Eva guides; it never decides a shock.", parameters: || json!({"type":"object","properties":{"seat":{"type":"string","description":"Who needs help. Defaults to the person talking."},"reason":{"type":"string","maxLength":200}},"required":["reason"],"additionalProperties":false}) },
+        ToolDef { name: "call_aed_runner", description: "Send the nearest passenger to fetch the AED from the emergency station in corridor B. The AED, not Eva, decides whether to shock.", parameters: || json!({"type":"object","properties":{"seat":{"type":"string","description":"Who the AED is for."}},"required":["seat"],"additionalProperties":false}) },
         ToolDef { name: "daily_summary", description: "Summarise the person's day: vitals versus their usual, water, meals, sleep, mood entries and open alerts.", parameters: || json!({"type":"object","properties":{"seat":{"type":"string"}},"additionalProperties":false}) },
         ToolDef { name: "export_report", description: "Prepare an export of records: csv, json or a printable html report (print to PDF). Returns a link.", parameters: || json!({"type":"object","properties":{"format":{"type":"string","enum":["csv","json","html"]},"seat":{"type":"string","description":"Only this passenger; omit for everyone."}},"required":["format"],"additionalProperties":false}) },
         ToolDef { name: "send_to_ground", description: "Send a message or record to the ground team over the uplink. It is signed on board, queued, and acknowledged by the ground.", parameters: || json!({"type":"object","properties":{"text":{"type":"string","maxLength":1000},"urgent":{"type":"boolean","default":false}},"required":["text"],"additionalProperties":false}) },
@@ -227,7 +227,7 @@ fn run(state: &Shared, seat: &str, name: &str, a: &Value) -> ToolResult {
             let Some(p) = w.passenger_mut(seat) else { return ToolResult::err("unknown seat") };
             p.ecg_until_ms = Some(now + 30_000);
             p.ecg = Some(EcgResult { ts_ms: now, result: "recording".into() });
-            ToolResult::ok("Rest one finger of each hand on the two metal pads. Stay still for 30 seconds.", json!({"seconds": 30}))
+            ToolResult::ok("Rest two fingers of the same hand on the two metal pads, the index and the little finger lifted. Stay still for about 30 seconds.", json!({"seconds": 30}))
         }
         "request_help" => {
             let who = arg_str(a, "seat").unwrap_or(seat).to_uppercase();
@@ -244,7 +244,7 @@ fn run(state: &Shared, seat: &str, name: &str, a: &Value) -> ToolResult {
             let Some(who) = arg_str(a, "seat").map(str::to_uppercase) else { return ToolResult::err("seat is required") };
             match super::assign_aed_runner(state, &who) {
                 Some(h) => ToolResult::ok(format!("{} is bringing the AED from corridor B. The AED decides shocks.", h.name), json!({"runner": h})),
-                None => ToolResult::err("No trained passenger free to fetch the AED; crew lead notified."),
+                None => ToolResult::err("No passenger free to fetch the AED; crew lead notified."),
             }
         }
         "daily_summary" => {

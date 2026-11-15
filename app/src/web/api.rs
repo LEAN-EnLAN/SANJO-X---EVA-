@@ -196,7 +196,7 @@ pub fn mood_after_tool(state: &Shared, seat: &str, name: &str, args: &Value, ok:
 }
 
 pub fn toast(text: &str, ok: bool) -> String {
-    let tone = if ok { "border-ok/40 bg-ok/10 text-ok" } else { "border-critical/50 bg-critical/15 text-critical" };
+    let tone = if ok { "border-ok/40 text-ok" } else { "border-critical/50 bg-critical/15 text-critical" };
     let esc = text.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;");
     format!(r#"<p class="toast pointer-events-auto rounded-full border px-4 py-2 text-sm {tone}" data-toast>{esc}</p>"#)
 }
@@ -292,7 +292,7 @@ pub async fn eva_tts(State(state): State<Shared>, headers: HeaderMap, axum::Form
     // the voice only reads Eva's own, in-scope lines (layer 4 on the input)
     let text = match guard::check_output(&f.text) {
         Some(_) => guard::REDIRECT.to_string(),
-        None => f.text,
+        None => guard::copy_rules(&f.text),
     };
     match speech::speak_or_fallback(&state.agent, &state.http, text, state.clock.real_ms()).await {
         speech::Spoken::Audio(resp) => {
@@ -677,8 +677,8 @@ pub struct TapForm {
 /// Answers with the grid, plus the Eva strip out of band.
 pub async fn station_tap(State(state): State<Shared>, axum::Form(f): axum::Form<TapForm>) -> Response {
     let Some(h) = state.station_device.get() else { return (StatusCode::NOT_FOUND, "no station on this node").into_response() };
-    if !(1..=12).contains(&f.n) {
-        return (StatusCode::BAD_REQUEST, "compartment 1 to 12").into_response();
+    if f.n == 0 || f.n as usize > crate::station::COMPARTMENTS.len() {
+        return (StatusCode::BAD_REQUEST, "unknown compartment").into_response();
     }
     h.tap(f.n);
     let grid = StationGrid::build(&state).map(|g| render(&g)).unwrap_or_default();

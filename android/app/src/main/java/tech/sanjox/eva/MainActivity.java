@@ -183,7 +183,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(true); // uploads of content:// photos picked or captured
         s.setSupportMultipleWindows(false);
-        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.2");
+        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.3");
         // Smoothness (APP-POLISH §8): the page owns overscroll (pull to refresh) and its own type scale; the
         // WebView is always full screen, so pre-rastering off-screen tiles avoids checkerboarding on fast scroll.
         // The default hardware layer is kept (no setLayerType anywhere).

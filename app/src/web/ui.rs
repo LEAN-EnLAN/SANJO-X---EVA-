@@ -46,12 +46,12 @@ pub fn mood_word(v: impl Val<u8>) -> &'static str {
 /// Badge fill and text for a tone: the tone at 16 % behind the tone's own text, no border.
 pub fn badge(tone: &str) -> &'static str {
     match tone {
-        "ok" => "bg-ok/15 text-ok",
-        "warn" => "bg-warn/15 text-warn",
+        "ok" => "border border-line text-ok",
+        "warn" => "border border-line text-warn",
         "critical" => "bg-critical/15 text-critical",
-        "info" => "bg-info/15 text-info",
-        "brand" => "bg-brand/15 text-brand",
-        _ => "bg-white/8 text-muted",
+        "info" => "border border-line text-info",
+        "brand" => "border border-line text-brand",
+        _ => "border border-line text-muted",
     }
 }
 pub fn dot(tone: &str) -> &'static str {
@@ -77,10 +77,10 @@ pub fn text(tone: &str) -> &'static str {
 }
 pub fn avatar(tone: &str) -> &'static str {
     match tone {
-        "ok" => "bg-ok/15 text-ok",
-        "warn" => "bg-warn/15 text-warn",
+        "ok" => "border border-line text-ok",
+        "warn" => "border border-line text-warn",
         "critical" => "bg-critical/20 text-critical",
-        "info" => "bg-info/15 text-info",
+        "info" => "border border-line text-info",
         _ => "bg-elevated text-ink",
     }
 }
@@ -147,7 +147,7 @@ pub fn trend(data: &[u16], usual: (u16, u16), width: f32, height: f32) -> (Strin
 /// One 3D icon from the Codex kit (`static/img/icons/<name>.webp`, 256 px) on its soft
 /// disc (`.pic` in styles/app.css). `class` sizes the disc (`size-12`) and may add more.
 /// Content icons use these; tab bar, toolbars, chips and buttons with words keep the
-/// line icons below (`ic`). The art is AI-generated; the notice is in README.md.
+/// line icons below (`ic`). The art is generated with Super Intelligence; the notice is in README.md.
 pub fn pic(name: &str, class: &str) -> String {
     format!(r#"<span class="pic {class}" aria-hidden="true"><img src="/static/img/icons/{name}.webp" alt="" width="256" height="256" decoding="async" draggable="false"></span>"#)
 }
@@ -156,9 +156,9 @@ pub fn pic(name: &str, class: &str) -> String {
 fn ic_fill(name: &str) -> Option<&'static str> {
     Some(match name {
         "home-fill" => r#"<path d="M3.2 10.6 12 3l8.8 7.6V21h-6.3v-6.3h-5V21H3.2z" fill="currentColor" stroke="none"/>"#,
-        "list-fill" => r##"<rect x="3" y="3.5" width="18" height="17" rx="4" fill="currentColor" stroke="none"/><path d="M10 8.5h7M10 12h7M10 15.5h7M6.5 8.5h.01M6.5 12h.01M6.5 15.5h.01" stroke="#0A0E1A"/>"##,
+        "list-fill" => r##"<rect x="3" y="3.5" width="18" height="17" rx="4" fill="currentColor" stroke="none"/><path d="M10 8.5h7M10 12h7M10 15.5h7M6.5 8.5h.01M6.5 12h.01M6.5 15.5h.01" stroke="#0C0C0C"/>"##,
         "utensils-fill" => r#"<path d="M5 3v5.2a2.2 2.2 0 0 0 1.4 2V21h1.8V10.2A2.2 2.2 0 0 0 9.6 8.2V3H8.4v5H7.7V3H6.9v5h-.7V3z" fill="currentColor" stroke="none"/><path d="M18.4 3c-2.6.9-4.3 3.7-4.3 7.9h2.6V21h1.7z" fill="currentColor" stroke="none"/>"#,
-        "records-fill" => r##"<rect x="4.5" y="2.5" width="15" height="19" rx="3" fill="currentColor" stroke="none"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4" stroke="#0A0E1A"/>"##,
+        "records-fill" => r##"<rect x="4.5" y="2.5" width="15" height="19" rx="3" fill="currentColor" stroke="none"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4" stroke="#0C0C0C"/>"##,
         _ => return None,
     })
 }

@@ -283,7 +283,7 @@ pub async fn dash(State(state): State<Shared>) -> Response {
     };
     let p = DashPage {
         ground,
-        eyebrow: format!("{} · day {} of {} · ship time {}", weekday, now / clock::DAY_MS + 1, state.clock.mission_days, clock::hhmm(now)),
+        eyebrow: format!("{} · day {} in space · ship time {}", weekday, now / clock::DAY_MS + 1, clock::hhmm(now)),
         greeting,
         person,
         person_role,

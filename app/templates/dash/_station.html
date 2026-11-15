@@ -4,10 +4,10 @@
     {% let (label, tone) = self.status() %}
     <span class="inline-flex items-center gap-1 badge {{ crate::web::ui::badge(tone) }}" data-station-status><span class="relative inline-flex size-2.5 shrink-0 rounded-full {{ crate::web::ui::dot(tone) }}"></span>{{ label }}</span>
   </header>
-  <p class="text-xs text-muted">{% if ground %}Corridor B · reports arrive as signed ship records{% else %}Corridor B · 12 compartments · a client of this hub{% endif %}</p>
+  <p class="text-xs text-muted">{% if ground %}Corridor B · reports arrive as signed ship records{% else %}Corridor B · numbered compartments · a client of this hub{% endif %}</p>
   {% if !ground %}
   <div class="grid grid-cols-6 gap-1.5" role="img" aria-label="Compartments as last reported">
-    {% for (nn, st) in cells %}<span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums {% if st == &"lit" %}bg-station text-on-light{% else if st == &"taken" %}bg-ok/20 text-ok{% else if st == &"open" %}bg-info/20 text-info{% else %}bg-raised text-muted{% endif %}" title="{{ nn }} · {{ st }}">{{ nn }}</span>{% endfor %}
+    {% for (nn, st) in cells %}<span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums {% if st == &"lit" %}bg-station text-on-light{% else if st == &"taken" %}border border-ok/40 text-ok{% else if st == &"open" %}border border-info/40 text-info{% else %}border border-line text-muted{% endif %}" title="{{ nn }} · {{ st }}">{{ nn }}</span>{% endfor %}
   </div>
   {% endif %}
   <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">

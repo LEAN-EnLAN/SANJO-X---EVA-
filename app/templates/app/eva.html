@@ -10,7 +10,7 @@
     {% call m::big(c.mood, c.art, "size-32 min-[400px]:size-40") %}
   </div>
   <h1 class="relative text-center text-h1 text-ink">Hi {{ c.first }}. How can I help?</h1>
-  <p class="badge badge-dot relative h-7 bg-eva/15 text-eva"><span data-eva-status>Reading your wristband live</span></p>
+  <p class="badge badge-dot relative h-7 text-eva border border-line"><span data-eva-status>Reading your wristband live</span></p>
 </div>
 
 {% call u::status_banner(c, false) %}
@@ -38,14 +38,13 @@
     <input type="hidden" name="seat" value="{{ c.seat }}">
     <label class="press absolute left-1.5 inline-grid size-10 cursor-pointer place-items-center rounded-full text-muted" aria-label="Send a photo">{{ crate::web::ui::ic("camera", 20)|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-seat="{{ c.seat }}"></label>
     <label class="sr-only" for="eva-text">Message Eva</label>
-    <input id="eva-text" name="text" autocomplete="off" required maxlength="1000" placeholder="Ask Eva" class="h-[3.25rem] min-w-0 flex-1 rounded-[26px] bg-raised pr-14 pl-12 text-body text-ink shadow-[inset_0_1px_0_#FFFFFF14] placeholder:text-muted focus-visible:outline-2 focus-visible:outline-eva">
-    <button type="submit" aria-label="Send" class="press absolute right-1.5 inline-grid size-10 place-items-center rounded-full bg-grad-eva text-on-light">{{ crate::web::ui::ic("send", 20)|safe }}</button>
+    <input id="eva-text" name="text" autocomplete="off" required maxlength="1000" placeholder="Ask Eva" class="h-[3.25rem] min-w-0 flex-1 rounded-[26px] bg-background pr-14 pl-12 text-body text-ink shadow-[inset_0_0_0_1px_#2A2A2A] placeholder:text-muted focus-visible:outline-2 focus-visible:outline-eva">
+    <button type="submit" aria-label="Send" class="press absolute right-1.5 inline-grid size-10 place-items-center rounded-full text-eva">{{ crate::web::ui::ic("send", 20)|safe }}</button>
   </form>
   <div class="flex items-center justify-center gap-6">
     <label class="icon-btn press cursor-pointer" aria-label="Send a short video">{{ crate::web::ui::ic("video", 24)|safe }}<input type="file" accept="video/*" capture="environment" class="sr-only" data-eva-video data-seat="{{ c.seat }}"></label>
     <span class="relative grid size-20 place-items-center">
-      <span class="mic-halo absolute inset-0 rounded-full bg-eva/20"></span>
-      <button type="button" class="press relative inline-grid size-[4.5rem] shrink-0 touch-none place-items-center rounded-full bg-grad-eva text-on-light e2" aria-label="Hold to talk" data-eva-mic data-seat="{{ c.seat }}">{{ crate::web::ui::ic("mic", 28)|safe }}</button>
+      <button type="button" class="press relative inline-grid size-[4.5rem] shrink-0 touch-none place-items-center rounded-full bg-background text-eva shadow-[inset_0_0_0_1.5px_var(--color-eva)]" aria-label="Hold to talk" data-eva-mic data-seat="{{ c.seat }}">{{ crate::web::ui::ic("mic", 28)|safe }}</button>
     </span>
     <label class="icon-btn press cursor-pointer has-checked:bg-eva/25 has-checked:text-eva has-focus-visible:outline-2 has-focus-visible:outline-eva" title="Voice replies"><input type="checkbox" data-eva-voice class="sr-only">{{ crate::web::ui::ic("speaker", 24)|safe }}<span class="sr-only">Voice replies</span></label>
   </div>

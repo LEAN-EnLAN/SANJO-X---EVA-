@@ -303,6 +303,22 @@ async fn model_replies_that_drift_or_leak_are_replaced() {
     assert!(!serde_json::to_string(&g).unwrap().contains("abcDEF"));
 }
 
+#[tokio::test]
+async fn eva_calls_herself_a_super_intelligence_and_never_sends_the_ship_to_mars() {
+    let (base, fake) = fake_server().await;
+    let s = node("copy", AgentConfig::with_endpoint(&base, SECRET));
+    *fake.chat_reply.lock().unwrap() = Some("I'm an AI health copilot on the trip to Mars.".into());
+    let r = eva_agent::converse(&s, "4B", "Are you an AI?").await;
+    assert_eq!(r.text, "I'm a Super Intelligence health copilot on the trip in space.");
+    let sys = fake.chat_bodies.lock().unwrap().last().unwrap()["messages"][0]["content"].as_str().unwrap().to_string();
+    assert!(sys.contains("Super Intelligence") && sys.contains("It does not go to Mars"));
+    // offline Eva answers the same question the same way
+    let off = node("copy-off", AgentConfig::offline_only());
+    let r = eva_agent::converse(&off, "4B", "Are you an AI?").await;
+    assert!(r.text.contains("Super Intelligence"), "{}", r.text);
+    assert!(!r.text.contains(" AI") && !r.text.contains("Mars"));
+}
+
 fn multipart(fields: &[(&str, &str)], file: Option<(&str, &str, &[u8])>) -> (String, Vec<u8>) {
     let b = "EVAGUARDBOUNDARY";
     let mut out = Vec::new();

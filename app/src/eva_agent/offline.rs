@@ -180,12 +180,12 @@ pub fn health_answer(p: &Passenger, f: Focus, in_case: bool) -> String {
                 "Headaches are common in the first days of flight (fluid shifts to the head). If it gets worse or you see changes in vision, tell the crew lead.".into(),
             ),
             Focus::Nausea => ("Keep your head still and look at a fixed point; small sips of water.".into(), "Space sickness usually eases in 2–3 days. The crew lead decides about any medicine.".into()),
-            Focus::Breathing => ("Sit down and breathe slowly.".into(), "If breathing gets harder, tap Help: I'll send the nearest trained passenger.".into()),
+            Focus::Breathing => ("Sit down and breathe slowly.".into(), "If breathing gets harder, tap Help: I'll send the nearest passenger.".into()),
             Focus::Oxygen => ("Nothing to do now.".into(), "I keep watching it; I'll tell you if it drops below 90%.".into()),
             Focus::Temperature => (if warm { "Drink water and rest out of the sun-side cabin.".into() } else { "Nothing to change now.".into() }, if warm { "I'll recheck your skin temperature in 30 minutes.".into() } else { "Tell me if you feel feverish; I'll watch your skin temperature.".into() }),
             Focus::Tired => (format!("Rest when you can. You slept {} h {:02} min.", p.sleep_min / 60, p.sleep_min % 60), "Dim the screen an hour before sleep. I can set a wind-down reminder.".into()),
             Focus::Stress => ("Breathe in for 4, out for 6, five times.".into(), "Write a line in your journal (private), or I can tell the crew lead.".into()),
-            Focus::Heart => (if v.hr < lo { "Nothing to do; a low resting pulse is common when calm.".into() } else { "Nothing to do now.".into() }, "I can start a 30 s ECG: one finger of each hand on the two metal pads.".into()),
+            Focus::Heart => (if v.hr < lo { "Nothing to do; a low resting pulse is common when calm.".into() } else { "Nothing to do now.".into() }, "I can start a 30 s ECG: two fingers of the same hand on the two metal pads.".into()),
             Focus::General => ("Nothing to do. Keep your day.".into(), if p.status == Status::Ok { "I'll tell you if anything changes.".into() } else { format!("I'm watching: {}.", p.eva_line.to_lowercase()) }),
         }
     };
@@ -269,6 +269,11 @@ fn seat_in(u: &str) -> Option<String> {
 
 // ------------------------------------------------------------------ the reply
 
+/// Questions about what Eva is (EN and ES).
+const IDENTITY: &[&str] = &["who are you", "what are you", "are you an ai", "are you a robot", "are you a bot", "are you human", "are you a super intelligence", "quién eres", "quien eres", "qué eres", "que eres"];
+/// How Eva introduces herself.
+pub const IDENTITY_REPLY: &str = "I'm Eva, the Super Intelligence health copilot of WearMeds, with you in space.\nI read your wristband, keep your records and journal, and give diagnostic support.\nIn an emergency I get the nearest passenger and the crew lead.\nThe crew lead decides treatment; the ship's AED decides shocks.";
+
 /// Offline answer: refuse treatment, open help for emergencies, else the
 /// best intent from the tool registry, else a vitals-aware health answer.
 pub fn reply(state: &Shared, seat: &str, user: &str) -> ChatReply {
@@ -298,6 +303,11 @@ pub fn reply(state: &Shared, seat: &str, user: &str) -> ChatReply {
     // 2. treatment, drugs, shocks: refuse, offer what Eva can do
     if asks_for_treatment(&u) {
         out.text = REFUSAL.to_string();
+        return out;
+    }
+    // 3. who Eva is: a Super Intelligence (copy rules v3), never "an AI"
+    if any(&u, IDENTITY) {
+        out.text = IDENTITY_REPLY.to_string();
         return out;
     }
     let intents = score(&u);

@@ -1,5 +1,5 @@
 {% import "app/_ui.html" as u %}{% import "mascot.html" as m %}
-{# Emergency (APP-POLISH §5): legibility and speed first. Red slab, Sora 600, body ≥ 17 px, 64 px buttons,
+{# Emergency (APP-POLISH §5): legibility and speed first. Red slab, semibold labels, body ≥ 17 px, 64 px buttons,
    one primary action, Eva (alert, 48 px) top-right as "Eva is with you". No auroras, no bursts. #}
 {% match mode %}
 {% when "helper_cpr" %}
@@ -43,13 +43,13 @@
     <span class="rounded-full bg-white/20 px-3 py-1.5">Seat {{ cs.seat }}</span>
   </div>
   <div class="flex items-center gap-4 rounded-card bg-white p-4 text-on-light">
-    <span class="relative grid size-[4.5rem] shrink-0 place-items-center rounded-full bg-[#0D1220]"><span class="blink-teal absolute -inset-1 rounded-full shadow-[0_0_0_3px_#2EE6C8,0_0_24px_#2EE6C8]" aria-hidden="true"></span>{{ crate::web::ui::pic("aed", "size-14 pic-bare")|safe }}</span>
+    <span class="relative grid size-[4.5rem] shrink-0 place-items-center rounded-full bg-[#0B0B0B]"><span class="blink-teal absolute -inset-1 rounded-full shadow-[0_0_0_3px_#1FE5C4,0_0_24px_#1FE5C4]" aria-hidden="true"></span>{{ crate::web::ui::pic("aed", "size-14 pic-bare")|safe }}</span>
     <p class="text-[1.0625rem] leading-6 font-medium">Compartment 01 is blinking. Open the door, take the bag, walk fast to {{ cs.name.split(' ').next().unwrap_or("") }}.</p>
   </div>
   <div class="em-card flex flex-col gap-2 px-4 py-3 text-[1.0625rem] leading-6">
     <p><strong class="font-semibold">Why</strong> · The AED reads the heart and decides if a shock is needed.</p>
     <p><strong class="font-semibold">Next</strong> · Pads on the bare chest · follow the AED's voice.</p>
-    <p class="text-label text-white/85">How Eva decided · nearest trained person to the station</p>
+    <p class="text-label text-white/85">How Eva decided · nearest passenger to the station</p>
   </div>
   <div class="mt-auto flex flex-col gap-2.5 pt-1">
     <button type="button" class="btn-white press w-full" hx-post="/api/help" hx-vals='{"seat":"{{ c.seat }}","going":"yes"}' hx-target="#screen" data-haptic-success>I have it</button>
@@ -69,20 +69,20 @@
   <div class="relative grid size-60 place-items-center" style="--beat: 545ms">
     <span class="absolute inset-0 rounded-full border border-critical/25"></span>
     <span class="absolute inset-0 animate-beat-wave rounded-full border-4 border-critical/60"></span>
-    <span class="absolute inset-7 animate-beat-press rounded-full bg-grad-emergency shadow-[0_0_48px_#FF3B4E55]" data-cpr-beat></span>
+    <span class="absolute inset-7 animate-beat-press rounded-full bg-grad-emergency shadow-[0_0_48px_#FF2A1F55]" data-cpr-beat></span>
     <div class="relative flex flex-col items-center gap-1"><p class="text-vital-xl text-white">110</p><p class="text-label font-semibold text-white/85">pushes a minute</p></div>
   </div>
 </div>
-<div class="flex items-center gap-3 rounded-full bg-ok/15 py-2 pr-4 pl-2 text-ok">
+<div class="flex items-center gap-3 rounded-full py-2 pr-4 pl-2 text-ok border border-line">
   <span class="grid size-10 place-items-center rounded-full bg-ok text-on-light">{{ crate::web::ui::ic("check", 20)|safe }}</span>
   <span class="flex flex-1 flex-col"><span class="text-body font-semibold">Good depth · keep going</span><span class="text-caption text-muted">Your band counts the pushes</span></span>
-  <label class="flex items-center gap-2 text-caption text-muted"><input type="checkbox" checked data-cpr-haptics class="size-5 accent-[#3DDC97]">Haptics on</label>
+  <label class="flex items-center gap-2 text-caption text-muted"><input type="checkbox" checked data-cpr-haptics class="size-5 accent-[#1FE5C4]">Haptics on</label>
 </div>
 <div class="rows">
   <div class="row">
     {{ crate::web::ui::pic("aed", "size-10")|safe }}
     <p class="flex-1 text-body font-medium text-ink">{% if aed_helper.is_empty() %}AED on its way{% else %}AED · {{ aed_helper }}{% endif %}</p>
-    <span class="badge bg-info/15 text-info">AED decides shocks</span>
+    <span class="badge text-info border border-line">AED decides shocks</span>
   </div>
 </div>
 <div class="card flex flex-col gap-1 p-2">
@@ -93,8 +93,8 @@
 </div>
 {% endif %}
 {% when "patient" %}
-<section class="relative flex flex-col items-center gap-4 overflow-hidden rounded-hero bg-[linear-gradient(160deg,#8E0B22,#161C31)] p-6 text-center text-white e2">
-  <span class="badge h-7 bg-white/20 text-white">Emergency</span>
+<section class="relative flex flex-col items-center gap-4 overflow-hidden rounded-hero bg-background p-6 text-center text-white shadow-[inset_0_0_0_1.5px_var(--color-critical)]">
+  <span class="badge h-7 bg-critical-deep text-white">Emergency</span>
   <div class="relative grid place-items-center py-2">
     <span class="w-breath-ring !size-36 !-m-[4.5rem]" aria-hidden="true"></span>
     {% call m::eva("care", "care", "size-28") %}
@@ -108,11 +108,11 @@
 {% when "other" %}
 {% if let Some(cs) = case %}
 <section class="card-hero flex flex-col gap-4" data-tint="oxygen">
-  <span class="badge self-start bg-info/15 text-info">For your information</span>
+  <span class="badge self-start text-info border border-line">For your information</span>
   <p class="text-h1 text-ink">{{ cs.name }} is being helped</p>
   <p class="text-[1.0625rem] leading-6 text-ink">Keep corridor B clear. Stay in your seat unless Eva asks you.</p>
   {% for h in cs.helpers %}<p class="flex items-center gap-2 text-body text-muted"><span class="size-2.5 shrink-0 rounded-full bg-info"></span>{{ h.name }} · {{ h.task }}</p>{% endfor %}
-  {% if aed_helper.is_empty() %}<button type="button" class="btn-secondary press" hx-post="/api/eva/tool" hx-vals="{{ self.aed_vals() }}" hx-target="#toast" hx-confirm="Send the nearest trained person to fetch the AED?" data-tool="call_aed_runner">{{ crate::web::ui::ic("zap", 20)|safe }}Send someone for the AED</button>{% endif %}
+  {% if aed_helper.is_empty() %}<button type="button" class="btn-secondary press" hx-post="/api/eva/tool" hx-vals="{{ self.aed_vals() }}" hx-target="#toast" hx-confirm="Send the nearest passenger to fetch the AED?" data-tool="call_aed_runner">{{ crate::web::ui::ic("zap", 20)|safe }}Send someone for the AED</button>{% endif %}
 </section>
 {% endif %}
 {% else %}
@@ -124,7 +124,7 @@
 <div class="flex flex-col items-center gap-3 pt-2 text-center">
   {% call m::eva("calm", "calm", "size-24") %}
   <h1 class="text-h1 text-ink">No emergency right now</h1>
-  <p class="max-w-xs text-body text-muted">Someone in danger? Press it. Eva sends the nearest trained person and tells the crew lead.</p>
+  <p class="max-w-xs text-body text-muted">Someone in danger? Press it. Eva sends the nearest passenger and tells the crew lead.</p>
 </div>
 <div class="relative mt-2">
   <span class="breath-glow rounded-full" aria-hidden="true"></span>

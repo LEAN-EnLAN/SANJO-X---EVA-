@@ -12,7 +12,7 @@ Words to keep (team rules): Eva gives **diagnostic support**, guides, records an
 |---|---|---|
 | **Ship hub** | laptop A, on the projector | `https://<A-ip>:8080/dash` (crew dashboard, Mara, crew lead) |
 | **Ana** · 4B · the patient | phone 1 | `https://<A-ip>:8080/app?seat=4B` |
-| **Leo** · 3B · nearest trained passenger | phone 2 | `https://<A-ip>:8080/app?seat=3B` |
+| **Leo** · 3B · nearest passenger | phone 2 | `https://<A-ip>:8080/app?seat=3B` |
 | **Tomás** · 1B · nearest to the AED station | phone 3 | `https://<A-ip>:8080/app?seat=1B` |
 | **Medical station** · corridor B | tablet in landscape (or laptop B in full screen, F11) | `https://<A-ip>:8080/station` |
 | **Ground** · flight surgeon | laptop B (or a second browser tab) | `http://<B-ip>:8081/dash` |
@@ -41,7 +41,7 @@ The terminal prints the LAN address. On each phone: open the address, trust the 
 
 - [ ] All three phones show "Good afternoon, <name>" and a green **Mesh** dot in the header.
 - [ ] Dashboard: roster live (pulse lines moving), mesh card shows 5+ nodes (the station is one).
-- [ ] Station screen: **Hub online**, 12 compartments, all full; the dashboard's station tile says **Online** with the battery. Tablet: auto-lock off, brightness up, landscape.
+- [ ] Station screen: **Hub online**, every compartment full; the dashboard's station tile says **Online** with the battery. Tablet: auto-lock off, brightness up, landscape.
 - [ ] Ground dashboard: **Ship link · On**, "Records received" counting.
 - [ ] Eva badge reads **Groq online** or **offline rules**; both demo fine. With a key, "browser voice (TTS terms pending)" means Groq's voice is not enabled for the org yet: phones speak with their own voice.
 - [ ] Phones: volume up, auto-lock off, brightness up. Laptop: notifications off.
@@ -54,7 +54,7 @@ The terminal prints the LAN address. On each phone: open the address, trust the 
 | **0:00** | Projector on the crew dashboard. | "This is a commercial spacecraft in low Earth orbit, day 96. Fifteen passengers, each with a WearMeds band on the wrist. Meet **Eva**: the health copilot that reads every band live, keeps the logs and the mood journal, gives diagnostic support, and sends signed records to the ground." |
 | **0:20** | Hold up Ana's phone (4B). Tap **Eva**, ask *"How am I doing?"* (type or hold the mic). | "Ana asks Eva. The answer always has four parts: **what to do now, why, how Eva decided, what comes next**. It reads her band against *her own* usual range, not a textbook." |
 | **0:45** | On Ana's phone: **+1 glass of water**; then **Journal**, slide to *Pleasant*, tick a feeling, save. | "Daily life: water, meals, sleep, mood. The journal is private; only what she chooses to share reaches the crew lead." |
-| **1:05** | Ana: **30 s ECG** chip. Show the countdown and the trace. | "On demand, a 30-second wrist ECG from two metal pads on the band's screen. If something looks uneven, it goes to the ground for review." |
+| **1:05** | Ana: **30 s ECG** chip. Show the countdown and the trace. | "On demand, a 30-second wrist ECG: two fingers of the same hand on the two metal pads of the band's screen. If something looks uneven, it goes to the ground for review." |
 | **1:20** | Laptop: **↑ ↑ ↓ ↓ ← → ← → B A** → dev panel → seat 4B → **Cardiac arrest**. Close the panel. | "Now the hard part. Ana's heart stops." *(pause)* "Watch her band: the pulse races, then disappears." |
 | **1:40** | Wait. ~20 s later the band reports no answer. (Short on time: dev panel **+1 min**.) | "Eva doesn't guess. Her reflex rule needs **three signs**: no pulse, no movement, and no answer to the band's 'are you OK?'. A loose band alone never triggers it. No AI model in this loop: it is instant and works with no network." |
 | **2:00** | **WOW.** Hold up Leo's and Tomás's phones next to Ana's, with the station tablet behind them. All three phones turn red at the same moment and compartment **01** on the station glows teal: "Take the AED · Ana, seat 4B". The dashboard jumps Ana to *Needs help now*. | "Three phones and the medical station, same second. **Leo**, three metres away and trained, is asked to start CPR. **Tomás**, nearest to the station in corridor B, is asked to get the AED, and the station lights the exact door he needs. Mara sees the whole case on the dashboard." |

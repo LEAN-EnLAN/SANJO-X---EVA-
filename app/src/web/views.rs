@@ -194,7 +194,7 @@ impl LiveHero {
 // ---------------------------------------------------------------- vitals detail
 
 /// One large detail view per reading (pulse, oxygen, skin temperature) and per daily
-/// habit (sleep, water), each under its hero image (Codex kit, AI-generated; notice in README.md).
+/// habit (sleep, water), each under its hero image (Codex kit, generated with Super Intelligence; notice in README.md).
 #[derive(Template)]
 #[template(path = "app/vitals.html")]
 pub struct VitalsScreen {
@@ -582,14 +582,14 @@ impl ToolSheet {
                 "send_to_ground" => forms.push(ToolForm { name: t.name.into(), label: "Message the ground", icon: "satellite", field: "text", placeholder: "Signed on board, then sent", fixed: vec![] }),
                 "add_journal_entry" => forms.push(ToolForm { name: t.name.into(), label: "Quick journal note", icon: "lock", field: "text", placeholder: "Private unless you share it", fixed: vec![] }),
                 "request_help" => {
-                    let mut b = btn(seat, t.name, "Get help now", "Nearest trained person + crew lead", "siren", json!({"reason": "Help from the tools sheet"}));
-                    b.confirm = "Open an emergency and send the nearest trained person?".into();
+                    let mut b = btn(seat, t.name, "Get help now", "Nearest passenger + crew lead", "siren", json!({"reason": "Help from the tools sheet"}));
+                    b.confirm = "Open an emergency and send the nearest passenger?".into();
                     b.danger = true;
                     emergency.push(b)
                 }
                 "call_aed_runner" => {
                     let mut b = btn(seat, t.name, "Send for the AED", "From the station in corridor B", "zap", json!({"seat": seat}));
-                    b.confirm = "Send the nearest trained person to fetch the AED?".into();
+                    b.confirm = "Send the nearest passenger to fetch the AED?".into();
                     b.danger = true;
                     emergency.push(b)
                 }

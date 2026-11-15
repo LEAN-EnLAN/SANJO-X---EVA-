@@ -27,7 +27,7 @@ One Rust binary (`eva`) serves everything: the astronaut PWA, the crew/ground da
      PWA phones / tablets ◀──── one WebSocket each to the hub (/link) + SSE for the page ──▶                 │
                                 │                                                                            │
   MEDICAL STATION (client) ◀────┘ Eva Link session, role Station: StationCmd ▼  ▲ StationEvent / Status      │
-  12 compartments · Eva screen · door + item sensors · red button · backup battery                           │
+  numbered compartments · Eva screen · door + item sensors · red button · backup battery                           │
   station.rs device side (in `eva demo`: in-process, screen = /station on a tablet or second laptop)         │
         ▲  LoRa broadcast (AppState::air): band no-pulse alarm → station lights 01 by itself;                │
         └─ red button → every wristband. Used when the hub is down; the station buffers and uploads later.   │
@@ -47,7 +47,7 @@ One Rust binary (`eva`) serves everything: the astronaut PWA, the crew/ground da
 | `lib.rs` | module list (the crate is a library so tests and benches can reach everything) |
 | `protocol/` | **Eva Link**: `wire` (varints, CRC-16), `frame` (header, types, priorities), `payload` (incl. `StationCmd`, `StationEvent`, `StationStatus`), `delta` (vitals), `queue` (store-and-forward, ACK/NACK, RTT, `retransmit_now`), `profile` (link simulator), `stats` (bytes), `Endpoint` |
 | `state.rs` | `AppState` (world, chain, clock, mesh, agent config, UI event bus, `hub_down`, the simulated LoRa `air`, station command outbox), `World` (incl. the hub's `StationView`), `LinkStatus`, demo reset |
-| `station.rs` | **the ship's medical station** (ADR-011). Device side: `StationDevice` (12 compartments idle / lit / open / taken with item counts, the Eva screen's message, standalone detection, its send queue as the event buffer, LoRa in and out) and `run_device` over any datagram pipe. Hub side: `StationView`, `light` / `clear` / `restock`, `on_frame` (each report → one signed chain record, "AED taken at the station · mm:ss" on the case, red button → alarm to every app), `band_lora_alarms` while the hub is down |
+| `station.rs` | **the ship's medical station** (ADR-011). Device side: `StationDevice` (numbered compartments, configurable per ship, idle / lit / open / taken with item counts, the Eva screen's message, standalone detection, its send queue as the event buffer, LoRa in and out) and `run_device` over any datagram pipe. Hub side: `StationView`, `light` / `clear` / `restock`, `on_frame` (each report → one signed chain record, "AED taken at the station · mm:ss" on the case, red button → alarm to every app), `band_lora_alarms` while the hub is down |
 | `model.rs` | passengers, statuses, alerts, cases, journal, meals, reminders, chat, Eva moods |
 | `seed.rs` | demo data matching the wireframes (Ana 4B, Leo 3B, Tomás 1B, Priya, Diego, Kwame…) |
 | `clock.rs` | mission clock (day 96, 13:58 at start) with fast-forward |
@@ -66,7 +66,7 @@ Templates live in `app/templates/` (`app/`, `dash/`, `dev/`, `export/`, `station
 ## Data flow of the cardiac case (the demo story)
 
 1. Dev panel → "Cardiac arrest" sets Ana's scenario. The overlay drops her pulse and motion; after 20 s the band reports *no answer*.
-2. `eva_agent::on_tick` → `reflex::evaluate` sees **no pulse + no movement + no answer** → `open_emergency`: nearest trained passenger for CPR (Leo, 3 m), nearest to the AED station for the AED (Tomás). No model involved.
+2. `eva_agent::on_tick` → `reflex::evaluate` sees **no pulse + no movement + no answer** → `open_emergency`: nearest passenger for CPR (Leo, 3 m), nearest to the AED station for the AED (Tomás). No model involved.
 3. Layer 3 logs `alarm` and `case` records; the uplink queues the alarm in the highest priority class.
 4. SSE: helpers' apps receive `go-emergency` and switch screens; the dashboard re-renders roster, KPIs and the case card. `station::on_case_opened` queues `StationCmd` *light 01 · "Take the AED · Ana, seat 4B"*: the medical station's compartment 01 glows teal on `/station`.
 5. Leo taps **I'm going** → CPR screen. Someone opens 01 (a tap on `/station`): the station reports *door opened* and *item taken*; each is a signed `station` record and the case gets **"AED taken at the station · mm:ss"** (or the same line when Tomás taps **I have it**, whichever comes first). The case timeline advances (crew lead notified, CPR started, AED attached and *shock advised by the AED*).

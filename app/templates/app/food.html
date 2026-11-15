@@ -46,7 +46,7 @@
     <label class="press inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-raised text-ink" aria-label="Log it from a photo">{{ crate::web::ui::ic("camera", 18)|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-meal data-seat="{{ c.seat }}"></label>
     <label class="sr-only" for="meal-text">What did you eat?</label>
     <input id="meal-text" name="arg.text" required maxlength="200" autocomplete="off" placeholder="What did you eat?" class="h-11 min-w-0 flex-1 rounded-full border border-line bg-background px-4 text-sm text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-info">
-    <button type="submit" aria-label="Log meal" class="press inline-grid size-12 shrink-0 place-items-center rounded-full bg-grad-food text-on-light e2">{{ crate::web::ui::ic("check", 18)|safe }}</button>
+    <button type="submit" aria-label="Log meal" class="press inline-grid size-12 shrink-0 place-items-center rounded-full text-food shadow-[inset_0_0_0_1px_#2A2A2A] e2">{{ crate::web::ui::ic("check", 18)|safe }}</button>
   </div>
 </form>
 
@@ -61,7 +61,7 @@
     {% else %}<button type="button" class="press flex h-11 flex-1 flex-col justify-end overflow-hidden rounded-t-sm rounded-b-lg border border-line bg-hatch" aria-label="Add a glass, 250 ml" hx-post="/api/eva/tool" hx-vals="{{ self.glass_vals() }}" hx-target="#toast" data-tool="log_water"></button>{% endif %}
     {% endfor %}
   </div>
-  <button type="button" class="press inline-flex h-11 items-center justify-center gap-2 rounded-full bg-info/15 text-sm text-info ring-1 ring-info/30" {% call u::tool(water) %}>{{ crate::web::ui::ic("glass", 16)|safe }}{{ water.label }} · {{ water.hint }}</button>
+  <button type="button" class="press inline-flex h-11 items-center justify-center gap-2 rounded-full text-sm text-info ring-1 ring-info/30" {% call u::tool(water) %}>{{ crate::web::ui::ic("glass", 16)|safe }}{{ water.label }} · {{ water.hint }}</button>
 </section>
 
 <section class="flex flex-col gap-2">

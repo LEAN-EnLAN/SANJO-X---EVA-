@@ -38,24 +38,24 @@
     <section class="w-page w-ecg" data-page="3" data-tint="heart" aria-label="30 second ECG">
       {% if ecg.mode == "recording" %}
       <div class="w-ecg-rec" data-wrist-ecg data-left="{{ ecg.left_ms }}" style="--beat: {{ crate::web::views::beat_ms(ecg.hr) }}ms">
-        <p class="w-ecg-top"><span>Hold still</span><span class="w-count num"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" fill="none" stroke="#FFFFFF24" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#FF4D6A" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" data-wrist-ecg-ring/></svg><span data-wrist-secs>{{ (ecg.left_ms + 999) / 1000 }}</span></span></p>
-        <div class="w-trace ecg-ribbon"><svg viewBox="0 0 960 120" preserveAspectRatio="none" width="300%" height="100%" aria-label="Live ECG trace" role="img"><polyline points="{{ crate::web::ui::ecg_points(9, false, 960.0, 120.0) }}" fill="none" stroke="#FF4D6A" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></div>
+        <p class="w-ecg-top"><span>Hold still</span><span class="w-count num"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" fill="none" stroke="#FFFFFF24" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#F28A1A" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" data-wrist-ecg-ring/></svg><span data-wrist-secs>{{ (ecg.left_ms + 999) / 1000 }}</span></span></p>
+        <div class="w-trace ecg-ribbon"><svg viewBox="0 0 960 120" preserveAspectRatio="none" width="300%" height="100%" aria-label="Live ECG trace" role="img"><polyline points="{{ crate::web::ui::ecg_points(9, false, 960.0, 120.0) }}" fill="none" stroke="#F28A1A" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></div>
         <span class="w-contact {% if ecg.contact_ok %}is-ok{% endif %}" aria-label="{% if ecg.contact_ok %}Good contact{% else %}Press a bit firmer{% endif %}"></span>
         <div class="hidden" hx-get="/app/wrist/ecg?seat={{ c.seat }}" hx-trigger="load delay:{{ ecg.left_ms + 1200 }}ms" hx-target="#screen" data-nav="fade"></div>
       </div>
       {% else if ecg.mode == "result" %}
       <div class="w-ecg-res" data-wrist-ecg-result>
-        <span class="badge badge-dot {% if ecg.uneven %}bg-warn/15 text-warn{% else %}bg-ok/15 text-ok{% endif %} w-badge">{% if ecg.uneven %}For review{% else %}Regular rhythm{% endif %}</span>
+        <span class="badge badge-dot {% if ecg.uneven %} text-warn{% else %} text-ok{% endif %} w-badge border border-line">{% if ecg.uneven %}For review{% else %}Regular rhythm{% endif %}</span>
         <p class="w-vital num">{% if ecg.hr > 0 %}{{ ecg.hr }}<span class="w-unit">bpm</span>{% else %}—{% endif %}</p>
         <p class="w-body">{% if ecg.uneven %}Sent to the crew lead for review{% else %}Saved to your logbook{% endif %}</p>
         <p class="w-fine">Diagnostic support · the crew lead confirms</p>
       </div>
       {% else %}
       <div class="w-ecg-idle">
-        <img src="/static/img/band/ecg.webp" alt="One finger of each hand on the two metal pads" class="w-ecg-thumb" width="1200" height="800" decoding="async">
+        <img src="/static/img/band/parts-screen.webp" alt="The screen part: two metal pads on its sides" class="w-ecg-thumb" width="560" height="420" decoding="async">
         <div class="flex min-w-0 flex-col gap-[0.75rem]">
           <h2 class="w-head">30 second ECG</h2>
-          <p class="w-body">One finger of each hand on the two metal pads</p>
+          <p class="w-body">Two fingers of the same hand on the two metal pads</p>
           <button type="button" class="w-btn w-btn-heart press" {% call u::tool(ecg.start) %}>{{ crate::web::ui::ic("zap", 24)|safe }}Start</button>
         </div>
       </div>
@@ -67,7 +67,7 @@
         <svg class="w-helpring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47" fill="none" stroke="#FFFFFF33" stroke-width="3"/><circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-help-ring/></svg>
         <span class="w-helpcore">{{ crate::web::ui::ic("siren", 48)|safe }}<span class="w-helplabel">Help</span><span class="w-helphint" data-help-hint>Hold 2 seconds</span></span>
       </button>
-      <p class="w-helptext">Eva sends the nearest trained person and tells the crew lead.<br><span class="text-muted">The AED decides shocks.</span></p>
+      <p class="w-helptext">Eva sends the nearest passenger and tells the crew lead.<br><span class="text-muted">The AED decides shocks.</span></p>
     </section>
   </div>
   <button type="button" class="w-arrow w-prev" data-wrist-step="-1" aria-label="Previous page">{{ crate::web::ui::ic("back", 24)|safe }}</button>

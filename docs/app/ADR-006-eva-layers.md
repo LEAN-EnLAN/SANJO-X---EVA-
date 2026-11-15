@@ -1,10 +1,10 @@
 # ADR-006 · Eva in three layers, separate pipelines, one tool registry
 
-- **Status:** accepted · 15/11/2026 · Claude · extends the team's 3-layer AI architecture (HANDOFF.md)
+- **Status:** accepted · 15/11/2026 · Claude · extends the team's 3-layer Super Intelligence architecture (HANDOFF.md)
 
 ## Context
 
-Eva is the product: an AI health copilot that reads the WearMeds band live, keeps logs and the mood journal, gives **diagnostic support** (never a diagnosis on its own), guides emergencies and records everything. It must never wait for a model to react to a dying passenger, and **it never decides a shock: the ship's AED does.**
+Eva is the product: a Super Intelligence health copilot that reads the WearMeds band live, keeps logs and the mood journal, gives **diagnostic support** (never a diagnosis on its own), guides emergencies and records everything. It must never wait for a model to react to a dying passenger, and **it never decides a shock: the ship's AED does.**
 
 ## Decision
 

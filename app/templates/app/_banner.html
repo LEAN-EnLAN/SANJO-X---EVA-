@@ -11,9 +11,9 @@
 </a>
 {% endif %}
 {% if storm %}
-<a href="/app/storm" hx-get="/app/storm" hx-target="#screen" hx-push-url="true" class="press relative mt-2 flex items-center gap-3 rounded-hero bg-[linear-gradient(180deg,#5A3A06,#2A1B05)] p-4 e2" data-storm-banner>
+<a href="/app/storm" hx-get="/app/storm" hx-target="#screen" hx-push-url="true" class="press relative mt-2 flex items-center gap-3 rounded-hero bg-background p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-warn)_55%,transparent)]" data-storm-banner>
   {% call m::eva("concerned", "concerned", "size-10") %}
   <span class="flex flex-1 flex-col"><span class="font-display text-base font-semibold text-ink">Solar storm · go to the shelter</span><span class="text-label text-warn">Deck B · walk, don't run</span></span>
-  <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[#5A3A06]">{{ crate::web::ui::ic("arrow", 20)|safe }}</span>
+  <span class="grid size-10 shrink-0 place-items-center rounded-full text-warn shadow-[inset_0_0_0_1px_#2A2A2A]">{{ crate::web::ui::ic("arrow", 20)|safe }}</span>
 </a>
 {% endif %}

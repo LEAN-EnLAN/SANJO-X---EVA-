@@ -4,7 +4,7 @@
   <p class="text-h3 text-ink">Journal · {{ c.time }}</p>
   <span class="size-11"></span>
 </div>
-{% if saved %}<p class="rounded-tile bg-ok/10 px-4 py-2 text-sm text-ok">Saved on board. Only you can read it unless you share it.</p>{% endif %}
+{% if saved %}<p class="rounded-tile px-4 py-2 text-sm text-ok border border-line">Saved on board. Only you can read it unless you share it.</p>{% endif %}
 
 {% call u::hero("journal", "An open notebook and a pen beside a glowing lamp", "Your journal") %}
 <form class="flex flex-col gap-5" hx-post="/api/journal" hx-target="#screen" data-journal>
@@ -69,7 +69,7 @@
       <span class="text-sm text-ink">{% if e.labels.is_empty() %}{{ crate::web::ui::mood_word(e.valence) }}{% else %}{{ e.labels.join(" · ") }}{% endif %}</span>
       {% if !e.text.is_empty() %}<span class="truncate text-xs text-muted">{{ e.text }}</span>{% endif %}
     </div>
-    {% if e.shared %}<span class="badge badge-dot bg-info/15 text-info">{{ crate::web::ui::ic("users", 11)|safe }}Crew lead</span>{% else %}<span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">{{ crate::web::ui::ic("lock", 11)|safe }}Private</span>{% endif %}
+    {% if e.shared %}<span class="badge badge-dot text-info border border-line">{{ crate::web::ui::ic("users", 11)|safe }}Crew lead</span>{% else %}<span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">{{ crate::web::ui::ic("lock", 11)|safe }}Private</span>{% endif %}
   </div>
   {% endfor %}
 </div>

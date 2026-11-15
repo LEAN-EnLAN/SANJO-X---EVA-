@@ -1,7 +1,7 @@
 {% import "app/_ui.html" as u %}
 <div class="flex items-center justify-between pt-2">
   {% if active %}<span class="badge badge-dot bg-critical/15 text-critical">Solar storm</span>
-  {% else %}<span class="badge badge-dot bg-ok/15 text-ok">Sun quiet</span>{% endif %}
+  {% else %}<span class="badge badge-dot text-ok border border-line">Sun quiet</span>{% endif %}
   <span class="text-xs text-muted">Shelter · Deck B</span>
 </div>
 {% call u::hero("radiation", "A shelter pod with a vault door inside thick water walls", "") %}
@@ -26,7 +26,7 @@
   <div class="flex items-baseline justify-between"><p class="text-sm text-ink">Crew in shelter {{ in_shelter }}/{{ total }}</p></div>
   <div class="relative h-4 w-full overflow-hidden rounded-full bg-white/10"><div class="spring-w h-full w-(--pct) rounded-full bg-grad-temp" style="--pct: {{ pct }}%"></div></div>
 </div>
-{% if me_in %}<p class="rounded-tile bg-ok/10 px-4 py-3 text-sm text-ok">You are in the shelter. Eva will tell you when it is over.</p>
+{% if me_in %}<p class="rounded-tile px-4 py-3 text-sm text-ok border border-line">You are in the shelter. Eva will tell you when it is over.</p>
 {% else %}<button type="button" class="btn-primary press w-full" hx-post="/api/shelter" hx-vals='{"seat":"{{ c.seat }}"}' hx-target="#screen">I'm in the shelter</button>{% endif %}
 {% else %}
 <p class="text-h1 text-ink">No storm warning</p>

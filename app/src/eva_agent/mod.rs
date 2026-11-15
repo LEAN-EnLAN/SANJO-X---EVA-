@@ -109,8 +109,8 @@ pub fn on_tick(state: &Shared) {
     progress_cases(state);
 }
 
-/// Open (or return) the emergency case for `seat`: assign the nearest trained
-/// passenger for CPR and an AED runner for a no-pulse case, log, alarm, notify.
+/// Open (or return) the emergency case for `seat`: assign the nearest
+/// available passenger for CPR and an AED runner for a no-pulse case, log, alarm, notify.
 pub fn open_emergency(state: &Shared, seat: &str, reason: &str, kind: &str) -> Option<Case> {
     let now = state.now();
     let case = {
@@ -151,7 +151,7 @@ pub fn open_emergency(state: &Shared, seat: &str, reason: &str, kind: &str) -> O
             helpers: helpers.clone(),
             steps: vec![
                 CaseStep { ts_ms: now, title: if no_pulse { format!("No pulse at {first}'s wrist") } else { format!("{first} needs help") }, detail: if no_pulse { "Wristband: no pulse, no movement, no answer · Eva sounded the alarm".into() } else { reason.into() }, tone: "critical".into(), earth_ms: None },
-                CaseStep { ts_ms: now, title: format!("Eva sent {} helper{}", helpers.len(), if helpers.len() == 1 { "" } else { "s" }), detail: if helper_line.is_empty() { "No trained passenger free · crew lead notified".into() } else { helper_line }, tone: "info".into(), earth_ms: None },
+                CaseStep { ts_ms: now, title: format!("Eva sent {} helper{}", helpers.len(), if helpers.len() == 1 { "" } else { "s" }), detail: if helper_line.is_empty() { "No passenger free · crew lead notified".into() } else { helper_line }, tone: "info".into(), earth_ms: None },
             ],
             now: if no_pulse { "Start CPR. Stand clear when the AED says so.".into() } else { "Stay with them. Keep them still and talk to them.".into() },
             why: if no_pulse { format!("{first}'s heart may not be pumping. CPR and the AED give the best chance.") } else { reason.to_string() },

@@ -1,11 +1,11 @@
-<ul class="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4 landscape:grid-cols-4 landscape:grid-rows-3" aria-label="Compartments">
+<ul class="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4 landscape:grid-cols-4" aria-label="Compartments">
   {% for c in cells %}
   <li class="flex">
-    <button type="button" class="station-cell press relative flex min-h-36 w-full flex-col gap-2 rounded-tile border p-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-station {% if c.state == "lit" %}station-lit{% else if c.state == "open" %}border-info/60 bg-info/5{% else if c.state == "taken" %}border-ok/50 bg-ok/5{% else %}border-line bg-surface hover:bg-raised{% endif %}" data-compartment="{{ c.n }}" data-state="{{ c.state }}" hx-post="/api/station/tap" hx-vals='{"n":"{{ c.n }}"}' hx-target="#station-grid" aria-label="{{ c.aria }}">
+    <button type="button" class="station-cell press relative flex min-h-36 w-full flex-col gap-2 rounded-tile border p-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-station {% if c.state == "lit" %}station-lit{% else if c.state == "open" %}border-info/60{% else if c.state == "taken" %}border-ok/50{% else %}border-line bg-surface hover:bg-raised{% endif %}" data-compartment="{{ c.n }}" data-state="{{ c.state }}" hx-post="/api/station/tap" hx-vals='{"n":"{{ c.n }}"}' hx-target="#station-grid" aria-label="{{ c.aria }}">
       <span class="flex items-center gap-2">
         <span class="font-mono text-base tabular-nums {% if c.state == "lit" %}text-station{% else %}text-muted{% endif %}">{{ c.nn }}</span>
         <span class="min-w-0 flex-1 truncate text-lg leading-tight text-ink lg:text-xl">{{ c.label }}</span>
-        {% if !c.chip.is_empty() %}<span class="inline-flex h-6 shrink-0 items-center rounded-full px-2.5 text-xs font-medium {% if c.state == "lit" %}bg-station text-on-light{% else if c.state == "open" %}bg-info/15 text-info{% else %}bg-ok/15 text-ok{% endif %}">{{ c.chip }}</span>{% endif %}
+        {% if !c.chip.is_empty() %}<span class="inline-flex h-6 shrink-0 items-center rounded-full px-2.5 text-xs font-medium {% if c.state == "lit" %}bg-station text-on-light{% else if c.state == "open" %}border border-line text-info{% else %}border border-line text-ok{% endif %}">{{ c.chip }}</span>{% endif %}
       </span>
       <span class="flex flex-1 items-center gap-3">
         {{ c.icon|safe }}

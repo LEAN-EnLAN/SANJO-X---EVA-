@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#070A14",
-  "theme_color": "#070A14",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "categories": [
     "health",
     "medical"
@@ -68,7 +68,7 @@
       "sizes": "1024x1536",
       "type": "image/webp",
       "form_factor": "narrow",
-      "label": "Eva, the health copilot (AI-generated art)"
+      "label": "Eva, the health copilot (art generated with Super Intelligence)"
     }
   ]
 }

@@ -1,13 +1,13 @@
 # ADR-002 · Near space, not deep space
 
 - **Status:** accepted · 15/11/2026 · decided by the team lead, written by Claude
-- **Supersedes:** the Mars framing of the earlier concept ("3 to 22 min per leg", "Earth delay 12 min 40 s" in the wireframes)
+- **Supersedes:** the deep-space framing of the earlier concept ("3 to 22 min per leg", "Earth delay 12 min 40 s" in the wireframes)
 
 ## Context
 
 The team said it plainly: *"we will never reach deep space"*. Eva's market is commercial flights in **near space**: low Earth orbit, stations, at most cislunar. That changes the telecom problem completely:
 
-| | Deep space (Mars) | **Near space (our case)** |
+| | Deep space (interplanetary) | **Near space (our case)** |
 |---|---|---|
 | One-way latency | 3 to 22 **minutes** | hundreds of ms to a few **seconds** (relay hops, ground station queues) |
 | Link availability | scheduled passes, long blackouts | **intermittent**: contact gaps while a relay or station is below the horizon, handovers, solar events |

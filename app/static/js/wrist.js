@@ -66,10 +66,10 @@
   function setCur(i) {
     if (i === cur && dots[i] && dots[i].classList.contains("on")) return;
     var changed = i !== cur; cur = i;
-    var tints = { eva: "#2EE6C8", heart: "#FF4D6A", brand: "#FF6A3D" };
+    var tints = { eva: "#1FE5C4", heart: "#F28A1A", brand: "#F28A1A" };
     dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
     var w = document.querySelector("[data-wrist]");
-    if (w) w.style.setProperty("--dot", tints[pages[i] && pages[i].getAttribute("data-tint")] || "#2EE6C8");
+    if (w) w.style.setProperty("--dot", tints[pages[i] && pages[i].getAttribute("data-tint")] || "#1FE5C4");
     var prev = document.querySelector("[data-wrist-step='-1']"), next = document.querySelector("[data-wrist-step='1']");
     if (prev) prev.hidden = i === 0; if (next) next.hidden = i === pages.length - 1;
     if (changed) fx("tick");

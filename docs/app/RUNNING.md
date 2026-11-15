@@ -7,7 +7,7 @@ Needs only a Rust toolchain (1.85+; tested with cargo 1.97). On a busy machine a
 ```bash
 cd app
 cargo build --release          # → target/release/eva: one 12.5 MB binary (stripped, thin LTO), all assets embedded
-cargo test                     # 148 tests: protocol, chain + signatures, rules, tools, agent, HTTP flows, medical station, env file + Eva status, break tests (TESTING.md)
+cargo test                     # 152 tests: protocol, chain + signatures, rules, tools, agent, HTTP flows, medical station, env file + Eva status, break tests (TESTING.md)
 ```
 
 CSS is generated from `app/styles/app.css` with the Tailwind v4 CLI and committed. Only after changing templates, styles or class strings in Rust/JS:
@@ -43,7 +43,7 @@ The startup log says which mode Eva is in, never the key: `Eva: online · key fr
 ```json
 {"mode":"rules","reason":"no_key","label":"On-board rules","hint":"Set GROQ_API_KEY and restart",
  "chat":false,"voice_in":false,"voice_out":"browser","vision":false,"key_source":"none",
- "checked_at":"2026-11-15T14:32:10Z","version":"0.3.2"}
+ "checked_at":"2026-11-15T14:32:10Z","version":"0.3.3"}
 ```
 
 `reason` is `ok`, `no_key`, `offline_flag`, `bad_key` (the provider refused the key at the start-up probe or on a call) or `unreachable` (no internet from the hub; Eva re-probes every 60 s and comes back online by herself). Changes go out as the `eva-status` SSE event to every app and dashboard. In the app: the Eva tab shows a chip (Online / On-board rules) and a banner with the reason-specific fix; the dashboard header has a pill; the dev panel shows `reason`, `key_source` and `checked_at`.
@@ -51,7 +51,7 @@ The startup log says which mode Eva is in, never the key: `Eva: online · key fr
 | URL | what |
 |---|---|
 | http://localhost:8080/app | astronaut app (Ana, seat 4B; pick another seat in the header) |
-| http://localhost:8080/app?seat=3B | Leo, the nearest trained passenger to Ana |
+| http://localhost:8080/app?seat=3B | Leo, the nearest passenger to Ana |
 | http://localhost:8080/dash | crew dashboard (Mara, crew lead) · the medical station tile |
 | http://localhost:8080/station | the ship's **medical station** screen (full screen, landscape): put it on a tablet or a second laptop |
 | http://localhost:8081/dash | ground view (flight surgeon), fed by the near-space uplink |

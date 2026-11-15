@@ -1,6 +1,6 @@
 [package]
 name = "eva"
-version = "0.3.2"
+version = "0.3.3"
 edition = "2021"
 description = "Eva by WearMeds: AI health copilot server (astronaut PWA, crew/Earth dashboard, Eva Link protocol). Team Sanjo-X, NASA Space Apps 2026."
 license = "MIT"

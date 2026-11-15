@@ -6,7 +6,7 @@
 
 ## Context
 
-On Sun 15/11 the team sent the v2 references: a rugged two-module wristband and a wall-mounted emergency station for the ship (AI-generated concept images). Lean asked: is the backend a server on a local computer (for example the laptop at the demo), or does each client host something? Is the station a host or a client?
+On Sun 15/11 the team sent the v2 references: a rugged two-module wristband and a wall-mounted emergency station for the ship (concept images generated with Super Intelligence). Lean asked: is the backend a server on a local computer (for example the laptop at the demo), or does each client host something? Is the station a host or a client?
 
 Product rule: Eva gives **diagnostic support** and guidance. The station's AED analyses the heart rhythm and decides the shock. Eva never does.
 
@@ -14,7 +14,7 @@ Product rule: Eva gives **diagnostic support** and guidance. The station's AED a
 
 A wall-mounted medical cabinet in each habitable module, ISS-like: beige wall panels, handrails and blue straps around it.
 
-**Twelve compartments** in a 3×4 grid. Each is numbered and labelled, sits behind a clear window and has its own light strip. The team images use Spanish labels; product text is English.
+**Numbered compartments**, configurable for each ship (the demo cabinet's layout is data: `station::COMPARTMENTS`; no screen states a count). Each is numbered and labelled, sits behind a clear window and has its own light strip. The team images use Spanish labels; product text is English.
 
 | # | Label | Contents |
 |---|---|---|
@@ -31,7 +31,7 @@ A wall-mounted medical cabinet in each habitable module, ISS-like: beige wall pa
 | 11 | Airway | |
 | 12 | Hygiene | |
 
-Variant: a centre cabinet with side doors that open to reveal compartments 07–12.
+Variant: a centre cabinet with side doors that open to reveal the second half of the compartments.
 
 **On top of the cabinet**
 - **Eva screen**: says what to take and what to do, for example "EVA · Take the AED".
@@ -51,7 +51,7 @@ Variant: a centre cabinet with side doors that open to reveal compartments 07–
 ```
   EARTH                               ground instance (eva serve --role ground)
     ^
-    |  near-space link: signed records, store-and-forward, acks
+    |  near-space link: the hub stores and forwards signed records; Earth acknowledges
     v
   +-----------------------------------------------------------+
   |  SHIP HUB  (the only host)                                |
@@ -81,7 +81,7 @@ Variant: a centre cabinet with side doors that open to reveal compartments 07–
 - **Wristbands are clients.** Each part (sensor base and screen module) talks LoRa to the hub. Wristbands relay for each other (mesh) when one is out of range.
 - **Phones and tablets are clients.** The app is an optional big screen for the same person, connected to the hub over the ship's Wi-Fi (Eva Link over `/link`, ADR-003 and ADR-008 in the app).
 - **The station is a client, not a host.** It has its own small computer, but it hosts nothing. It subscribes to case events from the hub and reports back.
-- **Earth** is a separate ground instance that receives the signed records over the near-space link, with store-and-forward and acknowledgements. Already built: `eva serve --role ground`.
+- **Earth** is a separate ground instance that receives and acknowledges the signed records over the near-space link (the ship hub is the one that stores and forwards; it hosts the Super Intelligence and stores everything). Already built: `eva serve --role ground`.
 - **Demo**: one laptop is the hub (`eva demo`). Phones play the wristbands and screens; a tablet or a second browser window plays the station.
 
 #### Why this shape
@@ -99,7 +99,7 @@ Names marked *(exists)* are already in the app (branch `fase2/12-app`: `docs/app
 |---|---|---|---|
 | 00:00 | wristband → hub | `Vitals` *(exists)* with `hr = 0`, low motion, then the `no answer` flag after 20 s | Reflex layer sees no pulse + no movement + no answer |
 | 00:20 | wristband → hub | `Alarm` code 1, no pulse *(exists)*, alarm priority class | |
-| 00:20 | hub | `open_emergency` *(exists)*; `alarm` and `case` records *(exist)* | Nearest trained passenger for CPR, nearest to the station for the AED |
+| 00:20 | hub | `open_emergency` *(exists)*; `alarm` and `case` records *(exist)* | Nearest passenger for CPR, nearest to the station for the AED |
 | 00:21 | hub → helpers' apps and wristbands | `go-emergency` *(exists, SSE)* | Helper screens switch to the case |
 | 00:21 | hub → station | `station.request {case, compartment: 1, text: "Take the AED"}` *(proposed)* | Compartment 01 lights teal, screen shows "EVA · Take the AED", chime |
 | 00:41 | station → hub | `station.door {compartment: 1, state: open}` *(proposed, record kind)* | Signed log + case timeline: "door 01 open 00:41" |

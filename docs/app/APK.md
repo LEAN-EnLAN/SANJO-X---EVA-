@@ -7,16 +7,16 @@ The APK is a small native wrapper (Java, no Capacitor/Cordova, no AndroidX) arou
 | | |
 |---|---|
 | Package | `tech.sanjox.eva` (debug: `tech.sanjox.eva.debug`, can be installed alongside) |
-| Version | 0.3.2 (code 302) |
+| Version | 0.3.3 (code 303) |
 | SDK | minSdk 26 (Android 8.0), targetSdk / compileSdk 36 (Android 16) |
-| Size | release 385 KB, debug 407 KB |
+| Size | release 270 KB, debug 398 KB |
 | Signing | release: own keystore (RSA 3072, v2 scheme), cert SHA-256 `55:F1:78:EE:7A:AE:7E:AD:80:83:5D:AA:59:EE:47:0A:5E:D7:B9:29:00:FD:19:4A:B7:7F:42:50:58:88:44:D7` |
 | Source | `android/` (Gradle wrapper 8.14.7, AGP 8.13.2) |
 
 ## Install
 
-1. Copy `eva-v0.3.2.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.2.apk`). It is signed with the same key as 0.3.1, so it installs over it.
-   **Update the hub too**: the APK is only a WebView around the hub; the new look and wristband mode ship in the `eva` 0.3.2 binary. If the phone still shows the old look after the hub update, Android Settings → Apps → Eva → Storage → Clear cache (the service worker cache `eva-shell-v8` normally evicts the old one).
+1. Copy `eva-v0.3.3.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.3.apk`). It is signed with the same key as 0.3.1 and 0.3.2, so it installs over them.
+   **Update the hub too**: the APK is only a WebView around the hub; the copy rules v3 wording ships in the `eva` 0.3.3 binary. If the phone still shows the old look after the hub update, Android Settings → Apps → Eva → Storage → Clear cache (the service worker cache `eva-shell-v9` normally evicts the old one).
 2. Open it from Files. Android asks to allow **Install unknown apps** for the app that opens it (Files, Chrome, the chat app): allow it, go back, tap **Install**. Play Protect may warn about an unknown developer: choose **Install anyway**.
 3. To switch between the debug and release builds, or to a build signed with another key, uninstall first. Debug and release have different package names, so both can be installed at the same time.
 
@@ -100,16 +100,27 @@ Needs JDK 17+ (tested with OpenJDK 21) and the Android SDK packages `platforms;a
 ```bash
 cd android
 echo "sdk.dir=/path/to/android-sdk" > local.properties        # or export ANDROID_HOME
-./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.2-debug.apk
+./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.3-debug.apk
 
 # signed release: keystore and passwords OUTSIDE the repo
 EVA_SIGNING_PROPS=/secure/place/signing.properties ./gradlew lintRelease assembleRelease
-#   → app/build/outputs/apk/release/eva-v0.3.2-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
+#   → app/build/outputs/apk/release/eva-v0.3.3-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
 ```
 
 `signing.properties` holds `storeFile=`, `storePassword=`, `keyAlias=`, `keyPassword=`. The 0.3.1 release keystore (`eva-release.p12`, alias `eva`) and its password file were created outside the repo, both mode 600. **Back them up**: an update signed with a different key has to be installed after uninstalling the old app. `.gitignore` excludes build outputs, `local.properties` and `*.jks`, `*.keystore`, `*.p12` and `signing.properties`.
 
 To make a new key: `keytool -genkeypair -keystore eva-release.p12 -storetype PKCS12 -alias eva -keyalg RSA -keysize 3072 -validity 10000`.
+
+## Test results 0.3.3 (15/11/2026)
+
+Wrapper changes: the version (303 / 0.3.3, UA `EvaAndroid/0.3.3`) and the native screens' colours, now the landing's palette (black, `#141414` raised, `#2a2a2a` lines, `#9b9996` grey, orange `#f28a1a`, alarm red `#ff2a1f`). The copy and palette changes of the screens themselves live in the hub.
+
+| check | result |
+|---|---|
+| JVM unit + Robolectric | **55 / 55 pass** |
+| `lintDebug`, `lintRelease` | 0 errors |
+| `apksigner verify --print-certs` | release verifies (v2), signer SHA-256 `55:F1:78:EE:…:44:D7`, the same key as 0.3.1 and 0.3.2 |
+| `aapt2 dump badging` | `tech.sanjox.eva` 0.3.3/303, min 26, target 36 |
 
 ## Test results 0.3.2 (15/11/2026)
 

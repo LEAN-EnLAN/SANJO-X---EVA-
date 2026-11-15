@@ -35,9 +35,9 @@
         <a href="/export/records.csv" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("download", 14)|safe }}CSV</a>
         <a href="/export/records.json" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("download", 14)|safe }}JSON</a>
       </div>
-      <span class="badge badge-dot h-8 px-3 {% if eva_ok %}bg-ok/15 text-ok{% else %}bg-warn/15 text-warn{% endif %}" data-eva-chip data-online-text="Eva online" title="{{ eva_label }}"><span data-eva-chip-text>{% if eva_ok %}Eva online{% else %}On-board rules{% endif %}</span><span class="hidden text-muted xl:inline" data-eva-hint>{% if !eva_ok %}{{ eva_hint }}{% endif %}</span></span>
+      <span class="badge badge-dot h-8 px-3 {% if eva_ok %} text-ok{% else %} text-warn{% endif %} border border-line" data-eva-chip data-online-text="Eva online" title="{{ eva_label }}"><span data-eva-chip-text>{% if eva_ok %}Eva online{% else %}On-board rules{% endif %}</span><span class="hidden text-muted xl:inline" data-eva-hint>{% if !eva_ok %}{{ eva_hint }}{% endif %}</span></span>
       <span class="ml-auto flex items-center gap-2.5">
-        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full bg-info/15 text-sm font-medium text-info">{{ initials }}</span>
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium text-info border border-line">{{ initials }}</span>
         <span class="flex flex-col leading-tight"><span class="text-sm text-ink">{{ person }}</span><span class="text-xs text-muted">{{ person_role }}</span></span>
       </span>
     </header>
@@ -53,9 +53,9 @@
             {% call m::eva(mood, art, "size-12") %}
             <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status>{% if mood == "alert" %}Guiding a case{% else %}Watching the crew{% endif %}</span></span>
           </a>
-          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{% if ground %}{{ crate::web::ui::pic("earth", "size-7")|safe }}{% else %}{{ crate::web::ui::pic("hub", "size-7")|safe }}{% endif %}{% if ground %}Ground node · mirror{% else if hub_down %}Hub down · simulated{% else %}Hub online · offline-ready{% endif %}</span>
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{% if ground %}{{ crate::web::ui::pic("earth", "size-7")|safe }}{% else %}{{ crate::web::ui::pic("hub", "size-7")|safe }}{% endif %}{% if ground %}Earth · receives and acknowledges the signed records{% else if hub_down %}Hub down · simulated{% else %}Hub · hosts the Super Intelligence · stores everything{% endif %}</span>
           <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{{ crate::web::ui::pic("lora", "size-7")|safe }}Eva Link mesh · <span data-mesh-count>live</span></span>
-          {% if storm %}<span class="inline-flex h-9 items-center gap-2 rounded-full border border-warn/40 bg-warn/10 pr-3.5 pl-1.5 text-xs text-warn">{{ crate::web::ui::pic("sun", "size-7")|safe }}Solar storm · shelter</span>{% endif %}
+          {% if storm %}<span class="inline-flex h-9 items-center gap-2 rounded-full border border-warn/40 pr-3.5 pl-1.5 text-xs text-warn">{{ crate::web::ui::pic("sun", "size-7")|safe }}Solar storm · shelter</span>{% endif %}
         </div>
       </div>
 

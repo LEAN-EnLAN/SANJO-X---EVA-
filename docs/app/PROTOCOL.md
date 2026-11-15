@@ -116,9 +116,9 @@ Frames with a `dst` other than 0 are relayed verbatim to that node. Each client 
 
 ## 11. The medical station (types 13–15)
 
-The ship's medical station (12 compartments, an Eva screen, door and item sensors, a red button, a LoRa radio, a backup battery) is a **client of the hub** (ADR-011). It says `Hello` with role 6, gets a node id, answers the hub's pings like any node, and keeps one reliable session: the hub queues `StationCmd`s on it, the station queues `StationEvent`s. Code: `app/src/station.rs`.
+The ship's medical station (numbered compartments, configurable per ship, an Eva screen, door and item sensors, a red button, a LoRa radio, a backup battery) is a **client of the hub** (ADR-011). It says `Hello` with role 6, gets a node id, answers the hub's pings like any node, and keeps one reliable session: the hub queues `StationCmd`s on it, the station queues `StationEvent`s. Code: `app/src/station.rs`.
 
-Compartments are numbered 1–12 as on the cabinet: 01 AED, 02 Breathing, 03 Diagnostics, 04 Ultrasound, 05 Wounds, 06 Restraint, 07 Oral meds, 08 Injectables (the crew's medical kit), 09 IV access, 10 Eyes & dental, 11 Airway, 12 Hygiene. Masks use one bit per compartment, bit 0 = compartment 1; anything above bit 11 is rejected.
+Compartments are numbered as on the cabinet (the wire carries up to 12, one bit each in the masks). The demo ship's layout: 01 AED, 02 Breathing, 03 Diagnostics, 04 Ultrasound, 05 Wounds, 06 Restraint, 07 Oral meds, 08 Injectables (the crew's medical kit), 09 IV access, 10 Eyes & dental, 11 Airway, 12 Hygiene. Masks use one bit per compartment, bit 0 = compartment 1; anything above bit 11 is rejected.
 
 **StationCmd** (13, hub → station, guidance, reliable)
 

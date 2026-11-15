@@ -112,7 +112,9 @@ async function dev(ctx, action, form) {
       await page.tomas.getByText(/Good \w+,\s*Tom/).first().waitFor();
       await page.dash.locator("#roster, [sse-swap=roster]").first().waitFor();
       await page.station.locator("[data-station-hub]").getByText("Hub online").waitFor({ timeout: 10000 });
-      if ((await page.station.locator('[data-compartment]').count()) !== 12) throw new Error("the station shows 12 compartments");
+      // the compartment layout is configurable per ship: check the grid is there and numbered from 01, not a count
+      const cells = page.station.locator("[data-compartment]");
+      if ((await cells.count()) < 1 || (await cells.first().getAttribute("data-compartment")) !== "1") throw new Error("the station shows its numbered compartments");
       await page.ground.waitForLoadState("domcontentloaded");
       await new Promise((r) => setTimeout(r, 1500)); // SSE streams connect
       await page.dash.locator("[data-station-status]").getByText("Online").waitFor({ timeout: 10000 });

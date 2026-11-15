@@ -18,7 +18,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 #[derive(Parser)]
-#[command(name = "eva", version, about = "Eva by WearMeds: AI health copilot server (astronaut PWA, crew/ground dashboard, Eva Link)")]
+#[command(name = "eva", version, about = "Eva by WearMeds: Super Intelligence health copilot server (astronaut PWA, crew/ground dashboard, Eva Link)")]
 struct Cli {
     /// read KEY=VALUE lines (e.g. GROQ_API_KEY=…) from this file; default: ./.env, then .env or
     /// eva.env next to the eva program. Variables already set in the environment win.

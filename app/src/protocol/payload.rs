@@ -15,7 +15,7 @@ pub enum Role {
     App = 3,
     Dash = 4,
     Band = 5,
-    /// the ship's medical station (12 compartments, Eva screen, red button)
+    /// the ship's medical station (numbered compartments, Eva screen, red button)
     Station = 6,
 }
 
@@ -250,7 +250,8 @@ impl RecordMsg {
     }
 }
 
-/// Compartments on the medical station (numbered 1..=12 on the cabinet).
+/// Wire limit on the medical station's numbered compartments (one bit each in
+/// a `u16` mask). A ship configures how many it has, up to this limit.
 pub const STATION_COMPARTMENTS: u8 = 12;
 /// Bit mask with one bit per compartment (bit 0 = compartment 1).
 pub const STATION_MASK: u16 = (1 << STATION_COMPARTMENTS) - 1;
