@@ -1,0 +1,46 @@
+{% import "mascot.html" as m %}
+<section class="flex flex-col gap-5 rounded-card border p-5 {% if let Some(cs) = case %}{% if cs.open %}border-critical/50 bg-critical/5{% else %}border-line bg-surface{% endif %}{% else %}border-line bg-surface{% endif %}">
+  <header class="flex flex-wrap items-center gap-3">
+    {% call m::eva(mood, art, "size-12") %}
+    <span class="flex min-w-0 flex-1 flex-col leading-tight">
+      <span class="flex items-center gap-2 text-sm text-ink">Eva<span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"><span class="absolute inset-0 animate-ping rounded-full bg-ok"></span></span><span class="text-xs text-muted">live · {{ agent_mode }}</span></span>
+      <span class="truncate text-xs text-muted">{% if let Some(cs) = case %}{% if cs.open %}Guiding {{ cs.name }}'s case · {{ elapsed }}{% else %}Last case closed{% endif %}{% else %}No open case · watching {{ "15" }} wristbands{% endif %}</span>
+    </span>
+    {% if let Some(cs) = case %}{% if cs.open && !ground %}
+    <button type="button" class="inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-xs text-ink hover:bg-raised" hx-post="/api/dev/close_case" hx-vals='{"seat":"{{ cs.seat }}"}' hx-swap="none">Close case</button>
+    {% endif %}{% endif %}
+  </header>
+  {% if let Some(cs) = case %}
+  <div class="flex flex-col gap-2 rounded-tile border border-critical/50 bg-critical/10 p-3">
+    <div class="flex items-center gap-2"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical">{% if cs.open %}<span class="absolute inset-0 animate-ping rounded-full bg-critical"></span>{% endif %}</span><span class="text-sm text-ink">{{ cs.name }} · seat {{ cs.seat }} · {{ cs.kind }}</span><span class="ml-auto text-xs text-muted">{{ elapsed }}</span></div>
+    {% if !cs.helpers.is_empty() %}
+    <div class="flex flex-wrap gap-1.5">{% for h in cs.helpers %}<span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-background/60 px-2.5 text-xs text-ink"><span class="size-1.5 rounded-full bg-info"></span>{{ h.name }} · {{ h.task }} · {{ "{:.0}"|format(h.distance_m) }} m</span>{% endfor %}</div>
+    {% endif %}
+  </div>
+  <div class="grid gap-2 md:grid-cols-2">
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-critical">What to do now</span><p class="text-sm leading-snug text-ink">{{ cs.now }}</p></div>
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-info">Why</span><p class="text-sm leading-snug text-ink">{{ cs.why }}</p></div>
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-info">How Eva decided</span><p class="text-sm leading-snug text-ink">{{ cs.how }}</p></div>
+    <div class="flex flex-col gap-1 rounded-tile bg-raised px-3.5 py-2.5"><span class="text-xs uppercase tracking-label text-info">What comes next</span><p class="text-sm leading-snug text-ink">{{ cs.next }}</p></div>
+  </div>
+  <div class="flex flex-col">
+    <div class="grid grid-cols-12 gap-4 px-3 pb-3 text-xs uppercase tracking-label text-muted">
+      <span class="col-span-3 md:col-span-2">Ship time</span>{% if ground %}<span class="col-span-3">Ground received</span>{% endif %}<span class="{% if ground %}col-span-6 md:col-span-7{% else %}col-span-9 md:col-span-10{% endif %} pl-7">What happened</span>
+    </div>
+    <ol class="flex flex-col">
+      {% for st in cs.steps %}
+      <li class="grid grid-cols-12 items-start gap-4 rounded-tile px-3 py-3 {% if st.tone == "critical" %}bg-critical/10{% endif %}">
+        <span class="col-span-3 font-mono text-sm text-ink tabular-nums md:col-span-2">{{ self.t(st.ts_ms) }}</span>
+        {% if ground %}<span class="col-span-3 font-mono text-sm text-info tabular-nums">{% if let Some(e) = st.earth_ms %}{{ self.t(e) }}{% else %}—{% endif %}</span>{% endif %}
+        <div class="relative flex gap-4 {% if ground %}col-span-6 md:col-span-7{% else %}col-span-9 md:col-span-10{% endif %}">
+          <span class="relative flex w-3 shrink-0 justify-center pt-1.5"><span class="size-3 rounded-full ring-4 ring-background {{ crate::web::ui::dot(st.tone) }}"></span></span>
+          <div class="flex min-w-0 flex-col gap-0.5"><p class="text-sm text-ink">{{ st.title }}</p>{% if !st.detail.is_empty() %}<p class="text-xs text-muted">{{ st.detail }}</p>{% endif %}</div>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% else %}
+  <p class="text-sm text-muted">No pulse + no movement + no answer opens a case at once. No model in the loop.</p>
+  {% endif %}
+</section>

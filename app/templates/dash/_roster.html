@@ -1,0 +1,54 @@
+<section class="flex flex-col gap-6 rounded-card border border-line bg-surface p-5">
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl text-ink">Passengers now</h2>
+        <span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">{{ total }} on board</span>
+        <span class="flex items-center gap-1.5 text-xs text-muted"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span>{% if ground %}as received{% else %}live{% endif %}</span>
+      </div>
+      <div class="flex rounded-full bg-raised p-1 text-xs">
+        <span class="rounded-full bg-ink px-3 py-1.5 text-on-light">All · {{ total }}</span>
+        <span class="rounded-full px-3 py-1.5 text-muted">Needs attention · {{ help.len() + watch.len() }}</span>
+        <span class="rounded-full px-3 py-1.5 text-muted">Suit mode · {{ suit }}</span>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4 text-xs text-muted">
+      <span class="flex flex-wrap gap-x-5 gap-y-2"><span class="flex items-center gap-2"><span class="size-3 rounded-full bg-critical"></span>Needs help now</span><span class="flex items-center gap-2"><span class="size-3 rounded-full bg-warn"></span>Watching</span><span class="flex items-center gap-2"><span class="size-3 rounded-full bg-ok"></span>All good</span></span>
+      <span class="flex items-center gap-5"><span class="flex items-center gap-2"><span class="h-3 w-5 rounded-full ring-1 ring-ok/40"></span>Usual pulse range</span><span class="flex items-center gap-1.5">{{ crate::web::ui::ic("magnet", 13)|safe }}Joined</span><span class="flex items-center gap-1.5">{{ crate::web::ui::ic("shirt", 13)|safe }}Suit mode</span></span>
+    </div>
+  </div>
+
+  {% if !help.is_empty() %}
+  <section class="flex flex-col gap-2">
+    <header class="flex items-center gap-2 px-4"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-critical"></span><span class="text-xs uppercase tracking-label text-ink">Needs help now</span><span class="text-xs text-muted tabular-nums">{{ help.len() }}</span>
+      <span class="ml-auto hidden gap-4 text-xs uppercase tracking-label text-muted xl:flex"><span class="w-32">Status</span><span class="w-52">Pulse · last 2 h</span><span class="w-20">SpO₂</span><span class="w-28">Skin temp</span><span class="w-24">Wrist ECG</span><span class="w-24">Band</span><span class="w-36">Battery</span></span></header>
+    {% for r in help %}{% include "dash/_row.html" %}{% endfor %}
+  </section>
+  {% endif %}
+
+  <section class="flex flex-col gap-2">
+    <header class="flex items-center gap-2 px-4"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-warn"></span><span class="text-xs uppercase tracking-label text-ink">Watching</span><span class="text-xs text-muted tabular-nums">{{ watch.len() }}</span><span class="truncate text-xs text-muted">· not in danger · Eva is following up</span></header>
+    {% for r in watch %}{% include "dash/_row.html" %}{% endfor %}
+    {% if watch.is_empty() %}<p class="px-4 text-sm text-muted">Nobody on the watch list.</p>{% endif %}
+  </section>
+
+  <section class="flex flex-col gap-2">
+    <header class="flex items-center gap-2 px-4"><span class="relative inline-flex size-2.5 shrink-0 rounded-full bg-ok"></span><span class="text-xs uppercase tracking-label text-ink">All good</span><span class="text-xs text-muted tabular-nums">{{ ok.len() }}</span><span class="truncate text-xs text-muted">· pulse and SpO₂ normal for each person</span></header>
+    <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
+      {% for r in ok %}
+      <article class="flex flex-col gap-3 rounded-tile bg-raised p-3.5">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-grid size-8 shrink-0 place-items-center rounded-full bg-elevated text-xs font-medium text-ink">{{ r.initials }}</span>
+          <span class="flex min-w-0 flex-1 flex-col leading-tight"><span class="truncate text-sm text-ink">{{ r.name }}</span><span class="text-xs text-muted">Seat {{ r.seat }}</span></span>
+          <span class="relative inline-flex size-2.5 shrink-0 rounded-full {% if r.stale %}bg-faint{% else %}bg-ok{% endif %}"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">Pulse</span><span class="text-base text-ink tabular-nums">{{ r.hr }}{% if r.hr_unit %}<span class="ml-1 text-xs text-muted">bpm</span>{% endif %}</span></span>
+          <span class="flex flex-col leading-tight"><span class="text-xs text-muted">SpO₂</span><span class="text-base text-ink tabular-nums">{{ r.spo2 }}<span class="ml-0.5 text-xs text-muted">%</span></span></span>
+        </div>
+        <p class="flex items-center gap-1.5 truncate text-xs {{ crate::web::ui::text(r.note_tone) }}">{% if r.suit %}<span class="text-ink">{{ crate::web::ui::ic("shirt", 13)|safe }}</span>{% endif %}{% if r.status_label == "CPR helper" || r.status_label == "AED helper" %}{{ r.status_label }} · pulse up, fine{% else %}{{ r.note }}{% endif %}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</section>

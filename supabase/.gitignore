@@ -1,0 +1,4 @@
+# Supabase CLI local state and any env file (secrets live outside the repo)
+.temp/
+.branches/
+.env*

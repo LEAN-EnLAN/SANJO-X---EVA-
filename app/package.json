@@ -1,0 +1,13 @@
+{
+  "name": "eva-app-css",
+  "private": true,
+  "description": "Build-time only: Tailwind v4 CLI that compiles styles/app.css into static/css/app.css (embedded in the Rust binary).",
+  "scripts": {
+    "css": "tailwindcss -i styles/app.css -o static/css/app.css --minify",
+    "css:watch": "tailwindcss -i styles/app.css -o static/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.1.17",
+    "tailwindcss": "4.1.17"
+  }
+}

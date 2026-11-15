@@ -1,0 +1,14 @@
+<section class="rounded-card border border-line bg-surface px-0 py-5">
+  <div class="grid grid-cols-2 gap-y-5 divide-line md:grid-cols-5 md:divide-x">
+  {% for k in items %}
+    <div class="relative flex items-start justify-between gap-3 px-6 before:absolute before:top-[-1.25rem] before:left-6 before:h-1 before:w-10 before:rounded-full before:bg-eva">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs uppercase tracking-label text-muted">{{ k.label }}</p>
+        <p class="text-vital tabular-nums text-ink"><span data-count="kpi-{{ loop.index }}">{{ k.value }}</span>{% if !k.unit.is_empty() %}<span class="ml-1 text-base text-muted">{{ k.unit }}</span>{% endif %}</p>
+        <p class="flex flex-wrap items-center gap-2 text-xs text-muted"><span class="inline-flex items-center gap-1 badge {{ crate::web::ui::badge(k.delta_tone) }}">{{ k.delta }}</span>{{ k.hint }}</p>
+      </div>
+      {{ crate::web::ui::pic(k.icon, "size-11")|safe }}
+    </div>
+  {% endfor %}
+  </div>
+</section>

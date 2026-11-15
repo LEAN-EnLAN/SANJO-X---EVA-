@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+{% include "head.html" %}
+<title>Eva · medical station</title>
+</head>
+<body class="min-h-dvh bg-background text-ink antialiased" data-view="station">
+<div class="mx-auto flex min-h-dvh w-full max-w-[110rem] flex-col gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:gap-4 lg:px-6" hx-ext="sse" sse-connect="/sse/station">
+  <h1 class="sr-only">Medical station, corridor B</h1>
+  <div id="station-strip" sse-swap="strip">{{ strip|safe }}</div>
+  <main id="station-grid" class="flex flex-1 flex-col" sse-swap="grid">{{ grid|safe }}</main>
+  <footer class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-muted">
+    <span data-konami-tap>Backup guide · press Emergency if needed · open 01 · take the AED to the patient</span>
+    <span>Eva guides and warns · the AED analyses the rhythm and decides the shock</span>
+  </footer>
+</div>
+{% include "dev/slot.html" %}
+</body>
+</html>

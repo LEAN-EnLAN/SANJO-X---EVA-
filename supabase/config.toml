@@ -1,0 +1,19 @@
+# Supabase CLI config for Eva's Earth / cloud side (ADR-014). Used only for
+#   npx supabase@latest functions deploy eva-chat --project-ref <ref> --no-verify-jwt --use-api
+#
+# Eva currently SHARES a project with another app (changuito) inside its own `eva` schema.
+# Never run `supabase config push`, `supabase db push`, `supabase db reset` or `supabase link`
+# against that project: they would apply project-wide settings or another migration history.
+# Migrations go through supabase/scripts/provision.sh (eva.schema_migrations); project-wide
+# settings are only ever appended to (exposed schemas, redirect URLs). See supabase/README.md.
+project_id = "eva"
+
+[api]
+schemas = ["public", "graphql_public", "eva"]
+
+# The function validates the caller's JWT itself (Auth /user + eva RPCs) so that CORS preflights
+# reach it; requests without a valid user token get 401 from the function.
+[functions.eva-chat]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/eva-chat/index.ts"

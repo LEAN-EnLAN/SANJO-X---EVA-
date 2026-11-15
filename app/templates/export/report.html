@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+<style>
+  :root { color-scheme: light; }
+  body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #0c0c0c; background: #fff; margin: 32px; font-size: 12px; }
+  h1 { font-size: 24px; font-weight: 500; margin: 0 0 4px; }
+  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .14em; color: #57564f; margin: 28px 0 8px; font-weight: 500; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid #e3e1dd; vertical-align: top; }
+  th { font-weight: 500; color: #57564f; }
+  .mono { font-family: ui-monospace, monospace; font-size: 11px; }
+  .muted { color: #8f8e8a; }
+  .ok { color: #137a3b; } .bad { color: #c21d0e; }
+  .bar { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #0c0c0c; padding-bottom: 8px; }
+  .print { margin: 12px 0; } .print button { font: inherit; padding: 6px 14px; border-radius: 999px; border: 1px solid #0c0c0c; background: #0c0c0c; color: #fff; cursor: pointer; }
+  @media print { .print { display: none; } body { margin: 12mm; } }
+</style>
+</head>
+<body>
+<div class="bar"><div><h1>{{ title }}</h1><div class="muted">Eva by WearMeds · {{ node }} · generated {{ generated }}</div></div><div class="{% if chain_ok %}ok{% else %}bad{% endif %}">Hash chain {% if chain_ok %}verified{% else %}BROKEN{% endif %} · head <span class="mono">{{ head }}</span></div></div>
+<div class="print"><button onclick="window.print()">Print or save as PDF</button></div>
+<p class="muted">Eva gives diagnostic support: it guides, records and warns. It does not diagnose on its own or treat. Shocks are decided by the ship's AED.</p>
+
+<h2>Passengers</h2>
+<table><thead><tr><th>Seat</th><th>Name</th><th>Status</th><th>Pulse</th><th>SpO₂</th><th>Skin</th><th>Batteries (base/screen)</th><th>Water</th></tr></thead><tbody>
+{% for p in passengers %}<tr><td>{{ p.seat }}</td><td>{{ p.name }}</td><td>{{ p.status.label() }}</td><td>{% if p.vitals.hr == 0 %}no pulse{% else %}{{ p.vitals.hr }} bpm{% endif %}</td><td>{{ p.vitals.spo2 }}%</td><td>{{ "{:.1}"|format(p.vitals.skin_c()) }} °C</td><td>{{ p.vitals.base_batt }}% / {{ p.vitals.screen_batt }}%</td><td>{{ p.water_ml }} ml</td></tr>{% endfor %}
+</tbody></table>
+
+{% if !cases.is_empty() %}
+<h2>Cases</h2>
+{% for cs in cases %}
+<p><strong>{{ cs.name }}</strong> · seat {{ cs.seat }} · {{ cs.kind }} · opened {{ self.t(cs.opened_ms) }} · {% if cs.open %}open{% else %}closed{% endif %}</p>
+<table><tbody>{% for st in cs.steps %}<tr><td class="mono">{{ self.t(st.ts_ms) }}</td><td>{{ st.title }}</td><td class="muted">{{ st.detail }}</td></tr>{% endfor %}</tbody></table>
+{% endfor %}
+{% endif %}
+
+{% if !journal.is_empty() %}
+<h2>Journal (shared entries only)</h2>
+<table><tbody>{% for e in journal %}<tr><td class="mono">{{ self.t(e.ts_ms) }}</td><td>{{ e.seat }}</td><td>{{ crate::web::ui::mood_word(e.valence) }}</td><td>{{ e.labels.join(", ") }}</td><td>{{ e.text }}</td></tr>{% endfor %}</tbody></table>
+{% endif %}
+
+<h2>Records ({{ records.len() }})</h2>
+<table><thead><tr><th>#</th><th>Time</th><th>Kind</th><th>Subject</th><th>What</th><th>State</th><th>Hash</th></tr></thead><tbody>
+{% for r in records %}<tr><td class="mono">{{ r.seq }}</td><td class="mono">{{ r.time }}</td><td>{{ r.kind }}</td><td>{{ r.subject }}</td><td>{{ r.text }}</td><td>{{ r.state }}</td><td class="mono">{{ r.hash }}</td></tr>{% endfor %}
+</tbody></table>
+<p class="muted">Russell et al., npj Microgravity 9:46 (2023).</p>
+</body>
+</html>

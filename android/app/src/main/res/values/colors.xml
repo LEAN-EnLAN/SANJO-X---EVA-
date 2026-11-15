@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The landing palette, same tokens as app/styles/app.css: black, hairlines, off-white, grey, orange accent, red alarms, teal Eva -->
+    <color name="eva_background">#000000</color>
+    <color name="eva_raised">#141414</color>
+    <color name="eva_line">#2A2A2A</color>
+    <color name="eva_ink">#F4F3F0</color>
+    <color name="eva_muted">#9B9996</color>
+    <color name="eva_brand">#F28A1A</color>
+    <color name="eva_critical">#FF2A1F</color>
+    <color name="eva_teal">#1FE5C4</color>
+</resources>

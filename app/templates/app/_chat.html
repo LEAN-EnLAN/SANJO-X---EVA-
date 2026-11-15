@@ -1,0 +1,16 @@
+{% if msgs.is_empty() %}
+<p class="text-center text-label text-muted">Ask anything, or tap a chip.</p>
+{% endif %}
+{% for msg in msgs %}
+{% if msg.eva %}
+<div class="flex max-w-full items-end gap-2 self-start animate-eva-rise" data-eva-msg>
+  <img src="/static/img/eva/eva-face.webp" alt="Eva" class="size-7 shrink-0 object-contain" width="512" height="512" decoding="async">
+  <div class="flex min-w-0 flex-col gap-1 rounded-[20px] rounded-bl-[6px] bg-surface px-4 py-2.5 text-body text-ink shadow-[inset_0_0_0_1px_#2A2A2A]">
+    {% if let Some(l) = msg.label %}<span class="text-caption font-semibold text-eva">{{ l }}</span>{% endif %}
+    {% for line in msg.lines %}<span data-say>{{ line }}</span>{% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="flex max-w-64 flex-col gap-1 self-end rounded-[20px] rounded-br-[6px] px-4 py-2.5 text-body text-ink shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-eva)_45%,transparent)] animate-eva-rise">{% for line in msg.lines %}<span>{{ line }}</span>{% endfor %}</div>
+{% endif %}
+{% endfor %}

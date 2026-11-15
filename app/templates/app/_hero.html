@@ -1,0 +1,6 @@
+<div class="flex flex-col gap-2">
+  <h2 class="text-h3 text-ink">{% if all_good %}Today: all good{% else %}Eva is watching{% endif %}</h2>
+  {% if all_good %}<span class="badge badge-dot self-start text-ok border border-line">Normal for you</span>
+  {% else %}<span class="badge badge-dot self-start {{ crate::web::ui::badge(p.status.tone()) }}">{{ p.status.label() }}</span>{% endif %}
+</div>
+<p class="bubble line-clamp-3 max-w-[13rem] text-[0.875rem] leading-5" data-eva-line>{% if p.eva_line.is_empty() %}All good. I'm watching quietly.{% else %}{{ p.eva_line }}{% endif %}</p>

@@ -1,0 +1,752 @@
+/* Eva app stylesheet: Tailwind v4 input. Built into static/css/app.css by
+   scripts/build-css.sh (npx @tailwindcss/cli). Tokens ported from the
+   wireframes' src/theme.css; motion tokens and app-only utilities appended.
+
+   Eva design system: pure black, grotesk type, uppercase tracked labels, soft cards.
+   Every colour, radius and spacing used by screens must come from this file. */
+@import "tailwindcss" source(none);
+@source "../templates";
+@source "../src";
+@source "../static/js/eva.js";
+@source "../static/js/motion.js";
+@source "../static/sw.js";
+
+@source "../static/js/fx.js";
+@source "../static/js/wrist.js";
+
+/* ---------- visual system v3: the landing's palette (copy rules v3, Sun 15/11) ----------
+   Pure black, off-white ink, grey secondary text, #2a2a2a hairlines, teal #1fe5c4 for Eva and
+   positive states, orange #f28a1a accents, red only for alarms. Values come from the landing's
+   :root / dark theme (scratchpad landing3/index.html). Layout, components and motion are v2's;
+   token names are kept so templates keep compiling. */
+@theme {
+  /* landing --space / --canvas (dark) */
+  --color-background: #000000;
+  /* lifted blacks so cards still read on the canvas; edges are the landing's hairline */
+  --color-surface: #0B0B0B;
+  --color-raised: #141414;
+  --color-elevated: #1C1C1C;
+  /* landing --space-rule */
+  --color-line: #2A2A2A;
+  --color-line-strong: #3A3A3A;
+  /* landing --space-ink */
+  --color-ink: #F4F3F0;
+  /* landing --space-muted on black (rgba(244,243,240,.62) ≈ #9b9996): 7.6:1 on black, AA on every surface */
+  --color-muted: #9B9996;
+  --color-faint: #6B6A68;
+  /* landing light-theme ink: text on teal / orange / white */
+  --color-on-light: #0C0C0C;
+  /* landing orange: accents only */
+  --color-brand: #F28A1A;
+  /* landing solar-alert red: alarms only (5.6:1 on black) */
+  --color-critical: #FF2A1F;
+  /* landing --lit */
+  --color-warn: #FFB347;
+  /* landing --teal (dark): Eva and positive states */
+  --color-ok: #1FE5C4;
+  /* landing --net / --link (dark) */
+  --color-info: #7FD4FF;
+  /* deep alarm red for full-bleed emergency surfaces: white text on it is 6.0:1 */
+  --color-critical-deep: #C41A12;
+  /* the medical station's light strip (alias of Eva teal) */
+  --color-station: #1FE5C4;
+
+  /* domain colours, all from the landing's set */
+  --color-heart: #F28A1A;
+  --color-oxygen: #7FD4FF;
+  --color-temp: #FFB347;
+  /* landing --mark (dark) */
+  --color-mood: #FFD84A;
+  --color-eva: #1FE5C4;
+  --color-sleep: #7FD4FF;
+  --color-water: #7FD4FF;
+  --color-food: #1FE5C4;
+
+  /* the landing's stack; PP Neue Montreal is not shipped, so Inter (self-hosted) renders */
+  --font-display: "PP Neue Montreal", "Inter", Arial, sans-serif;
+  --font-sans: "PP Neue Montreal", "Inter", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* body text is 15 px (was 14); captions never under 12 px */
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.375rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+
+  --tracking-label: 0.12em;
+  --radius-hero: 2rem;
+  --radius-card: 1.5rem;
+  --radius-tile: 1.125rem;
+  --radius-chip: 0.75rem;
+  --radius-device: 2rem;
+
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.02;
+  --text-hero: 4rem;
+  --text-hero--line-height: 0.95;
+
+  /* motion: springs only (see docs/app/MOTION.md). --ease-eva is the gentle spring. */
+  --ease-eva: var(--ease-spring-gentle);
+  --animate-eva-rise: eva-rise var(--dur-spring-swift) var(--ease-spring-swift) both;
+  @keyframes eva-rise {
+    from { opacity: 0; transform: translateY(12px) scale(.96); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@font-face { font-family: "Inter"; src: url("/static/fonts/inter-var.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+
+:root {
+  --grad-heart: linear-gradient(135deg, #F28A1A, #D9740C);
+  --grad-oxygen: linear-gradient(135deg, #7FD4FF, #5BBDEB);
+  --grad-temp: linear-gradient(135deg, #FFB347, #F29A24);
+  --grad-mood: linear-gradient(135deg, #FFD84A, #F2C21F);
+  --grad-eva: linear-gradient(135deg, #1FE5C4, #14C7AA);
+  --grad-sleep: linear-gradient(135deg, #7FD4FF, #5BBDEB);
+  --grad-water: linear-gradient(135deg, #7FD4FF, #5BBDEB);
+  --grad-food: linear-gradient(135deg, #1FE5C4, #14C7AA);
+  --grad-brand: linear-gradient(135deg, #F28A1A, #D9740C);
+  /* alarm red; white body text stays ≥ 4.8:1 at the lightest stop */
+  --grad-emergency: linear-gradient(180deg, #E0241A 0%, #A3160F 100%);
+  --grad-storm: linear-gradient(180deg, #5A3E18, #1A1208);
+  /* hairline edges (landing --space-rule) instead of navy glows */
+  --e1: inset 0 0 0 1px #2A2A2A;
+  --e2: inset 0 0 0 1px #3A3A3A, 0 16px 40px -16px #000000CC;
+  --e3: inset 0 1px 0 #2A2A2A, 0 -8px 48px #000000B3;
+  --tint: var(--color-eva);
+  --grad: var(--grad-eva);
+}
+[data-tint="heart"] { --tint: var(--color-heart); --grad: var(--grad-heart); }
+[data-tint="oxygen"] { --tint: var(--color-oxygen); --grad: var(--grad-oxygen); }
+[data-tint="temp"] { --tint: var(--color-temp); --grad: var(--grad-temp); }
+[data-tint="mood"] { --tint: var(--color-mood); --grad: var(--grad-mood); }
+[data-tint="eva"] { --tint: var(--color-eva); --grad: var(--grad-eva); }
+[data-tint="sleep"] { --tint: var(--color-sleep); --grad: var(--grad-sleep); }
+[data-tint="water"] { --tint: var(--color-water); --grad: var(--grad-water); }
+[data-tint="food"] { --tint: var(--color-food); --grad: var(--grad-food); }
+[data-tint="brand"] { --tint: var(--color-brand); --grad: var(--grad-brand); }
+[data-tint="critical"] { --tint: var(--color-critical); --grad: var(--grad-emergency); }
+
+/* ---------- type scale: the landing's grotesk stack at its light weight (400) ---------- */
+@utility font-display { font-family: var(--font-display); }
+@utility text-vital-xl { font-family: var(--font-display); font-size: 4.5rem; line-height: 4.5rem; font-weight: 400; letter-spacing: -0.03em; }
+@utility text-vital { font-family: var(--font-display); font-size: 2.75rem; line-height: 2.75rem; font-weight: 400; letter-spacing: -0.02em; }
+@utility text-vital-sm { font-family: var(--font-display); font-size: 1.625rem; line-height: 1.75rem; font-weight: 400; letter-spacing: -0.01em; }
+@utility text-h1 { font-family: var(--font-display); font-size: 2rem; line-height: 2.25rem; font-weight: 400; letter-spacing: -0.02em; }
+@utility text-h2 { font-family: var(--font-display); font-size: 1.375rem; line-height: 1.75rem; font-weight: 400; letter-spacing: -0.01em; }
+@utility text-h3 { font-family: var(--font-display); font-size: 1.0625rem; line-height: 1.5rem; font-weight: 500; }
+@utility text-body { font-size: 0.9375rem; line-height: 1.375rem; }
+@utility text-label { font-size: 0.8125rem; line-height: 1.125rem; font-weight: 500; }
+@utility text-caption { font-size: 0.75rem; line-height: 1rem; font-weight: 500; letter-spacing: 0.01em; }
+@utility text-overline { font-size: 0.6875rem; line-height: 0.875rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+@utility num { font-variant-numeric: tabular-nums lining-nums; }
+
+@layer base {
+  /* headlines: the landing's stack at weight 400; small headings 500 so they still read as headings */
+  h1, h2, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl, .text-7xl { font-family: var(--font-display); font-weight: 400; }
+  h1.text-base, h2.text-base, h2.text-sm { font-weight: 500; }
+  button, .btn { font-family: inherit; }
+  .tabular-nums { font-variant-numeric: tabular-nums lining-nums; }
+}
+
+/* ---------- the card system: three containers, two button families (§2.4) ---------- */
+@layer components {
+  .card { position: relative; border-radius: var(--radius-card); padding: 1.25rem; background: var(--color-background); box-shadow: var(--e1); border-color: transparent; }
+  .card-hero { position: relative; overflow: hidden; isolation: isolate; border-radius: var(--radius-hero); padding: 1.5rem;
+    background: var(--color-background);
+    box-shadow: inset 0 0 0 1px #2A2A2A; }
+  .tile { position: relative; border-radius: var(--radius-tile); padding: 1rem; background: var(--color-background); box-shadow: var(--e1); }
+  .rows { border-radius: var(--radius-card); padding: 0.5rem; background: var(--color-background); box-shadow: var(--e1); display: flex; flex-direction: column; }
+  .row { position: relative; display: flex; align-items: center; gap: 0.75rem; min-height: 4rem; padding: 0.75rem 1rem; border-radius: var(--radius-tile); color: var(--color-ink); }
+  .rows > .row + .row::before { content: ""; position: absolute; top: 0; left: 4.25rem; right: 1rem; height: 1px; background: var(--color-line); }
+  a.row:active, button.row:active { background: var(--color-raised); }
+
+  .btn-primary, .btn-secondary, .btn-ghost, .btn-emergency, .btn-white { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    min-height: 3rem; padding: 0 1.5rem; border-radius: 999px; font-family: var(--font-display); font-weight: 500; font-size: 1rem; line-height: 1.25rem; touch-action: manipulation; }
+  .btn-primary { min-height: 3.5rem; background: var(--color-ink); color: var(--color-on-light); box-shadow: none; }
+  .btn-secondary { background: transparent; color: var(--color-ink); box-shadow: inset 0 0 0 1px #2A2A2A; }
+  .btn-ghost { color: color-mix(in oklab, var(--color-ink) 80%, transparent); }
+  .btn-emergency { min-height: 3.5rem; background: var(--grad-emergency); color: #fff; box-shadow: var(--e2), 0 12px 40px -8px #FF2A1F59; }
+  .btn-white { min-height: 4rem; background: #fff; color: var(--color-critical-deep); box-shadow: var(--e2); font-size: 1.125rem; }
+  .btn-outline { display: inline-flex; align-items: center; justify-content: center; min-height: 3.5rem; padding: 0 1.5rem; border-radius: 999px; font-family: var(--font-display); font-weight: 600; font-size: 1rem;
+    color: #fff; box-shadow: inset 0 0 0 1.5px #FFFFFF99; background: transparent; }
+  .btn-sm { min-height: 2.25rem; padding: 0 0.875rem; font-size: 0.8125rem; }
+  .icon-btn { display: inline-grid; place-items: center; width: 3rem; height: 3rem; flex-shrink: 0; border-radius: 999px; background: transparent; color: var(--color-ink); box-shadow: inset 0 0 0 1px #2A2A2A; }
+
+  .badge { display: inline-flex; align-items: center; gap: 0.375rem; height: 1.5rem; padding: 0 0.625rem; border-radius: 0.75rem; border: 0; font-size: 0.75rem; line-height: 1rem; font-weight: 600; white-space: nowrap; }
+  .badge-dot::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+
+  .glass { background: linear-gradient(180deg, #1C1C1CCC, #0B0B0BE6); box-shadow: var(--e2); }
+  .bubble { position: relative; border-radius: 1.25rem; padding: 0.625rem 0.875rem; background: var(--color-background); color: var(--color-ink); box-shadow: inset 0 0 0 1px #2A2A2A; font-size: 0.9375rem; line-height: 1.375rem; font-weight: 500; }
+}
+.e1 { box-shadow: var(--e1); } .e2 { box-shadow: var(--e2); } .e3 { box-shadow: var(--e3); }
+.glow { box-shadow: var(--e1), 0 12px 40px -8px color-mix(in oklab, var(--tint) 35%, transparent); }
+.text-grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bg-grad { background: var(--grad); }
+.bg-grad-eva { background: var(--grad-eva); } .bg-grad-mood { background: var(--grad-mood); } .bg-grad-food { background: var(--grad-food); } .bg-grad-temp { background: var(--grad-temp); } .bg-grad-water { background: var(--grad-water); } .bg-grad-oxygen { background: var(--grad-oxygen); } .bg-grad-heart { background: var(--grad-heart); } .bg-grad-emergency { background: var(--grad-emergency); } .bg-grad-brand { background: var(--grad-brand); }
+.bg-tint-10 { background: color-mix(in oklab, var(--tint) 10%, var(--color-surface)); }
+.bg-tint-16 { background: color-mix(in oklab, var(--tint) 16%, transparent); }
+.text-tint { color: var(--tint); }
+
+/* ambient depth: one static radial layer behind the app, plus a per-screen tint that cross-fades */
+html { background: var(--color-background); }
+body[data-view="app"] { background: transparent; }
+body[data-view="app"]::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background: #000000; }
+body[data-view="app"]::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: none;
+  opacity: var(--tint-o, 1); transition: opacity 400ms cubic-bezier(.2, 0, 0, 1); }
+body[data-view="dash"], body[data-view="station"] { background: #000000; }
+
+/* eased move between the Eva assistant's positions (minimised, docked, expanded); still for reduced motion */
+@utility transition-eva {
+  transition-property: width, height, border-radius, opacity, transform, translate, scale, background-color;
+  transition-duration: var(--dur-spring-gentle);
+  transition-timing-function: var(--ease-spring-gentle);
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 1ms;
+  }
+}
+
+/* the hatched "remaining / other" fill used by progress, split bars and highlighted chart bars */
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(135deg, var(--color-line) 0 2px, transparent 2px 7px);
+}
+@utility bg-hatch-info {
+  background-image: repeating-linear-gradient(135deg, var(--color-info) 0 2px, transparent 2px 7px);
+}
+@utility bg-hatch-critical {
+  background-image: repeating-linear-gradient(135deg, var(--color-critical) 0 2px, transparent 2px 7px);
+}
+
+html, body { background: var(--color-background); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; color-scheme: dark; margin: 0; }
+
+/* CPR metronome: one compression per beat. The period comes from --beat (60 s / rate), so the visual stays in sync with the number shown. */
+@keyframes beat-press { 0%, 100% { transform: scale(1); } 12% { transform: scale(0.86); } 40% { transform: scale(1); } }
+@keyframes beat-wave { 0% { transform: scale(0.62); opacity: 0.55; } 70% { opacity: 0.12; } 100% { transform: scale(1); opacity: 0; } }
+@utility animate-beat-press { animation: beat-press var(--beat, 545ms) cubic-bezier(0.3, 0, 0.2, 1) infinite; }
+@utility animate-beat-wave { animation: beat-wave var(--beat, 545ms) cubic-bezier(0.2, 0.6, 0.3, 1) infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-beat-press, .animate-beat-wave { animation: none; } }
+
+/* ---------- Eva assistant and journaling ---------- */
+/* State of Mind valence palette, very unpleasant (1) to very pleasant (5). Only for the journaling orb, its slider and mood charts. */
+@theme {
+  --color-mood-1: #9B9996;
+  --color-mood-2: #7FD4FF;
+  --color-mood-3: #1FE5C4;
+  --color-mood-4: #FFD84A;
+  --color-mood-5: #F28A1A;
+}
+
+
+/* the valence scale as one gradient track */
+@utility bg-mood-scale {
+  background-image: linear-gradient(90deg, var(--color-mood-1), var(--color-mood-2), var(--color-mood-3), var(--color-mood-4), var(--color-mood-5));
+}
+
+/* glowing 3D orb: specular highlight, lit body, dark underside and a halo, all from --orb (set by orb-1 ... orb-5).
+   Shape follows valence: tight and lumpy when unpleasant, round and open when pleasant. */
+@utility orb {
+  border-radius: var(--orb-shape, 50%);
+  background-image:
+    radial-gradient(circle at 34% 26%, color-mix(in oklab, var(--color-ink) 85%, var(--orb)) 0, color-mix(in oklab, var(--color-ink) 30%, transparent) 9%, transparent 26%),
+    radial-gradient(circle at 70% 82%, color-mix(in oklab, var(--orb) 60%, var(--color-ink)) 0, transparent 30%),
+    radial-gradient(circle at 42% 38%, color-mix(in oklab, var(--orb) 75%, var(--color-ink)) 0, var(--orb) 38%, color-mix(in oklab, var(--orb) 45%, var(--color-background)) 100%);
+  box-shadow:
+    0 0 calc(var(--orb-halo, 48px) * var(--orb-scale, 1)) color-mix(in oklab, var(--orb) 55%, transparent),
+    inset calc(-10px * var(--orb-scale, 1)) calc(-14px * var(--orb-scale, 1)) calc(28px * var(--orb-scale, 1)) color-mix(in oklab, var(--color-background) 45%, transparent),
+    inset calc(6px * var(--orb-scale, 1)) calc(8px * var(--orb-scale, 1)) calc(18px * var(--orb-scale, 1)) color-mix(in oklab, var(--color-ink) 18%, transparent);
+}
+@utility orb-1 { --orb: var(--color-mood-1); --orb-shape: 44% 56% 38% 62% / 58% 40% 60% 42%; --orb-halo: 18px; }
+@utility orb-2 { --orb: var(--color-mood-2); --orb-shape: 48% 52% 44% 56% / 54% 46% 54% 46%; --orb-halo: 28px; }
+@utility orb-3 { --orb: var(--color-mood-3); --orb-shape: 50% 50% 47% 53% / 52% 48% 52% 48%; --orb-halo: 36px; }
+@utility orb-4 { --orb: var(--color-mood-4); --orb-shape: 50%; --orb-halo: 48px; }
+@utility orb-5 { --orb: var(--color-mood-5); --orb-shape: 50%; --orb-halo: 64px; }
+/* small orbs (chart dots, entry cards) keep the colour with a tighter halo and softer shading */
+@utility orb-sm { --orb-scale: 0.22; }
+
+/* slow breathing for the big orb and the push-to-talk rings; still for reduced motion */
+@keyframes orb-breathe { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.04) rotate(6deg); } }
+@utility animate-orb-breathe { animation: orb-breathe 6s var(--ease-eva) infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-orb-breathe { animation: none; } }
+
+/* ---------- motion tokens (single source; motion.js reads the spring numbers) ----------
+   Each spring = mass / stiffness / damping. The linear() curves below are
+   fallbacks sampled from the same numbers; motion.js regenerates them at load
+   so CSS transitions and JS springs always match. Springs for anything that moves in
+   response to the user; fixed curves (--ease-fade, linear) only for ambient loops and fades. */
+:root {
+  --spring-snappy-mass: 1;  --spring-snappy-stiffness: 400; --spring-snappy-damping: 30;
+  --spring-gentle-mass: 1;  --spring-gentle-stiffness: 170; --spring-gentle-damping: 26;
+  --spring-bouncy-mass: 1;  --spring-bouncy-stiffness: 300; --spring-bouncy-damping: 14;
+  --spring-slow-mass: 1;    --spring-slow-stiffness: 90;    --spring-slow-damping: 20;
+  --spring-swift-mass: 1;   --spring-swift-stiffness: 520;  --spring-swift-damping: 40;
+  --spring-glide-mass: 1;   --spring-glide-stiffness: 60;   --spring-glide-damping: 16;
+
+  --ease-spring-snappy: linear(0, 0.0238, 0.0815, 0.1609, 0.2613, 0.3581, 0.4541, 0.5534, 0.6369, 0.7118, 0.7828, 0.838, 0.8843, 0.9222, 0.955, 0.9781, 0.9956, 1.0092, 1.0176, 1.0229, 1.0258, 1.0266, 1.0261, 1.0246, 1.0224, 1.0199, 1.0173, 1.0146, 1.0121, 1.0099, 1.0077, 1.0059, 1.0044, 1.0032, 1.0021, 1.0013, 1.0006, 1.0001, 0.9998, 0.9995, 0.9994);
+  --dur-spring-snappy: 452ms;
+  --ease-spring-gentle: linear(0, 0.0251, 0.0838, 0.1609, 0.246, 0.3323, 0.4156, 0.4933, 0.5677, 0.6306, 0.6861, 0.7346, 0.7764, 0.8124, 0.8431, 0.8691, 0.8922, 0.9105, 0.9259, 0.9387, 0.9494, 0.9583, 0.9657, 0.9718, 0.9771, 0.9813, 0.9846, 0.9874, 0.9897, 0.9916, 0.9932, 0.9944, 0.9955, 0.9963, 0.997, 0.9976, 0.998, 0.9984, 0.9987, 0.9989, 0.9992);
+  --dur-spring-gentle: 725ms;
+  --ease-spring-bouncy: linear(0, 0.0799, 0.2707, 0.5129, 0.7564, 0.9655, 1.1196, 1.212, 1.2471, 1.2361, 1.1939, 1.1357, 1.0744, 1.0198, 0.9781, 0.9515, 0.9396, 0.9399, 0.9489, 0.9627, 0.978, 0.9921, 1.0033, 1.0108, 1.0146, 1.0152, 1.0134, 1.0101, 1.0064, 1.0027, 0.9998, 0.9977, 0.9965, 0.9962, 0.9965, 0.9973, 0.9982, 0.9991, 0.9999, 1.0005, 1.0008);
+  --dur-spring-bouncy: 960ms;
+  --ease-spring-slow: linear(0, 0.0306, 0.1004, 0.1887, 0.2828, 0.375, 0.4612, 0.5394, 0.6087, 0.6692, 0.7215, 0.7677, 0.8056, 0.8376, 0.8646, 0.8872, 0.9062, 0.922, 0.9353, 0.9463, 0.9554, 0.9633, 0.9696, 0.9748, 0.9791, 0.9827, 0.9857, 0.9881, 0.9902, 0.9919, 0.9933, 0.9945, 0.9954, 0.9962, 0.9969, 0.9974, 0.9979, 0.9982, 0.9985, 0.9988, 0.999);
+  --dur-spring-slow: 1123ms;
+  --ease-spring-swift: linear(0.0000, 0.0253, 0.0916, 0.1720, 0.2705, 0.3619, 0.4503, 0.5409, 0.6153, 0.6876, 0.7446, 0.7935, 0.8388, 0.8729, 0.9036, 0.9262, 0.9444, 0.9602, 0.9713, 0.9807, 0.9872, 0.9920, 0.9959, 0.9984, 1.0002, 1.0013, 1.0020, 1.0023, 1.0025, 1.0024, 1.0023, 1.0021, 1.0019, 1.0016, 1.0014, 1.0012, 1.0010, 1.0008, 1.0007, 1.0005, 1.0004);
+  --dur-spring-swift: 416ms;
+  --ease-spring-glide: linear(0.0000, 0.0284, 0.0944, 0.1765, 0.2679, 0.3588, 0.4447, 0.5211, 0.5918, 0.6540, 0.7082, 0.7548, 0.7935, 0.8275, 0.8562, 0.8804, 0.9001, 0.9171, 0.9314, 0.9432, 0.9530, 0.9610, 0.9678, 0.9734, 0.9781, 0.9818, 0.9850, 0.9876, 0.9898, 0.9916, 0.9931, 0.9943, 0.9953, 0.9961, 0.9968, 0.9974, 0.9978, 0.9982, 0.9985, 0.9988, 0.9990);
+  --dur-spring-glide: 1311ms;
+  --ease-fade: cubic-bezier(.2, 0, 0, 1);
+}
+
+/* width / height changes of live bars glide to the new value (retargets mid-flight) */
+.spring-w { transition: width var(--dur-spring-gentle) var(--ease-spring-gentle); }
+.spring-h { transition: height var(--dur-spring-gentle) var(--ease-spring-gentle); }
+/* press feedback: JS drives a spring on --press; CSS only applies it */
+.press { transform: scale(var(--press, 1)); will-change: transform; touch-action: manipulation; }
+.spring-panel { transform: translateX(var(--panel-x, 0%)); }
+@media (prefers-reduced-motion: reduce) {
+  .spring-w, .spring-h { transition-duration: 1ms; }
+  .press { transform: none; }
+}
+
+/* ---------- app shell: safe areas, tab bar, screen transitions, sheet ----------
+   The tab bar floats 0.75rem above the home indicator; screens reserve room for it
+   (pb-dock) and docks that must stay reachable (Eva's composer) stick above it. */
+@utility pb-dock { padding-bottom: calc(8rem + max(env(safe-area-inset-bottom, 0px), var(--sab, 0px))); }
+@utility bottom-tabbar { bottom: calc(0.75rem + max(env(safe-area-inset-bottom, 0px), var(--sab, 0px))); }
+@utility bottom-dock { bottom: calc(6.5rem + max(env(safe-area-inset-bottom, 0px), var(--sab, 0px))); }
+
+/* screens move in with springs (motion.js writes --scr-x px, --scr-o, --scr-s) */
+#screen { transform: translate(calc(var(--scr-x, 0) * 1px), calc(var(--scr-y, 0) * 1px)) scale(var(--scr-s, 1)); opacity: var(--scr-o, 1); transform-origin: 50% 0; overflow-x: clip; }
+.edge-swipe { touch-action: none; }
+
+/* ---------- floating glass tab bar with a liquid indicator (§3.4) ---------- */
+.tabbar { height: 4.25rem; border-radius: 2.125rem; background: #000000E6;
+  box-shadow: inset 0 1px 0 #FFFFFF2E, 0 4px 12px #00000080, 0 16px 40px -16px #000000CC;
+  -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); }
+html.lite .tabbar { -webkit-backdrop-filter: none; backdrop-filter: none; background: #000000; }
+.tab-fade { position: fixed; inset: auto 0 0 0; height: calc(6rem + env(safe-area-inset-bottom, 0px)); z-index: 39; pointer-events: none; background: linear-gradient(to top, #000000 30%, transparent); }
+.tab { color: var(--color-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1 1 0; height: 100%; min-width: 3rem; position: relative; z-index: 1; }
+.tab > svg { transition: transform var(--dur-spring-bouncy) var(--ease-spring-bouncy); }
+.tab .tab-label { font-size: 0.6875rem; line-height: 0.875rem; font-weight: 600; letter-spacing: 0.01em; }
+.tab .ic-fill { display: none; }
+.tab[aria-current="page"] { color: var(--color-ink); }
+.tab[aria-current="page"] .ic-line { display: none; }
+.tab[aria-current="page"] .ic-fill { display: block; }
+.tab-pill { width: 3.5rem; height: 2rem; top: 0.625rem; border-radius: 1rem; background: color-mix(in oklab, var(--pill-tint, var(--color-eva)) 24%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--pill-tint, var(--color-eva)) 50%, transparent);
+  transform: translateX(calc(var(--pill-x, 0) * 1px)) scaleX(var(--pill-s, 1)); opacity: var(--pill-o, 0); will-change: transform; }
+[data-tabbar][data-active="plan"] { --pill-tint: var(--color-mood); }
+[data-tabbar][data-active="food"] { --pill-tint: var(--color-food); }
+[data-tabbar][data-active="records"] { --pill-tint: var(--color-oxygen); }
+.tab-eva { width: 4rem; height: 4rem; margin-top: -1.75rem; border-radius: 999px; background: var(--color-background); flex: 0 0 auto;
+  box-shadow: inset 0 0 0 1px #2A2A2A; transition: transform var(--dur-spring-bouncy) var(--ease-spring-bouncy); }
+.tab-eva::before { content: ""; position: absolute; inset: -4px; border-radius: 999px; padding: 2px; z-index: -1;
+  padding: 1px; background: var(--ring-a, #2A2A2A);
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.tab-eva[aria-current="page"] { transform: scale(1.06); }
+.tab-eva[aria-current="page"]::before { --ring-a: #1FE5C4; padding: 1.5px; inset: -4px; }
+.tab-eva:has([data-state="thinking"])::before, .tab-eva:has([data-state="writing"])::before, .tab-eva:has([data-state="sending"])::before { --ring-a: #7FD4FF; animation: pulse-o 1.6s ease-in-out infinite; }
+.tab-eva:has([data-state="alert"])::before { --ring-a: #FF2A1F; padding: 2px; animation: pulse-o 1.2s ease-in-out infinite; }
+html[data-eva-mode="rules"] .tab-eva::after { content: ""; position: absolute; top: 2px; right: 2px; width: 12px; height: 12px; border-radius: 999px; background: var(--color-warn); box-shadow: 0 0 0 2px var(--color-background); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-o { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+
+/* header: avatar chip, ship time, link pill */
+.avatar { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: var(--grad-eva); color: var(--color-on-light); font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; }
+.link-pill { display: inline-flex; align-items: center; gap: 0.375rem; height: 2rem; padding: 0 0.75rem; border-radius: 999px; background: transparent; box-shadow: inset 0 0 0 1px #2A2A2A; font-size: 0.75rem; font-weight: 600; color: var(--color-muted); }
+/* sub-screen nav bar: sticky with a fade to transparent */
+.navbar { position: relative; z-index: 20; padding-top: 0.25rem; }
+
+/* bottom sheet: --sheet-y is 0 (open) to 100 (closed), driven by a spring and the finger */
+.sheet-panel { transform: translateY(calc(var(--sheet-y, 100) * 1%)); border-radius: 2rem 2rem 0 0; background: var(--color-raised); box-shadow: var(--e3); will-change: transform; }
+.sheet-backdrop { opacity: calc(1 - var(--sheet-y, 100) / 100); background: #000000B3; }
+/* (the iOS "app steps back to .96" effect was measured: scaling the shell re-parents the fixed tab
+   bar and restyles the whole page every frame, so the sheet keeps only its backdrop) */
+
+/* things that fill up (rings, bars) grow in once when a screen appears: --g goes 0 → 1 */
+.ring-fill { stroke-dashoffset: calc(100 - (100 - var(--ring, 0)) * var(--g, 1)); transition: stroke-dashoffset var(--dur-spring-gentle) var(--ease-spring-gentle); }
+.grow-w { width: calc(var(--pct) * var(--g, 1)); }
+.growing { transition: none !important; }
+
+/* the composer dock fades the chat out underneath it */
+.dock { background: linear-gradient(to top, var(--color-background) 72%, color-mix(in oklab, var(--color-background) 0%, transparent)); }
+
+/* pill-shaped quick action (Eva's chips) */
+.chip { display: inline-flex; flex-shrink: 0; scroll-snap-align: start; align-items: center; gap: 0.5rem; height: 2.5rem; padding: 0 1rem; border-radius: 1.25rem; background: transparent; box-shadow: inset 0 0 0 1px #2A2A2A; color: var(--color-ink); font-size: 0.8125rem; font-weight: 600; white-space: nowrap; }
+.chip > span:first-child { color: var(--color-eva); }
+.badge-plain { display: inline-flex; align-items: center; gap: 0.375rem; height: 2rem; border-radius: 1rem; background: transparent; box-shadow: inset 0 0 0 1px #2A2A2A; padding: 0 0.75rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-ink); }
+
+/* hold-to-talk halo breathes on the slow spring */
+@keyframes mic-halo { 0% { transform: scale(0.9); opacity: 0.7; } 100% { transform: scale(1.3); opacity: 0; } }
+.mic-halo { animation: mic-halo 2.4s var(--ease-spring-slow) infinite; }
+[data-eva-mic].is-recording { transform: scale(1.12); }
+
+/* ECG result trace draws itself once */
+@keyframes ecg-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.ecg-draw { stroke-dasharray: 1; stroke-dashoffset: 0; animation: ecg-draw 1.4s var(--ease-spring-slow) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-halo, .ecg-draw { animation: none; }
+  .ring-fill, .tab { transition-duration: 1ms; }
+}
+
+/* ---------- Eva mascot: one image per state (Codex kit, AI-generated) ----------
+   motion.js springs translate/scale/rotate/glow toward per-state targets, and a
+   squash (--eva-sx / --eva-sy) on every change of state while the new image
+   cross-fades in over the old one (.eva-next). These CSS variables are what it writes. */
+.eva-mascot .eva-body { transform: translateY(calc(var(--eva-y, 0) * 1px)) scale(calc(var(--eva-s, 1) * var(--eva-sx, 1)), calc(var(--eva-s, 1) * var(--eva-sy, 1))) rotate(calc(var(--eva-r, 0) * 1deg)); transform-origin: 50% 85%; will-change: transform; }
+.eva-mascot .eva-next { position: absolute; inset: 0; }
+
+/* ---------- 3D icons (Codex "clay-lite" kit, AI-generated: covered by the app-level notice) ----------
+   A soft lit disc keeps the darker icons (navy book, hub) readable on pure black.
+   Size comes from the caller (size-8 … size-16); the art keeps its own padding. */
+.pic { display: inline-grid; flex-shrink: 0; place-items: center; border-radius: 999px; background: none; }
+.pic > img { width: 100%; height: 100%; object-fit: contain; padding: 4%; }
+.pic-bare { background: none; box-shadow: none; }
+.pic-bare > img { padding: 0; }
+
+/* first-load screen: the splash, then a spring fade (motion.js); never blocks taps */
+#splash { pointer-events: none; opacity: var(--splash-o, 1); }
+#splash img { transform: scale(var(--splash-s, 1)); }
+
+/* ---------- journaling valence slider ---------- */
+.mood-range { -webkit-appearance: none; appearance: none; height: 0.75rem; border-radius: 999px; background-image: linear-gradient(90deg, var(--color-mood-1), var(--color-mood-2), var(--color-mood-3), var(--color-mood-4), var(--color-mood-5)); }
+.mood-range::-webkit-slider-thumb { -webkit-appearance: none; width: 1.75rem; height: 1.75rem; border-radius: 999px; background: var(--color-ink); border: 4px solid var(--color-background); box-shadow: 0 4px 12px rgb(0 0 0 / .5); }
+.mood-range::-moz-range-thumb { width: 1.25rem; height: 1.25rem; border-radius: 999px; background: var(--color-ink); border: 4px solid var(--color-background); }
+.mood-range:focus-visible { outline: 2px solid var(--color-info); outline-offset: 4px; }
+
+/* toasts sit over live content: a solid, tinted pill so the text never mixes with what is behind */
+.toast { background-color: color-mix(in oklab, currentColor 12%, var(--color-elevated)); box-shadow: var(--e2); max-width: calc(100vw - 2rem); border-radius: 1.25rem; }
+/* when a new chat line scrolls into view it stops above Eva's composer dock and the tab bar */
+#chat > * { scroll-margin-bottom: calc(17rem + env(safe-area-inset-bottom, 0px)); }
+
+/* focus mode: while a person has an emergency task (go help, bring the AED, CPR) the screen is
+   theirs alone, like a full-screen modal: no tab bar, no room reserved for it */
+body:has(#screen [data-focus]) nav[aria-label="Main"], body:has(#screen [data-focus]) .app-header, body:has(#screen [data-focus]) .tab-fade { display: none; }
+#screen:has([data-focus]) { padding-top: max(0.75rem, env(safe-area-inset-top)); }
+#screen:has([data-focus]) { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
+/* screens slide in from the side; clip (not hidden: no scroll container, sticky still works) so the
+   moving screen never widens the page and mobile browsers never zoom the layout out */
+body[data-view="app"] { overflow-x: clip; }
+
+/* ---------- medical station (/station) ----------
+   A lit compartment glows teal and pulses on the bouncy spring (it overshoots, then settles,
+   then goes again), like a light strip asking to be opened. Reduced motion: a static highlight. */
+.station-lit { position: relative;
+  border-color: var(--color-station);
+  background-color: color-mix(in oklab, var(--color-station) 12%, var(--color-surface));
+  box-shadow: 0 0 0 2px var(--color-station), 0 0 24px color-mix(in oklab, var(--color-station) 40%, transparent);
+}
+/* the pulse is an overlay ring's opacity and scale (never an animated box-shadow) */
+.station-lit::after { content: ""; position: absolute; inset: -6px; border-radius: inherit; pointer-events: none;
+  box-shadow: 0 0 0 3px var(--color-station), 0 0 48px color-mix(in oklab, var(--color-station) 65%, transparent);
+  animation: station-ring 1.4s ease-in-out infinite alternate; }
+@keyframes station-ring { from { opacity: .15; transform: scale(.985); } to { opacity: 1; transform: scale(1.015); } }
+@media (prefers-reduced-motion: reduce) {
+  .station-lit::after { animation: none; opacity: .8; }
+}
+/* the station screen fills a landscape tablet: no page scroll when it fits */
+body[data-view="station"] { overflow-x: clip; }
+
+/* ================================================================ v2 components */
+
+/* ---------- vitals rings (§3.1): SVG arc on a track, the heart one beats ---------- */
+.vring { position: relative; display: inline-grid; place-items: center; flex-shrink: 0; }
+.vring > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.vring .ring-track { stroke: #FFFFFF14; }
+.vring .ring-arc { stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--pct, 0) * var(--g, 1)); transition: stroke-dashoffset var(--dur-spring-gentle) var(--ease-spring-gentle); }
+.ring-center { position: relative; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+@keyframes lub-dub { 0% { transform: scale(1); } 8% { transform: scale(1.045); } 16% { transform: scale(1); } 24% { transform: scale(1.025); } 34%, 100% { transform: scale(1); } }
+@keyframes beat-wave2 { 0% { transform: scale(.9); opacity: .5; } 100% { transform: scale(1.35); opacity: 0; } }
+@keyframes breath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+.beating { animation: lub-dub var(--beat, 900ms) linear infinite; will-change: transform; }
+.beat-wave { position: absolute; inset: 0; border-radius: 999px; border: 2px solid var(--color-heart); opacity: 0; animation: beat-wave2 var(--beat, 900ms) var(--ease-fade) infinite; pointer-events: none; }
+.beat-wave + .beat-wave { animation-delay: calc(var(--beat, 900ms) * .16); }
+.breathing { animation: breath 4s ease-in-out infinite; }
+/* ECG ribbon: a PQRST path repeated, translated one complex per beat */
+.ecg-ribbon { overflow: hidden; width: 100%; }
+.ecg-ribbon > svg { display: block; animation: ecg-scroll var(--beat, 900ms) linear infinite; will-change: transform; }
+@keyframes ecg-scroll { from { transform: translateX(0); } to { transform: translateX(-33.333%); } }
+.no-reading .beating, .no-reading .beat-wave, .no-reading .ecg-ribbon > svg { animation: none; }
+.no-reading .beat-wave { display: none; }
+
+/* rolling counters (§3.2): one column of 0-9 per digit, springs to its offset */
+.count { display: inline-flex; align-items: baseline; }
+.count .slot { display: inline-block; width: .62em; height: 1em; overflow: hidden; position: relative; text-align: center; line-height: 1; }
+.count .col { display: flex; flex-direction: column; transform: translateY(calc(var(--d, 0) * -1em)); will-change: transform; }
+.count .col > span { height: 1em; line-height: 1; }
+.count .sep { display: inline-block; line-height: 1; }
+.flash-tint { transition: color 400ms var(--ease-fade); }
+.flash-tint.is-flash { color: var(--tint); }
+
+/* slim meters: transform scaleX on an inner bar (never width) */
+.meter { position: relative; height: 6px; border-radius: 999px; background: #FFFFFF14; overflow: hidden; }
+.meter > i { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(90deg, #1FE5C4, #1FE5C4); transform-origin: left; transform: scaleX(calc(var(--pct, 0) / 100 * var(--g, 1))); transition: transform var(--dur-spring-gentle) var(--ease-spring-gentle); }
+.meter.is-low > i { background: linear-gradient(90deg, #FFB347, #F28A1A); }
+
+/* ---------- Eva's reactive aurora (§3.3): three drifting radial blobs, no blur ---------- */
+@property --aa { syntax: "<color>"; inherits: true; initial-value: #1FE5C4; }
+@property --ab { syntax: "<color>"; inherits: true; initial-value: #7FD4FF; }
+@property --ac { syntax: "<color>"; inherits: true; initial-value: #0A8A74; }
+.eva-mascot { isolation: isolate; }
+
+/* ---------- toggles and checks (§4.4) ---------- */
+.check { position: relative; display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 999px; box-shadow: inset 0 0 0 2px #FFFFFF3D; flex-shrink: 0; }
+.check::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--grad-eva); opacity: 0; transition: opacity 160ms var(--ease-fade); }
+.check > svg { position: relative; color: var(--color-on-light); stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset 220ms var(--ease-fade); }
+.is-done .check::before, .check.is-on::before { opacity: 1; }
+.is-done .check > svg, .check.is-on > svg { stroke-dashoffset: 0; }
+.strike { position: relative; }
+.is-done .strike { color: var(--color-muted); }
+.is-done .strike::after { content: ""; position: absolute; left: 0; right: 0; top: 55%; height: 1.5px; background: currentColor; transform-origin: left; animation: strike 220ms var(--ease-fade) both; }
+@keyframes strike { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* press brightness overlay and ripple ink */
+.ripple-ink { position: absolute; width: 160px; height: 160px; margin: -80px 0 0 -80px; border-radius: 999px; pointer-events: none; background: radial-gradient(circle, #FFFFFF2E 0%, transparent 60%); transform: scale(0); opacity: 0; }
+
+/* ---------- skeleton shimmer and typing dots (§3.8) ---------- */
+.skel { background: #FFFFFF0F; border-radius: 12px; position: relative; overflow: hidden; }
+.skel::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 120px; background: linear-gradient(100deg, transparent, #FFFFFF14, transparent); animation: shimmer 1100ms linear infinite; }
+@keyframes shimmer { from { transform: translateX(-120px); } to { transform: translateX(100vw); } }
+.typing > i { display: inline-block; width: 6px; height: 6px; border-radius: 999px; background: var(--color-muted); margin: 0 2px; animation: typing 840ms ease-in-out infinite; }
+.typing > i:nth-child(2) { animation-delay: 140ms; } .typing > i:nth-child(3) { animation-delay: 280ms; }
+@keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+
+/* ---------- emergency takeover (§3.7) ---------- */
+#takeover { position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; display: none; }
+#takeover.is-on { display: block; }
+#takeover > .tk-disc { position: absolute; left: 50%; top: 0; width: 200vmax; height: 200vmax; margin: -100vmax 0 0 -100vmax; border-radius: 999px; background: var(--grad-emergency); transform: scale(var(--tk, 0)); will-change: transform; }
+#takeover.is-storm > .tk-disc { background: linear-gradient(180deg, #5A3E18, #1A1208); }
+#takeover > .tk-ring { position: absolute; left: 50%; top: 30%; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 999px; border: 3px solid #fff; opacity: 0; }
+#takeover.is-rings > .tk-ring { animation: shock 700ms var(--ease-fade) both; }
+#takeover.is-rings > .tk-ring + .tk-ring { animation-delay: 250ms; }
+@keyframes shock { from { transform: scale(1); opacity: .5; } to { transform: scale(3); opacity: 0; } }
+.em-slab { border-radius: var(--radius-hero); background: var(--grad-emergency); color: #fff; box-shadow: var(--e2); }
+.em-slab .em-card { border-radius: 1.5rem; background: #FFFFFF1A; }
+.em-edge { position: relative; }
+.em-edge::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 2px #fff; opacity: 0; animation: edge-pulse 1.6s ease-in-out infinite; pointer-events: none; }
+@keyframes edge-pulse { 0%, 100% { opacity: 0; } 50% { opacity: .5; } }
+.breath-glow { position: absolute; inset: -6px; border-radius: inherit; background: radial-gradient(closest-side, #FF2A1F99, transparent); z-index: -1; animation: breath-o 2.4s ease-in-out infinite alternate; pointer-events: none; }
+@keyframes breath-o { from { opacity: .4; } to { opacity: .7; } }
+@keyframes nudge { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-4px, -4px); } }
+.nudge { animation: nudge 1.2s ease-in-out infinite; }
+@keyframes blink-teal { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+.blink-teal { animation: blink-teal 1.4s ease-in-out infinite; }
+
+/* stagger: fx.js sets these on screen children while they land */
+.in-start { opacity: 0; transform: translateY(16px) scale(.98); }
+
+/* below-the-fold rows skip layout until scrolled near (§4.6 rule 5) */
+.cv-auto > :nth-child(n+9) { content-visibility: auto; contain-intrinsic-size: auto 96px; }
+.card, .tile { contain: layout paint; }
+.card-hero.no-contain, .card.no-contain { contain: none; }
+
+/* infinite loops pause off screen and when the page is hidden (fx.js) */
+.is-paused, .is-paused *, html.is-hidden *, html.is-hidden *::before, html.is-hidden *::after { animation-play-state: paused !important; }
+
+/* lite mode: slow devices or the About switch (§4.6 rule 9) */
+html.lite .beat-wave { animation: none; }
+html.lite .beat-wave { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .beating, .beat-wave, .ecg-ribbon > svg, .skel::after, .typing > i, .em-edge::after, .breath-glow, .nudge, .blink-teal, .breathing, .tab-eva::before { animation: none !important; }
+  .beat-wave { display: none; }
+  .meter > i, .vring .ring-arc { transition-duration: 1ms; }
+}
+:root { --g1-heart: #F28A1A; --g2-heart: #D9740C; --g1-oxygen: #7FD4FF; --g2-oxygen: #5BBDEB; --g1-temp: #FFB347; --g2-temp: #F29A24;
+  --g1-mood: #FFD84A; --g2-mood: #F2C21F; --g1-eva: #1FE5C4; --g2-eva: #14C7AA; --g1-sleep: #7FD4FF; --g2-sleep: #5BBDEB;
+  --g1-water: #7FD4FF; --g2-water: #5BBDEB; --g1-food: #1FE5C4; --g2-food: #14C7AA; --g1-brand: #F28A1A; --g2-brand: #D9740C; }
+@keyframes float { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
+.float { animation: float 6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .float { animation: none; } }
+
+/* ---------- wristband mode (APP-POLISH §9) ----------
+   The same PWA becomes the wristband's own UI on a small wide screen. Everything is in rem and
+   the root font-size follows the screen height, so 480×270, 640×360 and 800×450 are one design at
+   three scales. Black (OLED behind black glass), no header, no tab bar, no vertical scroll. */
+html[data-mode="wristband"] { font-size: clamp(12px, 4.444vh, 21px); background: #000; }
+html[data-mode="wristband"][data-letterbox] { font-size: clamp(12px, min(4.444vh, 2.5vw), 21px); }
+html[data-mode="wristband"] body { background: #000; overflow: hidden; height: 100dvh; min-height: 0; }
+html[data-mode="wristband"] body::before, html[data-mode="wristband"] body::after { display: none; }
+html[data-mode="wristband"] .app-header, html[data-mode="wristband"] nav[aria-label="Main"], html[data-mode="wristband"] .tab-fade,
+html[data-mode="wristband"] #sheet, html[data-mode="wristband"] #splash, html[data-mode="wristband"] .edge-swipe { display: none !important; }
+html[data-mode="wristband"] #app-shell { max-width: none; width: 100vw; height: 100dvh; min-height: 0; overflow: hidden; }
+html[data-mode="wristband"][data-letterbox] body { display: grid; place-items: center; }
+html[data-mode="wristband"][data-letterbox] #app-shell { width: min(100vw, 177.78dvh); height: min(100dvh, 56.25vw); }
+html[data-mode="wristband"] #screen { padding: 0; gap: 0; flex: 1 1 auto; min-height: 0; height: 100%; overflow: hidden; }
+html[data-mode="wristband"] #toast { top: 0.5rem; }
+html[data-mode="wristband"] .toast { font-size: max(0.9rem, 12px); }
+html[data-mode="wristband"] .tabbar { backdrop-filter: none; }
+
+.wrist { position: relative; width: 100%; height: 100%; color: var(--color-ink); }
+.w-track { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior: contain; scrollbar-width: none; transition: opacity 200ms var(--ease-fade); }
+.w-track::-webkit-scrollbar { display: none; }
+.w-page { position: relative; flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden;
+  padding: 0.75rem max(0.75rem, env(safe-area-inset-right)) 1.5rem max(0.75rem, env(safe-area-inset-left)); }
+.wrist-ambient .w-track { opacity: 0.45; }
+.wrist-ambient .w-track * { animation-play-state: paused !important; }
+.wrist-ambient .w-pill, .wrist-ambient .w-day, .wrist-ambient .w-arrow, .wrist-ambient .w-dots { visibility: hidden; }
+.w-arrow { position: absolute; top: 50%; width: 2.5rem; height: 2.5rem; margin-top: -1.25rem; display: grid; place-items: center; border-radius: 999px; background: #FFFFFF1F; color: #fff; opacity: .4; z-index: 5; }
+.w-arrow > svg { width: 1.5rem; height: 1.5rem; }
+.w-prev { left: 0.25rem; } .w-next { right: 0.25rem; }
+.w-arrow[hidden] { display: none; }
+.w-dots { position: absolute; left: 50%; bottom: 0.45rem; translate: -50% 0; display: flex; gap: 0.375rem; z-index: 5; }
+.w-dots > i { width: 0.375rem; height: 0.375rem; border-radius: 999px; background: #FFFFFF55; transition: width 240ms var(--ease-fade), background 240ms var(--ease-fade); }
+.w-dots > i.on { width: 1rem; background: var(--dot, #1FE5C4); }
+.w-fine { font-size: max(0.8rem, 12px); line-height: 1.3; color: var(--color-muted); }
+.w-body { font-size: max(1rem, 12px); line-height: 1.3; }
+.w-head { font-family: var(--font-display); font-weight: 600; font-size: 1.75rem; line-height: 1.15; }
+.w-vital { font-family: var(--font-display); font-weight: 600; font-size: 3.5rem; line-height: 1; }
+.w-unit, .w-vunit { font-family: var(--font-sans); font-weight: 500; font-size: max(0.8rem, 12px); color: var(--color-muted); margin-left: 0.25rem; }
+.w-badge { height: 1.75rem; font-size: max(0.9rem, 12px); padding: 0 0.75rem; border-radius: 0.875rem; }
+
+/* page 1: the watch face (Eva | time | vitals) */
+.w-face { display: grid; grid-template-columns: 30% 40% 30%; grid-template-rows: 1fr auto auto 1fr; grid-template-areas: "eva . vit" "eva time vit" "eva pill vit" "eva . vit"; align-items: center; column-gap: 0; row-gap: 0.75rem; }
+.w-eva { grid-area: eva; justify-self: center; position: relative; display: grid; place-items: center; width: 7rem; height: 7rem; border-radius: 999px; }
+.w-evaring { position: absolute; inset: 0; border-radius: 999px; box-shadow: inset 0 0 0 0.125rem #1FE5C4; }
+.w-eva:has([data-state="alert"]) .w-evaring { box-shadow: inset 0 0 0 0.25rem #FF2A1F; }
+.w-eva:has([data-state="concerned"]) .w-evaring { box-shadow: inset 0 0 0 0.125rem #FFB347; animation: pulse-o 2.4s ease-in-out infinite; }
+.w-eva:has([data-state="thinking"]) .w-evaring { box-shadow: none; background: conic-gradient(#7FD4FF, #7FD4FF, #7FD4FF); -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 0.25rem), #000 calc(100% - 0.25rem)); mask: radial-gradient(closest-side, transparent calc(100% - 0.25rem), #000 calc(100% - 0.25rem)); animation: spin 4s linear infinite; }
+html[data-eva-mode="rules"] .w-eva::after { content: ""; position: absolute; top: 0.5rem; right: 0.5rem; width: 0.9rem; height: 0.9rem; border-radius: 999px; background: #FFB347; box-shadow: 0 0 0 0.2rem #000; }
+.w-time-block { grid-area: time; text-align: center; }
+.w-time { font-family: var(--font-display); font-weight: 600; font-size: 5rem; line-height: 1; letter-spacing: -0.03em; }
+.w-colon { animation: colon 1s steps(1) infinite; }
+@keyframes colon { 50% { opacity: .25; } }
+.w-day { font-size: max(0.9rem, 12px); color: var(--color-muted); margin-top: 0.25rem; }
+.w-pill { grid-area: pill; justify-self: center; align-self: start; display: inline-flex; align-items: center; gap: 0.5rem; max-width: 100%; height: 2.25rem; padding: 0 0.875rem 0 0.5rem; border-radius: 999px; background: transparent; box-shadow: inset 0 0 0 1px #2A2A2A; font-size: max(0.9rem, 12px); font-weight: 600; }
+.w-pill-quiet { color: var(--color-muted); padding-left: 0.875rem; }
+.w-vcol { grid-area: vit; display: flex; flex-direction: column; gap: 0.5rem; padding-left: 0.5rem; position: relative; }
+.w-vrow { display: flex; align-items: baseline; gap: 0.4rem; position: relative; padding-left: 0.5rem; }
+.w-vrow.is-bad::before { content: ""; position: absolute; left: 0; top: 0.2rem; bottom: 0.2rem; width: 0.2rem; border-radius: 1rem; background: var(--color-critical); }
+.w-vrow.is-bad .w-vnum { color: var(--color-critical); }
+.w-dot { width: 0.75rem; height: 0.75rem; border-radius: 999px; flex-shrink: 0; align-self: center; }
+.w-vnum { font-family: var(--font-display); font-weight: 600; font-size: 2rem; line-height: 1; }
+.w-batt { position: absolute; top: -2.25rem; right: 0.5rem; height: 1.5rem; padding: 0 0.5rem; border-radius: 999px; background: #FFB34726; color: #FFB347; font-size: max(0.8rem, 12px); font-weight: 600; display: inline-flex; align-items: center; }
+.w-bystander { position: absolute; inset: 0 0 auto 0; z-index: 4; padding: 0.4rem 0.75rem; background: var(--grad-emergency); color: #fff; font-size: max(0.9rem, 12px); font-weight: 600; text-align: center; }
+
+/* page 2: vitals panels; a tapped panel grows to the whole page */
+.w-vitals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; height: 100%; padding: 0 2.25rem; position: relative; }
+.w-page:not(.w-face) { padding-left: max(3rem, env(safe-area-inset-left)); padding-right: max(3rem, env(safe-area-inset-right)); }
+.w-page .w-vitals { padding: 0; }
+[data-help-ring] { stroke-linecap: butt; }
+.w-panel { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; border-radius: 1.25rem; background: #000000; box-shadow: inset 0 0 0 1px #2A2A2A; padding: 0.75rem 0.5rem; text-align: center; }
+.w-panel-ic { display: block; }
+.w-ringwrap { width: 6rem; height: 6rem; }
+.w-ringwrap .w-pnum { position: relative; font-size: 2.5rem; }
+.w-pnum { font-family: var(--font-display); font-weight: 600; font-size: 3.5rem; line-height: 1; }
+.w-punit { font-size: max(0.9rem, 12px); color: var(--color-muted); }
+.w-more { display: none; flex-direction: column; gap: 0.5rem; align-items: center; width: 70%; }
+.w-panel.is-open { position: absolute; inset: 0; z-index: 6; flex-direction: row; gap: 1.5rem; background: #000000; }
+.w-panel.is-open .w-pnum { font-size: 5rem; }
+.w-panel.is-open .w-ringwrap { width: 9rem; height: 9rem; }
+.w-panel.is-open .w-more { display: flex; }
+.w-range { position: relative; display: block; width: 100%; height: 0.5rem; border-radius: 999px; background: #FFFFFF14; }
+.w-range > i { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: color-mix(in oklab, var(--tint) 45%, transparent); }
+.w-range > b { position: absolute; top: 50%; width: 0.9rem; height: 0.9rem; margin: -0.45rem 0 0 -0.45rem; border-radius: 999px; background: #fff; box-shadow: 0 0 0 0.2rem var(--tint); }
+
+/* page 3: Eva quick-ask */
+.w-evapage { display: grid; grid-template-columns: 38% 62%; align-items: center; }
+.w-evaleft { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+.w-bubble { max-width: 100%; border-radius: 1.25rem; background: #000000; color: var(--color-ink); box-shadow: inset 0 0 0 1px #2A2A2A; padding: 0.5rem 0.75rem; font-size: max(1rem, 12px); line-height: 1.3; font-weight: 500;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.w-evaright { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+.w-mic-wrap { display: flex; align-items: center; gap: 1rem; }
+.w-mic { display: grid; place-items: center; width: 6rem; height: 6rem; border-radius: 999px; background: #000000; color: #1FE5C4; box-shadow: inset 0 0 0 0.125rem #1FE5C4; touch-action: none; }
+.w-mic > svg { width: 2.5rem; height: 2.5rem; }
+.w-mic.is-recording { transform: scale(1.12); }
+.w-caption { font-size: max(1rem, 12px); color: var(--color-muted); max-width: 9rem; }
+.w-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.w-chip { height: 3rem; padding: 0 1rem; border-radius: 1.5rem; background: transparent; box-shadow: inset 0 0 0 1px #2A2A2A; font-size: max(1rem, 12px); font-weight: 600; white-space: nowrap; }
+.wrist.no-voice .w-mic-wrap { display: none; }
+.wrist.no-voice .w-chips { flex-direction: column; width: 100%; }
+
+/* page 4: ECG */
+.w-ecg { display: flex; align-items: center; justify-content: center; }
+.w-ecg-idle { display: flex; align-items: center; gap: 1.25rem; width: 100%; }
+.w-ecg-thumb { width: 9rem; height: 6rem; border-radius: 1rem; object-fit: cover; flex-shrink: 0; }
+.w-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3.5rem; min-width: 40%; padding: 0 1.25rem; border-radius: 999px; font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; }
+.w-btn > svg { width: 1.5rem; height: 1.5rem; }
+.w-btn-heart { background: var(--grad-heart); color: #0C0C0C; box-shadow: var(--e2); align-self: flex-start; min-width: 45%; }
+.w-btn-white { background: #fff; color: var(--color-critical-deep); flex: 1; }
+.w-btn-outline { box-shadow: inset 0 0 0 0.1rem #FFFFFFAA; color: #fff; flex: 1; }
+.w-btn-amber { background: #fff; color: #5A3E18; flex: 1; }
+.w-ecg-rec { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; }
+.w-ecg-top { display: flex; align-items: center; justify-content: space-between; font-size: max(1rem, 12px); font-weight: 600; }
+.w-count { position: relative; display: grid; place-items: center; width: 3.5rem; height: 3.5rem; font-family: var(--font-display); font-size: 1.5rem; }
+.w-count > svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.w-trace { height: 8rem; border-radius: 1rem; background-color: #0C0C0C; background-image: linear-gradient(#FFFFFF0A 1px, transparent 1px), linear-gradient(90deg, #FFFFFF0A 1px, transparent 1px); background-size: 1.25rem 1.25rem; }
+.w-trace > svg { height: 100%; }
+.w-contact { position: absolute; left: 0; right: 0; bottom: -1rem; height: 0.5rem; border-radius: 999px; background: #FFB347; }
+.w-contact.is-ok { background: #1FE5C4; }
+.w-ecg-res { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+
+/* page 5: Help (hold 2 s) */
+.w-help { display: grid; grid-template-columns: 62% 38%; align-items: center; }
+.w-helpbtn { position: relative; justify-self: center; width: 11rem; height: 11rem; border-radius: 999px; display: grid; place-items: center; touch-action: none; -webkit-user-select: none; user-select: none; }
+.w-helpring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.w-helpcore { position: relative; width: 9rem; height: 9rem; border-radius: 999px; background: var(--grad-emergency); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem;
+  box-shadow: none; transform: scale(var(--hold-s, 1)); }
+.w-helpcore > svg { width: 2.5rem; height: 2.5rem; }
+.w-helplabel { font-family: var(--font-display); font-weight: 600; font-size: 2.25rem; line-height: 1; }
+.w-helphint { font-size: max(0.85rem, 12px); opacity: .9; }
+.w-helptext { font-size: max(0.9rem, 12px); line-height: 1.35; }
+
+/* takeovers */
+.w-take { position: relative; display: grid; grid-template-columns: 40% 60%; align-items: center; height: 100%; padding: 0.75rem max(1rem, env(safe-area-inset-right)) 0.75rem max(1rem, env(safe-area-inset-left)); color: #fff; overflow: hidden; }
+.w-red { background: var(--grad-emergency); }
+.w-cpr { background: #000; grid-template-columns: 42% 58%; padding-bottom: 2.5rem; }
+.w-patient { background: #000000; box-shadow: inset 0 0 0 0.2rem var(--color-critical); }
+.w-storm { background: #000000; box-shadow: inset 0 0 0 0.2rem var(--color-warn); }
+.w-other { background: #000000; grid-template-columns: 1fr; }
+.w-take-left { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; position: relative; }
+.w-take-right { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.w-take-h { font-family: var(--font-display); font-weight: 600; font-size: 2rem; line-height: 1.1; }
+.w-btns { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+.w-arrowbig > svg { width: 7rem; height: 7rem; stroke-width: 2.4; }
+.w-dist { font-family: var(--font-display); font-weight: 600; font-size: 2.5rem; line-height: 1; }
+.w-aedring { position: relative; display: grid; place-items: center; width: 7rem; height: 7rem; border-radius: 999px; background: #000000; }
+.w-aedblink { position: absolute; inset: -0.25rem; border-radius: 999px; box-shadow: 0 0 0 0.3rem #1FE5C4, 0 0 2rem #1FE5C4; }
+.w-compart { font-family: var(--font-display); font-weight: 600; font-size: 3rem; line-height: 1; color: #1FE5C4; margin-top: 0.25rem; }
+.w-metro { position: relative; display: grid; place-items: center; width: 9rem; height: 9rem; justify-self: center; }
+.w-metro-disc { position: absolute; inset: 0.75rem; border-radius: 999px; background: var(--grad-emergency); box-shadow: 0 0 2rem #FF2A1F66; }
+.w-metro-wave { position: absolute; inset: 0; border-radius: 999px; border: 0.25rem solid #FF2A1F99; }
+.w-cpr-rate { display: flex; align-items: baseline; gap: 0.25rem; font-family: var(--font-display); font-weight: 600; font-size: 4rem; line-height: 1; }
+.w-push { font-family: var(--font-display); font-weight: 700; font-size: 3rem; line-height: 1; letter-spacing: 0.04em; animation: push-flash var(--beat, 545ms) steps(1) infinite; }
+@keyframes push-flash { 0% { opacity: 1; } 45% { opacity: .35; } }
+.w-cpr::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 0.5rem #FFB347; }
+.w-cpr.is-good::after { box-shadow: inset 0 0 0 0.5rem #1FE5C4; }
+.w-strip { position: absolute; left: 1rem; right: 1rem; bottom: 0.9rem; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; font-size: max(0.85rem, 12px); color: var(--color-muted); }
+.w-steps { display: inline-flex; gap: 0.3rem; }
+.w-steps > i { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #FFFFFF44; }
+.w-steps > i.on { background: #fff; }
+.w-breath-ring { position: absolute; width: 8.5rem; height: 8.5rem; top: 50%; left: 50%; margin: -4.25rem 0 0 -4.25rem; border-radius: 999px; box-shadow: 0 0 0 0.2rem #FFFFFF66; animation: breath-ring 5s ease-in-out infinite; }
+@keyframes breath-ring { 0%, 100% { transform: scale(.85); opacity: .5; } 50% { transform: scale(1.05); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .w-colon, .w-push, .w-breath-ring, .w-evaring { animation: none !important; }
+}
+
+/* vitals chart: the line draws left to right, then the area fades in; the live dot breathes */
+.chart-line { stroke-dasharray: 1; animation: chart-draw 700ms var(--ease-fade) both; }
+.chart-area { animation: fade-in 400ms 500ms var(--ease-fade) both; }
+@keyframes chart-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.chart-dot { animation: pulse-o 1.6s ease-in-out infinite; }
+::view-transition-group(vital-hero), ::view-transition-group(vital-value) { animation-duration: 420ms; animation-timing-function: var(--ease-spring-swift); }
+::view-transition-old(root) { animation: 180ms both fade-out; }
+::view-transition-new(root) { animation: 260ms 80ms both fade-in; }
+@keyframes fade-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .chart-line, .chart-area, .chart-dot { animation: none; } }
+
+/* ---------- /dash and /station: lighter touch (tokens, fonts, cards, min 13 px text on the dashboard) ---------- */
+body[data-view="dash"] .text-xs { font-size: 0.8125rem; line-height: 1.125rem; }
+body[data-view="dash"] .text-\[0\.6875rem\] { font-size: 0.8125rem; }
+body[data-view="dash"] .rounded-card.border, body[data-view="station"] .rounded-card.border { border-color: transparent; background: var(--color-surface); box-shadow: var(--e1); }
+body[data-view="dash"] .rounded-tile.border, body[data-view="station"] .rounded-tile.border { border-color: transparent; box-shadow: var(--e1); }
+body[data-view="station"] [data-station-message] { font-family: var(--font-display); font-weight: 700; }
+
+/* ---------- no coloured blocks (user request, Sun 15/11) ----------
+   Eva sits straight on the black canvas, like the landing: no halo, aurora, tinted slab or
+   coloured disc behind her. At most this near-invisible shadow, which only lifts her off
+   lighter content. Surfaces are black with #2a2a2a hairlines; teal is a thin accent only. */
+.eva-body { filter: drop-shadow(0 10px 22px rgb(0 0 0 / .45)); }

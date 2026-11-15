@@ -1,0 +1,27 @@
+<section class="flex flex-col gap-3 rounded-card border border-line bg-surface p-5" aria-labelledby="station-tile-h">
+  <header class="flex items-center justify-between gap-3">
+    <h2 id="station-tile-h" class="flex items-center gap-3 text-base text-ink">{{ crate::web::ui::pic("aed", "size-10")|safe }}Medical station</h2>
+    {% let (label, tone) = self.status() %}
+    <span class="inline-flex items-center gap-1 badge {{ crate::web::ui::badge(tone) }}" data-station-status><span class="relative inline-flex size-2.5 shrink-0 rounded-full {{ crate::web::ui::dot(tone) }}"></span>{{ label }}</span>
+  </header>
+  <p class="text-xs text-muted">{% if ground %}Corridor B · reports arrive as signed ship records{% else %}Corridor B · numbered compartments · a client of this hub{% endif %}</p>
+  {% if !ground %}
+  <div class="grid grid-cols-6 gap-1.5" role="img" aria-label="Compartments as last reported">
+    {% for (nn, st) in cells %}<span class="grid h-7 place-items-center rounded-md font-mono text-[0.6875rem] tabular-nums {% if st == &"lit" %}bg-station text-on-light{% else if st == &"taken" %}border border-ok/40 text-ok{% else if st == &"open" %}border border-info/40 text-info{% else %}border border-line text-muted{% endif %}" title="{{ nn }} · {{ st }}">{{ nn }}</span>{% endfor %}
+  </div>
+  {% endif %}
+  <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
+    <dt class="text-muted">Last event</dt>
+    <dd class="min-w-0 text-ink" data-station-last>{% if last_text.is_empty() %}<span class="text-muted">None yet</span>{% else %}<span class="font-mono tabular-nums text-muted">{{ last_time }}</span> · {{ last_text }}{% endif %}</dd>
+    {% if !ground %}
+    <dt class="text-muted">Battery</dt>
+    <dd class="flex items-center gap-2 text-ink">{% if let Some(b) = battery %}<span class="h-1.5 w-20 overflow-hidden rounded-full bg-line"><span class="spring-w block h-full rounded-full {% if *b < 20 %}bg-warn{% else %}bg-ok{% endif %}" style="width: {{ b }}%"></span></span><span class="tabular-nums">{{ b }}%</span>{% else %}<span class="text-muted">—</span>{% endif %}</dd>
+    <dt class="text-muted">Reports</dt>
+    <dd class="text-ink"><span class="tabular-nums">{{ events }}</span> signed{% if uploaded > 0 %} · <span class="tabular-nums">{{ uploaded }}</span> uploaded late from its buffer{% endif %}{% if buffered > 0 %} · <span class="text-warn">{{ buffered }} waiting</span>{% endif %}</dd>
+    {% else %}
+    <dt class="text-muted">Reports</dt>
+    <dd class="text-ink"><span class="tabular-nums">{{ events }}</span> mirrored and verified</dd>
+    {% endif %}
+  </dl>
+  {% if !ground %}<a href="/station" target="_blank" class="inline-flex h-8 w-fit items-center gap-2 rounded-full border border-line px-3 text-xs text-ink hover:bg-raised">{{ crate::web::ui::ic("arrow", 14)|safe }}Open the station screen</a>{% endif %}
+</section>

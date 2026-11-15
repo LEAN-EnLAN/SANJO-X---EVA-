@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark, black system bars. -->
+    <style name="Theme.Eva" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorPrimary">@color/eva_background</item>
+        <item name="android:colorPrimaryDark">@color/eva_background</item>
+        <item name="android:colorAccent">@color/eva_brand</item>
+        <item name="android:colorBackground">@color/eva_background</item>
+        <item name="android:windowBackground">@color/eva_background</item>
+        <item name="android:statusBarColor">@color/eva_background</item>
+        <item name="android:navigationBarColor">@color/eva_background</item>
+        <item name="android:textColorPrimary">@color/eva_ink</item>
+        <item name="android:textColorSecondary">@color/eva_muted</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Launch theme: black splash with the Eva mark (API 26-30; values-v31 adds the system splash). -->
+    <style name="Theme.Eva.Launch">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+    <style name="Eva.Button" parent="android:Widget.Material.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:minHeight">52dp</item>
+    </style>
+    <style name="Eva.Label" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textColor">@color/eva_ink</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Eva.Radio" parent="android:Widget.Material.CompoundButton.RadioButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/eva_ink</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:buttonTint">@color/eva_brand</item>
+        <item name="android:paddingStart">8dp</item>
+    </style>
+</resources>

@@ -1,0 +1,34 @@
+{% import "app/_ui.html" as u %}
+<div class="flex items-center justify-between pt-2">
+  {% if active %}<span class="badge badge-dot bg-critical/15 text-critical">Solar storm</span>
+  {% else %}<span class="badge badge-dot text-ok border border-line">Sun quiet</span>{% endif %}
+  <span class="text-xs text-muted">Shelter · Deck B</span>
+</div>
+{% call u::hero("radiation", "A shelter pod with a vault door inside thick water walls", "") %}
+{% if active %}
+<p class="text-h1 text-ink">Go to the shelter now</p>
+<div class="flex items-center gap-3">
+  <p class="font-mono text-4xl tracking-tight text-ink" data-countdown>{{ left }}</p>
+  <span class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-muted">Walk, don't run</span>
+</div>
+<div class="flex flex-col gap-3">
+  <p class="flex items-center gap-2 text-xs uppercase tracking-label text-muted">{{ crate::web::ui::pic("shelter", "size-9")|safe }}Your route · 40 m</p>
+  <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full bg-grad-temp font-display text-sm font-semibold text-on-light">1</span><p class="pt-1 text-sm text-ink">Leave your seat and turn left</p></div>
+  <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full border border-line text-sm text-ink">2</span><p class="pt-1 text-sm text-ink">Follow the floor arrows to Deck B</p></div>
+  <div class="flex items-start gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full border border-line text-sm text-ink">3</span><p class="pt-1 text-sm text-ink">Go in and close the hatch</p></div>
+</div>
+<div class="flex flex-col gap-2 tile px-4 py-3">
+  <div class="flex items-center gap-3 text-sm text-ink"><span class="w-12 shrink-0 font-semibold text-ink">Why</span><span class="flex-1">Water walls block the radiation</span>{{ crate::web::ui::pic("radiation", "size-9")|safe }}</div>
+  <div class="flex gap-3 text-sm text-ink"><span class="w-12 shrink-0 pt-0.5 font-semibold text-ink">Next</span><span>Stay until Eva says it is over</span></div>
+  <p class="text-xs text-muted">How Eva decided · NOAA GOES X-ray flux and ship radiation sensors</p>
+</div>
+<div class="mt-auto flex flex-col gap-2">
+  <div class="flex items-baseline justify-between"><p class="text-sm text-ink">Crew in shelter {{ in_shelter }}/{{ total }}</p></div>
+  <div class="relative h-4 w-full overflow-hidden rounded-full bg-white/10"><div class="spring-w h-full w-(--pct) rounded-full bg-grad-temp" style="--pct: {{ pct }}%"></div></div>
+</div>
+{% if me_in %}<p class="rounded-tile px-4 py-3 text-sm text-ok border border-line">You are in the shelter. Eva will tell you when it is over.</p>
+{% else %}<button type="button" class="btn-primary press w-full" hx-post="/api/shelter" hx-vals='{"seat":"{{ c.seat }}"}' hx-target="#screen">I'm in the shelter</button>{% endif %}
+{% else %}
+<p class="text-h1 text-ink">No storm warning</p>
+<p class="text-sm text-muted">Eva watches the Sun's X-rays and the ship's radiation sensors. If a storm comes, your route shows here.</p>
+{% endif %}

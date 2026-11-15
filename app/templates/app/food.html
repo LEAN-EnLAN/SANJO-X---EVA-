@@ -1,0 +1,80 @@
+{% import "app/_ui.html" as u %}
+<div class="navbar flex items-center justify-between gap-3">
+  <a {% call u::go("/app/plan", c.seat, "tab") %} aria-label="Today's plan" class="icon-btn press">{{ crate::web::ui::ic("list", 18)|safe }}</a>
+  <p class="text-h3 text-ink">Food · today</p>
+  <button type="button" aria-label="Log a meal" class="icon-btn press" onclick="document.getElementById('meal-text').focus()">{{ crate::web::ui::ic("plus", 18)|safe }}</button>
+</div>
+{% call u::hero("nutrition", "A ship meal tray: chicken with vegetables, fruit, a drink pouch and coffee", "Food today") %}
+<div class="flex items-center gap-5">
+  <span class="relative grid size-32 shrink-0 place-items-center" role="img" aria-label="{{ eaten }} of {{ goal }} kcal eaten">
+    <svg viewBox="0 0 120 120" class="absolute inset-0 size-full -rotate-90" aria-hidden="true">
+      <circle cx="60" cy="60" r="52" pathLength="100" fill="none" stroke-width="12" class="stroke-raised"/>
+      <circle cx="60" cy="60" r="52" pathLength="100" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="100" class="ring-fill stroke-info" id="kcal-ring" data-grow style="--ring: {{ 100 - ring }}"/>
+    </svg>
+    <span class="flex flex-col items-center"><span class="text-2xl tracking-tight text-ink tabular-nums">{{ left }}</span><span class="text-xs text-muted">kcal left</span></span>
+  </span>
+  <div class="flex min-w-0 flex-1 flex-col gap-3">
+    {% for mc in macros %}
+    <div class="flex flex-col gap-1.5">
+      <div class="flex items-baseline justify-between gap-2"><p class="text-sm text-ink">{{ mc.label }}</p><p class="text-xs text-muted"><span class="text-ink">{{ mc.value }}</span> / {{ mc.goal }} g</p></div>
+      <div class="relative h-2 w-full overflow-hidden rounded-full bg-white/10"><div class="spring-w grow-w h-full rounded-full bg-info" id="macro-{{ loop.index }}" data-grow style="--pct: {{ mc.pct }}%"></div></div>
+    </div>
+    {% endfor %}
+    <p class="text-xs text-muted">Estimated from {{ eaten }} kcal</p>
+  </div>
+</div>
+
+<section class="flex flex-col">
+  <p class="flex items-center gap-2 pb-1 text-xs uppercase tracking-label text-muted">{{ crate::web::ui::pic("food", "size-8")|safe }}Meals</p>
+  {% for ml in meals %}
+  <div class="flex items-center justify-between gap-3 border-b border-line py-2 last:border-b-0">
+    <div class="flex min-w-0 items-center gap-3">
+      {{ crate::web::ui::pic(ml.img, "size-12")|safe }}
+      <span class="flex min-w-0 flex-col"><span class="text-sm text-ink">{{ ml.kind }}{% if !ml.time.is_empty() %}<span class="ml-1.5 text-xs text-muted">{{ ml.time }}</span>{% endif %}</span><span class="truncate text-xs text-muted">{{ ml.text }}{% if ml.photo %} · from a photo{% endif %}</span></span>
+    </div>
+    {% if let Some(k) = ml.kcal %}<span class="shrink-0 text-sm text-ink tabular-nums">{{ k }}<span class="ml-1 text-xs text-muted">kcal</span></span>{% else %}<span class="shrink-0 text-xs text-muted">Planned</span>{% endif %}
+  </div>
+  {% endfor %}
+</section>
+
+<form class="flex flex-col gap-2 rounded-card bg-surface p-3" hx-post="/api/eva/tool" hx-target="#toast" data-tool-form data-tool="log_meal">
+  <input type="hidden" name="seat" value="{{ c.seat }}"><input type="hidden" name="name" value="log_meal">
+  <div class="flex gap-1.5 overflow-x-auto [scrollbar-width:none]" role="radiogroup" aria-label="Which meal">
+    {% for k in kinds %}<label class="cursor-pointer"><input type="radio" name="arg.kind" value="{{ k }}" class="peer sr-only" {% if self.is_now(k) %}checked{% endif %}><span class="inline-flex h-10 items-center rounded-[20px] bg-white/6 px-4 text-label font-semibold text-ink peer-checked:bg-[color-mix(in_oklab,var(--tint)_22%,transparent)] peer-checked:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--tint)_60%,transparent)] peer-focus-visible:outline-2 peer-focus-visible:outline-info">{{ k }}</span></label>{% endfor %}
+  </div>
+  <div class="flex items-center gap-2">
+    <label class="press inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-raised text-ink" aria-label="Log it from a photo">{{ crate::web::ui::ic("camera", 18)|safe }}<input type="file" accept="image/*" capture="environment" class="sr-only" data-eva-photo data-meal data-seat="{{ c.seat }}"></label>
+    <label class="sr-only" for="meal-text">What did you eat?</label>
+    <input id="meal-text" name="arg.text" required maxlength="200" autocomplete="off" placeholder="What did you eat?" class="h-11 min-w-0 flex-1 rounded-full border border-line bg-background px-4 text-sm text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-info">
+    <button type="submit" aria-label="Log meal" class="press inline-grid size-12 shrink-0 place-items-center rounded-full text-food shadow-[inset_0_0_0_1px_#2A2A2A] e2">{{ crate::web::ui::ic("check", 18)|safe }}</button>
+  </div>
+</form>
+
+<section class="flex flex-col gap-2">
+  <div class="flex items-center justify-between gap-2">
+    <a href="/app/vitals?k=water&amp;seat={{ c.seat }}" hx-get="/app/vitals?k=water&amp;seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" class="press flex items-center gap-2 rounded-full pr-2">{{ crate::web::ui::pic("water", "size-9")|safe }}<span class="text-xs uppercase tracking-label text-muted">Water</span><span class="text-muted">{{ crate::web::ui::ic("chevron", 14)|safe }}</span></a>
+    <span class="text-xs text-muted">{{ "{:.1}"|format(water_ml as f32 / 1000.0) }} of 2 L{% if water_ml < 2000 %} · {{ (2000 - water_ml + 249) / 250 }} to go{% endif %}</span>
+  </div>
+  <div class="flex gap-1.5" role="group" aria-label="Glasses of water today, tap an empty one to add 250 ml">
+    {% for full in glasses %}
+    {% if *full %}<span class="flex h-11 flex-1 flex-col justify-end overflow-hidden rounded-t-sm rounded-b-lg border border-line bg-hatch"><span class="glass-fill h-4/5 bg-info"></span></span>
+    {% else %}<button type="button" class="press flex h-11 flex-1 flex-col justify-end overflow-hidden rounded-t-sm rounded-b-lg border border-line bg-hatch" aria-label="Add a glass, 250 ml" hx-post="/api/eva/tool" hx-vals="{{ self.glass_vals() }}" hx-target="#toast" data-tool="log_water"></button>{% endif %}
+    {% endfor %}
+  </div>
+  <button type="button" class="press inline-flex h-11 items-center justify-center gap-2 rounded-full text-sm text-info ring-1 ring-info/30" {% call u::tool(water) %}>{{ crate::web::ui::ic("glass", 16)|safe }}{{ water.label }} · {{ water.hint }}</button>
+</section>
+
+<section class="flex flex-col gap-2">
+  <p class="text-h3 text-ink">Bones</p>
+  <div class="grid grid-cols-2 gap-2">
+    <div class="flex items-center gap-2.5 tile px-2.5 py-2">
+      {{ crate::web::ui::pic("calcium", "size-10")|safe }}
+      <span class="flex min-w-0 flex-col gap-0.5"><span class="flex items-center gap-2 text-sm text-ink"><span class="size-2 rounded-full bg-warn"></span>Calcium</span><span class="text-xs text-muted">Low · 620 / 1,000 mg</span></span>
+    </div>
+    <div class="flex items-center gap-2.5 tile px-2.5 py-2">
+      {{ crate::web::ui::pic("vitamin-d", "size-10")|safe }}
+      <span class="flex min-w-0 flex-col gap-0.5"><span class="flex items-center gap-2 text-sm text-ink"><span class="size-2 rounded-full bg-ok"></span>Vitamin D</span><span class="text-xs text-muted">Taken · good</span></span>
+    </div>
+  </div>
+</section>
+

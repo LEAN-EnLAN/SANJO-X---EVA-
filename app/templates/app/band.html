@@ -1,0 +1,78 @@
+{% import "app/_ui.html" as u %}
+<div class="navbar flex items-center justify-between gap-3">
+  <a {% call u::go("/app/home", c.seat, "back") %} aria-label="Back" data-back class="icon-btn press">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <p class="text-h3 text-ink">Wristband</p>
+  <span class="size-11"></span>
+</div>
+{# 360° turn: 8 turntable frames (Codex v2 renders, generated with Super Intelligence; notice in README.md).
+   motion.js [data-spin]: drag or swipe turns it on the gentle spring; arrow buttons and keys
+   step 45°; reduced motion keeps one still frame and the arrows. #}
+<div class="relative shrink-0 overflow-hidden rounded-hero bg-[#F4F2F0] e2" data-spin="000,045,090,135,180,225,270,315" data-morph="band-hero">
+  <span class="pointer-events-none absolute bottom-[14%] left-1/2 h-6 w-3/5 -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,#00000038,transparent)]" data-spin-floor aria-hidden="true"></span>
+  <div class="relative isolate aspect-8/7 cursor-grab touch-pan-y select-none outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-inset active:cursor-grabbing motion-reduce:cursor-auto md:aspect-video" data-spin-stage role="slider" tabindex="0" aria-label="Turn the wristband" aria-valuemin="0" aria-valuemax="315" aria-valuenow="0" aria-valuetext="0°">
+    <img src="/static/img/band/spin-000.webp" alt="The wristband: screen part on the sensor base, four fabric straps" class="absolute inset-0 size-full object-contain" width="720" height="642" decoding="async" draggable="false" data-spin-frame>
+  </div>
+  <span class="pointer-events-none absolute inset-y-0 left-0 w-2/5 bg-[linear-gradient(100deg,transparent,#FFFFFF33,transparent)]" data-spin-sheen aria-hidden="true"></span>
+  <span class="badge badge-dot pointer-events-none absolute top-4 left-4 {% if suit %} text-[#0B6AA6]{% else %} text-[#0A6B5A]{% endif %} border border-line">{% if suit %}Suit mode{% else %}Joined{% endif %}</span>
+  <span class="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-label font-semibold text-on-light/60 motion-reduce:hidden" style="opacity: var(--hint-o, 1)" data-spin-hint>Drag to turn</span>
+  <button type="button" class="press absolute bottom-3 left-3 inline-grid size-12 place-items-center rounded-full bg-[#0C0C0C]/70 text-white" aria-label="Turn left" data-spin-step="-1">{{ crate::web::ui::ic("back", 24)|safe }}</button>
+  <button type="button" class="press absolute right-3 bottom-3 inline-grid size-12 place-items-center rounded-full bg-[#0C0C0C]/70 text-white" aria-label="Turn right" data-spin-step="1">{{ crate::web::ui::ic("chevron", 24)|safe }}</button>
+</div>
+<h1 class="flex items-center gap-3 text-h2 text-ink">{{ crate::web::ui::pic("magnet", "size-11")|safe }}{% if suit %}Your suit is between the parts.{% else %}Two parts, held by magnets.{% endif %}</h1>
+
+<section class="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none]" aria-label="The two parts">
+  {% for (f, t, sub, alt) in [("band", "Two parts", "Screen part on the sensor base", "The wristband: the screen part sitting on the sensor base"), ("pins", "Pins touch", "The base charges the screen part", "Two gold pins on the screen part above the base's contact pads"), ("straps", "Fabric straps", "Magnets hold the parts", "Close-up of the fabric straps and magnets"), ("cabin", "On board", "Snug on the wrist, all day", "The wristband on an arm, a hand on the cabin rail")] %}
+  <figure class="relative h-[200px] w-[240px] shrink-0 snap-start overflow-hidden rounded-card bg-[radial-gradient(80%_60%_at_50%_40%,#141414,#0B0B0B)] e1"><img src="/static/img/band/gallery-{{ f }}.webp" alt="{{ alt }}" class="size-full object-cover" width="640" height="427" loading="lazy" decoding="async"><span class="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,#000000E6)]" aria-hidden="true"></span><figcaption class="absolute right-4 bottom-3 left-4 flex flex-col"><span class="text-h3 text-ink">{{ t }}</span><span class="text-label text-muted">{{ sub }}</span></figcaption></figure>
+  {% endfor %}
+</section>
+
+<section class="grid grid-cols-5 gap-1 tile px-2 py-3" aria-label="What the sensor base reads">
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("heart", "size-10")|safe }}Pulse</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("oxygen", "size-10")|safe }}Oxygen</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("temperature", "size-10")|safe }}Skin</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("eda", "size-10")|safe }}EDA</span>
+  <span class="flex flex-col items-center gap-1.5 text-center text-xs text-muted">{{ crate::web::ui::pic("movement", "size-10")|safe }}Motion</span>
+</section>
+
+<section class="grid grid-cols-2 gap-2" aria-label="Batteries">
+  <div class="flex flex-col gap-2 tile p-3">
+    <span class="flex items-center gap-2">{{ crate::web::ui::pic("interface", "size-10")|safe }}<span class="text-sm text-ink">Screen</span></span>
+    <p class="text-3xl tracking-tight text-ink tabular-nums">{{ p.vitals.screen_batt }}<span class="ml-0.5 text-sm text-muted">%</span></p>
+    <div class="relative h-2 w-full overflow-hidden rounded-full bg-white/10"><div class="spring-w h-full w-(--pct) rounded-full bg-grad-eva" style="--pct: {{ p.vitals.screen_batt }}%"></div></div>
+    <span class="text-xs text-muted">{{ screen_left }} · ECG pads, LoRa</span>
+  </div>
+  <div class="flex flex-col gap-2 tile p-3">
+    <span class="flex items-center gap-2">{% if p.vitals.base_batt < 20 %}{{ crate::web::ui::pic("battery", "size-10")|safe }}{% else %}{{ crate::web::ui::pic("sensor-base", "size-10")|safe }}{% endif %}<span class="text-sm text-ink">Sensor base</span></span>
+    <p class="text-3xl tracking-tight tabular-nums {% if p.vitals.base_batt < 20 %}text-warn{% else %}text-ink{% endif %}">{{ p.vitals.base_batt }}<span class="ml-0.5 text-sm text-muted">%</span></p>
+    <div class="relative h-2 w-full overflow-hidden rounded-full bg-white/10"><div class="spring-w h-full w-(--pct) rounded-full {% if p.vitals.base_batt < 20 %}bg-warn{% else %}bg-grad-eva{% endif %}" style="--pct: {{ p.vitals.base_batt }}%"></div></div>
+    <span class="text-xs {% if p.vitals.base_batt < 20 %}text-warn{% else %}text-muted{% endif %}">{{ base_left }} · pulse, oxygen, skin</span>
+  </div>
+</section>
+
+<section class="flex flex-col gap-3 card p-5 py-4">
+  <header class="flex items-center justify-between gap-3"><h2 class="text-h3 text-ink">Suit mode</h2><span class="text-xs {% if suit %}text-info{% else %}text-muted{% endif %}">{% if suit %}On now{% else %}Off · parts joined{% endif %}</span></header>
+  <img src="/static/img/band/suit-mode.webp" alt="The screen part on the suit sleeve, the sensor base under it on the wrist" class="block aspect-video w-full rounded-tile bg-raised object-cover" width="960" height="540" loading="lazy" decoding="async">
+  <div class="flex flex-col gap-1">
+    <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 justify-center">{{ crate::web::ui::pic("interface", "pic-bare size-12")|safe }}</span><p class="text-sm text-ink">Screen part<span class="block text-xs text-muted">ECG pads · LoRa</span></p></div>
+    <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 flex-col items-center gap-1"><span class="flex w-16 justify-between"><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span><span class="h-3 w-0.5 bg-muted"></span></span><span class="h-5 w-full rounded-sm {% if suit %}bg-hatch-info{% else %}bg-hatch{% endif %}"></span></span><p class="text-sm {% if suit %}text-info{% else %}text-ink{% endif %}">Suit fabric<span class="block text-xs text-muted">Magnets hold · pins don't</span></p></div>
+    <div class="flex items-center gap-4"><span class="flex w-24 shrink-0 justify-center">{{ crate::web::ui::pic("sensor-base", "pic-bare size-12")|safe }}</span><p class="text-sm text-ink">Sensor base<span class="block text-xs text-muted">Own battery · LoRa</span></p></div>
+  </div>
+  <ol class="flex flex-col gap-2 border-t border-line pt-3">
+    <li class="flex items-start gap-3"><span class="grid size-7 shrink-0 place-items-center rounded-full border border-line text-xs text-ink">1</span><p class="text-sm text-ink">Suit off? Snap the parts together<span class="block text-xs text-muted">Pins touch · the base charges</span></p></li>
+    <li class="flex items-start gap-3"><span class="grid size-7 shrink-0 place-items-center rounded-full border border-line text-xs text-ink">2</span><p class="text-sm text-ink">Re-join before 10%<span class="block text-xs text-muted">Eva warns 1 h before</span></p></li>
+  </ol>
+</section>
+
+<section class="flex flex-col gap-3 card p-5 py-4">
+  <header class="flex items-center justify-between gap-3"><h2 class="flex items-center gap-2 text-base text-ink">{{ crate::web::ui::pic("lora", "size-9")|safe }}Signal</h2><span class="text-xs text-muted">Last reading {{ age }}</span></header>
+  <div class="flex items-center gap-4">
+    <span class="flex h-8 items-end gap-1" aria-hidden="true">{% for on in signal_bars %}<span class="w-2 rounded-sm {% if *on %}bg-ink{% else %}bg-line{% endif %}" style="height: {{ (loop.index * 25) }}%"></span>{% endfor %}</span>
+    <span class="flex flex-col"><span class="text-2xl tracking-tight text-ink tabular-nums">{{ p.vitals.quality }}<span class="ml-0.5 text-sm text-muted">%</span></span><span class="text-xs text-muted">{{ signal_word }}</span></span>
+  </div>
+  <p class="text-xs text-muted">Light through your skin reads the pulse. Snug, not tight.</p>
+</section>
+
+<div class="grid grid-cols-2 gap-2">
+  <button type="button" class="press inline-flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-raised px-4 text-sm text-ink" {% call u::tool(read) %}>{{ crate::web::ui::ic("pulse", 16)|safe }}Read now</button>
+  <a {% call u::go("/app/ecg", c.seat, "push") %} class="btn-primary press" data-tint="heart">{{ crate::web::ui::ic("zap", 20)|safe }}30 s ECG</a>
+</div>

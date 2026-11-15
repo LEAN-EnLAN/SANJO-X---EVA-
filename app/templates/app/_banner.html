@@ -1,0 +1,19 @@
+{% import "mascot.html" as m %}
+{% if let Some(cb) = case %}
+<a href="/app/emergency" hx-get="/app/emergency" hx-target="#screen" hx-push-url="true" hx-include="[name=seat]" class="em-slab em-edge press relative flex items-center gap-3 p-4" data-case-banner data-role="{{ cb.role }}">
+  {% call m::eva("alert", "alert", "size-10") %}
+  <span class="flex min-w-0 flex-1 flex-col">
+    {% if cb.role == "helper" %}<span class="font-display text-base font-semibold text-white">{{ cb.name }} needs you · {{ cb.task }}</span><span class="text-label text-white/85">Seat {{ cb.seat }} · tap for the way</span>
+    {% else if cb.role == "patient" %}<span class="font-display text-base font-semibold text-white">Help is coming</span><span class="text-label text-white/85">Eva called the crew</span>
+    {% else %}<span class="font-display text-base font-semibold text-white">{{ cb.name }} is being helped</span><span class="text-label text-white/85">Seat {{ cb.seat }} · keep the corridor clear</span>{% endif %}
+  </span>
+  <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white text-critical-deep">{{ crate::web::ui::ic("arrow", 20)|safe }}</span>
+</a>
+{% endif %}
+{% if storm %}
+<a href="/app/storm" hx-get="/app/storm" hx-target="#screen" hx-push-url="true" class="press relative mt-2 flex items-center gap-3 rounded-hero bg-background p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-warn)_55%,transparent)]" data-storm-banner>
+  {% call m::eva("concerned", "concerned", "size-10") %}
+  <span class="flex flex-1 flex-col"><span class="font-display text-base font-semibold text-ink">Solar storm · go to the shelter</span><span class="text-label text-warn">Deck B · walk, don't run</span></span>
+  <span class="grid size-10 shrink-0 place-items-center rounded-full text-warn shadow-[inset_0_0_0_1px_#2A2A2A]">{{ crate::web::ui::ic("arrow", 20)|safe }}</span>
+</a>
+{% endif %}

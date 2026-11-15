@@ -1,0 +1,39 @@
+{% import "app/_ui.html" as u %}
+<div class="grid grid-cols-3 gap-3">
+  <a href="/app/vitals?k=heart&amp;seat={{ p.seat }}" hx-get="/app/vitals?k=heart&amp;seat={{ p.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" data-vital="heart" data-tint="heart" class="tile press flex flex-col items-center gap-2 p-2.5 pt-3{% if p.vitals.hr == 0 %} no-reading{% endif %}" aria-label="Pulse {% if p.vitals.hr == 0 %}no reading{% else %}{{ p.vitals.hr }} bpm{% endif %}">
+    <span class="vring size-[5.5rem]" style="--beat: {{ self.beat_ms() }}ms" data-morph="vital-hero">
+      <span class="beat-wave"></span><span class="beat-wave"></span>
+      <span class="beating absolute inset-0">{{ crate::web::ui::ring_svg("heart", self.hr_pct(), 10.0)|safe }}</span>
+      <span class="ring-center"><span class="text-vital-sm text-ink" data-count="heart" data-morph="vital-value">{% if p.vitals.hr == 0 %}—{% else %}{{ p.vitals.hr }}{% endif %}</span><span class="mt-0.5 text-caption text-muted">bpm</span></span>
+    </span>
+    <span class="text-center text-caption text-muted">{{ self.hr_read() }}</span>
+  </a>
+  <a href="/app/vitals?k=lungs&amp;seat={{ p.seat }}" hx-get="/app/vitals?k=lungs&amp;seat={{ p.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" data-vital="lungs" data-tint="oxygen" class="tile press flex flex-col items-center gap-2 p-2.5 pt-3" aria-label="Oxygen {{ p.vitals.spo2 }} %">
+    <span class="vring breathing size-[5.5rem]" data-morph="vital-hero">
+      {{ crate::web::ui::ring_svg("oxygen", self.spo2_pct(), 10.0)|safe }}
+      <span class="ring-center"><span class="text-vital-sm text-ink" data-count="spo2" data-morph="vital-value">{% if p.vitals.spo2 == 0 %}—{% else %}{{ p.vitals.spo2 }}{% endif %}</span><span class="mt-0.5 text-caption text-muted">%</span></span>
+    </span>
+    <span class="text-center text-caption text-muted">{{ self.spo2_read() }}</span>
+  </a>
+  <a href="/app/vitals?k=temperature&amp;seat={{ p.seat }}" hx-get="/app/vitals?k=temperature&amp;seat={{ p.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push" data-vital="temperature" data-tint="temp" class="tile press flex flex-col items-center gap-2 p-2.5 pt-3" aria-label="Skin {{ "{:.1}"|format(p.vitals.skin_c()) }} °C">
+    <span class="vring size-[5.5rem]" data-morph="vital-hero">
+      {{ crate::web::ui::ring_svg("temp", self.skin_pct(), 10.0)|safe }}
+      <span class="ring-center"><span class="font-display text-[1.375rem] font-semibold leading-none tracking-tight text-ink" data-count="skin" data-morph="vital-value">{{ "{:.1}"|format(p.vitals.skin_c()) }}</span><span class="mt-1 text-caption text-muted">°C</span></span>
+    </span>
+    <span class="text-center text-caption text-muted">{{ self.skin_read() }}</span>
+  </a>
+</div>
+<a {% call u::go("/app/band", p.seat, "push") %} class="card press flex flex-col gap-3" data-tint="brand" data-morph-src="band">
+  <div class="flex items-center justify-between gap-2">
+    <h2 class="text-h3 text-ink">Your wristband</h2>
+    <span class="badge badge-dot {% if p.suit() %} text-info{% else %} text-ok{% endif %} border border-line">{% if p.suit() %}Suit mode{% else %}Joined{% endif %}</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <span class="band-thumb relative block size-24 shrink-0 overflow-hidden rounded-tile bg-[radial-gradient(80%_60%_at_50%_40%,#141414,#0B0B0B)]"><img src="/static/img/band/card.webp" alt="Your wristband" class="float size-full object-cover" width="192" height="160" decoding="async" draggable="false"></span>
+    <div class="flex min-w-0 flex-1 flex-col gap-3">
+      <div class="flex flex-col gap-1.5"><span class="flex items-baseline justify-between text-label"><span class="text-ink">Screen</span><span class="num text-muted">{{ p.vitals.screen_batt }}%</span></span><span class="meter{% if p.vitals.screen_batt < 20 %} is-low{% endif %}" data-grow style="--pct: {{ p.vitals.screen_batt }}"><i></i></span></div>
+      <div class="flex flex-col gap-1.5"><span class="flex items-baseline justify-between text-label"><span class="text-ink">Sensor</span><span class="num {% if p.vitals.base_batt < 20 %}text-warn{% else %}text-muted{% endif %}">{{ p.vitals.base_batt }}%</span></span><span class="meter{% if p.vitals.base_batt < 20 %} is-low{% endif %}" data-grow style="--pct: {{ p.vitals.base_batt }}"><i></i></span></div>
+    </div>
+  </div>
+  <p class="flex items-center justify-between text-caption text-muted"><span>{% if ecg_running %}<span class="text-info">ECG recording · fingers on the pads</span>{% else %}Sensor base · {{ age }}{% endif %}</span><span class="num">Signal {{ p.vitals.quality }}%</span></p>
+</a>

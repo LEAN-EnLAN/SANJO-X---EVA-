@@ -1,0 +1,79 @@
+{% import "mascot.html" as m %}
+{# Wristband takeovers (APP-POLISH §9.5): same view model as the phone's emergency screen. Two buttons max. #}
+{% match e.mode %}
+{% when "helper_cpr" %}
+{% if let Some(cs) = e.case %}
+<section class="w-take w-red" data-focus data-wrist-arrive="emergency">
+  <div class="w-take-left">
+    <span class="w-arrowbig nudge">{{ crate::web::ui::ic("upleft", 112)|safe }}</span>
+    <p class="w-dist num">{{ e.distance }}</p>
+  </div>
+  <div class="w-take-right">
+    <p class="w-take-h">{{ self.first() }} needs help</p>
+    <p class="w-body">Seat {{ cs.seat }} · {{ e.direction }}</p>
+    <div class="w-btns">
+      <button type="button" class="w-btn w-btn-white press" hx-post="/api/help" hx-vals='{"seat":"{{ e.c.seat }}","going":"yes","wrist":"1"}' hx-target="#screen" data-haptic="tap">I'm going</button>
+      <button type="button" class="w-btn w-btn-outline press" hx-post="/api/help" hx-vals='{"seat":"{{ e.c.seat }}","going":"no","wrist":"1"}' hx-target="#screen" data-haptic="tap">I can't</button>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% when "helper_aed" %}
+{% if let Some(cs) = e.case %}
+<section class="w-take w-red" data-focus data-wrist-arrive="emergency">
+  <div class="w-take-left">
+    <span class="w-aedring"><span class="w-aedblink blink-teal" aria-hidden="true"></span>{{ crate::web::ui::pic("aed", "size-[5rem] pic-bare")|safe }}</span>
+    <p class="w-compart num">01</p>
+  </div>
+  <div class="w-take-right">
+    <p class="w-take-h">Take the AED</p>
+    <p class="w-body">Station · corridor B · compartment 01 · it is blinking teal</p>
+    <p class="w-body flex items-center gap-[0.5rem]">{{ crate::web::ui::ic("arrow", 24)|safe }}Corridor B, then seat {{ cs.seat }}</p>
+    <div class="w-btns">
+      <button type="button" class="w-btn w-btn-white press" hx-post="/api/help" hx-vals='{"seat":"{{ e.c.seat }}","going":"yes","wrist":"1"}' hx-target="#screen" data-haptic="success">I have it</button>
+      <button type="button" class="w-btn w-btn-outline press" hx-post="/api/help" hx-vals='{"seat":"{{ e.c.seat }}","going":"no","wrist":"1"}' hx-target="#screen" data-haptic="tap">I can't</button>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% when "cpr" %}
+{% if let Some(cs) = e.case %}
+<section class="w-take w-cpr is-good" data-focus style="--beat: 545ms">
+  <div class="w-metro">
+    <span class="w-metro-wave animate-beat-wave"></span>
+    <span class="w-metro-disc animate-beat-press" data-cpr-beat></span>
+  </div>
+  <div class="w-take-right">
+    <p class="w-cpr-rate"><span class="num">110</span><span class="w-vunit">pushes a minute</span></p>
+    <p class="w-push">PUSH</p>
+    <p class="w-body">Hard and fast, centre of the chest</p>
+    <p class="w-fine">Good depth · keep going</p>
+  </div>
+  <p class="w-strip"><span>AED · {% if e.aed_helper.is_empty() %}on its way{% else %}{{ e.aed_helper }} · on its way{% endif %} · the AED decides shocks</span><span class="w-steps">{% for i in 1..=4 %}<i class="{% if i <= e.step %}on{% endif %}"></i>{% endfor %}</span></p>
+  <label class="sr-only"><input type="checkbox" checked data-cpr-haptics> Haptics on</label>
+</section>
+{% endif %}
+{% when "patient" %}
+<section class="w-take w-patient" data-focus data-wrist-arrive="wake">
+  <div class="w-take-left">
+    <span class="w-breath-ring" aria-hidden="true"></span>
+    {% call m::eva("care", "care", "size-[6.5rem]") %}
+  </div>
+  <div class="w-take-right">
+    <p class="w-take-h">Help is coming</p>
+    {% if let Some(cs) = e.case %}{% for h in cs.helpers %}<p class="w-body">{{ h.name.split(' ').next().unwrap_or("") }} · {{ h.task }}</p>{% endfor %}{% endif %}
+    <p class="w-body text-white/85">Stay still. Breathe slowly.</p>
+    <div class="w-btns"><button type="button" class="w-btn w-btn-outline press" data-wrist-hold hx-post="/api/eva/chat" hx-vals='{"seat":"{{ e.c.seat }}","text":"I am OK now"}' hx-swap="none" hx-trigger="wrist-hold">I'm OK · hold</button></div>
+  </div>
+</section>
+{% else %}
+{% if let Some(cs) = e.case %}
+<section class="w-take w-other" data-wrist-arrive="warn">
+  <div class="w-take-right col-span-2 items-center text-center">
+    <p class="w-take-h">{{ cs.name.split(' ').next().unwrap_or("") }} is being helped</p>
+    <p class="w-body">Keep corridor B clear. Stay in your seat unless Eva asks you.</p>
+    <div class="w-btns justify-center"><a class="w-btn w-btn-outline press" href="/app/wrist?seat={{ e.c.seat }}" hx-get="/app/wrist?seat={{ e.c.seat }}" hx-target="#screen" data-nav="fade">Back to the face</a></div>
+  </div>
+</section>
+{% endif %}
+{% endmatch %}

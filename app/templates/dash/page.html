@@ -1,0 +1,98 @@
+{% import "mascot.html" as m %}
+<!doctype html>
+<html lang="en">
+<head>
+{% include "head.html" %}
+<title>Eva · {% if ground %}ground{% else %}ship hub{% endif %}</title>
+</head>
+<body class="min-h-dvh bg-background text-ink antialiased" data-view="dash">
+<div class="flex min-h-dvh" hx-ext="sse" sse-connect="/sse/dash">
+  <div class="hidden" sse-swap="eva" hx-swap="none"></div>
+  <div class="hidden" sse-swap="eva-status" hx-swap="none"></div>
+  <nav class="hidden w-18 shrink-0 border-r border-line bg-surface md:block" aria-label="Sections">
+   <div class="sticky top-0 flex h-dvh flex-col items-center gap-2 py-5">
+    <a href="#top" title="Overview" class="relative grid size-11 place-items-center rounded-full bg-ink text-on-light">{{ crate::web::ui::ic("home", 19)|safe }}</a>
+    <a href="#roster" title="Passengers" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("users", 19)|safe }}</a>
+    <a href="#case" title="Cases" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("heart", 19)|safe }}</a>
+    <a href="#alerts" title="Alerts" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("siren", 19)|safe }}</a>
+    <a href="#sync" title="Ground link" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("satellite", 19)|safe }}</a>
+    <a href="#station" title="Medical station" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("zap", 19)|safe }}</a>
+    <a href="#mesh" title="Mesh" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("radio", 19)|safe }}</a>
+    <a href="/export/report" target="_blank" title="Records report" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("file", 19)|safe }}</a>
+    <a href="#about" title="About &amp; credits" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink" onclick="document.getElementById('about').open=true">{{ crate::web::ui::ic("info", 19)|safe }}</a>
+    <a href="/app" title="Astronaut app" class="mt-auto grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("arrow", 19)|safe }}</a>
+   </div>
+  </nav>
+  <div class="flex min-w-0 flex-1 flex-col" id="top">
+    <header class="flex flex-wrap items-center gap-3 border-b border-line px-4 py-4 md:px-6">
+      <span class="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-ink pr-4 pl-1.5 text-on-light" data-konami-tap>
+        <span class="grid size-8 place-items-center rounded-full bg-on-light"><span class="size-3 rounded-full bg-brand"></span></span>
+        <span class="text-sm font-semibold tracking-tight">Eva</span><span class="text-xs text-on-light/70">by WearMeds</span>
+      </span>
+      <span class="hidden h-11 min-w-0 flex-1 items-center gap-3 rounded-full border border-line bg-surface px-4 text-sm text-muted lg:flex">{{ crate::web::ui::ic("eye", 17)|safe }}<span class="truncate">{% if ground %}Ground view · records from the ship, verified on arrival{% else %}Ship hub · {{ node }} · offline-first{% endif %}</span></span>
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="/export/report" target="_blank" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("file", 14)|safe }}Report</a>
+        <a href="/export/records.csv" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("download", 14)|safe }}CSV</a>
+        <a href="/export/records.json" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("download", 14)|safe }}JSON</a>
+      </div>
+      <span class="badge badge-dot h-8 px-3 {% if eva_ok %} text-ok{% else %} text-warn{% endif %} border border-line" data-eva-chip data-online-text="Eva online" title="{{ eva_label }}"><span data-eva-chip-text>{% if eva_ok %}Eva online{% else %}On-board rules{% endif %}</span><span class="hidden text-muted xl:inline" data-eva-hint>{% if !eva_ok %}{{ eva_hint }}{% endif %}</span></span>
+      <span class="ml-auto flex items-center gap-2.5">
+        <span class="inline-grid size-10 shrink-0 place-items-center rounded-full text-sm font-medium text-info border border-line">{{ initials }}</span>
+        <span class="flex flex-col leading-tight"><span class="text-sm text-ink">{{ person }}</span><span class="text-xs text-muted">{{ person_role }}</span></span>
+      </span>
+    </header>
+
+    <main class="flex flex-col gap-6 p-4 md:p-6">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="flex flex-col gap-2">
+          <p class="text-xs uppercase tracking-label text-muted">{{ eyebrow }}</p>
+          <h1 class="text-4xl tracking-tight text-ink">{{ greeting }}</h1>
+        </div>
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <a href="#case" class="press flex h-14 items-center gap-3 rounded-full border border-line bg-surface py-1 pr-4 pl-1 ring-1 ring-info/20" aria-label="Eva: open the case card">
+            {% call m::eva(mood, art, "size-12") %}
+            <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status>{% if mood == "alert" %}Guiding a case{% else %}Watching the crew{% endif %}</span></span>
+          </a>
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{% if ground %}{{ crate::web::ui::pic("earth", "size-7")|safe }}{% else %}{{ crate::web::ui::pic("hub", "size-7")|safe }}{% endif %}{% if ground %}Earth · receives and acknowledges the signed records{% else if hub_down %}Hub down · simulated{% else %}Hub · hosts the Super Intelligence · stores everything{% endif %}</span>
+          <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">{{ crate::web::ui::pic("lora", "size-7")|safe }}Eva Link mesh · <span data-mesh-count>live</span></span>
+          {% if storm %}<span class="inline-flex h-9 items-center gap-2 rounded-full border border-warn/40 pr-3.5 pl-1.5 text-xs text-warn">{{ crate::web::ui::pic("sun", "size-7")|safe }}Solar storm · shelter</span>{% endif %}
+        </div>
+      </div>
+
+      <div id="kpis" sse-swap="kpis">{{ kpis|safe }}</div>
+      <div id="roster" sse-swap="roster">{{ roster|safe }}</div>
+
+      <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
+        <div class="flex flex-col gap-6 xl:col-span-8">
+          <div id="case" sse-swap="case">{{ case|safe }}</div>
+          <div id="alerts" sse-swap="alerts">{{ alerts|safe }}</div>
+        </div>
+        <div class="flex flex-col gap-6 xl:col-span-4">
+          <div id="sync" sse-swap="sync">{{ sync|safe }}</div>
+          {% if ground %}
+          <section class="rounded-card border border-line bg-surface p-5">
+            <header class="mb-3 flex items-center justify-between gap-3"><h2 class="text-base text-ink">Message the ship</h2><span class="text-xs text-muted">reliable · acknowledged</span></header>
+            <form class="flex items-center gap-2" hx-post="/api/ground/message" hx-swap="none" hx-on::after-request="this.reset()">
+              <input name="text" required maxlength="500" placeholder="Flight surgeon note for the crew lead" class="h-10 min-w-0 flex-1 rounded-full border border-line bg-background px-4 text-sm text-ink placeholder:text-muted">
+              <button class="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-on-light" aria-label="Send">{{ crate::web::ui::ic("send", 16)|safe }}</button>
+            </form>
+          </section>
+          {% endif %}
+          <div id="station" sse-swap="station">{{ station|safe }}</div>
+          <div id="mesh" sse-swap="mesh">{{ mesh|safe }}</div>
+        </div>
+      </div>
+    </main>
+    <footer class="flex flex-wrap items-center gap-2 border-t border-line bg-surface px-4 py-2.5 text-xs text-muted md:px-6">
+      <span>Decision-support functions after Russell et al., npj Microgravity 9:46 (2023) · <a href="https://doi.org/10.1038/s41526-023-00284-1" class="text-info underline underline-offset-2">doi:10.1038/s41526-023-00284-1</a></span>
+      <span class="ml-auto">Eva guides, records and warns · the AED decides shocks</span>
+      <details class="w-full" id="about">
+        <summary class="inline-flex h-8 cursor-pointer items-center gap-2 rounded-full border border-line px-3 text-xs text-ink hover:bg-raised">About &amp; credits</summary>
+        <div class="max-w-3xl pt-3 pb-2">{% include "_credits.html" %}</div>
+      </details>
+    </footer>
+  </div>
+</div>
+{% include "dev/slot.html" %}
+</body>
+</html>
