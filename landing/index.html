@@ -38,7 +38,8 @@ img{display:block;max-width:100%}
 .in .mk{background-size:100% 100%;color:#0c0c0c}
 .space{background:var(--space);color:var(--space-ink)}
 .space .note{color:var(--space-muted)}
-.stars{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;pointer-events:none}
+.stars{position:absolute;inset:-3%;width:106%;height:106%;object-fit:cover;opacity:.6;pointer-events:none;transform:translate(calc(var(--pmx,0)*-22px),calc(var(--pmy,0)*-16px));animation:twinkle 9s ease-in-out infinite alternate}
+@keyframes twinkle{to{opacity:.4}}
 
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--canvas)}
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:400;height:72px;background:var(--canvas);border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;font-size:var(--t-sec);letter-spacing:-.01em}
@@ -54,9 +55,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hero .ground{position:absolute;inset:0;background:var(--space);z-index:2;clip-path:inset(var(--it,0) var(--ir,0) var(--ib,0) var(--il,0))}
 .hero .cab{position:absolute;inset:-6% 0 0 0;opacity:calc(.25 + .75*var(--s,0))}
 .hero .cab img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero .cab .bg{transform:translateY(calc(var(--q,0)*-3%)) scale(calc(1.06 - .06*var(--s,0)))}
-.hero .cab .mid{transform:translateY(calc(var(--q,0)*-8%)) scale(calc(1.1 - .1*var(--s,0)))}
-.hero .cab .fg{transform:translateY(calc(var(--q,0)*-14%)) scale(calc(1.16 - .16*var(--s,0)))}
+.hero .cab .bg{transform:translate(calc(var(--pmx,0)*-10px),calc(var(--q,0)*-3% + var(--pmy,0)*-8px)) scale(calc(1.07 - .06*var(--s,0)))}
+.hero .cab .mid{transform:translate(calc(var(--pmx,0)*-24px),calc(var(--q,0)*-8% + var(--pmy,0)*-16px)) scale(calc(1.11 - .1*var(--s,0)))}
+.hero .cab .fg{transform:translate(calc(var(--pmx,0)*-44px),calc(var(--q,0)*-14% + var(--pmy,0)*-28px)) scale(calc(1.18 - .16*var(--s,0)))}
 .hero .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,0) 55%);opacity:var(--s,0)}
 .hero .copy{position:absolute;z-index:3;top:50%;transform:translateY(-50%);left:var(--cl,40px);width:min(560px,80vw);color:var(--space-ink);display:grid;gap:18px}
 .hero .copy h1{font-size:clamp(64px,12vw,170px);line-height:.9;letter-spacing:-.03em}
@@ -64,9 +65,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hero .copy p b{font-weight:400;color:var(--space-ink)}
 .hero .clock{position:absolute;z-index:3;right:20px;bottom:18px;font-size:var(--t-util);color:var(--space-muted);opacity:var(--s,0);font-variant-numeric:tabular-nums}
 .chip{position:absolute;z-index:1;width:clamp(84px,11vw,170px);aspect-ratio:1;transform:translate(calc(var(--fx,0px)*var(--k,0)),calc(var(--fy,0px)*var(--k,0))) rotate(calc(var(--turn,0deg)*var(--k,0))) scale(calc(1 - .18*var(--k,0)));overflow:hidden}
-.chip img{width:100%;height:100%;object-fit:cover;animation:drift 4.8s ease-in-out infinite alternate}
-.chip:nth-child(even) img{animation-duration:5.6s;animation-direction:alternate-reverse}
-@keyframes drift{from{transform:scale(1.12) translateY(-4%)}to{transform:scale(1.12) translateY(4%)}}
+.chip{perspective:640px}
+.chip img{width:100%;height:100%;object-fit:cover;transform:scale(1.14);will-change:transform}
 .hint{position:absolute;z-index:4;left:20px;bottom:18px;font-size:var(--t-util);color:var(--muted);opacity:calc(1 - var(--s,0)*3)}
 
 /* 2 · Statement */
@@ -87,15 +87,16 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .xsec .part{--dx:0%;--dy:0%;--ds:0}
 .wsec{height:340svh}
 .wsec .obj{width:min(76vh,52vw);aspect-ratio:1;top:55%;left:64%}
-.wsec .orb{opacity:0}
+.wsec .orb{opacity:0;will-change:opacity,filter,transform}
 .wsec .part{transform:translate(calc(var(--dx,0)*var(--e,0)),calc(var(--dy,0)*var(--e,0)))}
-.hsec{height:360svh}
-.hsec .obj{width:min(62vh,40vw);aspect-ratio:2/3;left:66%;top:53%}
+.hsec{height:420svh}
+.hsec .obj{width:min(66vh,42vw);aspect-ratio:2/3;left:66%;top:53%;overflow:hidden}
 @media (max-width:760px){.hsec .obj{left:50%;top:60%}}
-.hsec .part{transform:translate(calc(var(--dx,0)*var(--e,0)),calc(var(--dy,0)*var(--e,0))) scale(calc(1 + var(--ds,0)*var(--e,0)))}
+.hsec .cam{position:absolute;inset:0;transform-origin:0 0;transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--zs,1));will-change:transform}
+.hsec .cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .hsec .s2{position:absolute;inset:0;z-index:2;opacity:calc(1 - var(--z,0))}
 .hsec .s2 img{width:100%;height:100%;object-fit:cover;transform:scale(calc(1 + .12*var(--z,0)))}
-.hsec .glow{opacity:var(--gl,0);transition:opacity .2s}
+.hsec .glow{opacity:0;transition:opacity .5s}
 .ledger{position:absolute;z-index:5;left:max(20px,env(safe-area-inset-left,0px));bottom:28px;width:min(440px,34vw);display:grid}
 .lbl{display:grid;gap:2px;padding:11px 0;border-top:1px solid var(--space-rule);font-size:var(--t-util);line-height:1.2;color:var(--space-ink);opacity:calc(.28 + .72*var(--lo,0));transition:opacity .2s}
 .lbl small{color:var(--space-muted);font-size:.8em}
@@ -117,7 +118,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .st p{font-size:var(--t-util);line-height:1.3;color:var(--muted)}
 .bar{height:1px;background:var(--rule);position:relative}
 .bar i{position:absolute;left:0;top:-1px;height:3px;width:100%;background:var(--ink);transform-origin:left;transform:scaleX(var(--sp,0))}
-.hl{position:absolute;z-index:3;left:0;top:0;border:2px solid var(--mark);box-shadow:0 0 0 5px rgba(255,216,74,.22),0 0 48px rgba(255,216,74,.38);transform:translate(var(--hx,0),var(--hy,0));width:var(--hw,0);height:var(--hh,0);opacity:var(--ho,0);transition:transform .6s cubic-bezier(.76,0,.24,1),width .6s cubic-bezier(.76,0,.24,1),height .6s cubic-bezier(.76,0,.24,1),opacity .4s}
+.ping{position:absolute;z-index:3;left:0;top:0;transform:translate(var(--hx,0),var(--hy,0));opacity:var(--ho,0);transition:transform .7s cubic-bezier(.76,0,.24,1),opacity .4s;pointer-events:none}
+.ping i{position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;border:2px solid var(--mark);box-shadow:0 0 18px rgba(255,216,74,.55)}
+.ping i::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--mark);animation:ping 1.8s ease-out infinite}
+@keyframes ping{to{transform:scale(2.4);opacity:0}}
+.ping span{position:absolute;left:24px;top:-12px;white-space:nowrap;font-size:13px;line-height:1;padding:6px 8px;background:#0c0c0c;color:#fff}
+@media (prefers-reduced-motion:reduce){.ping i::after{animation:none}}
 .caseB .bdev{position:absolute;right:max(20px,3vw);top:50%;transform:translateY(-50%);width:min(60vw,980px);display:grid;grid-template-columns:1.55fr 1fr;gap:2vw;align-items:center}
 .bdev .w{position:relative;aspect-ratio:3/2}
 .bdev .w img{width:100%;height:100%;object-fit:contain}
@@ -139,21 +145,21 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 }
 
 /* Solar */
-.solar{height:300svh}
+.solar{height:320svh}
 .solar .stage{background:var(--space)}
-.solar .sun{position:absolute;right:-8%;top:2%;width:min(78vh,52vw);aspect-ratio:1;transform:translateX(calc(40% - 40%*var(--a,0))) scale(calc(.65 + .35*var(--a,0)));opacity:calc(.15 + .85*var(--a,0))}
-.solar .sun img{position:absolute;inset:0;width:100%;height:100%}
-.solar .sun .cor{animation:spin 120s linear infinite;transform-origin:50% 50%}
-@keyframes spin{to{transform:rotate(360deg)}}
-.solar .sun .fl1{position:absolute;inset:auto;left:8%;top:30%;width:34%;height:auto;transform-origin:50% 100%;transform:translate(-50%,-62%) rotate(-62deg) scale(calc(.2 + .8*var(--b,0)));opacity:calc(var(--b,0)*1.2)}
-.solar .fl2{position:absolute;right:28%;top:12%;width:min(110vh,70vw);transform-origin:100% 50%;transform:translateX(calc(-40%*var(--c,0))) scaleX(calc(.3 + .7*var(--c,0)));opacity:calc(var(--c,0)*(1.4 - var(--c,0)))}
-.solar .pt{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:calc(var(--c,0)*.8);transform:translateX(calc(10% - 20%*var(--c,0)))}
+.solar .sun{position:absolute;right:max(20px,4vw);top:9%;width:min(64vh,42vw);aspect-ratio:1;transform:translate(calc(26% - 26%*var(--a,0)),calc(10% - 10%*var(--a,0))) scale(calc(.78 + .22*var(--a,0)));opacity:calc(.1 + .9*var(--a,0))}
+.solar .sun .cor,.solar .sun .disk{position:absolute;inset:0;width:100%;height:100%}
+.solar .sun .cor{animation:breathe 6s ease-in-out infinite alternate}
+@keyframes breathe{from{opacity:.75}to{opacity:1}}
+.solar .sun .fl1{position:absolute;left:var(--fx,0);top:var(--fy,0);width:var(--fw,30%);height:auto;transform-origin:48.7% 100%;transform:rotate(var(--fr,0deg)) scale(calc(.05 + .95*var(--b,0)));opacity:calc(var(--b,0)*1.4)}
+.solar .fl2{position:absolute;left:var(--ex,0);top:var(--ey,0);width:var(--ew,400px);height:auto;transform-origin:88% 48%;transform:rotate(var(--er,0deg)) translateX(calc(var(--et,0px)*-1*var(--c,0))) scale(calc(.35 + .65*var(--c,0)));opacity:calc(min(1, var(--c,0)*3)*(1 - var(--c,0)*.75));z-index:1;mix-blend-mode:screen}
 .solar canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
-.solar .ship{position:absolute;left:3%;bottom:6%;width:min(36vw,520px);aspect-ratio:3/2;z-index:3;transform:translateX(calc(-6% + 6%*var(--a,0)))}
+.solar .ship{position:absolute;left:max(20px,7vw);bottom:12%;width:min(25vw,360px);aspect-ratio:3/2;z-index:3;animation:bob 6s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-8px)}}
 .solar .ship img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.solar .ship .hull{filter:drop-shadow(14px -2px 14px rgba(255,110,50,calc(.85*var(--d,0))))}
 .solar .ship .eg{animation:flick 1.6s ease-in-out infinite alternate}
-@keyframes flick{to{opacity:.6}}
-.solar .ship::after{content:"";position:absolute;inset:15% 5%;background:radial-gradient(60% 50% at 60% 50%,rgba(255,80,40,.5),transparent 70%);opacity:var(--d,0);mix-blend-mode:screen}
+@keyframes flick{to{opacity:.55}}
 .solar .stage::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,0) 48%)}
 .solar .txt{position:absolute;z-index:5;left:20px;top:28px;max-width:min(560px,80vw);display:grid;gap:12px;color:var(--space-ink)}
 .solar .txt .note{color:var(--space-muted);max-width:30em}
@@ -162,7 +168,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .solar .alert b{font-weight:400;font-size:var(--t-sec);line-height:1}
 .solar .alert span{font-size:15px;color:var(--space-muted)}
 .solar .meter{position:absolute;z-index:5;right:380px;bottom:24px;font-size:var(--t-util);color:var(--space-muted);font-variant-numeric:tabular-nums}
-@media (max-width:760px){.solar .meter{right:auto;left:20px;bottom:190px}.solar .ship{width:70vw}}
+@media (max-width:760px){.solar .meter{right:auto;left:20px;bottom:190px}.solar .ship{width:46vw;bottom:30%}.solar .sun{width:70vw;top:30%}}
 
 /* Earth link */
 .link-sec .stage{background:var(--space);color:var(--space-ink)}
@@ -173,11 +179,16 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .link-sec .planet{flex:none;position:relative;width:min(56vh,44vw);aspect-ratio:1;transform:scale(var(--ps,1))}
 .link-sec .planet img{position:absolute;inset:0;width:100%;height:100%}
 .link-sec .planet .atm{opacity:var(--pa,.4)}
-.link-sec .packet{flex:none;display:grid;gap:6px;width:220px;border-top:1px solid var(--space-rule);padding-top:10px;position:relative}
+.link-sec .packet{flex:none;display:grid;gap:6px;width:200px;position:relative;align-self:center;transform:translateY(46px);z-index:2}
+.link-sec .packet::after{content:"";position:absolute;left:0;top:-52px;width:12px;height:12px;border-radius:50%;background:#000;border:2px solid rgba(255,255,255,.45);transform:scale(calc(.8 + .5*var(--f,0)));transition:background .3s,border-color .3s}
+.link-sec .packet.hit::after{background:var(--link);border-color:var(--link);box-shadow:0 0 16px var(--link)}
+.link-sec .packet::before{content:"";position:absolute;left:5px;top:-40px;width:2px;height:30px;background:rgba(255,255,255,.18)}
+.link-sec .tline{position:absolute;top:50%;height:2px;margin-top:-1px;background:rgba(255,255,255,.22);z-index:1;left:var(--tl,0);width:var(--tw,0)}
+.link-sec .tline i{position:absolute;inset:0;background:var(--link);transform-origin:left;transform:scaleX(var(--lf,0));box-shadow:0 0 12px var(--link)}
+.link-sec .tline b{position:absolute;right:-2px;top:-7px;width:0;height:0;border-left:16px solid rgba(255,255,255,.5);border-top:8px solid transparent;border-bottom:8px solid transparent}
+.link-sec .tline.done b{border-left-color:var(--link)}
 .link-sec .packet b{font-weight:400;font-size:var(--t-label)}
 .link-sec .packet span{font-size:15px;color:var(--space-muted)}
-.link-sec .packet::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--link);transform-origin:left;transform:scaleX(var(--f,0))}
-.link-sec .dash{flex:none;width:10vw;border-top:2px dotted rgba(255,255,255,.35)}
 .link-sec .playhead{position:absolute;left:50%;top:22%;bottom:12%;width:2px;background:var(--link);z-index:3}
 .link-sec .playhead::after{content:"now";position:absolute;top:-24px;left:8px;font-size:13px;color:var(--link)}
 
@@ -235,15 +246,16 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 [data-reveal].pre{opacity:.3;transform:translateY(28px)}
 
 @media (prefers-reduced-motion:reduce){
+  .stars{animation:none;transform:none}
   .pinsec{height:auto!important}.pinsec .stage{position:relative;height:90svh}
   .hero .ground{clip-path:none}.chip,.hint{display:none}
-  .chip img,.solar .sun .cor,.solar .ship .eg{animation:none}
+  .solar .sun .cor,.solar .ship,.solar .ship .eg{animation:none}
   [data-reveal].pre{opacity:1;transform:none}
   .slab{position:relative;top:auto;transform:none;filter:none}
 }
 </style>
 
-<nav class="nav g" aria-label="Main"><a href="#top">Eva</a><a href="#contact">Contact</a></nav>
+<nav class="nav g" aria-label="Main"><a href="#top">WearMeds</a></nav>
 
 <main id="top">
   <!-- 1 · Hero -->
@@ -261,11 +273,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <div class="ground" id="ground">
         <div class="cab"><img class="bg" src="a/cab-bg-b.jpg" alt="Calm spacecraft cabin with Mars in the window."><img class="mid" src="a/cab-mid-b.webp" alt=""><img class="fg" src="a/cab-fg-b.webp" alt=""></div>
         <div class="shade"></div>
-        <span class="ai">AI-generated</span>
       </div>
       <div class="copy" id="heroCopy"><h1>Eva</h1><p>Care that <b>guides</b>, <b>records</b> and <b>warns</b> on the way to Mars.</p></div>
-      <div class="clock">Mission day 212 · Earth 14 min away</div>
-      <div class="hint">Scroll</div>
     </div>
   </section>
 
@@ -284,14 +293,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   <section class="pinsec xsec wsec" id="wsec" aria-labelledby="wh">
     <div class="stage">
       <img class="stars" src="a/st1.jpg" alt="" aria-hidden="true">
-      <div class="head"><p class="label" id="wh">Wristband</p><h2 class="prop">A screen big enough to follow under stress</h2><p class="note">Curved to the forearm, one action per screen.</p></div>
+      <div class="head"><p class="label" id="wh">Wristband</p><h2 class="prop">A screen big enough to follow under stress</h2></div>
       <div class="obj">
         <img class="orb" src="a/or-m60.webp" alt=""><img class="orb" src="a/or-m30.webp" alt=""><img class="orb" src="a/or-000.webp" alt="WearMeds wristband."><img class="orb" src="a/or-p30.webp" alt=""><img class="orb" src="a/or-p60.webp" alt="">
         <img class="part" data-dy="12" src="a/wx1.webp" alt=""><img class="part" data-dy="0" src="a/wx2.webp" alt=""><img class="part" data-dy="-11" src="a/wx5.webp" alt=""><img class="part" data-dy="-21" src="a/wx3.webp" alt=""><img class="part" data-dy="25" src="a/wx4.webp" alt="">
       </div>
       <div class="ledger"><div class="lbl" data-at=".6">Flexible touch screen<small>Target: ≥100 mm active side</small></div><div class="lbl" data-at=".66">Battery and board<small>Firmware runs locally</small></div><div class="lbl" data-at=".72">Strap<small>Help button, voice, vibration</small></div><div class="lbl" data-at=".78">Sensor window<small>Non-invasive, on the skin</small></div></div>
-      <p class="step" id="wstep">Turn</p>
-      <span class="ai">AI-generated</span>
     </div>
   </section>
 
@@ -300,14 +307,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <div class="stage">
       <img class="sc tl" src="a/s4-w.jpg" alt="A passenger checks her wristband beside a seated passenger wearing the WearMeds harness, linked by a soft blue light.">
       <img class="sc td" src="a/s4-b.jpg" alt="A passenger checks her wristband beside a seated passenger wearing the WearMeds harness, linked by a soft blue light.">
-      <div class="hl" id="hlA"></div>
+      <div class="ping" id="hlA"><i></i><span id="hlT"></span></div>
       <div class="ptxt">
         <p class="label" id="ca">Case A · Cannot act</p>
         <div class="sts">
-          <div class="st" data-box="15.8,6.2,44,88.8"><span class="n">01 / 04</span><h3>The harness and wristband notice no response</h3><p>Eva cross-checks independent signals before it calls anyone. Stillness alone is not an emergency.</p></div>
-          <div class="st" data-box="17.5,61.5,12,15.5"><span class="n">02 / 04</span><h3>Eva calls the nearest passenger</h3><p>Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.</p></div>
-          <div class="st" data-box="17.5,44,17.5,33"><span class="n">03 / 04</span><h3>One instruction at a time</h3><p>The helper follows big pictures, voice and short text on their own wrist, linked to the patient's harness.</p></div>
-          <div class="st" data-box=""><span class="n">04 / 04</span><h3>Everyone else gets a quiet notice</h3><p>Every step, reading and decision goes into the log for the ship and for Earth.</p></div>
+          <div class="st" data-pt="31.8,44.5" data-tag="Harness · no response"><span class="n">01 / 04</span><h3>The harness and wristband notice no response</h3><p>Eva cross-checks independent signals before it calls anyone. Stillness alone is not an emergency.</p></div>
+          <div class="st" data-pt="23.4,69.3" data-tag="Helper’s wristband"><span class="n">02 / 04</span><h3>Eva calls the nearest passenger</h3><p>Their wristband shows where to go. If they do not confirm in 20 seconds, Eva calls the next one.</p></div>
+          <div class="st" data-pt="27.6,56" data-tag="Linked · step 1 of 4"><span class="n">03 / 04</span><h3>One instruction at a time</h3><p>The helper follows big pictures, voice and short text on their own wrist, linked to the patient's harness.</p></div>
+          <div class="st" data-pt=""><span class="n">04 / 04</span><h3>Everyone else gets a quiet notice</h3><p>Every step, reading and decision goes into the log for the ship and for Earth.</p></div>
         </div>
         <div class="bar"><i></i></div>
       </div>
@@ -331,43 +338,34 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <div class="w"><img src="a/wa1.webp" alt="WearMeds wristband on a forearm."><div class="scr" aria-live="polite"><div class="pict" id="uiP">?</div><div class="tx"><small id="uiK">Eva · Step 1 of 3</small><span id="uiT">Can you sit up? Tap Yes</span></div></div></div>
         <div class="h" id="harness" data-l="0"><img class="tl shd" src="a/sh-harness.webp" alt=""><img src="a/hx0.webp" alt="WearMeds chest harness."><img class="g1 tl" src="a/gl1-w.webp" alt=""><img class="g1 td" src="a/gl1-b.webp" alt=""></div>
       </div>
-      <span class="ai dk">AI-generated renders · screen content is live HTML</span>
     </div>
   </section>
 
-  <!-- 6 · Harness exploded -->
+  <!-- 6 · Harness: close-up, then a zoom into each component -->
   <section class="pinsec xsec hsec" id="hsec" aria-labelledby="hh">
     <div class="stage">
       <img class="stars" src="a/st1.jpg" alt="" aria-hidden="true">
       <div class="s2"><img src="a/s2-b.jpg" alt="A passenger presses the lit compartment on her WearMeds harness."></div>
       <div class="head"><p class="label" id="hh">Harness</p><h2 class="prop">Sensors on the body, help within reach</h2><p class="note">Monitoring stays non-invasive. Emergency treatment comes from validated modules, never from a chat model.</p></div>
-      <div class="obj">
-        <img class="part" src="a/hx1.webp" alt="WearMeds chest harness, exploded view.">
-        <img class="part" data-dx="-14" data-dy="-2" src="a/hx2.webp" alt="">
-        <img class="part" data-dx="0" data-dy="-9" data-ds=".06" src="a/hx3.webp" alt="">
-        <img class="part" data-dx="14" data-dy="2" src="a/hx4.webp" alt="">
-        <img class="part" data-dx="0" data-dy="10" src="a/hx5.webp" alt="">
-        <img class="glow" src="a/gl2-b.webp" alt=""><img class="glow" src="a/gl1-b.webp" alt="">
-      </div>
-      <div class="ledger"><div class="lbl" data-at=".42">Defibrillation pads<small>Validated rhythm analysis decides</small></div><div class="lbl" data-at=".48">Core module<small>Sensors and the link to the wristband</small></div><div class="lbl" data-at=".54">Injectable compartment<small>Route and drug still under study</small></div><div class="lbl" data-at=".6">Status lights<small>Show the item to use</small></div></div>
-      <p class="step" id="hstep">Close-up</p>
-      <span class="ai">AI-generated</span>
+      <div class="obj" id="hobj"><div class="cam" id="hcam">
+        <img src="a/hx0.webp" alt="WearMeds chest harness.">
+        <img class="glow gpads" src="a/gl2-b.webp" alt=""><img class="glow gcomp" src="a/gl1-b.webp" alt="">
+      </div></div>
+      <div class="ledger" id="hledger"><div class="lbl">Defibrillation pads<small>Validated rhythm analysis decides</small></div><div class="lbl">Core module<small>Sensors and the link to the wristband</small></div><div class="lbl">Injectable compartment<small>Route and drug still under study</small></div><div class="lbl">Status lights<small>Show the item to use</small></div></div>
     </div>
   </section>
 
-  <!-- 7 · Solar alert -->
+  <!-- 7 · Solar alert (composed from layers by measured geometry) -->
   <section class="pinsec solar" id="solar" aria-labelledby="sa">
     <div class="stage">
       <img class="stars" src="a/st1.jpg" alt="" aria-hidden="true">
-      <div class="sun"><img class="cor" src="a/ps-sun-corona.webp" alt=""><img src="a/ps-sun.webp" alt="The Sun."><img class="fl1" src="a/fl1.webp" alt="" aria-hidden="true"></div>
-      <img class="fl2" src="a/fl2.webp" alt="" aria-hidden="true">
-      <img class="pt" src="a/pt1-b.webp" alt="" aria-hidden="true">
+      <div class="sun" id="sun"><img class="cor" src="a/ps-sun-corona.webp" alt=""><img class="disk" src="a/ps-sun.webp" alt="The Sun."><img class="fl1" id="fl1" src="a/fl1.webp" alt="" aria-hidden="true"></div>
+      <img class="fl2" id="fl2" src="a/fl2.webp" alt="" aria-hidden="true">
       <canvas id="particles" aria-hidden="true"></canvas>
-      <div class="ship"><img src="a/sc1.webp" alt="Passenger spacecraft in transit."><img class="eg" src="a/sc2.webp" alt=""></div>
+      <div class="ship" id="ship"><img class="hull" src="a/sc1.webp" alt="Passenger spacecraft in transit."><img class="eg" src="a/sc2.webp" alt=""></div>
       <div class="txt"><p class="label" id="sa">Solar alert</p><h2 class="prop">Minutes of warning before the particles arrive</h2><p class="note">Eva reads NASA DONKI flare reports and NOAA GOES proton data. X-rays arrive with the light; the particles that follow leave time to reach the shelter.</p></div>
       <div class="meter" id="meter">Proton flux · 2 pfu</div>
       <div class="alert" role="status"><small>SOLAR ALERT</small><b>Go to the shelter</b><span>Particles arrive in about 18 min. Your wristband shows the way.</span></div>
-      <span class="ai">AI-generated</span>
     </div>
   </section>
 
@@ -375,26 +373,24 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   <section class="pinsec link-sec" id="linkSec" aria-labelledby="el">
     <div class="stage">
       <img class="stars" src="a/st2.jpg" alt="" aria-hidden="true">
-      <div class="head"><div><p class="label" id="el">Earth link</p><h2 class="prop" style="max-width:12em">Every step recorded, even minutes from Earth</h2></div><p class="lt" id="lt">3 min<small>one-way light time</small></p></div>
+      <div class="head"><div><p class="label" id="el">Earth link</p><h2 class="prop" style="max-width:12em">Every step recorded, even minutes from Earth</h2></div><p class="lt" id="lt">3 min<small>one-way light time to Earth</small></p></div>
       <div class="playhead" aria-hidden="true"></div>
       <div class="track" id="track">
-        <div class="planet"><img src="a/pe-earth.webp" alt="Earth."><img class="atm" src="a/pe-earth-atmosphere.webp" alt=""></div>
-        <div class="dash"></div>
+        <div class="tline" id="tline"><i></i><b></b></div>
+        <div class="planet"><img src="a/pm-mars.webp" alt="Mars, where the ship is."><img class="atm" src="a/pm-mars-atmosphere.webp" alt=""></div>
         <div class="packet"><b>12:01:04</b><span>No response · passenger 07</span></div>
         <div class="packet"><b>12:01:05</b><span>Helper assigned · passenger 03</span></div>
         <div class="packet"><b>ECG strip</b><span>Signed, chained, queued</span></div>
         <div class="packet"><b>Step 2 done</b><span>Breathing checked</span></div>
         <div class="packet"><b>ACK</b><span>Received on Earth</span></div>
-        <div class="dash"></div>
-        <div class="planet"><img src="a/pm-mars.webp" alt="Mars."><img class="atm" src="a/pm-mars-atmosphere.webp" alt=""></div>
+        <div class="planet"><img src="a/pe-earth.webp" alt="Earth."><img class="atm" src="a/pe-earth-atmosphere.webp" alt=""></div>
       </div>
-      <span class="ai">AI-generated</span>
     </div>
   </section>
 
   <!-- 9 · Mars arrival -->
   <section class="arrive" id="arrive" aria-label="Arrival">
-    <div class="stage"><img src="a/ms1.jpg" alt="The surface of Mars at dawn."><div class="dots"></div><p class="cap prop">Arrive with every step on record.</p><span class="ai">AI-generated</span></div>
+    <div class="stage"><img src="a/ms1.jpg" alt="The surface of Mars at dawn."><div class="dots"></div><p class="cap prop">Arrive with every step on record.</p></div>
   </section>
 
   <!-- 10 · Why -->
@@ -416,15 +412,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <div class="slabs">
       <article class="slab g" data-slab>
         <div><p class="name">Wristband</p><div class="specs"><div>Screen<span>Flexible touch, target ≥100 mm active side</span></div><div>Talks to<span>Ship hub over LoRa</span></div><div>Always on<span>Help button, voice, vibration</span></div></div></div>
-        <div class="pic"><img class="tl" src="a/plinth-w.jpg" alt="WearMeds wristband on a plinth."><img class="td" src="a/plinth-b.jpg" alt="WearMeds wristband on a plinth."><span class="ai dk">AI-generated</span></div>
+        <div class="pic"><img class="tl" src="a/plinth-w.jpg" alt="WearMeds wristband on a plinth."><img class="td" src="a/plinth-b.jpg" alt="WearMeds wristband on a plinth."></div>
       </article>
       <article class="slab dark g" data-slab>
         <div><p class="name">Harness</p><div class="specs"><div>Sensors<span>Contact, non-invasive</span></div><div>Modules<span>Defibrillation, emergency injectable</span></div><div>Guides<span>Lights the item to use</span></div></div></div>
-        <div class="pic"><img src="a/fig1.webp" alt="A passenger wearing the WearMeds harness and wristband."><span class="ai">AI-generated</span></div>
+        <div class="pic"><img src="a/fig1.webp" alt="A passenger wearing the WearMeds harness and wristband."></div>
       </article>
       <article class="slab g" data-slab>
         <div><p class="name">Ship hub</p><div class="specs"><div>Runs<span>Eva's medical AI, offline</span></div><div>Keeps<span>The signed log of every step</span></div><div>Sends<span>Queued reports to Earth</span></div></div></div>
-        <div class="pic"><img src="a/sc1.webp" alt="Passenger spacecraft."><span class="ai dk">AI-generated</span></div>
+        <div class="pic"><img src="a/sc1.webp" alt="Passenger spacecraft."></div>
       </article>
     </div>
     <div class="g"><div class="parts" id="parts">
@@ -498,6 +494,25 @@ add(y=>{const p=pinP(hero,y), s=reduce?1:io2(clamp((p-.02)/.45)), k=reduce?1:cla
   const sw=H.sw; copy.style.setProperty('--cl',(il+(sw<700?20:40)*(1-s)+20*s)+'px');copy.style.width=Math.min(560,Math.max(220,sw-2*il-(sw<700?40:80)))+'px';
   chips.forEach(c=>c.style.setProperty('--k',k.toFixed(3)))});
 
+/* hero chips: each floats on its own — two-axis tilt for depth, small positional shake around its centre, pointer parallax by depth */
+const amb=chips.map((c,i)=>{const r=n=>((Math.sin((i+1)*12.9898+n*78.233)*43758.5453)%1+1)%1; return {img:c.querySelector('img.tl'),img2:c.querySelector('img.td'),
+  ph:[r(1)*6.28,r(2)*6.28,r(3)*6.28,r(4)*6.28], f:[.31+r(5)*.22,.27+r(6)*.2,.53+r(7)*.4,.47+r(8)*.38], depth:.4+r(9)*.9}});
+let mx=0,my=0,heroOn=true,ambRun=false;
+addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;mx=e.clientX/innerWidth*2-1;my=e.clientY/innerHeight*2-1},{passive:true});
+function ambTick(now){const t=now/1000;
+  amb.forEach(a=>{const rx=Math.sin(t*a.f[0]+a.ph[0])*7*a.depth - my*5*a.depth, ry=Math.sin(t*a.f[1]+a.ph[1])*9*a.depth + mx*6*a.depth;
+    const dx=(Math.sin(t*a.f[2]+a.ph[2])+.4*Math.sin(t*a.f[2]*2.3+a.ph[3]))*1.6*a.depth, dy=(Math.cos(t*a.f[3]+a.ph[3])+.4*Math.sin(t*a.f[3]*1.9+a.ph[0]))*1.6*a.depth;
+    const tr=`rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translate(${dx.toFixed(2)}%,${dy.toFixed(2)}%) scale(1.14)`;
+    if(a.img)a.img.style.transform=tr; if(a.img2)a.img2.style.transform=tr});
+  if(heroOn)requestAnimationFrame(ambTick);else ambRun=false}
+add(y=>{heroOn=pinP(hero,y)<.75; if(heroOn&&!ambRun&&!reduce){ambRun=true;requestAnimationFrame(ambTick)}});
+
+/* pointer → smoothed --pmx/--pmy on :root (stars and cabin layers read them by depth) */
+let pmx=0,pmy=0,pRun=false; const rootS=document.documentElement.style;
+function pTick(){pmx+=(mx-pmx)*.07;pmy+=(my-pmy)*.07;rootS.setProperty('--pmx',pmx.toFixed(4));rootS.setProperty('--pmy',pmy.toFixed(4));
+  if(Math.abs(mx-pmx)>.001||Math.abs(my-pmy)>.001)requestAnimationFrame(pTick);else pRun=false}
+if(!reduce)addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;if(!pRun){pRun=true;requestAnimationFrame(pTick)}},{passive:true});
+
 /* reveals */
 const rev=[...document.querySelectorAll('[data-reveal]')];
 if(!reduce)rev.forEach(el=>{if(el.getBoundingClientRect().top>innerHeight)el.classList.add('pre')});
@@ -507,18 +522,28 @@ add(()=>{const lim=innerHeight*.88;for(const el of rev)if(!el.classList.contains
 function labels(stage,p){stage.querySelectorAll('.lbl').forEach(l=>l.style.setProperty('--lo',clamp((p-+l.dataset.at)/.06).toFixed(3)))}
 
 /* 3 · Wristband orbit + exploded */
-const ws=document.getElementById('wsec'), wst=ws.querySelector('.stage'), orbs=[...ws.querySelectorAll('.orb')], wparts=[...ws.querySelectorAll('.part')], wstep=document.getElementById('wstep');
+const ws=document.getElementById('wsec'), wst=ws.querySelector('.stage'), orbs=[...ws.querySelectorAll('.orb')], wparts=[...ws.querySelectorAll('.part')], wstep={set textContent(v){}};
 wparts.forEach(pp=>{pp.style.setProperty('--dy',(+pp.dataset.dy||0)+'%')});
-add(y=>{const p=pinP(ws,y);
-  // orbit 0–.4: crossfade -60 → +60 then settle on 0
-  const o=clamp(p/.36)*4; orbs.forEach((im,i)=>{let a=clamp(1-Math.abs(o-i));if(p>=.36)a=0;im.style.opacity=a.toFixed(3)});
-  const toParts=clamp((p-.36)/.06); // swap to exploded set (wx0 camera == or-000)
-  if(p<.36){orbs[2].style.opacity=Math.max(+orbs[2].style.opacity,0)}
-  const e=reduce?1:ic3(clamp((p-.44)/.3));
-  wparts.forEach(pp=>{pp.style.opacity=(p<.36?0:toParts).toFixed(3);pp.style.setProperty('--e',e.toFixed(3))});
+let orbitT=0, orbitPlaying=false, orbitDone=false, lastWP=0;
+function drawOrbit(){const o=orbitT*4, k=Math.min(3,Math.floor(o)), f=o-k, blur=(reduce?0:Math.sin(Math.PI*f)*7), dx=Math.sin(Math.PI*f)*2.2;
+  orbs.forEach((im,i)=>{let a=0; if(i===k)a=1-f; else if(i===k+1)a=f; if(orbitT>=1)a=(i===2)?1:0;
+    im.style.opacity=a.toFixed(3); im.style.filter=a>0&&a<1?`blur(${blur.toFixed(1)}px)`:'none'; im.style.transform=a>0&&a<1?`translateX(${(i===k?-dx:dx).toFixed(2)}%)`:'none'})}
+function playOrbit(){if(orbitPlaying||orbitDone)return; if(reduce){orbitT=1;orbitDone=true;drawOrbit();return}
+  orbitPlaying=true; const t0=performance.now(), D=2200;
+  const step=now=>{const t=clamp((now-t0)/D); orbitT=io2(t); drawOrbit(); if(t<1&&!orbitDone)requestAnimationFrame(step); else {orbitPlaying=false; orbitDone=true; orbitT=1; drawOrbit(); req()}};
+  requestAnimationFrame(step)}
+add(y=>{const p=pinP(ws,y); lastWP=p;
+  if(p>0.005&&!orbitDone)playOrbit();               // autoplay the turn as soon as the scene pins
+  if(p<=0.001&&orbitDone){orbitDone=false;orbitT=0;drawOrbit()} // replay when scrolled back above
+  if(p>.36&&!orbitDone){orbitDone=true;orbitT=1;drawOrbit()}
+  const showParts=orbitDone&&p>.3, toParts=showParts?clamp((p-.3)/.06):0;
+  if(showParts&&toParts>0)orbs.forEach(im=>{im.style.opacity=(+(im===orbs[2])*(1-toParts)).toFixed(3)});
+  const e=reduce?1:ic3(clamp((p-.4)/.3));
+  wparts.forEach(pp=>{pp.style.opacity=toParts.toFixed(3);pp.style.setProperty('--e',e.toFixed(3))});
   labels(wst,p);
-  wstep.textContent=p<.36?'Orbit · '+Math.round(-60+120*clamp(p/.36))+'°':p<.44?'Assembled':'Exploded view';
+  wstep.textContent=!orbitDone?'Turning':p<.36?'Assembled':'Exploded view';
 });
+drawOrbit();
 
 /* 4–5 · pinned step scenes */
 function steps(id,onStep){const sec=document.getElementById(id), st=sec.querySelector('.stage'), sts=[...sec.querySelectorAll('.st')], bar=sec.querySelector('.bar'); let cur=-2;
@@ -526,49 +551,73 @@ function steps(id,onStep){const sec=document.getElementById(id), st=sec.querySel
     if(i!==cur){cur=i;sts.forEach((e,k)=>e.classList.toggle('on',k===i));onStep(i,sts[i],st)}});
   return ()=>{if(cur>=0)onStep(cur,sts[cur],st)}}
 const hlA=document.getElementById('hlA');
-function coverBox(stage,box){const img=[...stage.querySelectorAll('.sc')].find(i=>i.offsetParent!==null&&i.naturalWidth); if(!img||!box)return null;
+function coverPt(stage,pt){const img=[...stage.querySelectorAll('.sc')].find(i=>i.offsetParent!==null&&i.naturalWidth); if(!img||!pt)return null;
   const W=img.clientWidth,H=img.clientHeight,iw=img.naturalWidth,ih=img.naturalHeight,sc=Math.max(W/iw,H/ih);
   const pos=getComputedStyle(img).objectPosition.split(' ').map(v=>parseFloat(v)/100); const ox=img.offsetLeft+(W-iw*sc)*pos[0], oy=img.offsetTop+(H-ih*sc)*pos[1];
-  const [x,y,w,h]=box.split(',').map(Number); return [ox+x/100*iw*sc, oy+y/100*ih*sc, w/100*iw*sc, h/100*ih*sc]}
-const redoA=steps('caseA',(i,st,stage)=>{const r=coverBox(stage,st.dataset.box);
-  if(!r){hlA.style.setProperty('--ho',0);return} hlA.style.setProperty('--hx',r[0]+'px');hlA.style.setProperty('--hy',r[1]+'px');hlA.style.setProperty('--hw',r[2]+'px');hlA.style.setProperty('--hh',r[3]+'px');hlA.style.setProperty('--ho',1)});
+  const [x,y]=pt.split(',').map(Number); return [ox+x/100*iw*sc, oy+y/100*ih*sc]}
+const hlT=document.getElementById('hlT');
+const redoA=steps('caseA',(i,st,stage)=>{const r=coverPt(stage,st.dataset.pt);
+  if(!r){hlA.style.setProperty('--ho',0);return} hlA.style.setProperty('--hx',r[0]+'px');hlA.style.setProperty('--hy',r[1]+'px');hlT.textContent=st.dataset.tag||'';hlA.style.setProperty('--ho',1)});
 onMeasure(redoA); document.querySelectorAll('#caseA .sc').forEach(i=>i.addEventListener('load',redoA));
 const UI=[["?","Eva · Step 1 of 3","Can you sit up? Tap Yes"],["→","Eva · Step 2 of 3","Open the lit compartment on your harness"],["1","Eva · Step 3 of 3","Follow the picture. Say Repeat anytime"],["!","Eva · Calling help","Passenger 03 is on the way"]];
 const uiP=document.getElementById('uiP'),uiK=document.getElementById('uiK'),uiT=document.getElementById('uiT'),harness=document.getElementById('harness');
 steps('caseB',(i,st)=>{const u=UI[Math.max(0,i)];uiT.style.opacity=0;setTimeout(()=>{uiP.textContent=u[0];uiK.textContent=u[1];uiT.textContent=u[2];uiT.style.opacity=1},reduce?0:180);harness.dataset.l=st?st.dataset.l:'0'});
 
-/* 6 · Harness exploded */
-const hs=document.getElementById('hsec'), hstg=hs.querySelector('.stage'), hparts=[...hs.querySelectorAll('.part')], hglow=[...hs.querySelectorAll('.glow')], hstep=document.getElementById('hstep');
-hparts.forEach(pp=>{pp.style.setProperty('--dx',(+pp.dataset.dx||0)+'%');pp.style.setProperty('--dy',(+pp.dataset.dy||0)+'%');pp.style.setProperty('--ds',+pp.dataset.ds||0)});
-add(y=>{const p=pinP(hs,y); const z=reduce?1:io2(clamp((p-.08)/.2)); hstg.style.setProperty('--z',z.toFixed(3));
-  const e=reduce?0:ic3(clamp((p-.32)/.25))*(1-ic3(clamp((p-.72)/.08))); hparts.forEach(pp=>pp.style.setProperty('--e',e.toFixed(3)));
-  hstg.querySelector('.obj').style.opacity=z.toFixed(3);
-  hglow[0].style.opacity=clamp((p-.8)/.08).toFixed(3); hglow[1].style.opacity=clamp((p-.88)/.08).toFixed(3);
-  labels(hstg,p); if(p>.7)hstg.querySelectorAll('.lbl').forEach(l=>l.style.setProperty('--lo',clamp(1-(p-.7)/.06).toFixed(3)));
-  hstep.textContent=p<.28?'Close-up':p<.32?'Assembled':p<.72?'Exploded view':p<.8?'Reassembled':'Lights: pads, then compartment';
+/* 6 · Harness: zoom into each component (part centres measured on the shared canvas) */
+const hs=document.getElementById('hsec'), hstg=hs.querySelector('.stage'), hobj=document.getElementById('hobj'), hcam=document.getElementById('hcam'), hstep={set textContent(v){}};
+const hl=[...document.querySelectorAll('#hledger .lbl')], gPads=hs.querySelector('.gpads'), gComp=hs.querySelector('.gcomp');
+// [p, centreX, centreY, zoom] — centres in fractions of the 2:3 canvas
+const KF=[[.26,.5,.5,1],[.34,.24,.343,2.6],[.44,.24,.343,2.6],[.5,.358,.567,2.7],[.6,.358,.567,2.7],[.66,.74,.575,2.8],[.74,.74,.575,2.8],[.8,.5,.5,1.05],[.88,.5,.5,1.05],[.95,.5,.5,1]];
+const NAMES=['Assembled','Defibrillation pads','Core module','Injectable compartment','Status lights','Ready'];
+function camAt(p){if(p<=KF[0][0])return KF[0];for(let i=0;i<KF.length-1;i++){const a=KF[i],b=KF[i+1];if(p<=b[0]){const t=io2(clamp((p-a[0])/(b[0]-a[0])));return [p,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t,a[3]+(b[3]-a[3])*t]}}return KF[KF.length-1]}
+add(y=>{const p=pinP(hs,y); const z=reduce?1:io2(clamp((p-.06)/.18)); hstg.style.setProperty('--z',z.toFixed(3)); hobj.style.opacity=z.toFixed(3);
+  const [,cx,cy,zs]=reduce?[0,.5,.5,1]:camAt(p); const W=hobj.clientWidth,H=hobj.clientHeight;
+  hcam.style.setProperty('--zs',zs.toFixed(3)); hcam.style.setProperty('--tx',(W/2-cx*W*zs).toFixed(1)+'px'); hcam.style.setProperty('--ty',(H/2-cy*H*zs).toFixed(1)+'px');
+  const k=p<.3?-1:p<.47?0:p<.63?1:p<.77?2:p<.91?3:4;
+  hl.forEach((l,i)=>l.style.setProperty('--lo',(k===i||k===4)?1:0));
+  gPads.style.opacity=(k===0||k>=3)?1:0; gComp.style.opacity=(k===2||k>=3)?1:0;
+  hstep.textContent=p<.24?'Close-up':NAMES[k+1];
 });
 
-/* 7 · Solar */
-const so=document.getElementById('solar'), sst=so.querySelector('.stage'), meter=document.getElementById('meter'), cv=document.getElementById('particles'), cx=cv.getContext('2d'); let solarP=0, parts=[], running=false;
-onMeasure(()=>{const r=devicePixelRatio>1?2:1;cv.width=sst.clientWidth*r;cv.height=sst.clientHeight*r;cx.setTransform(r,0,0,r,0,0)});
+/* 7 · Solar: geometry measured from the layers (disk centre .4935/.4894, radius .2985; prominence base at 48.7%/100%; ejection anchor 88%/48%; hull nose at 95%/52%) */
+const so=document.getElementById('solar'), sst=so.querySelector('.stage'), sunEl=document.getElementById('sun'), fl1=document.getElementById('fl1'), fl2=document.getElementById('fl2'), ship=document.getElementById('ship'), meter=document.getElementById('meter'), cv=document.getElementById('particles'), cx=cv.getContext('2d');
+let solarP=0, parts=[], running=false, G=null;
+onMeasure(()=>{const r=devicePixelRatio>1?2:1;cv.width=sst.clientWidth*r;cv.height=sst.clientHeight*r;cx.setTransform(r,0,0,r,0,0);
+  const sw=sunEl.offsetWidth, sl=sunEl.offsetLeft, stp=sunEl.offsetTop; const scx=.4935*sw, scy=.4894*sw, R=.2985*sw;
+  const th=(196)*Math.PI/180;                                 // limb point, facing the ship (left, slightly up)
+  const px=scx+Math.cos(th)*R*.97, py=scy+Math.sin(th)*R*.97; // local to the sun box, a touch inside the limb
+  const fw=R*1.55, fh=fw*1067/1600;
+  fl1.style.setProperty('--fw',fw+'px'); fl1.style.setProperty('--fx',(px-.487*fw)+'px'); fl1.style.setProperty('--fy',(py-fh)+'px'); fl1.style.setProperty('--fr',(th*180/Math.PI+90)+'deg');
+  const P={x:sl+px,y:stp+py};                                 // limb point in stage coords (sun fully arrived)
+  const shw=ship.offsetWidth, T={x:ship.offsetLeft+.93*shw, y:ship.offsetTop+.5*ship.offsetHeight};
+  const dx=T.x-P.x, dy=T.y-P.y, dist=Math.hypot(dx,dy);
+  const Cx=(P.x+T.x)/2, Cy=Math.min(P.y,T.y)-dist*.18, phi=Math.atan2(Cy-P.y,Cx-P.x); // initial tangent of the particle arc
+  const ew=dist*.42, eh=ew*1600/2400;
+  fl2.style.setProperty('--ew',ew+'px'); fl2.style.setProperty('--ex',(P.x-.88*ew)+'px'); fl2.style.setProperty('--ey',(P.y-.48*eh)+'px');
+  fl2.style.setProperty('--er',(phi*180/Math.PI-180)+'deg'); fl2.style.setProperty('--et',(dist*.22)+'px');
+  G={P,T,C:{x:Cx,y:Cy}};
+});
 add(y=>{const p=pinP(so,y); solarP=p;
-  sst.style.setProperty('--a',ic3(clamp(p/.3)));sst.style.setProperty('--b',clamp((p-.25)/.25));sst.style.setProperty('--c',clamp((p-.42)/.4));sst.style.setProperty('--d',oc3(clamp((p-.72)/.28)));
+  sst.style.setProperty('--a',ic3(clamp(p/.24)));sst.style.setProperty('--b',io2(clamp((p-.2)/.2)));sst.style.setProperty('--c',clamp((p-.38)/.36));sst.style.setProperty('--d',oc3(clamp((p-.7)/.25)));
   meter.textContent='Proton flux · '+Math.round(2+38*clamp((p-.42)/.45))+' pfu'+(p>.62?' · above S1':'');
-  if(!running&&p>.42&&p<1&&!reduce){running=true;requestAnimationFrame(tick)}});
-function tick(){const w=sst.clientWidth,h=sst.clientHeight;cx.clearRect(0,0,w,h);const c=clamp((solarP-.42)/.4),live=solarP>.42&&solarP<1;
-  const sx=w*.72,sy=h*.32,ex=w*.26,ey=h*.74,mx=w*.5,my=h*.24;
-  if(live)for(let n=0;n<Math.round(6*c+1);n++)parts.push({t:0,v:.004+Math.random()*.006,o:(Math.random()-.5)*90});
-  parts=parts.filter(q=>q.t<1);
-  for(const q of parts){q.t+=q.v;const t=q.t,u=1-t,x=u*u*sx+2*u*t*mx+t*t*ex,yy=u*u*sy+2*u*t*my+t*t*ey+q.o*Math.sin(t*3.14);cx.fillStyle=`rgba(255,${150+Math.round(80*t)},${80+Math.round(120*t)},${.85*(1-t)})`;cx.fillRect(x,yy,2,2)}
+  if(!running&&p>.38&&p<1&&!reduce&&G){running=true;requestAnimationFrame(tick)}});
+function tick(){const w=sst.clientWidth,h=sst.clientHeight;cx.clearRect(0,0,w,h);const c=clamp((solarP-.38)/.36),live=solarP>.38&&solarP<.98;
+  if(live)for(let n=0;n<Math.round(9*c+2);n++)parts.push({t:0,v:.005+Math.random()*.007,o:(Math.random()-.5),s:1+Math.random()*1.6});
+  parts=parts.filter(q=>q.t<1); const {P,T,C}=G;
+  for(const q of parts){q.t+=q.v;const t=q.t,u=1-t,spread=(1-Math.abs(.5-t)*2)*46*q.o;
+    const x=u*u*P.x+2*u*t*C.x+t*t*T.x, yy=u*u*P.y+2*u*t*C.y+t*t*T.y+spread;
+    cx.fillStyle=`rgba(255,${170+Math.round(60*t)},${110+Math.round(90*t)},${.9*(1-t*.7)})`;cx.fillRect(x,yy,q.s,q.s)}
   if(parts.length||live)requestAnimationFrame(tick);else running=false}
 
 /* 8 · Earth link */
 const ls=document.getElementById('linkSec'), lst=ls.querySelector('.stage'), track=document.getElementById('track'), lt=document.getElementById('lt');
 const packets=[...track.querySelectorAll('.packet')], planets=[...track.querySelectorAll('.planet')]; let L={run:0,items:[],pl:[]};
 onMeasure(()=>{L.run=Math.max(0,track.scrollWidth-lst.clientWidth);ls.style.height=(lst.offsetHeight+L.run+V()*.3)+'px';const mid=lst.clientWidth/2;
-  L.items=packets.map(el=>({el,a:el.offsetLeft-mid,b:el.offsetLeft+el.offsetWidth-mid}));L.pl=planets.map(el=>({el,c:el.offsetLeft+el.offsetWidth/2}))});
+  L.items=packets.map(el=>({el,a:el.offsetLeft-mid,b:el.offsetLeft+el.offsetWidth-mid}));L.pl=planets.map(el=>({el,c:el.offsetLeft+el.offsetWidth/2}));
+  const tl=document.getElementById('tline'), a0=L.pl[0].c+planets[0].offsetWidth*.32, a1=L.pl[L.pl.length-1].c-planets[1].offsetWidth*.34; L.tl=tl; L.a0=a0; L.a1=a1; tl.style.setProperty('--tl',a0+'px'); tl.style.setProperty('--tw',(a1-a0)+'px')});
 add(y=>{const p=pinP(ls,y), x=clamp(p/.85)*L.run; track.style.setProperty('--x',x.toFixed(1));
-  L.items.forEach(it=>it.el.style.setProperty('--f',clamp((x-it.a)/(it.b-it.a)).toFixed(3)));
+  L.items.forEach(it=>{const f=clamp((x-it.a)/(it.b-it.a));it.el.style.setProperty('--f',f.toFixed(3));it.el.classList.toggle('hit',x>=it.a)});
+  if(L.tl){const lf=clamp((x+lst.clientWidth/2-L.a0)/(L.a1-L.a0));L.tl.style.setProperty('--lf',lf.toFixed(4));L.tl.classList.toggle('done',lf>=1)}
   const mid=lst.clientWidth/2; L.pl.forEach(o=>{const d=Math.abs(o.c-x-mid)/lst.clientWidth;const k=clamp(1-d*1.6);o.el.style.setProperty('--ps',(0.8+0.2*k).toFixed(3));o.el.style.setProperty('--pa',(0.25+0.75*k).toFixed(3))});
   lt.firstChild.textContent=Math.round(3+19*clamp(p/.85))+' min'});
 
