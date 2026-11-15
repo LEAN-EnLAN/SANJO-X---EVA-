@@ -12,7 +12,7 @@ Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedi
 ## Evento
 - Desafío: **Create Health Monitoring Software for Astronauts on Space Missions**.
 - Entrega local: **domingo 15/11 a las 15:00** (GitHub + materiales). Pitch 16:00. Cierre global 23:59.
-- Equipo: Lean, Tomi, Hassi, Naza (Joaquín es dueño del Drive).
+- Equipo: Lean, Tomi, Hazzi, Naza (Joaquín es dueño del Drive).
 - Jurado local (según Jacobo): factibilidad, innovación, formato y presentación, pitch de los integrantes, foco del problema y ajuste al desafío. Hay un jurado médico y un patrocinador de Rosario. El jurado nos evalúa como inversores.
 
 ## Producto
@@ -58,8 +58,8 @@ Estado al sábado 14/11/2026, 21:10 (hora de Rosario). Escrito por Claude a pedi
 |---|---|---|
 | 01 | Ganadores y qué definir en el informe | Lean (análisis listo) |
 | 02 | Presupuesto energético y componentes | Tomi |
-| 03 | Casos agudos: dato, interpretación y acción | Hassi y Naza |
-| 04 | Variables médicas | Hassi y Naza |
+| 03 | Casos agudos: dato, interpretación y acción | Hazzi y Naza |
+| 04 | Variables médicas | Hazzi y Naza |
 | 05 | Pantallas (las generadas con imágenes, pendientes) | Tomi |
 | 06 | Mockup happy path | Lean |
 | 07 | Escalabilidad | Naza |
