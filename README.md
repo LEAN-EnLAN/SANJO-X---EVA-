@@ -6,4 +6,4 @@ Eva is the assistant inside WearMeds wearables (chest band, large-screen wristba
 
 - `landing/` public landing page · `wire/` annotated wireframe · `proto/` interactive prototype · `app/` Rust + htmx app (in progress).
 - NASA data: Inspiration4 on NASA OSDR (OSD-575, OSD-569), DONKI.
-- AI use: see `landing/a/AI-NOTICE.md`. All AI images carry a visible "AI-generated" mark and contain no NASA insignia.
+- AI use: see `landing/a/AI-NOTICE.md`. AI images are declared in this README and in `app/README.md` (no on-screen marks) and contain no NASA insignia.

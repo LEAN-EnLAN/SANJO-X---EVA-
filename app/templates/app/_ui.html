@@ -4,6 +4,5 @@
 {# tool: attributes for a button that runs one of Eva's tools through the same endpoint Eva uses #}
 {% macro tool(b) %}hx-post="/api/eva/tool" hx-vals="{{ b.vals }}" hx-target="#toast" hx-swap="innerHTML"{% if !b.confirm.is_empty() %} hx-confirm="{{ b.confirm }}"{% endif %}{% if !b.then.is_empty() %} data-then="{{ b.then }}"{% endif %} data-tool="{{ b.name }}"{% endmacro %}
 {# hero: the photo on a large detail view (Codex kit, 1200×800, 3:2, never cropped). A title may sit on the
-   empty left side; the photo's own "AI-generated" mark (bottom right) is never covered, and a readable
-   copy of the notice sits bottom left. #}
-{% macro hero(file, alt, title) %}<figure class="relative shrink-0 overflow-hidden rounded-card bg-background ring-1 ring-line"><img src="/static/img/hero/{{ file }}.webp" alt="{{ alt }}" class="block aspect-3/2 w-full object-cover" width="1200" height="800" decoding="async">{% if !title.is_empty() %}<figcaption class="absolute top-4 left-4 w-1/2 text-2xl leading-tight tracking-tight text-ink">{{ title }}</figcaption>{% endif %}<span class="absolute bottom-3 left-3 rounded-full bg-background/80 px-2 py-0.5 text-xs text-ink">AI-generated</span></figure>{% endmacro %}
+   empty left side. The AI-generated notice lives in the README, not on screen. #}
+{% macro hero(file, alt, title) %}<figure class="relative shrink-0 overflow-hidden rounded-card bg-background ring-1 ring-line"><img src="/static/img/hero/{{ file }}.webp" alt="{{ alt }}" class="block aspect-3/2 w-full object-cover" width="1200" height="800" decoding="async">{% if !title.is_empty() %}<figcaption class="absolute top-4 left-4 w-1/2 text-2xl leading-tight tracking-tight text-ink">{{ title }}</figcaption>{% endif %}</figure>{% endmacro %}

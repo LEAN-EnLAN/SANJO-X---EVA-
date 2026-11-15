@@ -35,4 +35,8 @@ Design source of truth: the app wireframes (`design/app-wireframes`, tokens in `
 
 - Product copy in **English**. Eva **guides, records and warns**, gives *diagnostic support*, never decides a shock: **the AED decides**. No harness, no injector.
 - The Groq key is read **only** from `GROQ_API_KEY` at runtime; never in the repo, logs, docs or browser code.
-- AI-generated images carry a visible "AI-generated" note: large photos (detail heroes, splash) carry their own mark plus a readable label; the line at the foot of each screen, the About & credits screen (`/app/about`) and the dashboard footer cover the small 3D icons and Eva's mascot states (Codex kit, `static/img/icons`, `eva`, `hero`).
+- AI-generated images are declared in this README (below), in the repo README and in the release notes, not on screen.
+
+## AI-generated images
+
+Every illustration in the app is AI-generated concept art made for team Sanjo-X (NASA Space Apps Challenge 2026, Rosario): the 3D icons, Eva's mascot states, the app icon, the launch screen, the large detail photos and the wristband scenes (`static/img/icons`, `eva`, `hero`, `wrist`, `splash*`, `static/icons`). The team wrote the prompts with Claude, and the images were generated with an OpenAI image model through Codex. They are illustrative, show no real person or device, and contain no NASA insignia or branding. This notice replaces on-screen labels: the app itself shows none.

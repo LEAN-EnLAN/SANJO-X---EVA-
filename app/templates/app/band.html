@@ -7,7 +7,7 @@
 <div class="relative h-52 shrink-0 overflow-hidden rounded-card bg-surface">
   <img src="/static/img/wrist/{% if suit %}wrist-suit{% else %}wrist-two-parts{% endif %}.webp" alt="{% if suit %}Screen part on the suit sleeve, sensor base under it on the wrist{% else %}The two parts of the wristband: screen on top, sensor base underneath{% endif %}" class="size-full object-cover" width="1200" height="800">
   <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-xs text-ink"><span class="size-2 rounded-full {% if suit %}bg-info{% else %}bg-ok{% endif %}"></span>{% if suit %}Suit mode{% else %}Joined{% endif %}</span>
-  <span class="absolute right-3 bottom-3 rounded-full bg-background/80 px-2 py-0.5 text-xs text-ink">AI-generated</span>
+  
 </div>
 <h1 class="flex items-center gap-3 text-2xl leading-tight tracking-tight text-ink">{{ crate::web::ui::pic("magnet", "size-11")|safe }}{% if suit %}Your suit is between the parts.{% else %}Two parts, held by magnets.{% endif %}</h1>
 

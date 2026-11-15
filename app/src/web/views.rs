@@ -124,7 +124,7 @@ impl LiveCard {
 // ---------------------------------------------------------------- vitals detail
 
 /// One large detail view per reading (pulse, oxygen, skin temperature) and per daily
-/// habit (sleep, water), each under its hero image (Codex kit, AI-generated mark on it).
+/// habit (sleep, water), each under its hero image (Codex kit, AI-generated; notice in README.md).
 #[derive(Template)]
 #[template(path = "app/vitals.html")]
 pub struct VitalsScreen {
@@ -230,7 +230,7 @@ impl VitalsScreen {
     }
 }
 
-/// About and credits: what is AI-generated in the app, who made what.
+/// About and credits: what Eva does and who made what.
 #[derive(Template)]
 #[template(path = "app/about.html")]
 pub struct AboutScreen {
