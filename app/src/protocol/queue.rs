@@ -250,6 +250,16 @@ impl SendQueue {
         }
     }
 
+    /// Contact is back (a peer that was silent answers again): every frame in
+    /// flight is due now and the RTO forgets its backoff, so a store-and-forward
+    /// backlog goes out at once instead of after a backed-off timer.
+    pub fn retransmit_now(&mut self, now_ms: u64) {
+        for inf in self.inflight.values_mut() {
+            inf.deadline_ms = now_ms;
+        }
+        self.rtt.backoff = 0;
+    }
+
     pub fn depth(&self) -> QueueDepth {
         QueueDepth {
             alarm: self.queues[0].len(),

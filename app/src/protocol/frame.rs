@@ -74,10 +74,16 @@ pub enum MsgType {
     Text = 10,
     Presence = 11,
     Bye = 12,
+    /// hub → medical station: light / clear a compartment, show a message
+    StationCmd = 13,
+    /// medical station → hub: door opened, item taken, red button, back online…
+    StationEvent = 14,
+    /// medical station → hub: battery, lit/open/taken masks, buffered events (latest-wins)
+    StationStatus = 15,
 }
 
 impl MsgType {
-    pub const ALL: [MsgType; 13] = [
+    pub const ALL: [MsgType; 16] = [
         MsgType::Hello,
         MsgType::Welcome,
         MsgType::Ping,
@@ -91,6 +97,9 @@ impl MsgType {
         MsgType::Text,
         MsgType::Presence,
         MsgType::Bye,
+        MsgType::StationCmd,
+        MsgType::StationEvent,
+        MsgType::StationStatus,
     ];
     pub fn from_u8(v: u8) -> Result<Self, WireError> {
         Self::ALL.get(v as usize).copied().ok_or(WireError::UnknownType(v))
@@ -110,14 +119,17 @@ impl MsgType {
             MsgType::Text => "text",
             MsgType::Presence => "presence",
             MsgType::Bye => "bye",
+            MsgType::StationCmd => "station_cmd",
+            MsgType::StationEvent => "station_event",
+            MsgType::StationStatus => "station_status",
         }
     }
     /// Default priority class for a message type.
     pub fn default_priority(self) -> Priority {
         match self {
             MsgType::Alarm => Priority::Alarm,
-            MsgType::Guidance | MsgType::Text => Priority::Guidance,
-            MsgType::Vitals => Priority::Vitals,
+            MsgType::Guidance | MsgType::Text | MsgType::StationCmd | MsgType::StationEvent => Priority::Guidance,
+            MsgType::Vitals | MsgType::StationStatus => Priority::Vitals,
             MsgType::Record => Priority::Logs,
             // control frames are sent immediately; class is only informative
             _ => Priority::Alarm,
@@ -125,7 +137,7 @@ impl MsgType {
     }
     /// Whether frames of this type are acknowledged and retransmitted.
     pub fn reliable(self) -> bool {
-        matches!(self, MsgType::Alarm | MsgType::Guidance | MsgType::Record | MsgType::Text)
+        matches!(self, MsgType::Alarm | MsgType::Guidance | MsgType::Record | MsgType::Text | MsgType::StationCmd | MsgType::StationEvent)
     }
     pub fn is_control(self) -> bool {
         matches!(

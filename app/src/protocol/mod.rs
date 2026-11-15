@@ -207,6 +207,9 @@ pub fn message_size_table() -> Vec<(&'static str, usize, usize)> {
             "record (chain, Ed25519 signed)",
             Frame::new(MsgType::Record, 127, 1, RecordMsg { chain_seq: 812, ts_ms: 1_731_650_000_000, kind: "alarm".into(), subject: "4B".into(), hash8: [0xab; 8], body: br#"{"code":"no_pulse"}"#.to_vec(), sig: vec![0xcd; 64] }.encode()).with_crc(),
         ),
+        ("station: light 01 \"Take the AED\"", Frame::new(MsgType::StationCmd, 128, 0, StationCmd::light(1, "Take the AED", 101).encode()).to(7)),
+        ("station: AED taken", Frame::new(MsgType::StationEvent, 129, 7, StationEvent { event: station_ev::ITEM_TAKEN, compartment: 1, t_s: 8_344_727, count: 0, subject: String::new() }.encode())),
+        ("station: status", Frame::new(MsgType::StationStatus, 130, 7, StationStatus { battery: 96, flags: 0, lit: 1, open: 0, taken: 0, buffered: 0, items: vec![1, 1, 1, 1, 1, 1, 6, 4, 2, 2, 2, 3] }.encode())),
     ];
     let mut out: Vec<(&'static str, usize, usize)> = rows.into_iter().map(|(n, f)| (n, f.wire_len(), f.payload.len())).collect();
     out.push(("vitals as JSON (for comparison)", json, json));

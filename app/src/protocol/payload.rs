@@ -15,6 +15,8 @@ pub enum Role {
     App = 3,
     Dash = 4,
     Band = 5,
+    /// the ship's medical station (12 compartments, Eva screen, red button)
+    Station = 6,
 }
 
 impl Role {
@@ -26,6 +28,7 @@ impl Role {
             3 => Role::App,
             4 => Role::Dash,
             5 => Role::Band,
+            6 => Role::Station,
             _ => return Err(WireError::Invalid("role")),
         })
     }
@@ -37,6 +40,7 @@ impl Role {
             Role::App => "app",
             Role::Dash => "dash",
             Role::Band => "band",
+            Role::Station => "station",
         }
     }
 }
@@ -171,6 +175,8 @@ pub mod alarm_code {
     pub const SOLAR_STORM: u8 = 3;
     pub const HELP_REQUEST: u8 = 4;
     pub const BATTERY: u8 = 5;
+    /// the red emergency button on the medical station
+    pub const STATION_BUTTON: u8 = 6;
 }
 impl Alarm {
     pub fn encode(&self) -> Vec<u8> {
@@ -244,6 +250,166 @@ impl RecordMsg {
     }
 }
 
+/// Compartments on the medical station (numbered 1..=12 on the cabinet).
+pub const STATION_COMPARTMENTS: u8 = 12;
+/// Bit mask with one bit per compartment (bit 0 = compartment 1).
+pub const STATION_MASK: u16 = (1 << STATION_COMPARTMENTS) - 1;
+
+/// Operations the hub asks of the medical station.
+pub mod station_op {
+    /// lights off on every compartment (doors and counts unchanged)
+    pub const CLEAR_ALL: u8 = 0;
+    /// light one compartment and show `text` on the Eva screen
+    pub const LIGHT: u8 = 1;
+    /// light off on one compartment
+    pub const CLEAR: u8 = 2;
+    /// demo reset: every compartment idle and full again
+    pub const RESTOCK: u8 = 3;
+}
+
+/// Hub → station. `case` ties the request to an emergency case (0 = none).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StationCmd {
+    pub op: u8,
+    /// 1..=12; 0 with CLEAR_ALL / RESTOCK
+    pub compartment: u8,
+    pub case: u64,
+    pub text: String,
+}
+impl StationCmd {
+    pub fn light(compartment: u8, text: impl Into<String>, case: u64) -> Self {
+        StationCmd { op: station_op::LIGHT, compartment, case, text: text.into() }
+    }
+    pub fn clear(compartment: u8) -> Self {
+        StationCmd { op: station_op::CLEAR, compartment, case: 0, text: String::new() }
+    }
+    pub fn all(op: u8) -> Self {
+        StationCmd { op, compartment: 0, case: 0, text: String::new() }
+    }
+    pub fn encode(&self) -> Vec<u8> {
+        let mut w = Writer::new();
+        w.u8(self.op).u8(self.compartment).uvar(self.case).str(&self.text);
+        w.finish()
+    }
+    pub fn decode(b: &[u8]) -> Result<Self, WireError> {
+        let mut r = Reader::new(b);
+        let op = r.u8()?;
+        let compartment = r.u8()?;
+        let case = r.uvar()?;
+        let text = r.str()?.to_string();
+        if op > station_op::RESTOCK {
+            return Err(WireError::Invalid("station op"));
+        }
+        let needs_one = matches!(op, station_op::LIGHT | station_op::CLEAR);
+        if compartment > STATION_COMPARTMENTS || (needs_one && compartment == 0) {
+            return Err(WireError::Invalid("station compartment"));
+        }
+        Ok(StationCmd { op, compartment, case, text })
+    }
+}
+
+/// What the station reports.
+pub mod station_ev {
+    pub const DOOR_OPENED: u8 = 1;
+    pub const DOOR_CLOSED: u8 = 2;
+    /// the item sensor (weight / reed switch) saw an item leave
+    pub const ITEM_TAKEN: u8 = 3;
+    /// the red emergency button
+    pub const BUTTON: u8 = 4;
+    /// the station hears the hub again (count = events it buffered meanwhile)
+    pub const ONLINE: u8 = 5;
+    /// a wristband's no-pulse alarm heard directly over LoRa (subject = seat)
+    pub const ALARM_HEARD: u8 = 6;
+    /// the station lit a compartment by itself (standalone fallback)
+    pub const SELF_LIT: u8 = 7;
+    pub const LAST: u8 = SELF_LIT;
+}
+
+/// Station → hub. `t_s` is the station's own clock (mission seconds), so a
+/// buffered event keeps the time it happened, not the time it was uploaded.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StationEvent {
+    pub event: u8,
+    /// 1..=12, or 0 when the event is not about one compartment
+    pub compartment: u8,
+    pub t_s: u64,
+    /// items left (item events), events buffered (ONLINE), else 0
+    pub count: u32,
+    /// seat for ALARM_HEARD, else empty
+    pub subject: String,
+}
+impl StationEvent {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut w = Writer::new();
+        w.u8(self.event).u8(self.compartment).uvar(self.t_s).uvar(self.count as u64).str(&self.subject);
+        w.finish()
+    }
+    pub fn decode(b: &[u8]) -> Result<Self, WireError> {
+        let mut r = Reader::new(b);
+        let event = r.u8()?;
+        let compartment = r.u8()?;
+        let t_s = r.uvar()?;
+        let count = r.uvar()?;
+        let subject = r.str()?.to_string();
+        if event == 0 || event > station_ev::LAST {
+            return Err(WireError::Invalid("station event"));
+        }
+        if compartment > STATION_COMPARTMENTS {
+            return Err(WireError::Invalid("station compartment"));
+        }
+        if count > u32::MAX as u64 {
+            return Err(WireError::Invalid("station count"));
+        }
+        Ok(StationEvent { event, compartment, t_s, count: count as u32, subject })
+    }
+}
+
+pub mod station_flag {
+    /// the station cannot hear the hub and runs on its own rules
+    pub const STANDALONE: u8 = 1;
+    /// running on its backup battery (no ship power)
+    pub const ON_BATTERY: u8 = 2;
+}
+
+/// Station → hub, latest-wins (vitals class, never retransmitted).
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct StationStatus {
+    pub battery: u8,
+    pub flags: u8,
+    pub lit: u16,
+    pub open: u16,
+    pub taken: u16,
+    pub buffered: u32,
+    /// items per compartment, compartment 1 first (up to 12 bytes)
+    pub items: Vec<u8>,
+}
+impl StationStatus {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut w = Writer::new();
+        w.u8(self.battery).u8(self.flags).uvar(self.lit as u64).uvar(self.open as u64).uvar(self.taken as u64).uvar(self.buffered as u64).bytes(&self.items);
+        w.finish()
+    }
+    pub fn decode(b: &[u8]) -> Result<Self, WireError> {
+        let mut r = Reader::new(b);
+        let battery = r.u8()?;
+        let flags = r.u8()?;
+        let mut mask = || -> Result<u16, WireError> {
+            let m = r.uvar()?;
+            if m > STATION_MASK as u64 {
+                return Err(WireError::Invalid("station mask"));
+            }
+            Ok(m as u16)
+        };
+        let (lit, open, taken) = (mask()?, mask()?, mask()?);
+        let buffered = r.uvar()?;
+        let items = r.bytes()?.to_vec();
+        if battery > 100 || buffered > u32::MAX as u64 || items.len() > STATION_COMPARTMENTS as usize {
+            return Err(WireError::Invalid("station status"));
+        }
+        Ok(StationStatus { battery, flags, lit, open, taken, buffered: buffered as u32, items })
+    }
+}
+
 /// Server → clients: who is on the mesh right now, with measured RTT.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct PresenceEntry {
@@ -308,5 +474,41 @@ mod tests {
         assert_eq!(decode_presence(&encode_presence(&p)).unwrap(), p);
         let (s, why, st) = decode_nack(&encode_nack(9, NackReason::NeedKeyframe, 3)).unwrap();
         assert_eq!((s, why, st), (9, NackReason::NeedKeyframe, 3));
+    }
+    #[test]
+    fn station_messages_roundtrip_and_stay_small() {
+        let c = StationCmd::light(1, "Take the AED", 101);
+        assert_eq!(StationCmd::decode(&c.encode()).unwrap(), c);
+        // 01 op · 01 compartment · 65 case · 0c "Take the AED"
+        assert_eq!(&c.encode()[..4], &[1, 1, 101, 12]);
+        assert_eq!(c.encode().len(), 16);
+        for c in [StationCmd::clear(1), StationCmd::all(station_op::CLEAR_ALL), StationCmd::all(station_op::RESTOCK)] {
+            assert_eq!(StationCmd::decode(&c.encode()).unwrap(), c);
+        }
+        let e = StationEvent { event: station_ev::ITEM_TAKEN, compartment: 1, t_s: 8_344_727, count: 0, subject: String::new() };
+        assert_eq!(StationEvent::decode(&e.encode()).unwrap(), e);
+        assert_eq!(e.encode().len(), 8, "AED taken: 8 bytes of payload");
+        let h = StationEvent { event: station_ev::ALARM_HEARD, compartment: 1, t_s: 9, count: 0, subject: "4B".into() };
+        assert_eq!(StationEvent::decode(&h.encode()).unwrap(), h);
+        let s = StationStatus { battery: 96, flags: station_flag::STANDALONE, lit: 1, open: 1, taken: 1, buffered: 3, items: vec![0, 1, 1, 1, 1, 1, 6, 4, 2, 2, 2, 3] };
+        assert_eq!(StationStatus::decode(&s.encode()).unwrap(), s);
+        assert_eq!(s.encode().len(), 19);
+    }
+
+    #[test]
+    fn station_messages_reject_nonsense() {
+        assert!(StationCmd::decode(&StationCmd::light(13, "x", 0).encode()).is_err(), "no compartment 13");
+        assert!(StationCmd::decode(&StationCmd::light(0, "x", 0).encode()).is_err(), "light needs a compartment");
+        assert!(StationCmd::decode(&StationCmd { op: 9, compartment: 1, case: 0, text: String::new() }.encode()).is_err());
+        assert!(StationEvent::decode(&StationEvent { event: 0, compartment: 1, t_s: 1, count: 0, subject: String::new() }.encode()).is_err());
+        assert!(StationEvent::decode(&StationEvent { event: 99, compartment: 1, t_s: 1, count: 0, subject: String::new() }.encode()).is_err());
+        let mut w = Writer::new();
+        w.u8(50).u8(0).uvar(1 << 12).uvar(0).uvar(0).uvar(0).bytes(&[]);
+        assert!(StationStatus::decode(&w.finish()).is_err(), "mask wider than 12 compartments");
+        let s = StationStatus { battery: 101, ..Default::default() };
+        assert!(StationStatus::decode(&s.encode()).is_err());
+        let s = StationStatus { items: vec![1; 13], ..Default::default() };
+        assert!(StationStatus::decode(&s.encode()).is_err());
+        assert_eq!(Role::from_u8(6).unwrap(), Role::Station);
     }
 }
