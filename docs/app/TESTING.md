@@ -2,7 +2,7 @@
 
 ```bash
 cd app
-cargo test                       # 99 tests, ~10 s (debug build): unit, flows, break tests
+cargo test                       # 101 tests, ~10 s (debug build): unit, flows, break tests
 cargo test --test break_protocol -- --nocapture   # prints fuzz seeds and outage figures
 scripts/e2e/run.sh               # Playwright happy path in headless Chromium (from the repo root)
 EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture   # live Groq check, needs GROQ_API_KEY
@@ -47,6 +47,8 @@ EVA_LIVE_GROQ=1 cargo test --test groq_live -- --nocapture   # live Groq check, 
 | 17 | **API key in logs** (an upstream that echoes the key and the `Authorization` header back) | **fixed** | Pipeline errors carried the upstream message verbatim. Now every pipeline error is redacted (the configured key, any `gsk_…` token, any bearer token); a test captures all log output and checks the key is absent from logs, errors, the chain and `/api/state`. |
 | 18 | **Spurious retransmissions** (found by `eva bench`) | **fixed** | With RTT > 1 s every frame timed out, and Karn's rule then forbade every RTT sample: 1,147 retransmits for 600 records on near-space. RFC 6298 §5.5 backoff of the RTO itself: 57. |
 
+| 19 | **Acknowledged without the ground** (found by the coordinator in an e2e log: ship 19 acked, ground mirror 15) | **fixed** | The 4 seeded morning records were marked *Acked* on the ship at seed time, so the uplink (which skips acked records) never sent them. Now only a ground ack sets *Acked*; the seed records travel like any other. The ground also withdraws its ack for a record frame it cannot decode, so "acknowledged" always means "in the ground's mirror". Invariant in PROTOCOL.md §7; regression tests in `tests/signatures.rs`, tightened checks in `tests/break_restart.rs` and the e2e. |
+
 ### Patch for the outbox header (UI owner, `app/static/sw.js`)
 
 Give each queued post an id and send it on every replay:
@@ -74,10 +76,10 @@ headers: { "content-type": it.type, "x-eva-replayed": "1", "x-eva-idem": it.idem
 | wow: three phones switch | Leo's phone shows "I'm going", Tomás's "Get the AED", Ana's the emergency; CPR = 3B and AED = 1B |
 | 3B → CPR, 1B → AED | both accept; the case timeline reaches "AED attached, shock advised by the AED" |
 | case closes | dev panel → Close case |
-| records reach the ground | ship: no record Signed/Sent; ground mirror: every record verified (hash + signature), none failed; ground shows the closed case |
+| records reach the ground | ship: no record Signed/Sent and acked == chain length; ground mirror (current epoch) == ship chain, every record verified (hash + signature); ground shows the closed case |
 | exports | CSV and JSON downloaded through the dashboard links (JSON says `verify.ok`, every record signed), report printed to PDF |
 
-Last run: **13/13 steps in 15 s**, 19 records signed on the ship, 15 verified on the ground (the 4 morning seed records were acknowledged before the demo), `eva verify` OK on the ship chain and the ground mirror.
+Last run: **13/13 steps in 15 s**, 19 records signed on the ship, **19 mirrored and verified on the ground**, `eva verify` OK on the ship chain and the ground mirror. The step requires ground mirror == ship chain (count and verified), not just "some records verified".
 
 ## Known issues (open)
 

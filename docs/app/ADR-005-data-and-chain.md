@@ -30,6 +30,6 @@ rusqlite with `bundled` is fine and remains the plan for the working set once sc
 
 ## Consequences
 
-- `Reset demo` truncates the chain file and re-seeds four acknowledged morning records.
+- `Reset demo` truncates the chain file and re-seeds four morning records; like every record they are *Signed* until the ground acknowledges them (only a ground ack sets *Acked*).
 - The ground's mirror is persisted (`data/mirror-<node>.jsonl`) and replayed on restart (ADR-010).
 - Exports read straight from the chain: CSV (formula-safe quoting), JSON (with the verify report), printable HTML report.

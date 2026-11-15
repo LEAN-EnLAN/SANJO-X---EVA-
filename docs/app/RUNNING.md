@@ -7,7 +7,7 @@ Needs only a Rust toolchain (1.85+; tested with cargo 1.97). On a busy machine a
 ```bash
 cd app
 cargo build --release          # → target/release/eva: one 12.5 MB binary (stripped, thin LTO), all assets embedded
-cargo test                     # 99 tests: protocol, chain + signatures, rules, tools, agent, HTTP flows, break tests (TESTING.md)
+cargo test                     # 101 tests: protocol, chain + signatures, rules, tools, agent, HTTP flows, break tests (TESTING.md)
 ```
 
 CSS is generated from `app/styles/app.css` with the Tailwind v4 CLI and committed. Only after changing templates, styles or class strings in Rust/JS:

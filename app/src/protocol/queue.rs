@@ -304,6 +304,15 @@ impl Receiver {
         }
         true
     }
+    /// The application could not use `seq` (e.g. an undecodable record):
+    /// withdraw its pending ack and forget it, so the sender retransmits it.
+    /// Keeps "acknowledged" meaning "the application has it".
+    pub fn retract(&mut self, seq: u32) {
+        self.pending_acks.retain(|s| *s != seq);
+        if self.seen.remove(&seq) {
+            self.order.retain(|s| *s != seq);
+        }
+    }
     pub fn take_acks(&mut self) -> Vec<u32> {
         std::mem::take(&mut self.pending_acks)
     }

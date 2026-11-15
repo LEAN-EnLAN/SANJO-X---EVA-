@@ -3,7 +3,7 @@
 //!
 //! Locks are `std::sync` and are never held across an `.await`.
 
-use crate::chain::{Chain, SyncState};
+use crate::chain::Chain;
 use crate::clock::{MissionClock, DAY_MS};
 use crate::eva_agent::AgentConfig;
 use crate::mesh::Mesh;
@@ -272,10 +272,12 @@ impl AppState {
     }
 }
 
+/// The morning's records. Signed on board like any other record and sent by
+/// the uplink: only the ground's ack may mark a record Acknowledged (a seeded
+/// "already acknowledged" record would never reach the ground's mirror).
 fn seed_chain(chain: &mut Chain, now: u64) {
     let day_start = (now / DAY_MS) * DAY_MS;
     for (ts, kind, subject, body) in seed::chain_records(day_start) {
-        let seq = chain.append(ts, kind, subject, body);
-        chain.set_state(seq, SyncState::Acked, ts + 8_000);
+        chain.append(ts, kind, subject, body);
     }
 }

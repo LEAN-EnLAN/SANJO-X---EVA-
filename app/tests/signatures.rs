@@ -132,3 +132,40 @@ fn ground_mirror_is_persisted_and_checked_by_eva_verify() {
     let _ = std::fs::remove_dir_all(&ship_dir);
     let _ = std::fs::remove_dir_all(&ground_dir);
 }
+
+#[test]
+fn nothing_is_acknowledged_without_the_ground() {
+    // regression: the seeded morning records were marked Acked on the ship at
+    // seed time, so the uplink never sent them and the ground never had them
+    let dir = tmp("seed-acks");
+    let s = node(&dir, NodeRole::Ship, "ship");
+    let c = s.chain.lock().unwrap();
+    assert!(!c.is_empty(), "the demo seeds morning records");
+    assert_eq!(c.counts().2, 0, "no record starts acknowledged: only a ground ack sets Acked");
+    drop(c);
+    s.reset();
+    assert_eq!(s.chain.lock().unwrap().counts().2, 0, "same after a demo reset");
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn an_undecodable_record_frame_is_not_acknowledged() {
+    use eva::protocol::frame::MsgType;
+    use eva::protocol::Endpoint;
+    let mut ship = Endpoint::new(1);
+    let mut ground = Endpoint::new(0);
+    let seq = ship.send(MsgType::Record, vec![0xff, 0xff], None);
+    let d = ship.outgoing(0, usize::MAX, 1024);
+    for x in &d {
+        for ev in ground.incoming(0, x) {
+            if let eva::protocol::Delivered::Frame(f) = ev {
+                assert_eq!(f.seq, seq);
+                ground.rx.retract(f.seq); // what link.rs does when RecordMsg::decode fails
+            }
+        }
+    }
+    for a in ground.outgoing(1, usize::MAX, 1024) {
+        ship.incoming(1, &a);
+    }
+    assert_eq!(ship.queue.depth().inflight, 1, "still in flight: the ground did not ack it");
+}

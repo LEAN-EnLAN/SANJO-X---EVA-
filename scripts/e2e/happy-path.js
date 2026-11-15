@@ -219,10 +219,13 @@ async function dev(ctx, action, form) {
         return s.chain.signed === 0 && s.chain.sent === 0 && s;
       }, 45000);
       const ship = await api(ctx.dash, `${BASE}/api/chain/verify`);
-      const ground = await until("ground mirror verified", async () => {
+      // invariant (PROTOCOL.md §7): nothing pending on the ship → the ground's mirror
+      // (current epoch) holds exactly the ship's chain, every record verified
+      const ground = await until("ground mirror == ship chain", async () => {
         const g = await api(ctx.ground, `${GROUND}/api/chain/verify`);
-        return g.mirror.records > 0 && g.mirror.verified === g.mirror.records && g;
+        return g.mirror.records === ship.chain.records && g.mirror.verified === ship.chain.records && g;
       }, 20000);
+      if (st.chain.acked !== ship.chain.records) throw new Error(`ship acked ${st.chain.acked} of ${ship.chain.records}`);
       if (!ship.chain.ok) throw new Error("ship chain does not verify: " + JSON.stringify(ship.chain));
       if (ground.mirror.failed.length) throw new Error("ground failed records: " + ground.mirror.failed);
       log(`      ship: ${ship.chain.records} records, ${ship.chain.signatures} signatures · acked ${st.chain.acked} · ground verified ${ground.mirror.verified}`);

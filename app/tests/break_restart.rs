@@ -135,8 +135,11 @@ async fn kill_ship_and_ground_mid_case_and_restart() {
     assert!(all_acked, "records still waiting: {}", st["chain"]);
     let mirror = json(&c, gp, "/api/chain/verify").await;
     assert_eq!(mirror["mirror"]["failed"].as_array().unwrap().len(), 0, "{mirror}");
+    // invariant: nothing pending on the ship → the ground mirrors exactly the ship's chain
+    let n_ship = json(&c, sp, "/api/chain/verify").await["chain"]["records"].as_u64().unwrap();
     let n_mirror = mirror["mirror"]["verified"].as_u64().unwrap();
-    assert!(n_mirror >= n_before - 4, "ground verified {n_mirror} of {n_before} (4 seeded morning records were acked before the demo)");
+    assert_eq!(mirror["mirror"]["records"].as_u64().unwrap(), n_ship, "ground mirror holds every ship record: {mirror}");
+    assert_eq!(n_mirror, n_ship, "and every one verified");
     let gstate = json(&c, gp, "/api/state").await;
     assert!(gstate["cases"].as_array().unwrap().iter().any(|k| k["seat"] == "4B"), "the ground rebuilt the case from its mirror");
 

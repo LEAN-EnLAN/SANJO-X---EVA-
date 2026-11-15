@@ -213,11 +213,14 @@ fn on_endpoint_datagram(state: &Shared, id: u32, role: Role, e: &mut Endpoint, b
                 }
             }
             Delivered::Frame(f) if role == Role::Ship => match f.kind {
-                MsgType::Record | MsgType::Alarm | MsgType::Guidance => {
-                    if let Ok(r) = RecordMsg::decode(&f.payload) {
-                        on_ship_record(state, r);
+                MsgType::Record | MsgType::Alarm | MsgType::Guidance => match RecordMsg::decode(&f.payload) {
+                    Ok(r) => on_ship_record(state, r),
+                    Err(err) => {
+                        // never ack what did not reach the mirror
+                        tracing::warn!("link: undecodable record frame {} ({err}); not acknowledged", f.seq);
+                        e.rx.retract(f.seq);
                     }
-                }
+                },
                 MsgType::Text => {
                     if let Ok(t) = Text::decode(&f.payload) {
                         let now = state.now();
