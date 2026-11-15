@@ -139,7 +139,9 @@
   };
 
   function mountMascots(root) {
-    (root || document).querySelectorAll("[data-eva]").forEach(function (el) { if (!el._eva) el._eva = new Mascot(el); });
+    root = root || document;
+    if (root.matches && root.matches("[data-eva]") && !root._eva) root._eva = new Mascot(root);
+    root.querySelectorAll("[data-eva]").forEach(function (el) { if (!el._eva) el._eva = new Mascot(el); });
   }
   function setMood(state) {
     document.querySelectorAll("[data-eva]").forEach(function (el) { (el._eva || (el._eva = new Mascot(el))).setState(state); });
@@ -150,4 +152,162 @@
   reduced.addEventListener && reduced.addEventListener("change", function () { setMood(document.querySelector("[data-eva]")?.getAttribute("data-state") || "idle"); });
 
   window.EvaMotion = { Spring: Spring, token: token, varSpring: varSpring, setMood: setMood, mountMascots: mountMascots, reduced: reduced, linearFor: linearFor };
+
+  // ================================================================ app navigation motion
+  // Screens: push slides in from the right, back from the left, tabs cross-fade with a
+  // tiny scale, like iOS. The values live on springs, so a new navigation mid-flight
+  // retargets from where the screen is instead of jumping. Swipe from the left edge
+  // drags the screen with the finger; let go and it either completes (back) or springs home.
+  function scr() { return document.getElementById("screen"); }
+  function vset(prop) { return function (x) { var el = scr(); if (el) el.style.setProperty(prop, x.toFixed(4)); }; }
+  var S = { x: new Spring(0, "gentle", vset("--scr-x")), o: new Spring(1, "gentle", vset("--scr-o")), s: new Spring(1, "gentle", vset("--scr-s")) };
+  var pendingNav = null;
+
+  function enter(kind) {
+    var w = Math.min(window.innerWidth, 640);
+    if (kind === "refresh" || reduced.matches) { S.x.track(0, 0); S.o.track(1, 0); S.s.track(1, 0); return; }
+    if (kind === "back") { S.x.track(-w * 0.25, 0); S.o.track(0.4, 0); S.x.set(0, "gentle"); S.o.set(1, "gentle"); }
+    else if (kind === "tab") { S.x.track(0, 0); S.s.track(0.985, 0); S.o.track(0, 0); S.s.set(1, "snappy"); S.o.set(1, "snappy"); }
+    else if (kind === "fade") { S.o.track(0, 0); S.o.set(1, "gentle"); }
+    else { S.x.track(w * 0.3, 0); S.o.track(0.3, 0); S.x.set(0, "gentle"); S.o.set(1, "gentle"); }
+  }
+  function navOf(elt) {
+    var n = elt && elt.closest && elt.closest("[data-nav]");
+    return n ? n.getAttribute("data-nav") : "push";
+  }
+  document.addEventListener("htmx:beforeRequest", function (e) {
+    var t = e.detail.target;
+    if (t && t.id === "screen" && !pendingNav) pendingNav = navOf(e.detail.elt);
+  });
+  window.addEventListener("popstate", function () { pendingNav = "back"; });
+  document.addEventListener("htmx:afterSwap", function (e) {
+    if (!e.detail.target || e.detail.target.id !== "screen") return;
+    var kind = pendingNav || "push"; pendingNav = null;
+    if (kind !== "refresh" && kind !== "fade") window.scrollTo(0, 0);
+    enter(kind);
+    grow(e.detail.target, kind);
+    syncTabs();
+  });
+  document.addEventListener("htmx:historyRestore", function () { enter("back"); syncTabs(); pendingNav = null; });
+  // let other scripts say what the next swap is ("refresh" keeps the screen still)
+  function expect(kind) { pendingNav = kind; }
+
+  // edge swipe back (touch only): a thin strip on the left edge owns the gesture
+  function edgeSwipe() {
+    if (document.querySelector(".edge-swipe") || !scr()) return;
+    var strip = document.createElement("div");
+    strip.className = "edge-swipe fixed inset-y-0 left-0 z-30";
+    strip.style.width = "16px";
+    document.body.appendChild(strip);
+    var x0 = 0, lastT = 0, lastX = 0, on = false;
+    strip.addEventListener("pointerdown", function (e) {
+      if (!document.querySelector("#screen [data-back]")) return;
+      on = true; x0 = lastX = e.clientX; lastT = performance.now(); strip.setPointerCapture(e.pointerId);
+    });
+    strip.addEventListener("pointermove", function (e) {
+      if (!on) return;
+      var now = performance.now(), dx = Math.max(0, e.clientX - x0);
+      S.x.track(dx, (now - lastT) / 1000); S.o.track(1 - Math.min(0.5, dx / window.innerWidth), 0);
+      lastX = e.clientX; lastT = now;
+    });
+    function end() {
+      if (!on) return; on = false;
+      var w = window.innerWidth;
+      if (S.x.x > w * 0.33 || S.x.v > 700) {
+        S.x.set(w, "snappy", S.x.v);
+        var back = document.querySelector("#screen [data-back]");
+        if (back) { pendingNav = "back"; back.click(); }
+      } else { S.x.set(0, "bouncy", S.x.v); S.o.set(1, "gentle"); }
+    }
+    strip.addEventListener("pointerup", end); strip.addEventListener("pointercancel", end);
+  }
+
+  // ---- tab bar: aria-current follows the URL, the pill springs to it
+  var pill = null;
+  function syncTabs() {
+    var bar = document.querySelector("[data-tabbar]");
+    if (!bar) return;
+    var p = location.pathname.replace(/^\/app\/?/, "") || "home";
+    bar.querySelectorAll("[data-tab]").forEach(function (a) {
+      if (a.getAttribute("data-tab") === p) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    var el = bar.querySelector("[data-tab-pill]"), cur = bar.querySelector(".tab[aria-current]");
+    if (!el) return;
+    if (!pill) {
+      pill = { x: varSpring(el, "--pill-x", 0, "gentle"), o: varSpring(el, "--pill-o", 0, "snappy"), s: varSpring(el, "--pill-s", 1, "bouncy") };
+      if (cur) { pill.x.track(cur.offsetLeft, 0); pill.o.track(1, 0); }
+      bar.setAttribute("data-pill-ready", "");
+      return;
+    }
+    if (!cur) { pill.o.set(0, "snappy"); return; }
+    var from = pill.x.x, to = cur.offsetLeft;
+    if (pill.o.x < 0.05) pill.x.track(to, 0); else pill.x.set(to, "gentle");
+    pill.o.set(1, "snappy");
+    // stretch a little while it travels, like a drop of liquid
+    if (Math.abs(to - from) > 4 && !reduced.matches) { pill.s.track(1.25, 0); pill.s.set(1, "bouncy"); }
+  }
+  window.addEventListener("resize", function () { if (pill) { pill = null; syncTabs(); } });
+
+  // ---- bottom sheet: open with the gentle spring, follow the finger, release with velocity
+  var sheet = null;
+  function sheetSpring() {
+    var host = document.getElementById("sheet");
+    if (!host) return null;
+    if (!sheet) {
+      sheet = varSpring(host, "--sheet-y", 100, "gentle");
+      var base = sheet.onUpdate;
+      sheet.onUpdate = function (y) { base(y); if (y >= 99.5 && sheet.target >= 100) { host.classList.add("hidden"); host.setAttribute("aria-hidden", "true"); } };
+      dragSheet(host);
+    }
+    return sheet;
+  }
+  function openSheet() {
+    var host = document.getElementById("sheet"), sp = sheetSpring();
+    if (!sp) return;
+    if (sp.x >= 99) sp.track(100, 0);
+    sp.set(0, "gentle");
+    host.classList.remove("hidden"); host.setAttribute("aria-hidden", "false");
+    var f = host.querySelector("button, input, a"); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 50);
+  }
+  function closeSheet() { var sp = sheetSpring(); if (sp && sp.target !== 100) sp.set(100, "snappy"); }
+  function dragSheet(host) {
+    var panel = host.querySelector(".sheet-panel"), body = host.querySelector("#sheet-body");
+    var y0 = 0, lastT = 0, on = false, h = 1;
+    panel.addEventListener("pointerdown", function (e) {
+      var onGrab = e.target.closest("[data-sheet-grab]");
+      if (!onGrab && (e.target.closest("button, input, select, a, label, textarea") || body.scrollTop > 0)) return;
+      on = true; y0 = e.clientY; lastT = performance.now(); h = panel.offsetHeight || 1;
+      panel.setPointerCapture(e.pointerId);
+    });
+    panel.addEventListener("pointermove", function (e) {
+      if (!on) return;
+      var now = performance.now(), dy = e.clientY - y0;
+      // pulling up past open resists (rubber band), pulling down follows 1:1
+      var pct = dy >= 0 ? dy / h * 100 : -Math.sqrt(-dy) / h * 100;
+      sheet.track(pct, (now - lastT) / 1000); lastT = now;
+    });
+    function end() {
+      if (!on) return; on = false;
+      if (sheet.x > 30 || sheet.v > 160) closeSheet(); else sheet.set(0, "bouncy", sheet.v);
+    }
+    panel.addEventListener("pointerup", end); panel.addEventListener("pointercancel", end);
+  }
+  document.addEventListener("htmx:afterSwap", function (e) { if (e.detail.target && e.detail.target.id === "sheet-body") openSheet(); });
+  document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-sheet-close]")) closeSheet(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSheet(); });
+
+  // ---- rings and bars fill up once when their screen appears (--g springs 0 → 1)
+  function grow(root, kind) {
+    if (kind === "refresh") return;
+    (root || document).querySelectorAll("[data-grow]").forEach(function (el) {
+      var g = varSpring(el, "--g", 0, "gentle"), base = g.onUpdate;
+      g.onUpdate = function (x) { base(x); if (x === 1) el.classList.remove("growing"); };
+      el.classList.add("growing");
+      el.style.setProperty("--g", "0");
+      requestAnimationFrame(function () { g.set(1, "gentle"); });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () { syncTabs(); edgeSwipe(); grow(document, "push"); });
+  window.EvaMotion.enter = enter; window.EvaMotion.expect = expect; window.EvaMotion.openSheet = openSheet; window.EvaMotion.closeSheet = closeSheet; window.EvaMotion.syncTabs = syncTabs;
 })();

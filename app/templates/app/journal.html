@@ -1,6 +1,6 @@
 {% import "mascot.html" as m %}
 <div class="flex items-center justify-between gap-3 pt-1">
-  <a href="/app/eva?seat={{ c.seat }}" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" aria-label="Back" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <a href="/app?seat={{ c.seat }}" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" aria-label="Back" data-back data-nav="back" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
   <p class="text-xs uppercase tracking-label text-muted">Journal · {{ c.time }}</p>
   <span class="size-11"></span>
 </div>
@@ -38,7 +38,7 @@
       <p class="text-sm text-info">Write for 5 minutes. What's on your mind, and why?</p>
     </div>
     <label class="sr-only" for="jtext">Journal text</label>
-    <textarea id="jtext" name="text" rows="4" maxlength="4000" class="w-full resize-none bg-transparent text-lg leading-snug text-ink placeholder:text-faint focus-visible:outline-none" placeholder="A few lines, or just save"></textarea>
+    <textarea id="jtext" name="text" rows="4" maxlength="4000" class="w-full resize-none bg-transparent text-lg leading-snug text-ink placeholder:text-muted focus-visible:outline-none" placeholder="A few lines, or just save"></textarea>
     <div class="flex items-center justify-between">
       <label class="flex items-center gap-1.5 text-xs text-muted"><input type="checkbox" name="shared" value="1" class="accent-info"> Share with the crew lead</label>
       <span class="flex items-center gap-1.5 text-xs text-muted">{{ crate::web::ui::ic("lock", 12)|safe }}Private by default</span>
@@ -72,4 +72,4 @@
   </div>
   {% endfor %}
 </div>
-<p class="flex gap-2 text-xs text-faint">{{ crate::web::ui::ic("book", 12)|safe }}<span>Why writing helps · Pennebaker &amp; Beall 1986; Frattaroli 2006; Lieberman et al. 2007</span></p>
+<p class="flex gap-2 text-xs text-muted">{{ crate::web::ui::ic("book", 12)|safe }}<span>Why writing helps · Pennebaker &amp; Beall 1986; Frattaroli 2006; Lieberman et al. 2007</span></p>

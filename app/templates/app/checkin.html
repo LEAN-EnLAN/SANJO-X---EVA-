@@ -1,0 +1,24 @@
+{% import "app/_ui.html" as u %}
+<div class="flex items-center justify-between gap-3 pt-1">
+  <a {% call u::go("/app/home", c.seat, "back") %} aria-label="Later" data-back class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("x", 18)|safe }}</a>
+  <p class="text-xs uppercase tracking-label text-muted">Check-in</p>
+  <span class="size-11"></span>
+</div>
+<div class="flex flex-col gap-2">
+  <p class="text-xs uppercase tracking-label text-muted">{{ c.time }}</p>
+  <h1 class="text-5xl leading-none tracking-tight text-ink">{{ question }}</h1>
+</div>
+<div class="flex flex-wrap gap-2">
+  {% for (t, tone) in context %}<span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {% if *tone == "neutral" %}border-line text-muted{% else %}{{ crate::web::ui::badge(tone) }}{% endif %}">{{ t }}</span>{% endfor %}
+</div>
+<div class="flex flex-col gap-3">
+  {% for a in answers %}
+  <button type="button" class="press flex items-center gap-4 rounded-card border border-line bg-surface px-5 py-4 text-left hover:bg-raised" hx-post="/api/eva/tool" hx-vals="{{ a.vals }}" hx-target="#toast" data-tool="checkin">
+    <span class="text-ink">{{ crate::web::ui::ic(a.icon, 26)|safe }}</span>
+    <span class="flex flex-1 flex-col gap-0.5"><span class="text-lg text-ink">{{ a.title }}</span><span class="text-xs text-muted">{{ a.next }}</span></span>
+    <span class="text-muted">{{ crate::web::ui::ic("arrow", 18)|safe }}</span>
+  </button>
+  {% endfor %}
+</div>
+<a {% call u::go("/app/journal", c.seat, "push") %} class="press inline-flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-raised px-5 text-sm text-ink">{{ crate::web::ui::ic("book", 16)|safe }}Write more in your journal</a>
+<p class="mt-auto flex items-center gap-2 text-xs text-muted">{{ crate::web::ui::ic("lock", 12)|safe }}Saved on board · "Worse" is shared with the crew lead</p>

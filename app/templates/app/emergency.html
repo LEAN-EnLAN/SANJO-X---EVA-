@@ -79,7 +79,7 @@
   <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Now</span><span>{{ cs.now }}</span></div>
   <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Why</span><span>Your pushes move blood to the brain.</span></div>
   <div class="flex gap-3 text-sm text-ink"><span class="w-10 shrink-0 pt-0.5 text-xs uppercase tracking-label text-muted">Next</span><span>{{ cs.next }}</span></div>
-  <p class="text-xs text-faint">How Eva decided · {{ cs.how }}</p>
+  <p class="text-xs text-muted">How Eva decided · {{ cs.how }}</p>
 </div>
 {% endif %}
 {% when "patient" %}
@@ -110,6 +110,6 @@
 <div class="flex flex-col gap-2 rounded-tile bg-surface px-4 py-3">
   <p class="flex items-center gap-2 text-xs text-muted"><span class="size-2 shrink-0 animate-pulse rounded-full bg-info"></span><span><span class="text-ink">AED:</span> emergency station, corridor B · blinks when needed</span></p>
   <p class="flex items-center gap-2 text-xs text-muted"><span class="size-2 shrink-0 rounded-full bg-info"></span><span><span class="text-ink">Shelter:</span> Deck B · water walls block radiation</span></p>
-  <p class="text-xs text-faint">Eva guides, records and warns. The AED decides shocks.</p>
+  <p class="text-xs text-muted">Eva guides, records and warns. The AED decides shocks.</p>
 </div>
 {% endmatch %}

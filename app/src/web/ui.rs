@@ -179,8 +179,44 @@ pub fn ic(name: &str, size: u32) -> String {
         "pin" => r#"<path d="M12 21s-6-5.4-6-11a6 6 0 0 1 12 0c0 5.6-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>"#,
         "keyboard" => r#"<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h1M11 10h1M15 10h1M7 14h10"/>"#,
         "history" => r#"<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5M12 8v4l3 2"/>"#,
+        "utensils" => r#"<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M18 3c-2.2 1-3.5 3.6-3.5 7.5H18V21"/>"#,
+        "calendar" => r#"<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>"#,
+        "hand" => r#"<path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V11M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5A5.5 5.5 0 0 1 5 16.5L3.8 14a1.5 1.5 0 0 1 2.6-1.5L8 14.5"/>"#,
+        "smile" => r#"<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/>"#,
+        "meh" => r#"<circle cx="12" cy="12" r="8.5"/><path d="M9 15h6M9 9.5h.01M15 9.5h.01"/>"#,
+        "frown" => r#"<circle cx="12" cy="12" r="8.5"/><path d="M8.5 16a4 4 0 0 1 7 0M9 9.5h.01M15 9.5h.01"/>"#,
+        "battery" => r#"<rect x="3" y="8" width="16" height="9" rx="2"/><path d="M21.5 11v3M6 11v3"/>"#,
+        "signal" => r#"<path d="M5 19v-3M10 19v-6M15 19v-9M20 19V6"/>"#,
+        "info" => r#"<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>"#,
+        "pulse" => r#"<path d="M3 12h4l2-5 3 10 2-5h7"/>"#,
+        "moon" => r#"<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/>"#,
+        "pill" => r#"<path d="M10.5 20.5a5 5 0 0 1-7-7l6-6a5 5 0 0 1 7 7z"/><path d="M8.5 8.5l7 7"/>"#,
+        "run" => r#"<circle cx="14.5" cy="4.5" r="1.8"/><path d="M8 21l3.5-6-3-3 3.5-4 3 3h3.5M5 11l3.5-3"/>"#,
+        "chat" => r#"<path d="M4 5h16v11H9.5L5 20v-4H4z"/>"#,
+        "phone" => r#"<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>"#,
+        "glass" => r#"<path d="M6 3h12l-1.5 17a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1z"/><path d="M6.6 9h10.8"/>"#,
+        "chevron" => r#"<path d="M9 5l7 7-7 7"/>"#,
+        "share" => r#"<path d="M12 4v11M7.5 8.5L12 4l4.5 4.5M5 13v6h14v-6"/>"#,
+        "speaker" => r#"<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>"#,
         "stop" => r#"<rect x="7" y="7" width="10" height="10" rx="2"/>"#,
         _ => r#"<circle cx="12" cy="12" r="8"/>"#,
     };
     format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0">{body}</svg>"#)
+}
+
+/// One-lead ECG trace as SVG polyline points: P wave, QRS spike, T wave.
+/// `uneven` varies the gap between beats, the way an irregular rhythm looks.
+pub fn ecg_points(beats: usize, uneven: bool, width: f32, height: f32) -> String {
+    const BEAT: [f32; 20] = [0.0, 0.0, 0.12, 0.18, 0.1, 0.0, 0.0, -0.12, 1.0, -0.3, 0.0, 0.0, 0.08, 0.22, 0.28, 0.18, 0.05, 0.0, 0.0, 0.0];
+    const GAPS: [usize; 6] = [0, 6, 1, 9, 3, 7];
+    let mut ys: Vec<f32> = Vec::new();
+    for b in 0..beats {
+        ys.extend_from_slice(&BEAT);
+        if uneven {
+            ys.extend(std::iter::repeat_n(0.0, GAPS[b % GAPS.len()]));
+        }
+    }
+    let n = ys.len().max(2) as f32 - 1.0;
+    let mid = height * 0.68;
+    ys.iter().enumerate().map(|(i, y)| format!("{:.1},{:.1}", i as f32 / n * width, mid - y * height * 0.6)).collect::<Vec<_>>().join(" ")
 }

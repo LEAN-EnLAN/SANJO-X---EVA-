@@ -53,7 +53,7 @@ pub fn home_screen(state: &Shared, seat: &str) -> String {
     let banner = render(&Banner::build(state, seat));
     let now = state.now();
     let next = state.world.read().expect("world").reminders.iter().filter(|r| r.seat == seat && !r.done && r.at_ms >= now).min_by_key(|r| r.at_ms).map(|r| (clock::hhmm(r.at_ms), r.text.clone()));
-    render(&HomeScreen { c: common(state, seat), live, banner, next })
+    render(&HomeScreen { c: common(state, seat), live, banner, next, water: tool_vals(seat, "log_water", serde_json::json!({"ml": 250})) })
 }
 
 pub async fn app_home(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
@@ -169,7 +169,7 @@ pub async fn app_storm(State(state): State<Shared>, Query(q): Query<SeatQ>, head
 pub fn records_screen(state: &Shared, seat: &str) -> String {
     let chain = state.chain.lock().expect("chain");
     let rep = chain.verify();
-    let records: Vec<RecordView> = chain.records.iter().rev().filter(|r| r.subject == seat).take(40).map(RecordView::from).collect();
+    let records: Vec<RecordView> = chain.records.iter().rev().filter(|r| r.subject == seat || r.subject == "ship").take(40).map(RecordView::from).collect();
     drop(chain);
     render(&RecordsScreen { c: common(state, seat), records, verified: rep.ok, total: rep.records })
 }
@@ -178,6 +178,42 @@ pub async fn app_records(State(state): State<Shared>, Query(q): Query<SeatQ>, he
     let seat = resolve_seat(&state, &q, &headers);
     let s = records_screen(&state, &seat);
     page(&state, &seat, "records", s, &headers)
+}
+
+pub async fn app_plan(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &q, &headers);
+    let s = render(&PlanScreen::build(&state, &seat));
+    page(&state, &seat, "plan", s, &headers)
+}
+
+pub async fn app_food(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &q, &headers);
+    let s = render(&FoodScreen::build(&state, &seat));
+    page(&state, &seat, "food", s, &headers)
+}
+
+pub async fn app_checkin(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &q, &headers);
+    let s = render(&CheckinScreen::build(&state, &seat));
+    page(&state, &seat, "home", s, &headers)
+}
+
+pub async fn app_ecg(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &q, &headers);
+    let s = render(&EcgScreen::build(&state, &seat));
+    page(&state, &seat, "home", s, &headers)
+}
+
+pub async fn app_band(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &q, &headers);
+    let s = BandScreen::build(&state, &seat).map(|b| render(&b)).unwrap_or_default();
+    page(&state, &seat, "home", s, &headers)
+}
+
+/// The tools sheet (a fragment the app shows in its bottom sheet).
+pub async fn app_tools(State(state): State<Shared>, Query(q): Query<SeatQ>, headers: HeaderMap) -> Response {
+    let seat = resolve_seat(&state, &q, &headers);
+    with_cookie(&seat, render(&ToolSheet::build(&state, &seat)))
 }
 
 pub async fn dash(State(state): State<Shared>) -> Response {

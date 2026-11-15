@@ -155,9 +155,53 @@ html, body { background: var(--color-background); color: var(--color-ink); font-
   .press { transform: none; }
 }
 
-/* htmx swaps settle in with the gentle spring */
-#screen.htmx-swapping { opacity: 0.6; }
-#screen { transition: opacity var(--dur-spring-snappy) var(--ease-spring-snappy); }
+/* ---------- app shell: safe areas, tab bar, screen transitions, sheet ----------
+   The tab bar floats 0.75rem above the home indicator; screens reserve room for it
+   (pb-dock) and docks that must stay reachable (Eva's composer) stick above it. */
+@utility pb-dock { padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)); }
+@utility bottom-tabbar { bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
+@utility bottom-dock { bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)); }
+
+/* screens move in with springs (motion.js writes --scr-x px, --scr-o, --scr-s) */
+#screen { transform: translateX(calc(var(--scr-x, 0) * 1px)) scale(var(--scr-s, 1)); opacity: var(--scr-o, 1); transform-origin: 50% 0; }
+.edge-swipe { touch-action: none; }
+
+/* sliding selection pill behind the active tab */
+.tab { color: var(--color-muted); transition: color var(--dur-spring-snappy) var(--ease-spring-snappy); }
+.tab[aria-current="page"] { color: var(--color-on-light); background: var(--color-ink); }
+[data-pill-ready] .tab[aria-current="page"] { background: transparent; }
+.tab-pill { transform: translateX(calc(var(--pill-x, 0) * 1px)) scaleX(var(--pill-s, 1)); opacity: var(--pill-o, 0); }
+.tab-eva[aria-current="page"] { box-shadow: 0 0 0 2px var(--color-info); }
+
+/* bottom sheet: --sheet-y is 0 (open) to 100 (closed), driven by a spring and the finger */
+.sheet-panel { transform: translateY(calc(var(--sheet-y, 100) * 1%)); }
+.sheet-backdrop { opacity: calc(1 - var(--sheet-y, 100) / 100); }
+
+/* things that fill up (rings, bars) grow in once when a screen appears: --g goes 0 → 1 */
+.ring-fill { stroke-dashoffset: calc(100 - (100 - var(--ring, 0)) * var(--g, 1)); transition: stroke-dashoffset var(--dur-spring-gentle) var(--ease-spring-gentle); }
+.grow-w { width: calc(var(--pct) * var(--g, 1)); }
+.growing { transition: none !important; }
+
+/* the composer dock fades the chat out underneath it */
+.dock { background: linear-gradient(to top, var(--color-background) 72%, color-mix(in oklab, var(--color-background) 0%, transparent)); }
+
+/* pill-shaped quick action (Eva's chips) */
+.chip { display: inline-flex; flex-shrink: 0; scroll-snap-align: start; align-items: center; gap: 0.375rem; height: 2.25rem; padding: 0 0.875rem; border-radius: 999px; border: 1px solid var(--color-line); background: var(--color-surface); color: var(--color-ink); font-size: 0.8125rem; white-space: nowrap; }
+.badge-plain { display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 999px; border: 1px solid var(--color-line); padding: 0.125rem 0.625rem; font-size: 0.75rem; color: var(--color-ink); }
+
+/* hold-to-talk halo breathes on the slow spring */
+@keyframes mic-halo { 0% { transform: scale(0.9); opacity: 0.7; } 100% { transform: scale(1.3); opacity: 0; } }
+.mic-halo { animation: mic-halo 2.4s var(--ease-spring-slow) infinite; }
+[data-eva-mic].is-recording { background: var(--color-info); }
+
+/* ECG result trace draws itself once */
+@keyframes ecg-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.ecg-draw { stroke-dasharray: 1; stroke-dashoffset: 0; animation: ecg-draw 1.4s var(--ease-spring-slow) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-halo, .ecg-draw { animation: none; }
+  .ring-fill, .tab { transition-duration: 1ms; }
+}
 
 /* ---------- Eva mascot: state-driven placeholder animation ----------
    motion.js springs translate/scale/rotate/glow toward per-state targets;
@@ -173,3 +217,6 @@ html, body { background: var(--color-background); color: var(--color-ink); font-
 .mood-range::-webkit-slider-thumb { -webkit-appearance: none; width: 1.75rem; height: 1.75rem; border-radius: 999px; background: var(--color-ink); border: 4px solid var(--color-background); box-shadow: 0 4px 12px rgb(0 0 0 / .5); }
 .mood-range::-moz-range-thumb { width: 1.25rem; height: 1.25rem; border-radius: 999px; background: var(--color-ink); border: 4px solid var(--color-background); }
 .mood-range:focus-visible { outline: 2px solid var(--color-info); outline-offset: 4px; }
+
+/* toasts sit over live content: a solid, tinted pill so the text never mixes with what is behind */
+.toast { background-color: color-mix(in oklab, currentColor 14%, var(--color-raised)); box-shadow: 0 8px 24px rgb(0 0 0 / 0.5); max-width: calc(100vw - 2rem); }

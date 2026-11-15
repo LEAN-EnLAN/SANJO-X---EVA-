@@ -31,14 +31,14 @@
   <div class="flex flex-col gap-2 rounded-tile bg-raised p-3 text-xs">
     <div class="flex items-center justify-between"><span class="text-muted">Eva Link · {{ link.profile_label }}</span><span class="text-ink tabular-nums">RTO {{ link.rto_ms }} ms</span></div>
     <div class="grid grid-cols-4 gap-2 text-center">
-      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.alarm }}</span><span class="text-faint">alarm</span></span>
-      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.guidance }}</span><span class="text-faint">guidance</span></span>
-      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.vitals }}</span><span class="text-faint">vitals</span></span>
-      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.logs }}</span><span class="text-faint">logs</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.alarm }}</span><span class="text-muted">alarm</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.guidance }}</span><span class="text-muted">guidance</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.vitals }}</span><span class="text-muted">vitals</span></span>
+      <span class="flex flex-col"><span class="text-ink tabular-nums">{{ link.depth.logs }}</span><span class="text-muted">logs</span></span>
     </div>
     <div class="flex items-center justify-between text-muted"><span>Sent {{ self.kb(link.bytes_sent) }} · lost datagrams {{ link.datagrams_lost }}</span><span>{{ link.depth.inflight }} in flight</span></div>
     {% if !link.stats.is_empty() %}
-    <div class="flex flex-wrap gap-1.5">{% for s in link.stats %}<span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-faint">{{ s.kind }} · {{ s.avg_bytes }} B avg</span>{% endfor %}</div>
+    <div class="flex flex-wrap gap-1.5">{% for s in link.stats %}<span class="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-muted">{{ s.kind }} · {{ s.avg_bytes }} B avg</span>{% endfor %}</div>
     {% endif %}
   </div>
   {% endif %}

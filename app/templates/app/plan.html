@@ -1,0 +1,39 @@
+{% import "app/_ui.html" as u %}
+<div class="flex items-center justify-between gap-3 pt-1">
+  <span class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink" aria-hidden="true">{{ crate::web::ui::ic("calendar", 18)|safe }}</span>
+  <p class="text-xs uppercase tracking-label text-muted">Today's plan · day {{ c.day }}</p>
+  <button type="button" aria-label="Add a reminder" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" onclick="document.getElementById('tf-plan-reminder').focus()">{{ crate::web::ui::ic("plus", 18)|safe }}</button>
+</div>
+{% let (word, tone) = self.tone() %}
+<div class="flex flex-col gap-3">
+  <div class="flex items-end justify-between gap-3">
+    <p class="text-7xl leading-none tracking-tight text-ink tabular-nums">{{ pct }}%</p>
+    <span class="mb-2 inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium {{ crate::web::ui::badge(tone) }}">{{ word }}</span>
+  </div>
+  <div class="relative h-3 w-full overflow-hidden rounded-full bg-hatch" role="progressbar" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100" aria-label="Plan done"><div class="spring-w grow-w h-full rounded-full bg-info" id="plan-bar" data-grow style="--pct: {{ pct }}%"></div></div>
+  <p class="text-xs text-muted">{{ done }} of {{ items.len() }} done</p>
+</div>
+<ul class="flex flex-col">
+  {% for it in items %}
+  <li class="flex items-center gap-3 border-b border-line py-3 last:border-b-0">
+    <span class="grid size-11 shrink-0 place-items-center rounded-full {% if it.done %}bg-ok/10 text-ok{% else %}bg-raised text-ink{% endif %}">{{ crate::web::ui::ic(it.icon, 20)|safe }}</span>
+    <span class="flex min-w-0 flex-1 flex-col"><span class="text-sm {% if it.done %}text-muted{% else %}text-ink{% endif %}">{{ it.title }}</span><span class="text-xs text-muted">{{ it.sub }}</span></span>
+    {% if let Some(b) = it.action %}
+    <button type="button" class="press inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-ink px-3 text-xs font-medium text-on-light" {% call u::tool(b) %}>{{ b.label }}</button>
+    {% else if let Some((href, label)) = it.link %}
+    <a href="{{ href }}" hx-get="{{ href }}" hx-target="#screen" hx-push-url="true" data-nav="push" class="press inline-flex h-9 shrink-0 items-center rounded-full bg-ink px-3 text-xs font-medium text-on-light">{{ label }}</a>
+    {% else %}
+    <span class="grid size-7 shrink-0 place-items-center rounded-full {% if it.done %}bg-ok text-on-light{% else %}border border-line{% endif %}" aria-label="{% if it.done %}Done{% else %}Not yet{% endif %}">{% if it.done %}{{ crate::web::ui::ic("check", 14)|safe }}{% endif %}</span>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+<form class="flex items-center gap-2 rounded-full bg-surface py-1.5 pr-1.5 pl-4" hx-post="/api/eva/tool" hx-target="#toast" hx-on::after-request="if(event.detail.successful){this.reset();htmx.ajax('GET','/app/plan?seat={{ c.seat }}',{target:'#screen'})}" data-tool-form data-tool="set_reminder">
+  <input type="hidden" name="seat" value="{{ c.seat }}"><input type="hidden" name="name" value="set_reminder">
+  <label class="sr-only" for="tf-plan-reminder">Reminder</label>
+  <input id="tf-plan-reminder" name="arg.text" required maxlength="200" autocomplete="off" placeholder="{{ reminder.placeholder }}" class="h-10 min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-muted focus-visible:outline-none">
+  <label class="sr-only" for="tf-plan-in">In</label>
+  <select id="tf-plan-in" name="arg.in_min" data-int class="h-10 rounded-full border border-line bg-raised px-2 text-xs text-ink"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="60">1 h</option><option value="120">2 h</option></select>
+  <button type="submit" class="press inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-on-light" aria-label="{{ reminder.label }}">{{ crate::web::ui::ic("plus", 16)|safe }}</button>
+</form>
+<button type="button" class="press inline-flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-raised px-5 text-sm text-ink" {% call u::tool(summary) %}>{{ crate::web::ui::ic(summary.icon, 16)|safe }}{{ summary.label }}</button>

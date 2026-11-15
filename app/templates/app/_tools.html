@@ -1,0 +1,41 @@
+{% import "app/_ui.html" as u %}
+<div class="flex flex-col gap-5 pt-1">
+  <div class="flex items-end justify-between gap-3">
+    <div class="flex flex-col gap-1">
+      <p class="text-xs uppercase tracking-label text-muted">Same tools Eva uses</p>
+      <h2 class="text-2xl leading-none tracking-tight text-ink">Do it yourself</h2>
+    </div>
+    <button type="button" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink" aria-label="Close" data-sheet-close>{{ crate::web::ui::ic("x", 18)|safe }}</button>
+  </div>
+  <div class="grid grid-cols-2 gap-2">
+    {% for b in everyday %}
+    <button type="button" class="press flex min-h-16 items-center gap-2.5 rounded-tile bg-raised px-3 py-2.5 text-left" {% call u::tool(b) %}>
+      <span class="grid size-9 shrink-0 place-items-center rounded-full bg-info/10 text-info">{{ crate::web::ui::ic(b.icon, 18)|safe }}</span>
+      <span class="flex min-w-0 flex-col"><span class="text-sm leading-tight text-ink">{{ b.label }}</span>{% if !b.hint.is_empty() %}<span class="truncate text-xs text-muted">{{ b.hint }}</span>{% endif %}</span>
+    </button>
+    {% endfor %}
+  </div>
+  <div class="flex flex-col gap-2">
+    {% for f in forms %}
+    <form class="flex items-center gap-2 rounded-full bg-raised py-1.5 pr-1.5 pl-3" hx-post="/api/eva/tool" hx-target="#toast" hx-on::after-request="if(event.detail.successful)this.reset()" data-tool-form data-tool="{{ f.name }}">
+      <input type="hidden" name="seat" value="{{ c.seat }}"><input type="hidden" name="name" value="{{ f.name }}">
+      {% for (k, v) in f.fixed %}<input type="hidden" name="arg.{{ k }}" value="{{ v }}">{% endfor %}
+      <span class="text-info" aria-hidden="true">{{ crate::web::ui::ic(f.icon, 18)|safe }}</span>
+      <label class="sr-only" for="tf-{{ f.name }}">{{ f.label }}</label>
+      <input id="tf-{{ f.name }}" name="arg.{{ f.field }}" required maxlength="200" autocomplete="off" placeholder="{{ f.label }} · {{ f.placeholder }}" class="h-10 min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-muted focus-visible:outline-none">
+      <button type="submit" class="press inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-on-light" aria-label="{{ f.label }}">{{ crate::web::ui::ic("send", 15)|safe }}</button>
+    </form>
+    {% endfor %}
+  </div>
+  <div class="flex flex-col gap-2">
+    <p class="text-xs uppercase tracking-label text-muted">Emergency</p>
+    {% for b in emergency %}
+    <button type="button" class="press flex items-center gap-3 rounded-tile border border-critical/40 bg-critical/10 px-3 py-3 text-left" {% call u::tool(b) %}>
+      <span class="text-critical">{{ crate::web::ui::ic(b.icon, 20)|safe }}</span>
+      <span class="flex flex-col"><span class="text-sm text-ink">{{ b.label }}</span><span class="text-xs text-muted">{{ b.hint }}</span></span>
+    </button>
+    {% endfor %}
+    <p class="flex items-center gap-2 text-xs text-muted"><span class="size-2 shrink-0 rounded-full bg-info"></span><span><span class="text-ink">AED station:</span> corridor B · it decides shocks</span></p>
+  </div>
+  <p class="text-xs text-muted">{{ total }} tools · every tap is signed on board, like Eva's own calls.</p>
+</div>

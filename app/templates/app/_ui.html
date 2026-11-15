@@ -1,0 +1,5 @@
+{# Small building blocks shared by the astronaut screens. #}
+{# go: attributes for a link that swaps #screen (htmx) and still works without JS. nav = push | back | tab #}
+{% macro go(path, seat, nav) %}href="{{ path }}?seat={{ seat }}" hx-get="{{ path }}?seat={{ seat }}" hx-target="#screen" hx-push-url="true" data-nav="{{ nav }}"{% endmacro %}
+{# tool: attributes for a button that runs one of Eva's tools through the same endpoint Eva uses #}
+{% macro tool(b) %}hx-post="/api/eva/tool" hx-vals="{{ b.vals }}" hx-target="#toast" hx-swap="innerHTML"{% if !b.confirm.is_empty() %} hx-confirm="{{ b.confirm }}"{% endif %}{% if !b.then.is_empty() %} data-then="{{ b.then }}"{% endif %} data-tool="{{ b.name }}"{% endmacro %}

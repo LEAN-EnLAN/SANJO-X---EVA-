@@ -1,7 +1,7 @@
 <div class="flex items-center justify-between gap-3 pt-1">
-  <a href="/app?seat={{ c.seat }}" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" aria-label="Back" class="inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated">{{ crate::web::ui::ic("back", 20)|safe }}</a>
+  <button type="button" aria-label="Send my day to the ground" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"send_to_ground","args":"{\"text\":\"Daily log from {{ c.first }}\"}"}' hx-target="#toast" data-tool="send_to_ground">{{ crate::web::ui::ic("satellite", 18)|safe }}</button>
   <p class="text-xs uppercase tracking-label text-muted">Logbook</p>
-  <span class="size-11"></span>
+  <button type="button" aria-label="Prepare my report" class="press inline-flex size-11 items-center justify-center rounded-full bg-raised text-ink hover:bg-elevated" hx-post="/api/eva/tool" hx-vals='{"seat":"{{ c.seat }}","name":"export_report","args":"{\"format\":\"html\",\"seat\":\"{{ c.seat }}\"}"}' hx-target="#toast" data-tool="export_report">{{ crate::web::ui::ic("share", 18)|safe }}</button>
 </div>
 <div class="flex items-end justify-between gap-3">
   <p class="text-4xl leading-none tracking-tight text-ink">Your records</p>
@@ -18,7 +18,7 @@
     <div class="flex min-w-0 flex-1 flex-col">
       <span class="font-mono text-xs text-muted">{{ r.time }} · #{{ r.seq }} · {{ r.kind }}</span>
       <span class="truncate text-sm text-ink">{{ r.text }}</span>
-      <span class="font-mono text-xs text-faint">{{ r.hash }}…</span>
+      <span class="font-mono text-xs text-muted">{{ r.hash }}…</span>
     </div>
     <div class="flex shrink-0 flex-col items-end gap-1.5">
       <div class="flex gap-1">{% for on in r.bars() %}<span class="h-1.5 w-4 rounded-full {% if on %}{{ crate::web::ui::sync_fill(r.step) }}{% else %}bg-line{% endif %}"></span>{% endfor %}</div>
@@ -26,5 +26,5 @@
     </div>
   </div>
   {% endfor %}
-  {% if records.is_empty() %}<p class="text-sm text-muted">Nothing yet. Every check-in, journal entry and alert you make lands here.</p>{% endif %}
+  {% if records.is_empty() %}<p class="text-sm text-muted">Nothing yet. Check-ins and alerts land here.</p>{% endif %}
 </div>

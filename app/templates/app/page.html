@@ -1,3 +1,4 @@
+{% import "app/_ui.html" as u %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,38 +6,44 @@
 <title>Eva · {{ c.first }}</title>
 </head>
 <body class="min-h-dvh bg-background text-ink antialiased" data-view="app" data-seat="{{ c.seat }}">
-<div class="mx-auto flex min-h-dvh w-full max-w-md flex-col" hx-ext="sse" sse-connect="/sse/app?seat={{ c.seat }}">
-  <header class="flex items-center justify-between gap-3 px-6 pt-3 pb-1 text-sm">
-    <button type="button" class="tabular-nums text-ink" data-konami-tap title="Ship time">{{ c.time }}</button>
-    <label class="flex items-center gap-2 text-xs text-muted">
+<div class="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-2xl" hx-ext="sse" sse-connect="/sse/app?seat={{ c.seat }}">
+  <header class="flex items-center justify-between gap-3 px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-1 text-sm">
+    <button type="button" class="min-h-11 min-w-11 tabular-nums text-ink" data-konami-tap title="Ship time">{{ c.time }}</button>
+    <label class="flex min-w-0 items-center gap-2 text-xs text-muted">
       <span class="sr-only">Who is using this app</span>
-      <select class="rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-ink" onchange="location.href='/app?seat='+this.value">
+      <select class="h-9 max-w-48 truncate rounded-full border border-line bg-surface px-3 text-xs text-ink" onchange="location.href='/app?seat='+this.value">
         {% for (s, n) in seats %}<option value="{{ s }}" {% if s == &c.seat %}selected{% endif %}>{{ s }} · {{ n }}</option>{% endfor %}
       </select>
     </label>
-    <span class="flex items-center gap-1.5 text-xs text-muted" id="mesh-indicator" title="Eva Link to the ship hub"><span class="size-1.5 rounded-full bg-faint" data-link-dot></span><span data-link-rtt>LoRa</span></span>
+    <span class="flex min-w-11 items-center justify-end gap-1.5 text-xs text-muted" id="mesh-indicator" title="Eva Link to the ship hub"><span class="size-1.5 rounded-full bg-faint" data-link-dot></span><span data-link-rtt>LoRa</span></span>
   </header>
 
   <div class="hidden" sse-swap="eva" hx-swap="none"></div>
-  <div class="hidden" hx-trigger="sse:go-home" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}"></div>
-  <div class="hidden" hx-trigger="sse:go-eva" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
-  <div class="hidden" hx-trigger="sse:go-emergency" hx-get="/app/emergency?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
-  <div class="hidden" hx-trigger="sse:go-journal" hx-get="/app/journal?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
-  <div class="hidden" hx-trigger="sse:go-storm" hx-get="/app/storm?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
-  <div class="hidden" hx-trigger="sse:go-records" hx-get="/app/records?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true"></div>
-  <div class="hidden" hx-trigger="sse:go-plan" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen"></div>
+  <div class="hidden" hx-trigger="sse:go-home" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" data-nav="tab"></div>
+  {% for s in ["eva", "emergency", "journal", "storm", "records", "plan", "food", "ecg", "band", "checkin"] %}
+  <div class="hidden" hx-trigger="sse:go-{{ s }}" hx-get="/app/{{ s }}?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-nav="push"></div>
+  {% endfor %}
 
-  <main id="screen" class="flex flex-1 flex-col gap-4 px-5 pt-2 pb-32">{{ screen|safe }}</main>
+  <main id="screen" class="flex flex-1 flex-col gap-4 px-5 pt-2 pb-dock">{{ screen|safe }}</main>
 
-  <nav class="fixed inset-x-0 bottom-3 z-40 mx-auto flex w-full max-w-md px-5" aria-label="Main">
-    <div class="flex w-full items-center justify-around rounded-full bg-raised py-3 ring-1 ring-line">
-      <a href="/app?seat={{ c.seat }}" hx-get="/app/home?seat={{ c.seat }}" hx-target="#screen" hx-push-url="/app?seat={{ c.seat }}" data-tab="home" aria-label="Home" class="tab grid size-11 place-items-center rounded-full {% if tab == "home" %}bg-ink text-on-light{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("home", 20)|safe }}</a>
-      <a href="/app/journal?seat={{ c.seat }}" hx-get="/app/journal?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="journal" aria-label="Journal" class="tab grid size-11 place-items-center rounded-full {% if tab == "journal" %}bg-ink text-on-light{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("book", 20)|safe }}</a>
-      <a href="/app/eva?seat={{ c.seat }}" hx-get="/app/eva?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="eva" aria-label="Eva" class="tab -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 {% if tab == "eva" %}ring-info{% else %}ring-line{% endif %}"><img src="/static/img/eva/eva-neutral.webp" alt="" class="size-10 object-contain"></a>
-      <a href="/app/records?seat={{ c.seat }}" hx-get="/app/records?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="records" aria-label="Records" class="tab grid size-11 place-items-center rounded-full {% if tab == "records" %}bg-ink text-on-light{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("records", 20)|safe }}</a>
-      <a href="/app/emergency?seat={{ c.seat }}" hx-get="/app/emergency?seat={{ c.seat }}" hx-target="#screen" hx-push-url="true" data-tab="emergency" aria-label="Help" class="tab grid size-11 place-items-center rounded-full {% if tab == "emergency" %}bg-critical text-ink{% else %}text-muted{% endif %}">{{ crate::web::ui::ic("siren", 20)|safe }}</a>
+  <nav class="fixed inset-x-0 bottom-tabbar z-40 mx-auto flex w-full max-w-md px-5" aria-label="Main">
+    <div class="relative flex w-full items-center justify-around rounded-full bg-raised/95 py-3 ring-1 ring-line backdrop-blur-md" data-tabbar>
+      <span class="tab-pill pointer-events-none absolute top-3 left-0 size-11 rounded-full bg-ink opacity-0" data-tab-pill aria-hidden="true"></span>
+      <a {% call u::go("/app/home", c.seat, "tab") %} data-tab="home" aria-label="Home" {% if tab == "home" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("home", 20)|safe }}</a>
+      <a {% call u::go("/app/plan", c.seat, "tab") %} data-tab="plan" aria-label="Today's plan" {% if tab == "plan" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("list", 20)|safe }}</a>
+      <a {% call u::go("/app/eva", c.seat, "tab") %} data-tab="eva" aria-label="Eva" {% if tab == "eva" %}aria-current="page"{% endif %} class="tab-eva press relative -my-3 grid size-16 place-items-center rounded-full bg-background ring-2 ring-line"><img src="/static/img/eva/eva-neutral.webp" alt="" class="size-10 object-contain" width="40" height="40"></a>
+      <a {% call u::go("/app/food", c.seat, "tab") %} data-tab="food" aria-label="Food and water" {% if tab == "food" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("utensils", 20)|safe }}</a>
+      <a {% call u::go("/app/records", c.seat, "tab") %} data-tab="records" aria-label="Logbook" {% if tab == "records" %}aria-current="page"{% endif %} class="tab relative grid size-11 place-items-center rounded-full">{{ crate::web::ui::ic("records", 20)|safe }}</a>
     </div>
   </nav>
+</div>
+
+<div id="sheet" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+  <div class="sheet-backdrop absolute inset-0 bg-background/70" data-sheet-close></div>
+  <section class="sheet-panel absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-md flex-col rounded-t-card border-t border-x border-line bg-surface" role="dialog" aria-modal="true" aria-label="Eva's tools">
+    <div class="flex shrink-0 cursor-grab touch-none justify-center pt-3 pb-2" data-sheet-grab><span class="h-1.5 w-10 rounded-full bg-elevated"></span></div>
+    <div id="sheet-body" class="overflow-y-auto overscroll-contain px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))]"></div>
+  </section>
 </div>
 {% include "dev/slot.html" %}
 </body>

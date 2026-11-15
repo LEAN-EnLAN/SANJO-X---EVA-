@@ -1,3 +1,4 @@
+{% import "app/_ui.html" as u %}
 <section class="rounded-card border border-line bg-surface p-5">
   <header class="mb-4 flex items-center justify-between gap-3">
     <h3 class="text-base text-ink">{% if all_good %}Today: all good{% else %}Eva is watching{% endif %}</h3>
@@ -20,10 +21,10 @@
   </div>
   {% if !p.eva_line.is_empty() %}<p class="mt-4 flex items-start gap-2 rounded-tile bg-info/5 px-3 py-2 text-xs text-ink"><span class="mt-0.5 text-info">{{ crate::web::ui::ic("sparkles", 13)|safe }}</span>{{ p.eva_line }}</p>{% endif %}
 </section>
-<section class="rounded-card border border-line bg-surface p-5 py-4">
+<a {% call u::go("/app/band", p.seat, "push") %} class="press block rounded-card border border-line bg-surface p-5 py-4">
   <header class="mb-3 flex items-center justify-between gap-3">
-    <h3 class="text-base text-ink">Your wristband</h3>
-    <span class="flex items-center gap-2 text-xs text-ink"><span class="relative inline-flex size-2.5 shrink-0 rounded-full {% if p.suit() %}bg-info{% else %}bg-ok{% endif %}"></span>{% if p.suit() %}Suit mode · base on its own battery{% else %}Joined{% endif %}</span>
+    <h3 class="flex items-center gap-1 text-base text-ink">Your wristband<span class="text-muted">{{ crate::web::ui::ic("chevron", 16)|safe }}</span></h3>
+    <span class="flex items-center gap-2 text-xs text-ink"><span class="relative inline-flex size-2.5 shrink-0 rounded-full {% if p.suit() %}bg-info{% else %}bg-ok{% endif %}"></span>{% if p.suit() %}Suit mode{% else %}Joined{% endif %}</span>
   </header>
   <div class="flex items-center gap-4">
     <span class="block h-20 w-32 shrink-0 overflow-hidden rounded-tile bg-background ring-1 ring-line"><img src="/static/img/wrist/band-top.webp" alt="The wristband, screen part on top" class="size-full object-cover"></span>
@@ -38,5 +39,5 @@
       </div>
     </div>
   </div>
-  <p class="mt-3 flex items-center justify-between text-xs text-muted"><span>{% if ecg_running %}<span class="text-info">ECG recording · keep one finger of each hand on the pads</span>{% else %}Sensor base · {{ age }}{% endif %}</span><span>Signal {{ p.vitals.quality }}%</span></p>
-</section>
+  <p class="mt-3 flex items-center justify-between text-xs text-muted"><span>{% if ecg_running %}<span class="text-info">ECG recording · fingers on the pads</span>{% else %}Sensor base · {{ age }}{% endif %}</span><span>Signal {{ p.vitals.quality }}%</span></p>
+</a>

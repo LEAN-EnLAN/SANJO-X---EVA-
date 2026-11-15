@@ -8,7 +8,8 @@
 <body class="min-h-dvh bg-background text-ink antialiased" data-view="dash">
 <div class="flex min-h-dvh" hx-ext="sse" sse-connect="/sse/dash">
   <div class="hidden" sse-swap="eva" hx-swap="none"></div>
-  <nav class="sticky top-0 hidden h-dvh w-18 shrink-0 flex-col items-center gap-2 border-r border-line bg-surface py-5 md:flex" aria-label="Sections">
+  <nav class="hidden w-18 shrink-0 border-r border-line bg-surface md:block" aria-label="Sections">
+   <div class="sticky top-0 flex h-dvh flex-col items-center gap-2 py-5">
     <a href="#top" title="Overview" class="relative grid size-11 place-items-center rounded-full bg-ink text-on-light">{{ crate::web::ui::ic("home", 19)|safe }}</a>
     <a href="#roster" title="Passengers" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("users", 19)|safe }}</a>
     <a href="#case" title="Cases" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("heart", 19)|safe }}</a>
@@ -17,14 +18,15 @@
     <a href="#mesh" title="Mesh" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("radio", 19)|safe }}</a>
     <a href="/export/report" target="_blank" title="Records report" class="relative grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("file", 19)|safe }}</a>
     <a href="/app" title="Astronaut app" class="mt-auto grid size-11 place-items-center rounded-full text-muted hover:text-ink">{{ crate::web::ui::ic("arrow", 19)|safe }}</a>
+   </div>
   </nav>
   <div class="flex min-w-0 flex-1 flex-col" id="top">
     <header class="flex flex-wrap items-center gap-3 border-b border-line px-4 py-4 md:px-6">
       <span class="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-ink pr-4 pl-1.5 text-on-light" data-konami-tap>
         <span class="grid size-8 place-items-center rounded-full bg-on-light"><span class="size-3 rounded-full bg-brand"></span></span>
-        <span class="text-sm font-semibold tracking-tight">Eva</span><span class="text-xs text-faint">by WearMeds</span>
+        <span class="text-sm font-semibold tracking-tight">Eva</span><span class="text-xs text-muted">by WearMeds</span>
       </span>
-      <span class="hidden h-11 min-w-0 flex-1 items-center gap-3 rounded-full border border-line bg-surface px-4 text-sm text-faint lg:flex">{{ crate::web::ui::ic("eye", 17)|safe }}<span class="truncate">{% if ground %}Ground view · records from the ship, verified on arrival{% else %}Ship hub · {{ node }} · offline-first{% endif %}</span></span>
+      <span class="hidden h-11 min-w-0 flex-1 items-center gap-3 rounded-full border border-line bg-surface px-4 text-sm text-muted lg:flex">{{ crate::web::ui::ic("eye", 17)|safe }}<span class="truncate">{% if ground %}Ground view · records from the ship, verified on arrival{% else %}Ship hub · {{ node }} · offline-first{% endif %}</span></span>
       <div class="flex flex-wrap items-center gap-2">
         <a href="/export/report" target="_blank" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("file", 14)|safe }}Report</a>
         <a href="/export/records.csv" class="inline-flex h-8 items-center justify-center gap-2 rounded-full border border-line px-3 text-xs font-medium text-ink hover:bg-raised">{{ crate::web::ui::ic("download", 14)|safe }}CSV</a>
@@ -42,7 +44,11 @@
           <p class="text-xs uppercase tracking-label text-muted">{{ eyebrow }}</p>
           <h1 class="text-4xl tracking-tight text-ink">{{ greeting }}</h1>
         </div>
-        <div class="flex flex-wrap justify-end gap-2">
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <a href="#case" class="press flex h-14 items-center gap-3 rounded-full border border-line bg-surface py-1 pr-4 pl-1 ring-1 ring-info/20" aria-label="Eva: open the case card">
+            {% call m::eva(mood, art, "size-12") %}
+            <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status>{% if mood == "alert" %}Guiding a case{% else %}Watching the crew{% endif %}</span></span>
+          </a>
           <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted"><img src="/static/img/icons/ship-hub.webp" alt="" class="size-6 rounded-full object-cover">{% if ground %}Ground node · mirror{% else %}Hub online · offline-ready{% endif %}</span>
           <span class="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted"><img src="/static/img/icons/lora.webp" alt="" class="size-6 rounded-full object-cover">Eva Link mesh · <span data-mesh-count>live</span></span>
           {% if storm %}<span class="inline-flex h-9 items-center gap-2 rounded-full border border-warn/40 bg-warn/10 pr-3.5 pl-1.5 text-xs text-warn"><img src="/static/img/icons/sun.webp" alt="" class="size-6 rounded-full object-cover">Solar storm · shelter</span>{% endif %}
@@ -63,7 +69,7 @@
           <section class="rounded-card border border-line bg-surface p-5">
             <header class="mb-3 flex items-center justify-between gap-3"><h3 class="text-base text-ink">Message the ship</h3><span class="text-xs text-muted">reliable · acknowledged</span></header>
             <form class="flex items-center gap-2" hx-post="/api/ground/message" hx-swap="none" hx-on::after-request="this.reset()">
-              <input name="text" required maxlength="500" placeholder="Flight surgeon note for the crew lead" class="h-10 min-w-0 flex-1 rounded-full border border-line bg-background px-4 text-sm text-ink placeholder:text-faint">
+              <input name="text" required maxlength="500" placeholder="Flight surgeon note for the crew lead" class="h-10 min-w-0 flex-1 rounded-full border border-line bg-background px-4 text-sm text-ink placeholder:text-muted">
               <button class="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-on-light" aria-label="Send">{{ crate::web::ui::ic("send", 16)|safe }}</button>
             </form>
           </section>
@@ -72,16 +78,10 @@
         </div>
       </div>
     </main>
-    <footer class="flex flex-wrap items-center gap-2 border-t border-line bg-surface px-4 py-2.5 text-xs text-faint md:px-6">
+    <footer class="flex flex-wrap items-center gap-2 border-t border-line bg-surface px-4 py-2.5 text-xs text-muted md:px-6">
       <span>Decision-support functions after Russell et al., npj Microgravity 9:46 (2023) · <a href="https://doi.org/10.1038/s41526-023-00284-1" class="text-info hover:underline">doi:10.1038/s41526-023-00284-1</a></span>
       <span class="ml-auto">Eva guides, records and warns · the AED decides shocks · images AI-generated</span>
     </footer>
-  </div>
-  <div class="pointer-events-none fixed right-4 bottom-4 z-30 md:right-6 md:bottom-6">
-    <a href="#case" class="pointer-events-auto flex items-center gap-3 rounded-full border border-line bg-surface/95 py-1.5 pr-4 pl-1.5 ring-1 ring-info/20 backdrop-blur">
-      {% call m::eva(mood, art, "size-12") %}
-      <span class="flex flex-col leading-tight"><span class="text-sm text-ink">Eva</span><span class="text-xs text-muted" data-eva-status>{% if mood == "alert" %}Guiding a case{% else %}Watching the crew{% endif %}</span></span>
-    </a>
   </div>
 </div>
 {% include "dev/slot.html" %}

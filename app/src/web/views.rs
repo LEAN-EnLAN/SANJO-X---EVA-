@@ -78,6 +78,8 @@ pub struct HomeScreen {
     pub live: String,
     pub banner: String,
     pub next: Option<(String, String)>,
+    /// hx-vals for the quick "+ water" button
+    pub water: String,
 }
 
 #[derive(Template)]
@@ -274,6 +276,450 @@ pub struct RecordsScreen {
     pub records: Vec<RecordView>,
     pub verified: bool,
     pub total: usize,
+}
+
+// ---------------------------------------------------------------- tool buttons
+//
+// Every button that runs one of Eva's tools posts to the same endpoint Eva's
+// chips use (`POST /api/eva/tool`), so the call is validated, executed and
+// written to the hash chain exactly like a call made by the model.
+
+/// The `hx-vals` JSON for a tool button: `{"seat":…, "name":…, "args":"{…}"}`.
+/// Rendered escaped inside a double-quoted attribute; the browser decodes it.
+pub fn tool_vals(seat: &str, name: &str, args: serde_json::Value) -> String {
+    serde_json::json!({"seat": seat, "name": name, "args": args.to_string()}).to_string()
+}
+
+pub struct ToolBtn {
+    pub name: String,
+    pub label: String,
+    pub hint: String,
+    pub icon: &'static str,
+    pub vals: String,
+    /// ask before running (opens a case, sends someone)
+    pub confirm: String,
+    /// screen to open after the call succeeds (empty = stay)
+    pub then: String,
+    pub danger: bool,
+}
+
+/// A tool that needs a few words from the person (reminder text, a message).
+pub struct ToolForm {
+    pub name: String,
+    pub label: &'static str,
+    pub icon: &'static str,
+    pub field: &'static str,
+    pub placeholder: &'static str,
+    /// extra fixed args, as hidden `arg.*` inputs
+    pub fixed: Vec<(&'static str, String)>,
+}
+
+fn btn(seat: &str, name: &str, label: &str, hint: &str, icon: &'static str, args: serde_json::Value) -> ToolBtn {
+    ToolBtn { name: name.into(), label: label.into(), hint: hint.into(), icon, vals: tool_vals(seat, name, args), confirm: String::new(), then: String::new(), danger: false }
+}
+
+/// Plain words for a tool name we have no preset for: `call_crew_lead` → "Call crew lead".
+fn tool_label(name: &str) -> String {
+    let s = name.replace('_', " ");
+    let mut c = s.chars();
+    c.next().map(|f| f.to_uppercase().collect::<String>() + c.as_str()).unwrap_or_default()
+}
+
+#[derive(Template)]
+#[template(path = "app/_tools.html")]
+pub struct ToolSheet {
+    pub c: AppCommon,
+    pub everyday: Vec<ToolBtn>,
+    pub forms: Vec<ToolForm>,
+    pub emergency: Vec<ToolBtn>,
+    pub total: usize,
+}
+
+impl ToolSheet {
+    /// Built from the live tool registry, so a tool added there shows up here:
+    /// known tools get a preset (label, icon, arguments); a new tool with no
+    /// required arguments gets a plain button.
+    pub fn build(state: &Shared, seat: &str) -> Self {
+        use serde_json::json;
+        let c = common(state, seat);
+        let mut everyday = Vec::new();
+        let mut forms = Vec::new();
+        let mut emergency = Vec::new();
+        let reg = crate::eva_agent::tools::registry();
+        let total = reg.len();
+        for t in reg {
+            match t.name {
+                "get_vitals" => everyday.push(btn(seat, t.name, "Read my band", "Pulse, oxygen, skin", "pulse", json!({}))),
+                "log_water" => everyday.push(btn(seat, t.name, "+1 glass of water", "250 ml", "glass", json!({"ml": 250}))),
+                "log_mood" => everyday.push(btn(seat, t.name, "I feel good", "Mood · pleasant", "smile", json!({"valence": 4, "labels": ["Calm"]}))),
+                "start_ecg_check" => {
+                    let mut b = btn(seat, t.name, "30 s ECG", "Both metal pads", "zap", json!({}));
+                    b.then = format!("/app/ecg?seat={seat}");
+                    everyday.push(b)
+                }
+                "daily_summary" => everyday.push(btn(seat, t.name, "Summary of my day", "Water, food, sleep", "book", json!({}))),
+                "show_screen" => everyday.push(btn(seat, t.name, "Show my week", "Mood journal", "calendar", json!({"screen": "journal"}))),
+                "export_report" => everyday.push(btn(seat, t.name, "Prepare my report", "Print to PDF", "file", json!({"format": "html", "seat": seat}))),
+                "log_meal" => forms.push(ToolForm { name: t.name.into(), label: "Log a snack", icon: "utensils", field: "text", placeholder: "What did you eat?", fixed: vec![("kind", "Snack".into())] }),
+                "set_reminder" => forms.push(ToolForm { name: t.name.into(), label: "Remind me in 30 min", icon: "bell", field: "text", placeholder: "Remind me to…", fixed: vec![("in_min", "30".into())] }),
+                "send_to_ground" => forms.push(ToolForm { name: t.name.into(), label: "Message the ground", icon: "satellite", field: "text", placeholder: "Signed on board, then sent", fixed: vec![] }),
+                "add_journal_entry" => forms.push(ToolForm { name: t.name.into(), label: "Quick journal note", icon: "lock", field: "text", placeholder: "Private unless you share it", fixed: vec![] }),
+                "request_help" => {
+                    let mut b = btn(seat, t.name, "Get help now", "Nearest trained person + crew lead", "siren", json!({"reason": "Help from the tools sheet"}));
+                    b.confirm = "Open an emergency and send the nearest trained person?".into();
+                    b.danger = true;
+                    emergency.push(b)
+                }
+                "call_aed_runner" => {
+                    let mut b = btn(seat, t.name, "Send for the AED", "From the station in corridor B", "zap", json!({"seat": seat}));
+                    b.confirm = "Send the nearest trained person to fetch the AED?".into();
+                    b.danger = true;
+                    emergency.push(b)
+                }
+                other => {
+                    // a tool added later: offer it when it needs no arguments
+                    let params = (t.parameters)();
+                    let needs = params.get("required").and_then(|r| r.as_array()).is_some_and(|r| !r.is_empty());
+                    if !needs {
+                        let mut b = btn(seat, other, &tool_label(other), "", "sparkles", json!({}));
+                        b.hint = t.description.split('.').next().unwrap_or("").chars().take(48).collect();
+                        everyday.push(b)
+                    }
+                }
+            }
+        }
+        ToolSheet { c, everyday, forms, emergency, total }
+    }
+}
+
+// ---------------------------------------------------------------- day plan
+
+pub struct PlanItem {
+    pub icon: &'static str,
+    pub title: String,
+    pub sub: String,
+    pub done: bool,
+    pub action: Option<ToolBtn>,
+    pub link: Option<(String, &'static str)>,
+}
+
+#[derive(Template)]
+#[template(path = "app/plan.html")]
+pub struct PlanScreen {
+    pub c: AppCommon,
+    pub items: Vec<PlanItem>,
+    pub done: usize,
+    pub pct: usize,
+    pub summary: ToolBtn,
+    pub reminder: ToolForm,
+}
+
+impl PlanScreen {
+    pub fn build(state: &Shared, seat: &str) -> Self {
+        use serde_json::json;
+        let c = common(state, seat);
+        let now = state.now();
+        let day0 = now / clock::DAY_MS * clock::DAY_MS;
+        let at = |h: u64, m: u64| day0 + h * 3_600_000 + m * 60_000;
+        let w = state.world.read().expect("world");
+        let p = w.passenger(seat);
+        let water = p.map(|p| p.water_ml).unwrap_or(0);
+        let breakfast = w.meals.iter().any(|m| m.seat == seat && m.ts_ms >= day0 && m.kind == "Breakfast");
+        let checkin = w.journal.iter().filter(|j| j.seat == seat && j.ts_ms >= day0).map(|j| j.ts_ms).max();
+        let sleep = p.map(|p| p.sleep_min).unwrap_or(0);
+        let mut items = vec![
+            PlanItem { icon: "run", title: "2 h exercise".into(), sub: if now >= at(11, 20) { "Done 11:20".into() } else { "Planned 09:20".into() }, done: now >= at(11, 20), action: None, link: None },
+            PlanItem {
+                icon: "glass",
+                title: "Drink 2 L of water".into(),
+                sub: format!("{:.1} of 2 L", water as f32 / 1000.0),
+                done: water >= 2000,
+                action: (water < 2000).then(|| btn(seat, "log_water", "+250 ml", "", "plus", json!({"ml": 250}))),
+                link: None,
+            },
+            PlanItem { icon: "pill", title: "Take vitamin D".into(), sub: if breakfast { "Done · breakfast".into() } else { "With breakfast".into() }, done: breakfast, action: None, link: None },
+            PlanItem { icon: "moon", title: "Sleep 22:30 to 06:30".into(), sub: format!("Last night {} h {:02}", sleep / 60, sleep % 60), done: false, action: None, link: None },
+            PlanItem {
+                icon: "chat",
+                title: "Check in with Eva".into(),
+                sub: checkin.map(|t| format!("Done {}", clock::hhmm(t))).unwrap_or_else(|| "Two taps".into()),
+                done: checkin.is_some(),
+                action: None,
+                link: checkin.is_none().then(|| (format!("/app/checkin?seat={seat}"), "Check in")),
+            },
+        ];
+        let mut rem: Vec<&Reminder> = w.reminders.iter().filter(|r| r.seat == seat && r.at_ms >= day0 && r.at_ms < day0 + clock::DAY_MS).collect();
+        rem.sort_by_key(|r| r.at_ms);
+        for r in rem {
+            items.push(PlanItem { icon: "bell", title: r.text.clone(), sub: if r.done { format!("Done · {}", clock::hhmm(r.at_ms)) } else { format!("Reminder · {}", clock::hhmm(r.at_ms)) }, done: r.done || r.at_ms < now, action: None, link: None });
+        }
+        drop(w);
+        let done = items.iter().filter(|i| i.done).count();
+        let pct = done * 100 / items.len().max(1);
+        PlanScreen {
+            c,
+            items,
+            done,
+            pct,
+            summary: btn(seat, "daily_summary", "Summary of my day", "", "book", json!({})),
+            reminder: ToolForm { name: "set_reminder".into(), label: "Add a reminder", icon: "bell", field: "text", placeholder: "Stretch, call home…", fixed: vec![] },
+        }
+    }
+    pub fn tone(&self) -> (&'static str, &'static str) {
+        match self.pct {
+            75.. => ("Doing well", "ok"),
+            40.. => ("On track", "info"),
+            _ => ("Plenty of day left", "neutral"),
+        }
+    }
+}
+
+// ---------------------------------------------------------------- food and water
+
+pub struct MealRow {
+    pub kind: String,
+    pub text: String,
+    pub kcal: Option<u32>,
+    pub img: &'static str,
+    pub time: String,
+    pub photo: bool,
+}
+
+pub struct Macro {
+    pub label: &'static str,
+    pub value: u32,
+    pub goal: u32,
+    pub pct: u32,
+}
+
+#[derive(Template)]
+#[template(path = "app/food.html")]
+pub struct FoodScreen {
+    pub c: AppCommon,
+    pub eaten: u32,
+    pub goal: u32,
+    pub left: u32,
+    /// ring dash offset for a circle of length 100
+    pub ring: u32,
+    pub macros: Vec<Macro>,
+    pub meals: Vec<MealRow>,
+    pub water_ml: u32,
+    pub glasses: Vec<bool>,
+    pub water: ToolBtn,
+    pub kinds: Vec<&'static str>,
+    pub kind_now: &'static str,
+}
+
+pub const KCAL_GOAL: u32 = 2300;
+
+fn meal_img(kind: &str) -> &'static str {
+    match kind {
+        "Breakfast" => "meal-breakfast",
+        "Lunch" => "meal-lunch",
+        "Dinner" => "meal-dinner",
+        _ => "meal-snack",
+    }
+}
+
+impl FoodScreen {
+    pub fn build(state: &Shared, seat: &str) -> Self {
+        let c = common(state, seat);
+        let now = state.now();
+        let day0 = now / clock::DAY_MS * clock::DAY_MS;
+        let w = state.world.read().expect("world");
+        let (eaten, water_ml) = w.passenger(seat).map(|p| (p.kcal, p.water_ml)).unwrap_or((0, 0));
+        let mut meals: Vec<MealRow> = w
+            .meals
+            .iter()
+            .filter(|m| m.seat == seat && m.ts_ms >= day0)
+            .map(|m| MealRow { kind: m.kind.clone(), text: m.text.clone(), kcal: Some(m.kcal), img: meal_img(&m.kind), time: clock::hhmm(m.ts_ms), photo: m.from_photo })
+            .collect();
+        drop(w);
+        // the band's daily estimate can include snacks nobody itemised
+        let listed: u32 = meals.iter().filter_map(|m| m.kcal).sum();
+        if eaten > listed + 50 {
+            meals.push(MealRow { kind: "Snacks".into(), text: "Earlier, not itemised".into(), kcal: Some(eaten - listed), img: "meal-snack", time: String::new(), photo: false });
+        }
+        if !meals.iter().any(|m| m.kind == "Dinner") {
+            meals.push(MealRow { kind: "Dinner".into(), text: "Pasta, beans · 19:30".into(), kcal: None, img: "meal-dinner", time: String::new(), photo: false });
+        }
+        let goal = KCAL_GOAL;
+        // estimated split of what was eaten: 50 % carbs, 18 % protein, 32 % fat
+        let mk = |label, value: u32, goal: u32| Macro { label, value, goal, pct: (value * 100 / goal.max(1)).min(100) };
+        let macros = vec![mk("Carbs", eaten / 2 / 4, 290), mk("Protein", eaten * 18 / 100 / 4, 95), mk("Fat", eaten * 32 / 100 / 9, 75)];
+        let full = (water_ml / 250).min(8);
+        FoodScreen {
+            water: btn(seat, "log_water", "+1 glass", "250 ml", "plus", serde_json::json!({"ml": 250})),
+            c,
+            eaten,
+            goal,
+            left: goal.saturating_sub(eaten),
+            ring: 100 - (eaten * 100 / goal).min(100),
+            macros,
+            meals,
+            water_ml,
+            glasses: (0..8).map(|i| i < full).collect(),
+            kinds: vec!["Breakfast", "Lunch", "Snack", "Dinner"],
+            kind_now: crate::eva_agent::tools::meal_kind(now),
+        }
+    }
+    pub fn is_now(&self, k: impl AsRef<str>) -> bool {
+        k.as_ref() == self.kind_now
+    }
+    pub fn glass_vals(&self) -> String {
+        tool_vals(&self.c.seat, "log_water", serde_json::json!({"ml": 250}))
+    }
+}
+
+// ---------------------------------------------------------------- daily check-in
+
+pub struct CheckinAnswer {
+    pub icon: &'static str,
+    pub title: &'static str,
+    pub next: &'static str,
+    pub vals: String,
+}
+
+#[derive(Template)]
+#[template(path = "app/checkin.html")]
+pub struct CheckinScreen {
+    pub c: AppCommon,
+    pub question: &'static str,
+    pub context: Vec<(String, &'static str)>,
+    pub answers: Vec<CheckinAnswer>,
+}
+
+impl CheckinScreen {
+    pub fn build(state: &Shared, seat: &str) -> Self {
+        use serde_json::json;
+        let c = common(state, seat);
+        let w = state.world.read().expect("world");
+        let p = w.passenger(seat);
+        let watching = p.is_some_and(|p| p.group != Group::Ok);
+        let mut context = Vec::new();
+        if let Some(p) = p {
+            if watching {
+                context.push((p.status.label().to_string(), "warn"));
+            }
+            context.push((format!("Water {:.1} of 2 L", p.water_ml as f32 / 1000.0), "neutral"));
+        }
+        if let Some(j) = w.journal.iter().filter(|j| j.seat == seat).max_by_key(|j| j.ts_ms) {
+            context.push((format!("Last: {}", if j.labels.is_empty() { mood_word(j.valence).to_string() } else { j.labels.join(", ") }), "info"));
+        }
+        drop(w);
+        let answers = vec![
+            CheckinAnswer { icon: "smile", title: if watching { "Yes, better" } else { "Good" }, next: "Saved in your journal", vals: tool_vals(seat, "log_mood", json!({"valence": 4, "labels": ["Better"]})) },
+            CheckinAnswer { icon: "meh", title: "The same", next: "Rest 30 min · Eva asks again", vals: tool_vals(seat, "set_reminder", json!({"text": "Check in with Eva again", "in_min": 30})) },
+            CheckinAnswer { icon: "frown", title: "Worse", next: "Crew lead told now", vals: tool_vals(seat, "add_journal_entry", json!({"text": "Check-in: I feel worse.", "valence": 2, "labels": ["Worse"], "shared": true})) },
+        ];
+        CheckinScreen { c, question: if watching { "Do you feel better?" } else { "How do you feel?" }, context, answers }
+    }
+}
+
+// ---------------------------------------------------------------- ECG
+
+#[derive(Template)]
+#[template(path = "app/ecg.html")]
+pub struct EcgScreen {
+    pub c: AppCommon,
+    /// ready | recording | result
+    pub mode: &'static str,
+    pub left_ms: u64,
+    pub uneven: bool,
+    pub at: String,
+    pub hr: u16,
+    pub contact_ok: bool,
+    pub trace: String,
+    pub start: ToolBtn,
+    pub last: Option<(String, String)>,
+}
+
+impl EcgScreen {
+    pub fn build(state: &Shared, seat: &str) -> Self {
+        let c = common(state, seat);
+        let now = state.now();
+        let w = state.world.read().expect("world");
+        let p = w.passenger(seat);
+        let until = p.and_then(|p| p.ecg_until_ms).filter(|u| *u > now);
+        let ecg = p.and_then(|p| p.ecg.clone());
+        let hr = p.map(|p| p.vitals.hr).unwrap_or(0);
+        let quality = p.map(|p| p.vitals.quality).unwrap_or(0);
+        drop(w);
+        let fresh = ecg.as_ref().filter(|e| e.result != "recording" && now.saturating_sub(e.ts_ms) < 10 * 60_000);
+        let mode = if until.is_some() || ecg.as_ref().is_some_and(|e| e.result == "recording") {
+            "recording"
+        } else if fresh.is_some() {
+            "result"
+        } else {
+            "ready"
+        };
+        let uneven = fresh.is_some_and(|e| e.result == "review");
+        let mut start = btn(seat, "start_ecg_check", "Start 30 s ECG", "", "zap", serde_json::json!({}));
+        start.then = format!("/app/ecg?seat={seat}");
+        EcgScreen {
+            c,
+            mode,
+            left_ms: until.map(|u| u - now).unwrap_or(1_500),
+            uneven,
+            at: fresh.map(|e| clock::hhmm(e.ts_ms)).unwrap_or_default(),
+            hr,
+            contact_ok: quality >= 70,
+            trace: ui::ecg_points(5, uneven, 320.0, 64.0),
+            start,
+            last: ecg.filter(|e| e.result != "recording").map(|e| (clock::hhmm(e.ts_ms), if e.result == "review" { "Uneven · sent for review".to_string() } else { "Regular rhythm".to_string() })),
+        }
+    }
+}
+
+// ---------------------------------------------------------------- wristband detail
+
+#[derive(Template)]
+#[template(path = "app/band.html")]
+pub struct BandScreen {
+    pub c: AppCommon,
+    pub p: Passenger,
+    pub suit: bool,
+    pub age: String,
+    pub base_left: String,
+    pub screen_left: String,
+    pub signal_word: &'static str,
+    pub signal_bars: Vec<bool>,
+    pub read: ToolBtn,
+}
+
+/// Hours left for a battery at `pct`, given hours on a full charge.
+fn hours_left(pct: u8, full_h: f32) -> String {
+    let h = pct as f32 / 100.0 * full_h;
+    if h < 1.0 {
+        format!("~{} min left", (h * 60.0).round() as u32)
+    } else {
+        format!("~{} h left", h.round() as u32)
+    }
+}
+
+impl BandScreen {
+    pub fn build(state: &Shared, seat: &str) -> Option<Self> {
+        let c = common(state, seat);
+        let now = state.now();
+        let p = state.world.read().expect("world").passenger(seat)?.clone();
+        let q = p.vitals.quality;
+        Some(BandScreen {
+            suit: p.suit(),
+            age: clock::age(now.saturating_sub(p.last_ms)),
+            base_left: hours_left(p.vitals.base_batt, 24.0),
+            screen_left: hours_left(p.vitals.screen_batt, 36.0),
+            signal_word: match q {
+                85.. => "Strong",
+                60.. => "Good",
+                30.. => "Weak · tighten the strap",
+                _ => "Lost · check the band",
+            },
+            signal_bars: (1..=4u8).map(|i| q >= i * 25 - 10).collect(),
+            read: btn(seat, "get_vitals", "Read my band now", "", "pulse", serde_json::json!({})),
+            c,
+            p,
+        })
+    }
 }
 
 // ---------------------------------------------------------------- dashboard

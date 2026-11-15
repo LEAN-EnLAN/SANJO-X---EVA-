@@ -39,19 +39,54 @@
     }
   });
 
-  // ---------------------------------------------------------------- tabs follow navigation
-  document.addEventListener("htmx:afterSettle", function () {
-    var p = location.pathname.replace(/^\/app\/?/, "") || "home";
-    document.querySelectorAll("[data-tab]").forEach(function (a) {
-      var on = a.getAttribute("data-tab") === p;
-      if (a.getAttribute("data-tab") === "eva") {
-        a.classList.toggle("ring-info", on); a.classList.toggle("ring-line", !on);
-      } else if (a.getAttribute("data-tab") === "emergency") {
-        a.classList.toggle("bg-critical", on); a.classList.toggle("text-ink", on); a.classList.toggle("text-muted", !on);
-      } else {
-        a.classList.toggle("bg-ink", on); a.classList.toggle("text-on-light", on); a.classList.toggle("text-muted", !on);
-      }
+  // ---------------------------------------------------------------- tool buttons and forms
+  // Every UI tool posts to /api/eva/tool, the endpoint Eva's own calls use, so each tap is
+  // validated, executed and written to the hash chain the same way.
+  // Forms name their tool arguments `arg.<key>`; they are folded into one `args` JSON field.
+  document.addEventListener("htmx:configRequest", function (e) {
+    var form = e.detail.elt && e.detail.elt.closest && e.detail.elt.closest("[data-tool-form]");
+    if (!form) return;
+    var p = e.detail.parameters, args = {};
+    var get = function (k) { return p instanceof FormData ? p.get(k) : p[k]; };
+    var keys = p instanceof FormData ? Array.from(p.keys()) : Object.keys(p);
+    keys.forEach(function (k) {
+      if (k.indexOf("arg.") !== 0) return;
+      var name = k.slice(4), v = get(k), field = form.querySelector('[name="' + k + '"]');
+      args[name] = (field && field.hasAttribute("data-int")) || /^\d+$/.test(v) ? parseInt(v, 10) : v;
+      if (p instanceof FormData) p.delete(k); else delete p[k];
     });
+    if (p instanceof FormData) p.set("args", JSON.stringify(args)); else p.args = JSON.stringify(args);
+  });
+  // after a tool runs: open the screen it leads to (data-then), or redraw the current
+  // screen in place so the numbers it changed update; a tool run from the sheet closes it.
+  document.addEventListener("htmx:afterRequest", function (e) {
+    var elt = e.detail.elt;
+    if (!elt || !elt.closest || !e.detail.successful) return;
+    var t = elt.closest("[data-tool], [data-tool-form]");
+    if (!t) return;
+    var inSheet = !!elt.closest("#sheet");
+    if (inSheet && M()) M().closeSheet();
+    var then = t.getAttribute("data-then");
+    if (then) {
+      if (M()) M().expect("push");
+      htmx.ajax("GET", then, { target: "#screen" }).then(function () { history.pushState({ htmx: true }, "", then); M() && M().syncTabs(); });
+      return;
+    }
+    var tgt = e.detail.target;
+    if (tgt && tgt.id === "toast" && document.getElementById("screen") && !document.getElementById("chat")) {
+      if (M()) M().expect("refresh");
+      htmx.ajax("GET", location.pathname + location.search, { target: "#screen" });
+    }
+  });
+
+  // tap Eva: a happy hop, then back to what she was doing
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest && e.target.closest("[data-eva-tap]");
+    if (!t || !M()) return;
+    var m = t.querySelector("[data-eva]"), was = m ? m.getAttribute("data-state") : "idle";
+    if (was === "alert") return;
+    M().setMood("happy");
+    setTimeout(function () { M().setMood(was === "happy" ? "idle" : was); }, 1400);
   });
 
   // ---------------------------------------------------------------- Konami → dev panel
@@ -160,10 +195,14 @@
         }).catch(function () { toast("Could not reach Eva", "bad"); });
       };
       rec.start();
+      btn.classList.add("is-recording");
       M() && M().setMood("listening");
     }).catch(function () { toast("Microphone blocked", "bad"); });
   });
-  document.addEventListener("pointerup", function () { if (rec && rec.state === "recording") rec.stop(); });
+  document.addEventListener("pointerup", function () {
+    if (rec && rec.state === "recording") rec.stop();
+    document.querySelectorAll("[data-eva-mic].is-recording").forEach(function (b) { b.classList.remove("is-recording"); });
+  });
 
   // fallback: the browser's own speech recognition, if any
   function browserDictation() {
@@ -212,7 +251,10 @@
     M() && M().setMood("thinking");
     fetch("/api/eva/vision", { method: "POST", body: fd }).then(function (r) { return r.text(); }).then(function (html) {
       var chat = document.getElementById("chat");
-      if (chat) { chat.innerHTML = html; htmx.process(chat); }
+      if (chat) { chat.innerHTML = html; htmx.process(chat); return; }
+      toast(task === "meal" ? "Meal logged from your photo" : "Sent to Eva");
+      if (M()) M().expect("refresh");
+      htmx.ajax("GET", location.pathname + location.search, { target: "#screen" });
     });
   }
   // a video is never uploaded whole: sample 3 evenly spaced frames as JPEG
@@ -239,13 +281,66 @@
   document.addEventListener("change", function (e) {
     var t = e.target;
     if (t.matches("[data-eva-photo]") && t.files[0]) {
-      var meal = window.confirm("Is this a meal? OK = log it as a meal, Cancel = ask Eva about it.");
+      var meal = t.hasAttribute("data-meal") || window.confirm("Is this a meal? OK = log it as a meal, Cancel = ask Eva about it.");
       sendImages([t.files[0]], meal ? "meal" : "symptom", false); t.value = "";
     }
     if (t.matches("[data-eva-video]") && t.files[0]) {
       sampleVideoFrames(t.files[0], 3).then(function (frames) { sendImages(frames, "symptom", true); }); t.value = "";
     }
   });
+
+
+  // ---------------------------------------------------------------- ECG: countdown ring + live trace
+  // The server owns the 30 s window (data-left = ms to go); the page draws a sweeping trace
+  // like a bedside monitor and re-asks the server for the result when the window closes.
+  var BEAT = [0, 0, 0.12, 0.18, 0.1, 0, 0, -0.12, 1, -0.3, 0, 0, 0.08, 0.22, 0.28, 0.18, 0.05, 0, 0, 0];
+  function ecgSample(t, hr) {
+    var period = 60 / (hr || 70), ph = (t % period) / period;   // phase inside one beat
+    var i = ph * 34;                                              // beat shape uses the first 20 of 34 slots
+    if (i >= BEAT.length - 1) return 0;
+    var a = Math.floor(i), f = i - a;
+    return BEAT[a] * (1 - f) + BEAT[a + 1] * f + (Math.random() - 0.5) * 0.02;
+  }
+  function mountEcg(root) {
+    root = root || document;
+    var boxes = Array.prototype.slice.call(root.querySelectorAll("[data-ecg]"));
+    if (root.matches && root.matches("[data-ecg]")) boxes.push(root);
+    boxes.forEach(function (box) {
+      if (box._ecg) return; box._ecg = true;
+      var left = parseInt(box.getAttribute("data-left"), 10) || 30000, t0 = performance.now();
+      var secs = document.querySelector("[data-ecg-secs]"), ring = document.querySelector("[data-ecg-ring]");
+      var cv = document.querySelector("[data-ecg-trace]"), hr = parseInt(box.getAttribute("data-hr"), 10) || 70;
+      var ctx = cv && cv.getContext("2d"), dpr = window.devicePixelRatio || 1, W = 0, H = 0, x = 0, lastY = null, lastT = 0;
+      var ink = getComputedStyle(document.documentElement).getPropertyValue("--color-ink").trim() || "#f4f3f0";
+      function size() { if (!cv) return; W = cv.width = cv.clientWidth * dpr; H = cv.height = cv.clientHeight * dpr; x = 0; lastY = null; }
+      size();
+      var slow = M() && M().reduced.matches, lastSec = -1;
+      function frame(now) {
+        if (!document.body.contains(box)) return;
+        var el = now - t0, rem = Math.max(0, left - el), sec = Math.ceil(rem / 1000);
+        if (secs && sec !== lastSec) { secs.textContent = sec; lastSec = sec; }
+        if (ring) ring.style.strokeDashoffset = (rem / 30000 * 100).toFixed(2);
+        if (ctx && W) {
+          // 25 mm/s feel: the sweep crosses the strip in ~3 s
+          var dt = lastT ? (now - lastT) / 1000 : 0, step = W / 3 * dt;
+          var n = Math.max(1, Math.round(step / dpr));
+          for (var k = 0; k < n; k++) {
+            var nx = x + step / n, t = (now / 1000) - (n - k) * dt / n;
+            var y = H * 0.66 - ecgSample(t, hr) * H * 0.6;
+            ctx.clearRect(nx, 0, 14 * dpr, H);                      // erase just ahead of the pen
+            if (lastY !== null && nx > x) { ctx.strokeStyle = ink; ctx.lineWidth = 1.6 * dpr; ctx.beginPath(); ctx.moveTo(x, lastY); ctx.lineTo(nx, y); ctx.stroke(); }
+            x = nx; lastY = y;
+            if (x >= W) { x = 0; lastY = null; }
+          }
+        }
+        lastT = now;
+        if (rem > 0) slow ? setTimeout(function () { frame(performance.now()); }, 1000) : requestAnimationFrame(frame);
+      }
+      slow ? frame(performance.now()) : requestAnimationFrame(frame);
+    });
+  }
+  document.addEventListener("DOMContentLoaded", function () { mountEcg(document); });
+  document.addEventListener("htmx:load", function (e) { mountEcg(e.target); });
 
   // ---------------------------------------------------------------- service worker (offline shell + queued posts)
   if ("serviceWorker" in navigator) {
