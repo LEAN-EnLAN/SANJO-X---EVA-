@@ -128,6 +128,11 @@ async function dev(ctx, action, form) {
       const chat = await page.ana.locator("#chat").innerText();
       if (!/Now/.test(chat) || !/Next/.test(chat)) throw new Error("answer is not in the Now / Why / How / Next format: " + chat.slice(0, 200));
       await shot(page.ana, "eva-answer");
+      // the suite runs without a key: Eva says she is on her on-board rules, and the endpoint agrees
+      await page.ana.locator("[data-eva-chip]").getByText("On-board rules").waitFor({ timeout: 5000 });
+      const st = await api(ctx.ana, `${BASE}/api/eva/status`);
+      if (st.mode !== "rules" || !["no_key", "offline_flag"].includes(st.reason)) throw new Error("eva status: " + JSON.stringify(st));
+      if (JSON.stringify(st).includes("gsk_")) throw new Error("eva status leaks a key");
     });
 
     await step("log water (Eva chip, +1 glass)", async () => {
@@ -239,6 +244,36 @@ async function dev(ctx, action, form) {
       await page.dash.keyboard.press("Escape");
       // the case closed: compartment 01 clears on the station
       await page.station.locator('[data-compartment="1"][data-state="idle"]').waitFor({ timeout: 10000 });
+    });
+
+    await step("wristband: 640×360 opens the band UI; a short press sends nothing, a 2 s hold calls help; the case closes back to the face", async () => {
+      const wctx = await browser.newContext({ viewport: { width: 640, height: 360 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+      const w = await wctx.newPage();
+      w.on("pageerror", (e) => errors.push(`wrist: ${e.message}`));
+      let helps = 0;
+      w.on("request", (r) => { if (r.url().endsWith("/api/eva/tool") && (r.postData() || "").includes("request_help")) helps++; });
+      await w.goto(`${BASE}/app?seat=4B`);
+      await w.waitForURL(/\/app\/wrist/, { timeout: 5000 });
+      if ((await w.evaluate(() => document.documentElement.dataset.mode)) !== "wristband") throw new Error("html[data-mode] is not wristband");
+      await w.locator(".w-face").waitFor();
+      await shot(w, "wrist-face");
+      await w.keyboard.press("h");
+      const btn = w.locator("[data-wrist-help]");
+      await btn.waitFor();
+      await w.waitForTimeout(700);
+      const box = await btn.boundingBox();
+      await w.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await w.mouse.down(); await w.waitForTimeout(500); await w.mouse.up();
+      await w.waitForTimeout(600);
+      if (helps !== 0) throw new Error("a 500 ms press sent help");
+      await w.mouse.down(); await w.waitForTimeout(2100); await w.mouse.up();
+      await w.locator(".w-take").waitFor({ timeout: 15000 });
+      if (helps !== 1) throw new Error(`a 2 s hold sent ${helps} help requests`);
+      await shot(w, "wrist-takeover");
+      await dev(ctx.dash, "close_case", { seat: "4B" });
+      await w.locator(".w-face").waitFor({ timeout: 10000 });
+      await page.station.locator('[data-compartment="1"][data-state="idle"]').waitFor({ timeout: 10000 });
+      await wctx.close();
     });
 
     await step("every record reaches the ground: verified and acknowledged", async () => {
