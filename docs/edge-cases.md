@@ -195,6 +195,23 @@ Formato de cada edge case: situación, qué hace Eva, qué nunca hace y criterio
 - **Qué nunca hace:** tratar el RSSI como distancia.
 - **Simulación:** el asignado responde "no estoy cerca" y Eva reasigna dentro del plazo.
 
+### T12 · El traje queda entre las dos partes del brazalete
+
+- **Qué pasa:** el pasajero se pone el traje con el módulo de sensores en la piel y la interfaz sobre la manga. Los imanes sostienen, pero los pines no tocan.
+- **Riesgo:** los sensores quedan con su batería chica y sin cable de datos hacia la interfaz.
+- **Cómo responde Eva:** la interfaz detecta que no hay contacto en los pines y pasa a modo traje. Los sensores bajan la frecuencia de muestreo a lo mínimo que mantiene las alarmas y mandan los datos por el enlace corto (propuesta NFC o BLE, a validar). La pantalla muestra la carga de la batería chica y el tiempo estimado que queda. Con poca carga, avisa con tiempo para volver a unir las partes.
+- **Para validar:** autonomía real de la batería chica y si el enlace corto atraviesa las capas del traje.
+
+### T13 · Las partes se separan o la interfaz queda lejos
+
+- **Qué pasa:** la interfaz se suelta (golpe, maniobra) o el pasajero se la saca y el módulo de sensores sigue en la piel.
+- **Cómo responde Eva:** el módulo de sensores sigue midiendo con su batería y guarda los datos. Si pierde el enlace con la interfaz por más de unos segundos, el hub avisa al pasajero y a la tripulación. Una alarma crítica detectada sin interfaz se manda por la malla desde el hub y, si hay, por la pulsera del compañero más cercano.
+
+### T14 · Mala señal óptica en la muñeca
+
+- **Qué pasa:** el sensado multionda funciona mejor en el dedo (por transmisión). En la muñeca se mide por reflexión, con más ruido por movimiento, frío o poca perfusión.
+- **Cómo responde Eva:** cada medición viaja con un índice de calidad de señal. Con calidad baja, Eva no dispara alarmas con ese dato solo: lo cruza con el ECG del arnés y los datos de la nave, y pide quedarse quieto o ajustar la banda.
+
 ## La simulación de desarrollo
 
 - Los escenarios están en `sim/scenarios.json`, en la rama `fase2/03-04-casos-variables`. Cada uno trae las señales en el tiempo, lo que Eva tiene que hacer y antes de cuándo, y lo que no puede hacer.
