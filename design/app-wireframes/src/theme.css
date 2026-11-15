@@ -85,6 +85,11 @@ html, body { background: var(--color-background); color: var(--color-ink); font-
   background-image: radial-gradient(closest-side, color-mix(in oklab, var(--color-info) 30%, transparent), color-mix(in oklab, var(--color-info) 8%, transparent) 60%, transparent);
 }
 
+/* soft lit disc behind a 3D icon (Codex kit): keeps the darker icons readable on pure black */
+@utility bg-pic {
+  background-image: radial-gradient(circle at 50% 30%, var(--color-elevated), var(--color-raised) 70%);
+}
+
 /* the valence scale as one gradient track */
 @utility bg-mood-scale {
   background-image: linear-gradient(90deg, var(--color-mood-1), var(--color-mood-2), var(--color-mood-3), var(--color-mood-4), var(--color-mood-5));

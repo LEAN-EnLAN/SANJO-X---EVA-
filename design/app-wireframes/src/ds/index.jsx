@@ -171,8 +171,8 @@ export const ListRow = ({ leading, title, subtitle, trailing, tone = "default", 
   </div>
 )
 export const IconTile = ({ src, alt = "", active, size = "md", className, children }) => (
-  <span className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full", src ? "bg-background ring-1 ring-line" : active ? "bg-elevated ring-1 ring-line" : "bg-raised", size === "sm" ? "size-12" : size === "lg" ? "size-24" : "size-16", className)}>
-    {src ? <img src={src} alt={alt} className="size-full scale-90 object-cover" /> : children}
+  <span className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full", src ? "bg-pic ring-1 ring-line" : active ? "bg-elevated ring-1 ring-line" : "bg-raised", size === "sm" ? "size-12" : size === "lg" ? "size-24" : "size-16", className)}>
+    {src ? <img src={src} alt={alt} className="size-full object-contain p-0.5" /> : children}
   </span>
 )
 export const Check = ({ done }) => (

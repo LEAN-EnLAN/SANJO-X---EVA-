@@ -250,10 +250,10 @@ const ShipToday = () => (
 
 /* ---------- supplies with stowage ---------- */
 const supplies = [
-  { name: "AEDs", count: "2/2", where: "Corridor B · D", src: "img/icons/aed-station.webp", used: "B is with Ana · 14:04" },
+  { name: "AEDs", count: "2/2", where: "Corridor B · D", src: "img/icons/aed.webp", used: "B is with Ana · 14:04" },
   { name: "AED pads", count: "5/6", where: "Emergency station B", src: "img/icons/aed-pads.webp", used: "1 set used · 14:04" },
-  { name: "Sensor parts", count: "6/6", where: "Med bay · B2", src: "img/wrist/band-base.webp" },
-  { name: "Band screens", count: "4/4", where: "Med bay · B3", src: "img/wrist/band-interface.webp" },
+  { name: "Sensor parts", count: "6/6", where: "Med bay · B2", src: "img/icons/sensor-base.webp" },
+  { name: "Band screens", count: "4/4", where: "Med bay · B3", src: "img/icons/interface.webp" },
 ]
 const SupplyRow = ({ s }) => (
   <li className={s.used ? "flex items-center gap-3 rounded-tile border border-info/40 bg-info/5 p-2.5" : "flex items-center gap-3 rounded-tile bg-raised p-2.5"}>
@@ -313,7 +313,7 @@ export function CrewDashboard() {
                 <Headline as="h1" className="text-4xl">Good afternoon, Mara</Headline>
               </div>
               <div className="flex flex-wrap justify-end gap-2">
-                <InfoChip tone="ok" src="img/icons/ship-hub.webp">Hub online · offline-ready</InfoChip>
+                <InfoChip tone="ok" src="img/icons/hub.webp">Hub online · offline-ready</InfoChip>
                 <InfoChip tone="ok" src="img/icons/lora.webp">Mesh · 15 of 15 bands</InfoChip>
                 <InfoChip tone="info" src="img/icons/earth-link.webp">Earth link · next slot 14:07</InfoChip>
               </div>

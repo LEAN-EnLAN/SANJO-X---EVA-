@@ -17,7 +17,7 @@ const DelayBanner = () => (
       </div>
     </div>
     <div className="flex w-96 shrink-0 items-center gap-3">
-      <span className="flex flex-col items-center gap-1"><IconTile src="img/icons/ship-hub.webp" alt="Ship hub" size="sm" /><span className="text-xs text-muted">Ship hub</span></span>
+      <span className="flex flex-col items-center gap-1"><IconTile src="img/icons/hub.webp" alt="Ship hub" size="sm" /><span className="text-xs text-muted">Ship hub</span></span>
       <div className="flex flex-1 flex-col gap-2">
         <Progress value={68} size="sm" />
         <span className="text-center text-xs text-muted">Next packet arrives in about 4 min</span>

@@ -49,7 +49,7 @@ export function WriteItDown() {
       </div>
       <div className="flex flex-1 flex-col gap-3 rounded-card bg-surface p-4">
         <div className="flex items-start gap-2.5">
-          <EvaMascot mood="care" size="xs" />
+          <EvaMascot mood="writing" size="xs" />
           <p className="text-sm text-info">Write for 5 minutes. What's on your mind, and why?</p>
         </div>
         <p className="text-lg leading-snug text-ink">Mum's message came through today. I miss the sea, the noise of the street. The crew helps<span className="animate-pulse text-info">|</span></p>

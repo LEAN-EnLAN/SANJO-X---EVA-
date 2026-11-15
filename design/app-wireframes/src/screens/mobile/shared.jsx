@@ -3,7 +3,7 @@ import { EvaMascot } from "@/ds/eva-extra"
 import { House, ListChecks, Utensils, BookOpen } from "lucide-react"
 
 /** Eva's mascot as the centre tab */
-const EvaTab = () => <EvaMascot size="sm" alt="" />
+const EvaTab = () => <EvaMascot mood="face" size="sm" alt="" />
 
 const tabs = [
   { icon: House, label: "Home" },

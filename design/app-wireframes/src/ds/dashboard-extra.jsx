@@ -168,7 +168,7 @@ export const TextBox = ({ children, placeholder }) => (
 /** small key/value chip with a leading status dot or image */
 export const InfoChip = ({ tone = "ok", src, children }) => (
   <span className="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-surface pr-3.5 pl-1.5 text-xs text-muted">
-    {src ? <img src={src} alt="" className="size-6 rounded-full object-cover" /> : <span className="grid size-6 place-items-center"><span className={cn("size-2 rounded-full", fill[tone])} /></span>}
+    {src ? <img src={src} alt="" className="size-7 rounded-full bg-pic object-contain" /> : <span className="grid size-6 place-items-center"><span className={cn("size-2 rounded-full", fill[tone])} /></span>}
     {children}
   </span>
 )

@@ -21,14 +21,14 @@ export function EvaHome() {
     <Phone number="E1" caption="Talk to Eva" tabbar={<Tabs active="Eva" />}>
       <PhoneTop left={<IconButton label="Past talks"><History size={18} /></IconButton>} title="Eva" right={<IconButton label="Type instead"><Keyboard size={18} /></IconButton>} />
       <div className="flex flex-col items-center gap-2">
-        <EvaMascot mood="wink" size="xl" glow labelled />
+        <EvaMascot mood="hello" size="xl" glow labelled />
         <p className="text-center text-3xl leading-tight tracking-tight text-ink">Hi Ana. How can I help?</p>
         <p className="flex items-center gap-2 text-sm text-muted"><StatusDot tone="info" pulse />I'm reading your wristband live</p>
       </div>
       <div className="flex gap-2 rounded-tile bg-surface px-3 py-2.5">
         <Live src="img/icons/heart.webp" value="72" unit="bpm" read="Calm" />
         <Live src="img/icons/oxygen.webp" value="98" unit="%" read="Good" />
-        <Live src="img/icons/skin-temp.webp" value="36.4" unit="°C" read="Normal" />
+        <Live src="img/icons/temperature.webp" value="36.4" unit="°C" read="Normal" />
       </div>
       <div className="grid grid-cols-2 gap-2">
         <Chip size="sm" icon={CircleHelp}>How am I?</Chip>
@@ -137,7 +137,7 @@ export function DailyLog() {
     <Phone number="E4" caption="Daily log">
       <PhoneTop left={<IconButton label="Pick a day"><CalendarDays size={18} /></IconButton>} title="Day 94 · log" right={<IconButton label="Share"><Share2 size={18} /></IconButton>} />
       <div className="flex items-center gap-3">
-        <EvaMascot mood="happy" size="md" />
+        <EvaMascot mood="reading" size="md" />
         <div className="flex flex-col">
           <Label>Written by Eva · 14:00</Label>
           <p className="text-xl leading-tight tracking-tight text-ink">A good day. Drink a bit more.</p>
@@ -159,7 +159,7 @@ export function DailyLog() {
         <DayTile src="img/icons/heart.webp" label="Vitals" read="Inside your normal" tone="ok">
           <Sparkline data={[64, 61, 58, 62, 74, 88, 76, 72]} band={[58, 82]} tone="ink" height={44} />
         </DayTile>
-        <DayTile src="img/icons/eva-orb.webp" label="Mood" read="Pleasant · calm">
+        <DayTile src="img/icons/mood.webp" label="Mood" read="Pleasant · calm">
           <div className="flex items-center gap-3"><Orb valence={4} size="sm" /><p className="text-2xl tracking-tight text-ink">Calm</p></div>
         </DayTile>
       </div>

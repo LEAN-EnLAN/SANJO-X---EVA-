@@ -1,5 +1,5 @@
 import { Phone, Headline, Button, IconButton, Card, CardHeader, CardTitle, Badge, StatusDot, Progress, Sparkline, ListRow, IconTile, Check, Segmented } from "@/ds"
-import { PhoneTop, Label, Reading, Tile, Legend, PhotoTile, Thumb, Hero, IconLine } from "@/ds/mobile-extra"
+import { PhoneTop, Label, Reading, Tile, Legend, PhotoTile, Hero, IconLine } from "@/ds/mobile-extra"
 import { Check as CheckIcon, Bell, LayoutGrid, ChevronLeft, Info, ArrowRight, CalendarDays, Plus, Compass, NotebookPen, BellRing, CircleCheck, Mic } from "lucide-react"
 import { EvaMascot } from "@/ds/eva-extra"
 import { Tabs } from "./shared"
@@ -10,7 +10,7 @@ export function Welcome() {
       <PhoneTop left={<Label>Eva by WearMeds</Label>} right={<Badge>Offline ready</Badge>} />
       <Hero src="img/wrist/wrist-hero.webp" alt="The Eva wristband worn on the wrist like a watch" size="lg" />
       <div className="grid grid-cols-2 gap-3">
-        {[{ src: "img/wrist/band-interface.webp", label: "Screen" }, { src: "img/wrist/band-base.webp", label: "Sensor base" }].map(p => (
+        {[{ src: "img/icons/interface.webp", label: "Screen" }, { src: "img/icons/sensor-base.webp", label: "Sensor base" }].map(p => (
           <div key={p.label} className="flex items-center gap-2.5">
             <PhotoTile src={p.src} alt={p.label} size="sm" />
             <span className="flex flex-col"><span className="text-sm text-ink">{p.label}</span><span className="text-xs text-ok">Paired</span></span>
@@ -67,7 +67,7 @@ export function Home() {
         <div className="grid grid-cols-3 gap-3">
           <Vital src="img/icons/heart.webp" value="72" unit="bpm" read="Pulse · calm" />
           <Vital src="img/icons/lungs.webp" value="98" unit="%" read="Oxygen · good" />
-          <Vital src="img/icons/skin-temp.webp" value="36.4" unit="°C" read="Skin · normal" />
+          <Vital src="img/icons/temperature.webp" value="36.4" unit="°C" read="Skin · normal" />
         </div>
       </Card>
       <Card className="py-4">
@@ -76,10 +76,10 @@ export function Home() {
           <span className="flex items-center gap-2 text-xs text-ink"><StatusDot tone="ok" />Joined</span>
         </CardHeader>
         <div className="flex items-center gap-4">
-          <Thumb src="img/wrist/band-top.webp" alt="The wristband, screen part on top" size="band" />
+          <IconTile src="img/icons/wristband.webp" alt="The wristband" size="lg" />
           <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <BandPart src="img/wrist/band-interface.webp" name="Screen" pct={64} read="64%" />
-            <BandPart src="img/wrist/band-base.webp" name="Sensor" pct={100} read="100%" />
+            <BandPart src="img/icons/interface.webp" name="Screen" pct={64} read="64%" />
+            <BandPart src="img/icons/sensor-base.webp" name="Sensor" pct={100} read="100%" />
           </div>
         </div>
       </Card>
@@ -106,7 +106,7 @@ export function HomeGrid() {
         <Tile src="img/icons/water.webp" label="Water" read="1.2 of 2 L" tone="warn" />
         <Tile src="img/icons/radiation.webp" label="Radiation" read="Low today" />
         <Tile src="img/icons/food.webp" label="Food" read="1,640 kcal" />
-        <Tile src="img/icons/aed-station.webp" label="Station" read="AED · corridor B" />
+        <Tile src="img/icons/aed.webp" label="Station" read="AED · corridor B" />
         <Tile src="img/icons/crew.webp" label="Crew" read="15 · all fine" />
         <Tile src="img/icons/earth-link.webp" label="Earth link" read="14 min away" />
       </div>
@@ -136,7 +136,7 @@ export function Heart() {
         <IconLine icon={CircleCheck} tone="ok">Nothing to do · keep your day</IconLine>
       </div>
       <div className="mt-auto flex items-center gap-3">
-        <IconTile src="img/wrist/band-base.webp" alt="Sensor base" size="sm" />
+        <IconTile src="img/icons/sensor-base.webp" alt="Sensor base" size="sm" />
         <p className="text-xs text-muted">Sensor base · 1 min ago</p>
       </div>
     </Phone>
@@ -149,7 +149,7 @@ export function Plan() {
     { src: "img/icons/water.webp", title: "Drink 2 L of water", sub: "1.2 of 2 L", done: false },
     { src: "img/icons/vitamin-d.webp", title: "Take vitamin D", sub: "Done · breakfast", done: true },
     { src: "img/icons/sleep.webp", title: "Sleep 22:30 to 06:30", sub: "Lights dim 22:00", done: false },
-    { src: "img/eva/eva-neutral.webp", title: "Check in with Eva", sub: "Done 09:12", done: true },
+    { src: "img/icons/mood.webp", title: "Check in with Eva", sub: "Done 09:12", done: true },
   ]
   return (
     <Phone number="04" caption="Today's plan" tabbar={<Tabs active="Plan" />}>

@@ -27,12 +27,12 @@ export const Reading = ({ value, unit, read, size = "md", tone = "muted" }) => (
   </div>
 )
 
-/** photoreal object on black in a circle. The icons are centred squares on pure black, so the photo
- *  sits a little inside the ring (scale-90) and nothing reaches the edge of the circle. */
+/** a 3D icon (Codex "clay-lite" kit, transparent, AI-generated: covered by the page-level note) on a soft
+ *  lit disc. The art keeps its own padding, so it sits inside the ring without touching it. */
 const photoSize = { xs: "size-9", sm: "size-12", md: "size-14", lg: "size-18" }
 export const PhotoTile = ({ src, alt = "", size = "md", className }) => (
-  <span className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full bg-background ring-1 ring-line", photoSize[size], className)}>
-    <img src={src} alt={alt} className="size-full scale-90 object-cover" />
+  <span className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full bg-pic ring-1 ring-line", photoSize[size], className)}>
+    <img src={src} alt={alt} className="size-full object-contain p-0.5" />
   </span>
 )
 
@@ -144,12 +144,12 @@ const Layer = ({ graphic, title, read, accent }) => (
 )
 export const SuitDiagram = () => (
   <div className="flex flex-col gap-1">
-    <Layer title="Screen part" read="ECG pads · LoRa" graphic={<img src="img/wrist/band-interface.webp" alt="" className="h-10 w-full object-cover" />} />
+    <Layer title="Screen part" read="ECG pads · LoRa" graphic={<img src="img/icons/interface.webp" alt="" className="size-12 object-contain" />} />
     <Layer accent title="Suit fabric" read="Magnets hold · pins don't" graphic={<>
       <span className="flex w-20 justify-between"><span className="h-3 w-0.5 bg-muted" /><span className="h-3 w-0.5 bg-muted" /><span className="h-3 w-0.5 bg-muted" /></span>
       <span className="h-5 w-full rounded-sm bg-hatch-info" />
     </>} />
-    <Layer title="Sensor base" read="Own battery · LoRa" graphic={<img src="img/wrist/band-base.webp" alt="" className="h-10 w-full object-cover" />} />
+    <Layer title="Sensor base" read="Own battery · LoRa" graphic={<img src="img/icons/sensor-base.webp" alt="" className="size-12 object-contain" />} />
     <Layer title="Your skin" read="Light reads pulse" graphic={<span className="h-2 w-full rounded-full bg-faint" />} />
   </div>
 )

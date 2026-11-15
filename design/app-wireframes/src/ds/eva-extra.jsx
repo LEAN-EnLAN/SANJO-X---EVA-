@@ -3,10 +3,12 @@ import { cn } from "./cn"
 import { Play } from "lucide-react"
 
 /* ---------- the mascot ---------- */
-/** Eva's plush mascot as a sticker on black. mood: neutral | wink | happy | care | snack.
+/** Eva's mascot (Codex kit, one image per state, as in the app): idle | hello | listening | thinking | speaking |
+ *  happy | wink | concerned | alert | calm | sleeping | celebrate | care | reading | writing | sending |
+ *  low-battery, plus face (the tab-bar avatar).
  *  AI-generated: pass `labelled` where it appears large; small avatars are covered by the page-level note. */
 const mascotSize = { xs: "size-8", sm: "size-10", md: "size-14", lg: "size-24", xl: "size-44", hero: "size-56" }
-export const EvaMascot = ({ mood = "neutral", size = "md", labelled, glow, alt = "Eva, the health copilot", className }) => (
+export const EvaMascot = ({ mood = "idle", size = "md", labelled, glow, alt = "Eva, the health copilot", className }) => (
   <span className={cn("relative inline-grid shrink-0 place-items-center", mascotSize[size], className)}>
     {glow && <span className="absolute -inset-1/4 rounded-full bg-eva-glow" />}
     <img src={`img/eva/eva-${mood}.webp`} alt={alt} className="relative size-full object-contain" />
@@ -27,7 +29,7 @@ export const EvaEyes = ({ mode = "open", size = "md" }) => (
 
 /* ---------- conversation ---------- */
 /** one chat bubble. from: eva | me. Eva's bubbles carry her small avatar. */
-export const Bubble = ({ from = "eva", mood = "neutral", children, className }) => from === "eva" ? (
+export const Bubble = ({ from = "eva", mood = "face", children, className }) => from === "eva" ? (
   <div className={cn("flex max-w-full items-end gap-2 self-start", className)}>
     <EvaMascot mood={mood} size="xs" alt="Eva" />
     <div className="flex min-w-0 flex-col gap-2 rounded-tile rounded-bl-sm bg-raised px-3.5 py-2.5 text-sm leading-snug text-ink">{children}</div>
