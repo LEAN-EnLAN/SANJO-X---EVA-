@@ -30,7 +30,7 @@ if (!a.out) {
 async function rest(path) {
   const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_ANON_KEY, token = process.env.EVA_ACCESS_TOKEN;
   if (!url || !key || !token) throw new Error("set SUPABASE_URL, SUPABASE_ANON_KEY and EVA_ACCESS_TOKEN (or use --rows/--pubkey)");
-  const r = await fetch(`${url}/rest/v1/${path}`, { headers: { apikey: key, authorization: `Bearer ${token}` } });
+  const r = await fetch(`${url}/rest/v1/${path}`, { headers: { apikey: key, authorization: `Bearer ${token}`, "accept-profile": "eva" } });
   if (!r.ok) throw new Error(`REST ${r.status}`);
   return r.json();
 }

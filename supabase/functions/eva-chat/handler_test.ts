@@ -9,7 +9,7 @@ function assert(cond: unknown, msg: string): asserts cond {
 
 Deno.env.set("SUPABASE_URL", "https://example.supabase.co");
 Deno.env.set("SUPABASE_ANON_KEY", "anon-test");
-Deno.env.set("GROQ_API_KEY", "test-key-not-real");
+Deno.env.set("EVA_GROQ_API_KEY", "test-key-not-real");
 
 let modelCalls = 0;
 let lastSystem = "";
@@ -21,7 +21,9 @@ globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) =>
   if (url.endsWith("/auth/v1/user")) {
     return auth === "Bearer good" ? Response.json({ id: "u-1" }) : new Response("{}", { status: 401 });
   }
-  if (url.endsWith("/rest/v1/rpc/eva_chat_consume")) return Response.json([consume]);
+  const profile = new Headers(init?.headers).get("content-profile");
+  if (url.endsWith("/rest/v1/rpc/ensure_profile")) return profile === "eva" ? Response.json(consume.role ?? "viewer") : new Response("{}", { status: 404 });
+  if (url.endsWith("/rest/v1/rpc/eva_chat_consume")) return profile === "eva" ? Response.json([consume]) : new Response("{}", { status: 404 });
   if (url.includes("/chat/completions")) {
     modelCalls++;
     lastSystem = JSON.parse(String(init?.body)).messages[0].content;

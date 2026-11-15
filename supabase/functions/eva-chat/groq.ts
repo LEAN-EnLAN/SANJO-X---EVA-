@@ -1,6 +1,6 @@
 // Minimal Groq chat client (OpenAI-compatible endpoint), same defaults as the
 // ship app's chat pipeline (docs/app/RUNNING.md: EVA_CHAT_MODEL, temperature 0.3).
-// Deno port for the eva-chat Edge Function. The key comes from the GROQ_API_KEY function secret; it is never logged,
+// Deno port for the eva-chat Edge Function. The key comes from the EVA_GROQ_API_KEY function secret; it is never logged,
 // never returned and never written anywhere.
 
 export const GROQ_BASE_URL = Deno.env.get("GROQ_BASE_URL") ?? "https://api.groq.com/openai/v1";

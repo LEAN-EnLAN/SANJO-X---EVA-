@@ -15,7 +15,7 @@ if [ "$(id -u)" = 0 ]; then chown -R nobody "$work" 2>/dev/null || true; run_as=
 "${run_as[@]}" "$bin/initdb" -D "$work/data" -U postgres -A trust >/dev/null
 "${run_as[@]}" "$bin/pg_ctl" -D "$work/data" -o "-k $work -c listen_addresses=''" -l "$work/log" -w start >/dev/null
 
-export PGHOST=$work PGUSER=postgres PGDATABASE=postgres PGOPTIONS="-c client_min_messages=warning"
+export PGHOST=$work PGUSER=postgres PGDATABASE=postgres PGOPTIONS="-c client_min_messages=warning -c eva.test_local=on"
 psql -q -v ON_ERROR_STOP=1 -f "$here/supabase-stub.sql" >/dev/null
 for f in "$root"/migrations/*.sql; do
   psql -q -v ON_ERROR_STOP=1 -f "$f" >/dev/null
@@ -23,6 +23,6 @@ for f in "$root"/migrations/*.sql; do
 done
 if [ "${1:-}" = "--seed" ] && [ -f "$root/seed.sql" ]; then
   psql -q -v ON_ERROR_STOP=1 -f "$root/seed.sql" >/dev/null && echo "seeded"
-  psql -q -c "select ship, acknowledged_records, open_cases, passengers, station_mode from public.public_stats"
+  psql -q -c "select ship, acknowledged_records, open_cases, passengers, station_mode from eva.public_stats"
 fi
 psql -v ON_ERROR_STOP=1 -f "$root/tests/rls.test.sql"

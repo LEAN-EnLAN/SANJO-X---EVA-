@@ -1,57 +1,18 @@
-# Supabase CLI config for Eva's Earth / cloud side (ADR-014). Used by `npx supabase@latest ...`
-# (functions deploy, db push, local `supabase start`). Hosted settings are applied by
-# scripts/provision.sh through the Management API; this file mirrors them for local runs.
-project_id = "eva-wearmeds"
+# Supabase CLI config for Eva's Earth / cloud side (ADR-014). Used only for
+#   npx supabase@latest functions deploy eva-chat --project-ref <ref> --no-verify-jwt --use-api
+#
+# Eva currently SHARES a project with another app (changuito) inside its own `eva` schema.
+# Never run `supabase config push`, `supabase db push`, `supabase db reset` or `supabase link`
+# against that project: they would apply project-wide settings or another migration history.
+# Migrations go through supabase/scripts/provision.sh (eva.schema_migrations); project-wide
+# settings are only ever appended to (exposed schemas, redirect URLs). See supabase/README.md.
+project_id = "eva"
 
 [api]
-enabled = true
-port = 54321
-schemas = ["public", "graphql_public"]
-extra_search_path = ["public", "extensions"]
-max_rows = 1000
+schemas = ["public", "graphql_public", "eva"]
 
-[db]
-port = 54322
-major_version = 17
-
-[db.seed]
-enabled = true
-sql_paths = ["./seed.sql"]
-
-[storage]
-enabled = true
-file_size_limit = "50MiB"
-
-[auth]
-enabled = true
-site_url = "https://eva-wearmeds.vercel.app"
-additional_redirect_urls = ["http://localhost:8080", "http://localhost:8080/**", "https://eva-wearmeds.vercel.app/**"]
-jwt_expiry = 3600
-enable_refresh_token_rotation = true
-# Email/password sign-up is open but controlled: a confirmed email is required, every new account
-# starts as 'viewer', and roles change only through public.admin_set_role() or the service role.
-enable_signup = true
-minimum_password_length = 10
-
-[auth.email]
-enable_signup = true
-enable_confirmations = true
-double_confirm_changes = true
-secure_password_change = true
-
-# Ready to enable once a Google Cloud OAuth client exists (supabase/README.md, "Google sign-in").
-[auth.external.google]
-enabled = false
-client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
-secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
-skip_nonce_check = false
-
-[edge_runtime]
-enabled = true
-policy = "per_worker"
-
-# The function validates the caller's JWT itself (Auth /user + the rate-limit RPC) so that CORS
-# preflights reach it; requests without a valid user token get 401 from the function.
+# The function validates the caller's JWT itself (Auth /user + eva RPCs) so that CORS preflights
+# reach it; requests without a valid user token get 401 from the function.
 [functions.eva-chat]
 enabled = true
 verify_jwt = false

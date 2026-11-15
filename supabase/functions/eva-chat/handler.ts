@@ -5,7 +5,7 @@
 //
 // Differences from the Vercel function, on purpose:
 //   - a valid Supabase JWT is required (any role: crew_lead, mission_control, team, viewer);
-//   - the rate limit is per user and persistent (public.eva_chat_consume, table public.rate_limits),
+//   - the rate limit is per user and persistent (eva.eva_chat_consume, table eva.rate_limits),
 //     not per IP in memory.
 //
 // Request:  POST { "text" | "message": string, "history"?: [{role, content}], "lang"?: "en" | "es" }
@@ -13,7 +13,7 @@
 // Response: 200 { text, source: "guard", reason } | { text, source: "model", model }
 //           401 unauthenticated · 403 no_role · 429 rate_limited (retry-after) · 503 eva_offline
 //
-// GROQ_API_KEY is a function secret. It is never logged or returned; logs carry a hash of the user
+// EVA_GROQ_API_KEY is a function secret (eva-prefixed so it never clashes with the host app's). It is never logged or returned; logs carry a hash of the user
 // id, lengths and the guard's decision, never message text.
 import { asUserData, guardReply, MAX_HISTORY_TURNS, MAX_INPUT_CHARS, sanitize, screen, SYSTEM_PROMPT } from "./guard.ts";
 import { chat, CHAT_MODEL, redact, type Turn } from "./groq.ts";
@@ -76,11 +76,18 @@ async function authorize(token: string): Promise<{ uid: string; consume: Consume
   if (!u.ok) return { status: 401, error: "unauthenticated" };
   const user = await u.json().catch(() => null) as { id?: string } | null;
   if (!user?.id) return { status: 401, error: "unauthenticated" };
-  const r = await fetch(`${base}/rest/v1/rpc/eva_chat_consume`, {
-    method: "POST",
-    headers: { ...headers, "content-type": "application/json" },
-    body: "{}",
-  });
+  // Eva lives in the `eva` schema (shared project): PostgREST needs the Content-Profile header.
+  const rpc = (fn: string) =>
+    fetch(`${base}/rest/v1/rpc/${fn}`, {
+      method: "POST",
+      headers: { ...headers, "content-type": "application/json", "content-profile": "eva", "accept-profile": "eva" },
+      body: "{}",
+    });
+  // First use creates the caller's Eva profile (role viewer); users of the host app get nothing in
+  // `eva` until they talk to Eva.
+  const p = await rpc("ensure_profile");
+  if (!p.ok) return { status: p.status === 401 ? 401 : 503, error: p.status === 401 ? "unauthenticated" : "eva_offline" };
+  const r = await rpc("eva_chat_consume");
   if (!r.ok) return { status: r.status === 401 ? 401 : 503, error: r.status === 401 ? "unauthenticated" : "eva_offline" };
   const rows = await r.json().catch(() => []) as Consume[];
   const c = rows?.[0];
@@ -125,7 +132,7 @@ export async function handler(req: Request): Promise<Response> {
     return json(200, { text: verdict.text, source: "guard", reason: verdict.reason }, origin);
   }
 
-  const key = Deno.env.get("GROQ_API_KEY");
+  const key = Deno.env.get("EVA_GROQ_API_KEY"); // eva-prefixed: the project may be shared
   if (!key) return json(503, { error: "eva_offline", text: "Eva is offline right now. Try again in a minute." }, origin);
 
   const lang = body?.lang === "es" ? "Answer in Spanish (Rioplatense, using 'vos')." : "Answer in English.";

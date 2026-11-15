@@ -1,5 +1,5 @@
 // GET /api/status · public counts for the /status/ page (Vercel Function, Node).
-// Reads the public_stats view with the public anon key (SUPABASE_URL, SUPABASE_ANON_KEY env vars).
+// Reads the eva.public_stats view with the public anon key (SUPABASE_URL, SUPABASE_ANON_KEY env vars).
 // public_stats exposes aggregates only (no health data, names, seats, hashes or keys).
 // Same-origin for the page, so the site's CSP (connect-src 'self') stays unchanged.
 export default async function handler(req: any, res: any) {
@@ -16,7 +16,7 @@ export default async function handler(req: any, res: any) {
   }
   try {
     const r = await fetch(`${url}/rest/v1/public_stats?select=ship,display_name,demo,epoch,acknowledged_records,last_ingest_at,open_cases,total_cases,passengers,station_mode&order=ship.asc`, {
-      headers: { apikey: key, accept: "application/json" },
+      headers: { apikey: key, accept: "application/json", "accept-profile": "eva" }, // Eva lives in the eva schema
       signal: AbortSignal.timeout(8000),
     });
     if (!r.ok) throw new Error(`supabase ${r.status}`);
