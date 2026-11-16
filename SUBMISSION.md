@@ -27,40 +27,28 @@ https://github.com/LEAN-EnLAN/SANJO-X---EVA- (the code, the final report in `doc
 
 ## Project details
 
-**What it does**
-Eva watches each person's vital signs against their own baseline and talks with them by voice or text. It keeps a wellness journal; if someone writes "I feel alone", Eva answers, logs it and suggests a concrete step. It guides people through emergencies with short, unambiguous screens: the shelter route during a solar particle event, and CPR pacing and the emergency station's lit AED compartment when someone stops responding. Every event is recorded in a signed log that Earth receives and acknowledges. Eva gives diagnostic support only. The AED decides the shock, and the crew lead decides treatment.
+```
+WHAT IT DOES
+Eva by WearMeds is a Super Intelligence health copilot for everyone on board a spaceflight, crew and commercial passengers alike. It monitors each person's vital signs against their own baseline, talks with them by voice or text, and keeps a wellness journal: if someone says "I feel alone", Eva answers, logs it and suggests a concrete step. In an emergency it turns health signals into one clear action per screen. During a solar particle event it guides each person to the shelter. When someone stops responding, Eva alerts the crew and calls the nearest person to assist, guides them through CPR, and the onboard medical station lights the compartment with the AED. Every step is recorded in a signed log that is stored on board and forwarded to Earth, which receives and acknowledges it. Eva gives diagnostic support only: the AED decides the shock and the crew lead decides treatment.
 
-**How it works**
-- **Two-module wristband (proposed hardware).** A sensor base on the skin reads pulse and SpO₂, skin temperature and movement. A detachable screen module, held by magnets, handles voice, touch and the help button. A proposed on-demand ECG uses two upper pads touched with the index and little finger of the free hand. In suit mode the base stays on the skin and keeps measuring.
-- **Ship network.** The ship hub hosts the Super Intelligence and stores everything. Wristbands, phones and the medical station are clients over a LoRa network for alerts and summaries, Wi-Fi for voice and BLE for the signal link. Serious alerts reach the crew within seconds, and the station lights the compartment that is needed.
-- **Two layers.** Deterministic rules raise alerts immediately. A conversational layer explains, guides and answers, behind a topic guard: space and health only, no treatment and no shock decisions.
-- **Records.** An Ed25519 signed hash chain: stored on board, forwarded when the link allows, and acknowledged by the ground instance.
+HOW IT WORKS
+Eva runs on a proposed two-module wristband. A sensor base on the skin reads pulse, SpO2, skin temperature and movement. A detachable screen module, held by magnets, provides voice, touch and a help button; in suit mode the base stays on the skin and keeps measuring. A proposed on-demand ECG uses two upper pads touched with the index and little finger of the free hand. The ship hub hosts the Super Intelligence and stores everything; wristbands, phones and the medical station connect to it over LoRa for alerts and summaries, Wi-Fi for voice and BLE for the sensor link. Two layers keep it safe: deterministic rules raise critical alerts instantly, and a conversational layer explains and guides behind a topic guard (space and health only, never treatment or shock decisions). Records use an Ed25519 signed hash chain.
 
-**What we built (prototype)**
-- **The Eva app:** one Rust binary covering the passenger PWA, a wristband-screen mode, the crew dashboard, the emergency-station screen and the ground instance, with 152 automated tests.
-- **A hosted demo** with live chat, voice input, photo and video understanding, and spoken answers: https://eva-wearmeds.vercel.app/app/
-- **An Android APK** with online, offline and connect-to-hub modes: https://eva-wearmeds.vercel.app/download/
-- **A hosted backend** with row-level security.
-- **The public material:** a landing page, a research hub, a 6-slide pitch, a 30 s video and a 28-page final report in Spanish and English.
+WHAT WE BUILT
+A working prototype as a single Rust binary: passenger app (PWA), wristband-screen mode, crew dashboard, medical-station screen and a ground instance, covered by 152 automated tests. A hosted demo with live chat, voice input, photo and video understanding and spoken answers; an Android APK with online, offline and connect-to-hub modes; a hosted backend with row-level security; plus a landing page, research hub, pitch, 30-second video and a 28-page final report in English and Spanish.
 
-**Benefits and intended impact**
-- Reduces cognitive workload in the first minutes, when nobody on board is a doctor and Earth may be far away.
-- Turns scattered signals into one clear action per screen, built around a design rule that every helper knows what to do within 10 seconds of Eva calling.
-- Keeps continuity of care: every step is signed and arrives on Earth in order.
-- Scales as the control interface and assistant that more modules plug into: other health devices, emergency and catastrophe response, information, entertainment and learning. It is designed for tourist flights, commercial stations and future deep-space bases.
+BENEFITS AND INTENDED IMPACT
+In the first minutes of an emergency there may be no doctor on board and Earth may be far away. Eva reduces cognitive workload, makes sure the nearest person knows what to do, where and how, and keeps continuity of care with a complete, ordered record for Earth. Long term, Eva is the control interface and assistant that more modules plug into (other health devices, emergency and catastrophe response, information, entertainment and learning), from tourist flights to commercial stations and future deep-space bases.
 
-**Tools, languages, hardware and software**
-- **Software:** Rust (axum, askama, htmx), TypeScript (Vercel functions), Java (Android wrapper), SQL with row-level security (Supabase), HTML/CSS/JS.
-- **Proposed hardware:** nRF54L15, MAX30101, MAX30208, BMI270, MAX30003 (ECG, proposed), SX1262 LoRa at 915 MHz, and an ESP32-S3 screen module.
-- **Hosting:** Vercel and Supabase.
-- **Models used in the demo, through Groq:** gpt-oss (chat), Whisper large v3 turbo (speech-to-text), Orpheus (speech) and Qwen (vision). MedGemma is our candidate model for the mission version, to be specialised and validated for space medicine.
+TOOLS, LANGUAGES, HARDWARE AND SOFTWARE
+Rust (axum, askama, htmx), TypeScript (Vercel functions), Java (Android), SQL with row-level security (Supabase), HTML/CSS/JavaScript. Demo models through Groq: gpt-oss (chat), Whisper large v3 turbo (speech-to-text), Orpheus (speech) and Qwen (vision). MedGemma is our candidate model for a mission version, to be specialised and validated for space medicine. Proposed hardware: nRF54L15, MAX30101, MAX30208, BMI270, MAX30003 (ECG), SX1262 LoRa at 915 MHz and an ESP32-S3 screen module. NASA data: OSDR (Inspiration4, OSD-575 and OSD-569), DONKI, and HRP resources.
 
-**What we considered**
-- Earth-independent medical operations.
-- Microgravity conditions for giving care.
-- Privacy and encryption of medical data, segment by segment.
-- Energy budgets.
-- The fact that this is a concept, not a medical device: claims are separated into decision, implementation, published data, calculation and proposal throughout the report.
+HOW IT IS CREATIVE
+Most wearables record and analyse later. Eva acts in the moment and coordinates people and equipment: it connects a person's own baseline, the nearest helper and the station's lit compartment into a single guided response. The wristband splits into two modules so it keeps working under a spacesuit, and the critical path never depends on generating an answer.
+
+FACTORS WE CONSIDERED
+Earth-independent medical operations and communication delay; care in microgravity; privacy and encryption of medical data on every link; energy budgets and battery life; usability for people with no medical training; and honesty about scope. Eva is a concept, not a medical device, and our report separates decisions, implementation, published data, calculations and proposals.
+```
 
 ---
 
