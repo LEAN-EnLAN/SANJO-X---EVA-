@@ -233,7 +233,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(true); // uploads of content:// photos picked or captured
         s.setSupportMultipleWindows(false);
-        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.5");
+        s.setUserAgentString(s.getUserAgentString() + " EvaAndroid/0.3.6");
         // The demo replay is plain static pages: no file:// or content:// beyond uploads, and its player frames and
         // fetches stay same-origin (the asset loader serves the bundle on an https origin, not file://).
         s.setAllowFileAccessFromFileURLs(false);

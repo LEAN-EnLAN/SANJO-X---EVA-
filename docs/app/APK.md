@@ -7,15 +7,20 @@ The APK is a small native wrapper (Java, no Capacitor/Cordova; its only library 
 | | |
 |---|---|
 | Package | `tech.sanjox.eva` (debug: `tech.sanjox.eva.debug`, can be installed alongside) |
-| Version | 0.3.5 (code 305) |
+| Version | 0.3.6 (code 306) |
 | SDK | minSdk 26 (Android 8.0), targetSdk / compileSdk 36 (Android 16) |
-| Size | release 2.3 MB, debug 3.5 MB (the offline demo is 4.9 MB of assets, compressed) |
+| Size | release 2.3 MB (2,395,408 bytes), debug 3.5 MB (the offline demo is 4.9 MB of assets, compressed) |
 | Signing | release: own keystore (RSA 3072, v2 scheme), cert SHA-256 `55:F1:78:EE:7A:AE:7E:AD:80:83:5D:AA:59:EE:47:0A:5E:D7:B9:29:00:FD:19:4A:B7:7F:42:50:58:88:44:D7` |
 | Source | `android/` (Gradle wrapper 8.14.7, AGP 8.13.2) |
 
 ## Install from a QR (0.3.5)
 
 `https://eva-wearmeds.vercel.app/download/` ("Install Eva on Android", EN/ES): a Download APK button (`/download/eva.apk`, served as `application/vnd.android.package-archive`), the version and size, three steps (allow the install, open Eva, choose "Try the demo") and a QR code to that page, an inline SVG generated locally (`pitch4/assets/qr.js`, ECC M, 4-module quiet zone, checked with jsQR).
+
+## What 0.3.6 changes
+
+- The offline bundle is the new everyone-friendly demo already live on the site (a copy of `public-sites/app/` without the old board): the first-visit intro, the guided tour with speech, "Talk to Eva", tap **or hold** to talk, the journal's "Say it instead", plainer captions ("Tap to talk to Eva"). The launcher still hides the site and board links inside the app and starts with a UTF-8 document.
+- No native change beyond the version: the microphone is still granted to both demo origins (Vercel online, the asset host offline), and media plays without a tap, so Eva's spoken answers (a WAV from a `blob:` URL, or the browser's voice) and the tour's speech play in the WebView.
 
 ## What 0.3.5 adds
 
@@ -39,7 +44,7 @@ The APK is a small native wrapper (Java, no Capacitor/Cordova; its only library 
 
 ## Install
 
-1. Scan the QR on `https://eva-wearmeds.vercel.app/download/`, or copy `eva-v0.3.5.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.5.apk`). It is signed with the same key as 0.3.1–0.3.4, so it installs over them. Open it and tap **Try the demo (online)**, or **Offline demo** with no network: no hub needed.
+1. Scan the QR on `https://eva-wearmeds.vercel.app/download/`, or copy `eva-v0.3.6.apk` to the phone (USB, chat, or `adb install -r eva-v0.3.6.apk`). It is signed with the same key as 0.3.1–0.3.5, so it installs over them. Open it and tap **Try the demo (online)**, or **Offline demo** with no network: no hub needed.
    **Hub mode: update the hub too**: there the APK is only a WebView around the hub; the copy rules v3 wording ships in the `eva` 0.3.3 binary. If the phone still shows the old look after the hub update, Android Settings → Apps → Eva → Storage → Clear cache (the service worker cache `eva-shell-v9` normally evicts the old one).
 2. Open it from Files. Android asks to allow **Install unknown apps** for the app that opens it (Files, Chrome, the chat app): allow it, go back, tap **Install**. Play Protect may warn about an unknown developer: choose **Install anyway**.
 3. To switch between the debug and release builds, or to a build signed with another key, uninstall first. Debug and release have different package names, so both can be installed at the same time.
@@ -124,16 +129,26 @@ Needs JDK 17+ (tested with OpenJDK 21) and the Android SDK packages `platforms;a
 ```bash
 cd android
 echo "sdk.dir=/path/to/android-sdk" > local.properties        # or export ANDROID_HOME
-./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.5-debug.apk
+./gradlew testDebugUnitTest lintDebug assembleDebug            # → app/build/outputs/apk/debug/eva-v0.3.6-debug.apk
 
 # signed release: keystore and passwords OUTSIDE the repo
 EVA_SIGNING_PROPS=/secure/place/signing.properties ./gradlew lintRelease assembleRelease
-#   → app/build/outputs/apk/release/eva-v0.3.5-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
+#   → app/build/outputs/apk/release/eva-v0.3.6-release.apk (unsigned if EVA_SIGNING_PROPS is not set)
 ```
 
 `signing.properties` holds `storeFile=`, `storePassword=`, `keyAlias=`, `keyPassword=`. The 0.3.1 release keystore (`eva-release.p12`, alias `eva`) and its password file were created outside the repo, both mode 600. **Back them up**: an update signed with a different key has to be installed after uninstalling the old app. `.gitignore` excludes build outputs, `local.properties` and `*.jks`, `*.keystore`, `*.p12` and `signing.properties`.
 
 To make a new key: `keytool -genkeypair -keystore eva-release.p12 -storetype PKCS12 -alias eva -keyalg RSA -keysize 3072 -validity 10000`.
+
+## Test results 0.3.6 (17/11/2026)
+
+| check | result |
+|---|---|
+| JVM unit + Robolectric | **84 / 84 pass** (the bundle checks follow the new `replay.js`: a short toast and the recorded answer when Eva can't be reached; media plays without a user gesture in both demo modes) |
+| `lintDebug`, `lintRelease` | 0 errors |
+| `apksigner verify --print-certs` | release verifies (v2), signer SHA-256 `55:F1:78:EE:…:44:D7`, the same key as 0.3.1–0.3.5 |
+| `aapt2 dump badging` | `tech.sanjox.eva` 0.3.6/306; 188 files under `assets/replay/` |
+| Headless Chromium, WebView user agent, the bundle served at the asset-host and site origins, live API, fake media | **37 / 38**: launcher (9 views, band auto-detect, `?mode`, deep links), plain http and `file://` have no API, "Tap to talk to Eva", chat, mic → stt → chat, Eva speaks (live tts answered 204 in English during the run, so the browser voice at 0.95; a mocked WAV from tts plays through `Audio` from a `blob:` URL at both origins), photo and video → vision, offline → toast + recorded answer, the band's Eva page. The one failure: the site-origin photo late in the sequential run got no answer from the vision endpoint; the same request answered on its own |
 
 ## Test results 0.3.5 (15/11/2026)
 

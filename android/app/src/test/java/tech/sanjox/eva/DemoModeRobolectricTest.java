@@ -169,6 +169,8 @@ public class DemoModeRobolectricTest {
         assertEquals("https://eva-wearmeds.vercel.app/app/", shadowOf(web(a)).getLastLoadedUrl());
         assertTrue(web(a).getSettings().getJavaScriptEnabled());
         assertTrue(web(a).getSettings().getDomStorageEnabled());
+        // Eva's spoken answers (a WAV from a blob: URL) and the guided tour's speech play without a tap on the audio
+        assertFalse(web(a).getSettings().getMediaPlaybackRequiresUserGesture());
         assertEquals(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_USER, a.getRequestedOrientation());
     }
 
@@ -304,6 +306,7 @@ public class DemoModeRobolectricTest {
     public void offlineDemoIsServedFromTheApkAssets() throws Exception {
         MainActivity a = launch(AppMode.OFFLINE);
         assertEquals(AppMode.OFFLINE_START, shadowOf(web(a)).getLastLoadedUrl());
+        assertFalse("spoken answers play in the bundle too", web(a).getSettings().getMediaPlaybackRequiresUserGesture());
         WebViewClient c = client(a);
         WebResourceResponse index = c.shouldInterceptRequest(web(a), request(AppMode.OFFLINE_START, true));
         assertNotNull(index);
@@ -361,7 +364,7 @@ public class DemoModeRobolectricTest {
                 js.contains("return loc.hostname === ASSET_HOST ? HOSTED_API : \"/api/eva/chat\";"));
         assertTrue("no API from file:// or plain http", js.contains("if (loc.protocol !== \"https:\") return null;"));
         assertTrue("voice, photo and video use the same base", js.contains("u.replace(/chat$/, name)"));
-        assertTrue("silent fallback to the captured answer", js.contains("offlineToast()"));
+        assertTrue("a short toast and the recorded answer when Eva can't be reached", js.contains("toast(failText(res.error"));
     }
 
     @Test
