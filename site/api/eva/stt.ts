@@ -9,7 +9,7 @@ const TYPES: Record<string, string> = { "audio/webm": "webm", "audio/ogg": "ogg"
 
 export default async function handler(req: any, res: any) {
   if (preflight(req, res)) return;
-  const wait = limited(req, "stt", 10);
+  const wait = limited(req, "stt", 15);
   if (wait) { res.setHeader("retry-after", String(wait)); return res.status(429).json({ error: "rate_limited" }); }
   const body = jsonBody(req);
   const mime = String(body.mime ?? "").split(";")[0].trim().toLowerCase();

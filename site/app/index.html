@@ -5,63 +5,144 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>Eva demo</title>
+<meta name="description" content="Meet Eva, the Super Intelligence health helper for people travelling in space. A guided tour, a live talk with Eva, and every screen of the demo.">
 <link rel="icon" href="static/icons/icon-192.png">
 <style>
 @font-face{font-family:Inter;src:url(static/fonts/inter-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
-:root{--bg:#000;--ink:#f4f3f0;--mu:#9b9996;--rule:#2a2a2a;--eva:#1fe5c4;--alarm:#ff2a1f;color-scheme:dark}
+:root{--bg:#000;--ink:#f4f3f0;--mu:#9b9996;--rule:#2a2a2a;--eva:#1fe5c4;--acc:#f28a1a;--alarm:#ff2a1f;--tour-h:0px;color-scheme:dark}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.4 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+html{font-size:16px;background:var(--bg)}
+html[data-ts="1"]{font-size:18px}
+html[data-ts="2"]{font-size:20px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:400 1.125rem/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit}
+:focus-visible{outline:2px solid var(--eva);outline-offset:3px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* menu */
-#menu{min-height:100%;display:flex;flex-direction:column;padding:max(24px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));max-width:880px;margin:0 auto}
-.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{font-size:15px;letter-spacing:.02em}
-.lang{display:flex;border:1px solid var(--rule)}
-.lang button{padding:6px 12px;font-size:13px;letter-spacing:.06em;color:var(--mu)}
-.lang button+button{border-left:1px solid var(--rule)}
-.lang button[aria-pressed=true]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--eva)}
-h1{font-weight:400;font-size:clamp(34px,7vw,64px);line-height:1.02;letter-spacing:-.02em;margin:40px 0 10px}
-.sub{color:var(--mu);font-size:15px;margin-bottom:32px}
-.lab{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);margin:28px 0 10px}
+#menu{min-height:100%;display:flex;flex-direction:column;padding:max(1.25rem,env(safe-area-inset-top)) 1rem max(1.5rem,env(safe-area-inset-bottom));max-width:56rem;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.brand{font-size:1rem;letter-spacing:.02em}
+.tools{display:flex;gap:.5rem;flex-wrap:wrap}
+.seg{display:flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden}
+.seg button{min-width:3rem;min-height:3rem;padding:0 .9rem;font-size:1rem;color:var(--mu)}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button[aria-pressed=true]{color:var(--ink);box-shadow:inset 0 -3px 0 var(--eva)}
+.seg .ts1{font-size:1.1rem}.seg .ts2{font-size:1.25rem}
+h1{font-weight:400;font-size:clamp(2.25rem,7vw,4rem);line-height:1.05;letter-spacing:-.02em;margin:2rem 0 .75rem}
+.sub{color:var(--mu);font-size:1.25rem;line-height:1.5;max-width:40rem}
+.status{display:flex;align-items:center;flex-wrap:wrap;gap:.2rem .6rem;margin:1.25rem 0 0;font-size:1.0625rem;color:var(--ink)}
+.status i{width:.7rem;height:.7rem;border-radius:99px;background:var(--mu);flex:none}
+.status[data-on=true] i{background:var(--eva)}
+.status b{font-weight:500;white-space:nowrap}
+.status span{color:var(--mu)}
+.again{margin-top:.75rem;font-size:1rem;color:var(--mu);text-decoration:underline;text-underline-offset:3px;min-height:3rem;display:inline-flex;align-items:center}
+.big{display:grid;gap:.75rem;margin-top:1.75rem}
+@media (min-width:44rem){.big{grid-template-columns:1fr 1fr}}
+.act{display:flex;align-items:center;gap:1rem;text-align:left;padding:1.1rem 1.25rem;min-height:5.5rem;border:1px solid var(--rule);border-radius:1.25rem;transition:border-color .2s}
+.act:hover,.act:focus-visible{border-color:var(--ink)}
+.act.primary{border-color:var(--ink)}
+.act svg{width:2.5rem;height:2.5rem;flex:none;stroke:var(--eva);fill:none;stroke-width:1.6}
+.act b{display:block;font-weight:500;font-size:1.375rem;line-height:1.25}
+.act span span{display:block;color:var(--mu);font-size:1.0625rem;line-height:1.45;margin-top:.2rem}
+.lab{font-size:.9375rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin:2.5rem 0 .75rem}
+.lab b{color:var(--eva);font-weight:500}
+.path{list-style:none;padding:0;border-top:1px solid var(--rule)}
+.path li{border-bottom:1px solid var(--rule)}
+.path button{display:flex;align-items:center;gap:1rem;width:100%;text-align:left;padding:1.1rem .25rem;min-height:4.5rem}
+.path button:hover,.path button:focus-visible{background:#0b0b0b}
+.path .n{flex:none;width:2.75rem;height:2.75rem;border-radius:99px;border:1px solid var(--eva);display:grid;place-items:center;font-size:1.125rem;color:var(--ink)}
+.path b{display:block;font-weight:500;font-size:1.25rem;line-height:1.3}
+.path span span{display:block;color:var(--mu);font-size:1.0625rem;line-height:1.45}
 .list{border-top:1px solid var(--rule)}
-.row{display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:18px 4px;border-bottom:1px solid var(--rule);transition:background .2s}
-.row:hover,.row:focus-visible{background:#0b0b0b;outline:none}
-.row .n{font-size:13px;color:var(--mu);width:28px;flex:none;font-variant-numeric:tabular-nums}
+.row{display:flex;align-items:center;gap:1rem;width:100%;text-align:left;padding:1rem .25rem;min-height:4.5rem;border-bottom:1px solid var(--rule);transition:background .2s}
+.row:hover,.row:focus-visible{background:#0b0b0b}
 .row .t{flex:1;min-width:0}
-.row .t b{display:block;font-weight:400;font-size:clamp(18px,3.2vw,24px)}
-.row .t span{display:block;color:var(--mu);font-size:14px;margin-top:2px}
-.row .go{flex:none;width:22px;height:22px;opacity:.6}
-.scenes{display:flex;flex-wrap:wrap;gap:8px}
-.scenes button{border:1px solid var(--rule);padding:9px 14px;font-size:14px;color:var(--mu)}
+.row .t b{display:block;font-weight:400;font-size:clamp(1.2rem,3.2vw,1.5rem);line-height:1.3}
+.row .t span{display:block;color:var(--mu);font-size:1.0625rem;line-height:1.45;margin-top:.15rem}
+.row .go{flex:none;width:1.5rem;height:1.5rem;opacity:.6}
+.scenes{display:flex;flex-wrap:wrap;gap:.5rem}
+.scenes button{border:1px solid var(--rule);border-radius:999px;padding:0 1.1rem;min-height:3rem;font-size:1.0625rem;color:var(--mu)}
 .scenes button[aria-pressed=true]{color:var(--ink);border-color:var(--ink)}
 .scenes button.al[aria-pressed=true]{border-color:var(--alarm)}
-.foot{margin-top:auto;padding-top:36px;color:var(--mu);font-size:13px;display:flex;gap:18px;flex-wrap:wrap}
+.note{color:var(--mu);font-size:1rem;margin-top:.6rem}
+.foot{margin-top:auto;padding-top:2.5rem;color:var(--mu);font-size:1rem;display:flex;gap:1.25rem;flex-wrap:wrap}
+.foot a{min-height:3rem;display:inline-flex;align-items:center}
 
 /* viewer */
 #viewer{position:fixed;inset:0;background:#000;display:none}
 #viewer.on{display:block}
 #frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-#bar{position:fixed;right:max(8px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:2px;background:rgba(0,0,0,.82);border:1px solid var(--rule);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:4px;transition:opacity .35s}
-#bar.dim{opacity:.35}
-#bar:not(.open) > :not(#bHandle){display:none}
-#bar.open #bHandle{display:none}
-#scn{writing-mode:vertical-rl;transform:rotate(180deg);padding:8px 0!important;max-height:30vh}
 #frame.phone{left:50%;width:min(100%,430px);transform:translateX(-50%);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
 /* the band's own screen: 16:9 in the middle on a big screen, the whole screen on a band-shaped one */
 #frame.wrist{left:50%;top:50%;right:auto;bottom:auto;width:min(100vw,960px,177.78vh);height:auto;aspect-ratio:16/9;transform:translate(-50%,-50%);border:1px solid var(--rule)}
+#viewer.touring #frame{bottom:auto;height:calc(100% - var(--tour-h))}
+#viewer.touring #frame.wrist{top:calc((100% - var(--tour-h)) / 2);height:auto;width:min(100vw,960px,calc((100vh - var(--tour-h)) * 1.7778))}
 body.band #frame.wrist{inset:0;width:100%;height:100%;aspect-ratio:auto;transform:none;border:0}
-body.band #bar,body.band #hint{display:none}
+body.band #bar,body.band #hint,body.band #back,body.band #talk{display:none!important}
 @media (max-width:600px){#frame.phone{border:0}}
-#bar button{width:40px;height:40px;display:grid;place-items:center}
+#bar{position:fixed;right:max(8px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:2px;background:rgba(0,0,0,.86);border:1px solid var(--rule);border-radius:1.5rem;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:4px;transition:opacity .35s}
+#bar.dim{opacity:.5}
+#bar:not(.open) > :not(#bHandle){display:none}
+#bar.open #bHandle{display:none}
+#bar button{width:3rem;height:3rem;display:grid;place-items:center;border-radius:999px}
 #bar button:hover{background:#111}
-#bar svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
-#scn{font-size:13px;color:var(--mu);padding:0 8px;white-space:nowrap;max-width:44vw;overflow:hidden;text-overflow:ellipsis}
+#bar svg{width:1.4rem;height:1.4rem;stroke:currentColor;fill:none;stroke-width:1.6}
+#bHandle{height:auto!important;padding:.6rem 0;gap:.2rem}
+#bHandle small{font-size:.75rem;color:var(--ink);letter-spacing:.02em}
+#scn{writing-mode:vertical-rl;transform:rotate(180deg);font-size:.9375rem;color:var(--mu);padding:.5rem 0;white-space:nowrap;max-height:30vh;overflow:hidden;text-overflow:ellipsis}
 #scn.al{color:var(--alarm)}
-#hint{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%);z-index:11;background:rgba(0,0,0,.85);border:1px solid var(--rule);padding:8px 14px;font-size:13px;color:var(--ink);pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap}
+#back{position:fixed;left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));z-index:11;display:none;align-items:center;gap:.4rem;min-height:3rem;padding:0 1.1rem 0 .8rem;border:1px solid var(--rule);border-radius:999px;background:rgba(0,0,0,.86);font-size:1.0625rem}
+#back svg{width:1.25rem;height:1.25rem;stroke:currentColor;fill:none;stroke-width:1.8}
+#talk{position:fixed;z-index:11;display:none;align-items:center;gap:.75rem;min-height:4rem;padding:0 1.5rem 0 1.1rem;border:1.5px solid var(--eva);border-radius:999px;background:#000;font-size:1.25rem;font-weight:500}
+#talk svg{width:1.75rem;height:1.75rem;stroke:var(--eva);fill:none;stroke-width:2}
+#talk small{display:block;font-size:.875rem;color:var(--mu);font-weight:400}
+@media (min-width:700px){#viewer.kphone #back,#viewer.kwrist #back{display:inline-flex}}
+@media (min-width:900px){
+  #viewer.kphone:not(.touring) #talk{display:inline-flex;left:calc(50% - 215px - 1.5rem);top:50%;transform:translate(-100%,-50%)}
+  #viewer.kwrist:not(.touring) #talk{display:inline-flex;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%)}
+}
+#hint{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%);z-index:12;background:rgba(0,0,0,.88);border:1px solid var(--rule);border-radius:999px;padding:.6rem 1.1rem;font-size:1.0625rem;color:var(--ink);pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
 #hint.on{opacity:1}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* guided tour */
+#tour{position:fixed;left:0;right:0;bottom:0;z-index:13;display:none;background:#000;border-top:1px solid var(--rule);padding:1rem 1rem max(1rem,env(safe-area-inset-bottom))}
+#viewer.touring #tour{display:block}
+#tour .in{max-width:56rem;margin:0 auto;display:flex;flex-direction:column;gap:.75rem}
+#tCap{font-size:clamp(1.2rem,2.6vw,1.5rem);line-height:1.4;min-height:2.8em}
+#tour .ctl{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+#tour .ctl .btn{flex:1 1 8rem;justify-content:center}
+#tour .ctl2{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap}
+#tour .ctl2 .btn{min-height:3rem;padding:0 .9rem;font-size:1.0625rem}
+#tStep{color:var(--mu);font-size:1rem;margin-right:auto}
+.btn{min-height:3.25rem;padding:0 1.35rem;border-radius:999px;border:1px solid var(--rule);font-size:1.125rem;display:inline-flex;align-items:center;gap:.5rem}
+.btn:hover{border-color:var(--ink)}
+.btn.main{background:var(--ink);color:#000;border-color:var(--ink);font-weight:500}
+.btn[disabled]{opacity:.35;cursor:default}
+.btn.quiet{border-color:transparent;color:var(--mu);text-decoration:underline;text-underline-offset:3px}
+#tSound[aria-pressed=false]{color:var(--mu)}
+
+/* first-time intro */
+#intro{position:fixed;inset:0;z-index:20;background:#000;display:none;overflow:auto}
+#intro.on{display:flex}
+#intro .card{margin:auto;width:100%;max-width:36rem;padding:max(1.25rem,env(safe-area-inset-top)) 1.25rem max(1.5rem,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;text-align:center;gap:1rem;position:relative}
+#iSkip{position:absolute;right:.5rem;top:max(.5rem,env(safe-area-inset-top));min-height:3rem;padding:0 1rem;color:var(--mu);text-decoration:underline;text-underline-offset:3px;font-size:1.0625rem}
+#iPic{width:12rem;height:12rem;display:grid;place-items:center;margin-top:2.5rem}
+#iPic img{width:100%;height:100%;object-fit:contain}
+#iPic img.round{border-radius:1.5rem;object-fit:cover;border:1px solid var(--rule)}
+.helpdisc{width:10rem;height:10rem;border-radius:999px;border:3px solid var(--acc);display:grid;place-items:center;font-size:2rem;font-weight:600;color:var(--ink)}
+.micdisc{width:10rem;height:10rem;border-radius:999px;border:3px solid var(--eva);display:grid;place-items:center}
+.micdisc svg{width:4.5rem;height:4.5rem;stroke:var(--eva);fill:none;stroke-width:1.8}
+#iTitle{font-weight:400;font-size:clamp(2rem,6vw,2.75rem);line-height:1.15;letter-spacing:-.01em}
+#iText{font-size:1.3rem;line-height:1.5;color:var(--ink);max-width:30rem}
+#iDots{display:flex;gap:.6rem;margin:.25rem 0}
+#iDots i{width:.7rem;height:.7rem;border-radius:99px;border:1px solid var(--mu)}
+#iDots i.on{background:var(--ink);border-color:var(--ink)}
+#intro .row2{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;width:100%}
+#intro .row2 .btn{min-height:3.5rem;font-size:1.1875rem;padding:0 1.6rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -69,34 +150,75 @@ body.band #bar,body.band #hint{display:none}
 <main id="menu">
   <div class="top">
     <p class="brand">Eva <span style="color:var(--mu)">by WearMeds</span> · <span data-t="demo">demo</span></p>
-    <div class="lang" role="group" aria-label="Language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Text size" data-tl="tsLabel"><button class="ts0" data-ts="0" aria-pressed="true" aria-label="Normal text">A</button><button class="ts1" data-ts="1" aria-pressed="false" aria-label="Bigger text">A+</button><button class="ts2" data-ts="2" aria-pressed="false" aria-label="Biggest text">A++</button></div>
+      <div class="seg" role="group" aria-label="Language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></div>
+    </div>
   </div>
-  <h1 data-t="h1">Pick a view.</h1>
-  <p class="sub" data-t="sub">Each one opens full screen. Switch views or scenes any time from the small button in the corner.</p>
+  <h1 data-t="h1">Meet Eva.</h1>
+  <p class="sub" data-t="sub">Eva is a health helper for people travelling in space. She lives in a wristband, keeps an eye on your health and calls for help when something is wrong.</p>
+  <p class="status" id="status" data-on="true" role="status"><i></i><b id="stT">Eva is online</b><span id="stS">· Ask anything about health in space</span></p>
+  <button class="again" id="again" data-t="again">Show me the introduction again</button>
 
-  <p class="lab" data-t="lScene">Scene</p>
+  <div class="big">
+    <button class="act primary" id="aTour"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z"/></svg><span><b data-t="tourT">Guided tour</b><span data-t="tourS">About 3 minutes. Eva shows you everything, step by step, out loud.</span></span></button>
+    <button class="act" id="aTalk"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span><b data-t="talkT">Talk to Eva</b><span data-t="talkS">Ask her anything about health. Tap the big button and speak, or type.</span></span></button>
+  </div>
+
+  <p class="lab"><b data-t="recA">Recommended:</b> <span data-t="recB">start here</span></p>
+  <ol class="path" id="path"></ol>
+
+  <p class="lab" data-t="lAll">All screens</p>
+  <p class="note" data-t="allNote">First pick a moment in the story, then a screen.</p>
+  <p class="lab" data-t="lScene" style="margin-top:1.25rem">Moment in the story</p>
   <div class="scenes" id="scenes"></div>
-
-  <p class="lab" data-t="lView">View</p>
+  <p class="lab" data-t="lView">Screen</p>
   <div class="list" id="views"></div>
 
   <div class="foot">
-    <a href="board.html" data-t="board">All views side by side</a>
-    <a href="../" data-t="site">Back to the site</a>
+    <a href="board.html" data-t="board">All screens side by side</a>
+    <a href="../" data-t="site">Back to the website</a>
   </div>
 </main>
 
 <section id="viewer" aria-label="Eva view">
   <iframe id="frame" title="Eva" allow="fullscreen; microphone; camera; autoplay"></iframe>
-  <div id="hint"></div>
+  <div id="hint" aria-live="polite"></div>
+  <button id="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span data-t="menuBtn">Menu</span></button>
+  <button id="talk"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span><span data-t="talkBtn">Talk to Eva</span><small data-t="talkBtnS">Tap, then speak</small></span></button>
   <div id="bar" role="toolbar" aria-label="Demo controls">
-    <button id="bHandle" aria-label="Show controls" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18" r="1.2"/></svg></button>
-    <button id="bMenu" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-    <button id="bPrev" aria-label="Previous scene"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button id="bHandle" aria-label="Show controls" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><small data-t="menuBtn">Menu</small></button>
+    <button id="bMenu" aria-label="Back to the menu"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7M5 10v10h14V10"/></svg></button>
+    <button id="bPrev" aria-label="Previous moment"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <span id="scn"></span>
-    <button id="bNext" aria-label="Next scene"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-    <button id="bView" aria-label="Next view"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="6"/><rect x="13" y="13" width="8" height="6"/></svg></button>
+    <button id="bNext" aria-label="Next moment"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button id="bView" aria-label="Next screen"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="6"/><rect x="13" y="13" width="8" height="6"/></svg></button>
     <button id="bFull" aria-label="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+  <div id="tour" role="region" aria-label="Guided tour">
+    <div class="in">
+      <p id="tCap" aria-live="polite"></p>
+      <div class="ctl">
+        <button class="btn" id="tBack"></button>
+        <button class="btn main" id="tNext"></button>
+      </div>
+      <div class="ctl2">
+        <span id="tStep"></span>
+        <button class="btn" id="tSound" aria-pressed="true"></button>
+        <button class="btn quiet" id="tExit"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="intro" role="dialog" aria-modal="true" aria-labelledby="iTitle">
+  <div class="card">
+    <button id="iSkip"></button>
+    <div id="iPic"></div>
+    <h2 id="iTitle"></h2>
+    <p id="iText"></p>
+    <div id="iDots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="row2" id="iBtns"></div>
   </div>
 </section>
 
@@ -104,87 +226,231 @@ body.band #bar,body.band #hint{display:none}
 (function () {
   "use strict";
   var SCENES = [
-    { id: "s1", en: "Normal day", es: "Día normal" },
-    { id: "s2", en: "Cardiac arrest", es: "Paro cardíaco", al: true },
+    { id: "s1", en: "A normal day", es: "Un día normal" },
+    { id: "s2", en: "Ana's heart stops", es: "Se detiene el corazón de Ana", al: true },
     { id: "s3", en: "Help on the way", es: "La ayuda va en camino", al: true },
-    { id: "s4", en: "AED taken", es: "DEA retirado", al: true },
-    { id: "s5", en: "Records on Earth", es: "Registros en la Tierra" },
+    { id: "s4", en: "The AED is brought", es: "Traen el desfibrilador", al: true },
+    { id: "s5", en: "Records reach Earth", es: "Los registros llegan a la Tierra" },
     { id: "s6", en: "Solar storm", es: "Tormenta solar", al: true }
   ];
   var PHONE = { s1: "home", s2: "emergency", s3: "emergency", s4: "emergency", s5: "home", s6: "storm" };
   // the band's screen per scene (captured from the app at 640 × 360 in wristband mode)
   var WRIST = { s1: "wrist", s2: "wrist-emergency", s3: "wrist-emergency", s4: "wrist-emergency", s5: "wrist", s6: "wrist-storm" };
+  // each screen in one plain sentence
   var VIEWS = [
-    { id: "4B", kind: "phone", en: ["Ana · seat 4B", "Passenger phone · the patient"], es: ["Ana · asiento 4B", "Teléfono del pasajero · la paciente"] },
-    { id: "3B", kind: "phone", en: ["Leo · seat 3B", "Passenger phone · starts CPR"], es: ["Leo · asiento 3B", "Teléfono del pasajero · empieza la RCP"] },
-    { id: "1B", kind: "phone", en: ["Tomás · seat 1B", "Passenger phone · brings the AED"], es: ["Tomás · asiento 1B", "Teléfono del pasajero · trae el DEA"] },
-    { id: "dash", kind: "wide", en: ["Crew dashboard", "The ship hub's view of everyone"], es: ["Panel de la tripulación", "Lo que ve el hub de la nave"] },
-    { id: "station", kind: "wide", en: ["Emergency station", "The wall cabinet's screen"], es: ["Estación de emergencia", "La pantalla del gabinete"] },
-    { id: "ground", kind: "wide", en: ["Mission control · Earth", "Signed records, received and acknowledged"], es: ["Control de misión · Tierra", "Registros firmados, recibidos y confirmados"] },
-    { id: "w4B", kind: "wrist", seat: "4B", en: ["Wristband · Ana 4B", "The band's own screen · the patient"], es: ["Pulsera · Ana 4B", "La pantalla de la pulsera · la paciente"] },
-    { id: "w3B", kind: "wrist", seat: "3B", en: ["Wristband · Leo 3B", "The band's own screen · starts CPR"], es: ["Pulsera · Leo 3B", "La pantalla de la pulsera · empieza la RCP"] },
-    { id: "w1B", kind: "wrist", seat: "1B", en: ["Wristband · Tomás 1B", "The band's own screen · brings the AED"], es: ["Pulsera · Tomás 1B", "La pantalla de la pulsera · trae el DEA"] }
+    { id: "4B", kind: "phone", en: ["Ana's phone · seat 4B", "Ana is the passenger who gets sick. This is what she sees."], es: ["Teléfono de Ana · asiento 4B", "Ana es la pasajera que se enferma. Esto es lo que ve."] },
+    { id: "3B", kind: "phone", en: ["Leo's phone · seat 3B", "Eva asks Leo to help Ana and guides him through CPR (pushing on the chest)."], es: ["Teléfono de Leo · asiento 3B", "Eva le pide a Leo que ayude a Ana y lo guía en la RCP (presionar el pecho)."] },
+    { id: "1B", kind: "phone", en: ["Tomás's phone · seat 1B", "Eva asks Tomás to bring the AED, the machine that can restart a heart."], es: ["Teléfono de Tomás · asiento 1B", "Eva le pide a Tomás que traiga el desfibrilador (DEA), la máquina que puede reanimar un corazón."] },
+    { id: "dash", kind: "wide", en: ["What the crew sees", "Every passenger on one screen: who is fine, who needs help, who is on the way."], es: ["Lo que ve la tripulación", "Todos los pasajeros en una pantalla: quién está bien, quién necesita ayuda, quién va en camino."] },
+    { id: "station", kind: "wide", en: ["The emergency cabinet", "The screen on the wall cabinet where the AED and the first-aid kit are kept."], es: ["El gabinete de emergencia", "La pantalla del gabinete donde están el desfibrilador y el botiquín."] },
+    { id: "ground", kind: "wide", en: ["Doctors on Earth", "What mission control receives from the ship: Eva's records, checked and confirmed."], es: ["Médicos en la Tierra", "Lo que recibe el control de misión: los registros de Eva, revisados y confirmados."] },
+    { id: "w4B", kind: "wrist", seat: "4B", en: ["Ana's wristband", "The band's own screen: big buttons to talk to Eva or to call for help."], es: ["Pulsera de Ana", "La pantalla de la pulsera: botones grandes para hablar con Eva o pedir ayuda."] },
+    { id: "w3B", kind: "wrist", seat: "3B", en: ["Leo's wristband", "On Leo's wrist, Eva counts his pushes during CPR."], es: ["Pulsera de Leo", "En la muñeca de Leo, Eva cuenta las compresiones durante la RCP."] },
+    { id: "w1B", kind: "wrist", seat: "1B", en: ["Tomás's wristband", "On Tomás's wrist, Eva shows the way to the AED and back."], es: ["Pulsera de Tomás", "En la muñeca de Tomás, Eva muestra el camino al desfibrilador y de vuelta."] }
+  ];
+  // "Recommended: start here"
+  var PATH = [
+    { v: "4B", s: "s1", p: "v/s1-4B-eva.html", en: ["Talk to Eva", "On Ana's phone. Ask her how Ana is today."], es: ["Hablá con Eva", "En el teléfono de Ana. Preguntale cómo está Ana hoy."] },
+    { v: "4B", s: "s2", en: ["See an emergency", "Ana's heart stops. Her wristband calls for help by itself."], es: ["Mirá una emergencia", "Se detiene el corazón de Ana. Su pulsera pide ayuda sola."] },
+    { v: "dash", s: "s3", en: ["See what the crew sees", "Everyone on one screen, and who is on the way to help."], es: ["Mirá lo que ve la tripulación", "Todos en una pantalla, y quién va en camino a ayudar."] }
+  ];
+  // the guided tour: one short caption per step, spoken out loud
+  var TOUR = [
+    { v: "4B", s: "s1", en: "This is Ana's phone. Eva lives in Ana's wristband and keeps an eye on her health all day.", es: "Este es el teléfono de Ana. Eva vive en la pulsera de Ana y cuida su salud todo el día." },
+    { v: "w4B", s: "s1", en: "This is Ana's wristband. One big button to talk to Eva, and one to call for help.", es: "Esta es la pulsera de Ana. Un botón grande para hablar con Eva y otro para pedir ayuda." },
+    { v: "4B", s: "s1", p: "v/s1-4B-eva.html", ask: { en: "I feel a bit dizzy. What should I do?", es: "Me siento un poco mareada. ¿Qué hago?" }, en: "Ana feels a little dizzy. She asks Eva what to do. Listen to Eva's answer.", es: "Ana se siente un poco mareada. Le pregunta a Eva qué hacer. Escuchá la respuesta de Eva." },
+    { v: "4B", s: "s2", en: "Later, Ana's heart stops. Her wristband notices at once and calls for help by itself.", es: "Más tarde, el corazón de Ana se detiene. Su pulsera lo nota enseguida y pide ayuda sola." },
+    { v: "3B", s: "s2", en: "Leo is the nearest passenger. Eva tells him to go to Ana and start CPR: pushing hard on the middle of her chest.", es: "Leo es el pasajero más cercano. Eva le dice que vaya con Ana y empiece la RCP: presionar fuerte el centro del pecho." },
+    { v: "1B", s: "s3", en: "Tomás brings the AED, the machine that can restart a heart. The AED decides the shock, not Eva.", es: "Tomás trae el desfibrilador, la máquina que puede reanimar un corazón. El desfibrilador decide la descarga, no Eva." },
+    { v: "dash", s: "s3", en: "The crew sees everyone on one screen: who needs help, and who is on the way.", es: "La tripulación ve a todos en una pantalla: quién necesita ayuda y quién va en camino." },
+    { v: "station", s: "s4", en: "The emergency cabinet's screen shows which door was opened and what was taken out.", es: "La pantalla del gabinete de emergencia muestra qué puerta se abrió y qué se sacó." },
+    { v: "ground", s: "s5", en: "Back on Earth, doctors receive Eva's records of everything that happened, and confirm them.", es: "En la Tierra, los médicos reciben los registros de Eva de todo lo que pasó, y los confirman." },
+    { v: "4B", s: "s6", en: "During a solar storm, Eva shows everyone the way to the safe shelter.", es: "Durante una tormenta solar, Eva le muestra a todos el camino al refugio seguro." },
+    { v: "4B", s: "s1", p: "v/s1-4B-eva.html", end: true, en: "That's Eva. Now try her yourself: tap the big round button and ask her anything about your health.", es: "Esa es Eva. Ahora probala vos: tocá el botón redondo grande y preguntale lo que quieras sobre tu salud." }
+  ];
+  var INTRO = [
+    { pic: '<img src="static/img/eva/eva-hello.webp" alt="">', en: ["This is Eva.", "She is a health helper for people travelling in space. She speaks plainly and kindly."], es: ["Esta es Eva.", "Es una ayudante de salud para quienes viajan al espacio. Habla claro y con calma."] },
+    { pic: '<img class="round" src="static/img/band/on-wrist.webp" alt="">', en: ["She lives in your wristband.", "The wristband checks your heart, breathing and temperature, all day."], es: ["Vive en tu pulsera.", "La pulsera controla tu corazón, tu respiración y tu temperatura, todo el día."] },
+    { pic: '<span class="micdisc"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>', en: ["Tap the big button to talk to her.", "Ask anything about your health. She answers out loud."], es: ["Tocá el botón grande para hablarle.", "Preguntale lo que quieras sobre tu salud. Te responde en voz alta."] },
+    { pic: '<span class="helpdisc">Help</span>', en: ["If something is wrong, press Help.", "Eva calls the nearest passenger and the crew right away."], es: ["Si algo anda mal, apretá Ayuda.", "Eva llama enseguida al pasajero más cercano y a la tripulación."] }
   ];
   // Wristband mode, the app's own rule (head.html): a landscape screen at most 480 px high and at least 8:5, or a
   // tiny square. A band-shaped screen opens the chosen seat's band view full screen, with no menu.
   // ?mode=wristband / ?mode=phone override it for this page.
   var BAND = "(orientation: landscape) and (max-height: 480px) and (min-aspect-ratio: 8/5), (max-width: 340px) and (max-height: 340px)";
   var T = {
-    en: { demo: "demo", h1: "Pick a view.", sub: "Each one opens full screen. Switch views or scenes any time from the small button in the corner.", lScene: "Scene", lView: "View", board: "All views side by side", site: "Back to the site", full: "Full screen isn't available here" },
-    es: { demo: "demo", h1: "Elegí una vista.", sub: "Cada una se abre en pantalla completa. Cambiá de vista o de escena cuando quieras desde el botón de la esquina.", lScene: "Escena", lView: "Vista", board: "Todas las vistas juntas", site: "Volver al sitio", full: "Pantalla completa no disponible acá" }
+    en: { demo: "demo", h1: "Meet Eva.", sub: "Eva is a health helper for people travelling in space. She lives in a wristband, keeps an eye on your health and calls for help when something is wrong.",
+      again: "Show me the introduction again", tourT: "Guided tour", tourS: "About 3 minutes. Eva shows you everything, step by step, out loud.",
+      talkT: "Talk to Eva", talkS: "Ask her anything about health. Tap the big button and speak, or type.", recA: "Recommended:", recB: "start here",
+      lAll: "All screens", allNote: "First pick a moment in the story, then a screen.", lScene: "Moment in the story", lView: "Screen",
+      board: "All screens side by side", site: "Back to the website", full: "Full screen isn't available here", menuBtn: "Menu", talkBtn: "Talk to Eva", talkBtnS: "Tap, then speak",
+      on: ["Eva is online", "· Ask anything about health in space"], off: ["Offline", "· Eva answers from her saved guide"],
+      step: "Step {n} of {t}", back: "Back", next: "Next", finish: "Finish", exit: "Exit tour", soundOn: "Sound on", soundOff: "Sound off",
+      iNext: "Next", iBack: "Back", iSkip: "Skip", iTour: "Start the guided tour", iOwn: "Look around on my own", tsLabel: "Text size", ts: ["Normal text", "Bigger text", "Biggest text"] },
+    es: { demo: "demo", h1: "Conocé a Eva.", sub: "Eva es una ayudante de salud para quienes viajan al espacio. Vive en una pulsera, cuida tu salud y pide ayuda cuando algo anda mal.",
+      again: "Ver la introducción otra vez", tourT: "Recorrido guiado", tourS: "Unos 3 minutos. Eva te muestra todo, paso a paso, en voz alta.",
+      talkT: "Hablá con Eva", talkS: "Preguntale lo que quieras sobre la salud. Tocá el botón grande y hablá, o escribí.", recA: "Recomendado:", recB: "empezá acá",
+      lAll: "Todas las pantallas", allNote: "Primero elegí un momento de la historia, después una pantalla.", lScene: "Momento de la historia", lView: "Pantalla",
+      board: "Todas las pantallas juntas", site: "Volver al sitio", full: "Pantalla completa no disponible acá", menuBtn: "Menú", talkBtn: "Hablá con Eva", talkBtnS: "Tocá y hablá",
+      on: ["Eva está en línea", "· Preguntale lo que quieras sobre la salud en el espacio"], off: ["Sin conexión", "· Eva responde con su guía guardada"],
+      step: "Paso {n} de {t}", back: "Atrás", next: "Siguiente", finish: "Terminar", exit: "Salir", soundOn: "Sonido sí", soundOff: "Sonido no",
+      iNext: "Siguiente", iBack: "Atrás", iSkip: "Saltar", iTour: "Empezar el recorrido guiado", iOwn: "Mirar por mi cuenta", tsLabel: "Tamaño del texto", ts: ["Texto normal", "Texto más grande", "Texto enorme"] }
   };
   var $ = function (id) { return document.getElementById(id); };
-  var lang = "en", scene = 0, view = 0;
-  try { if (localStorage.getItem("eva-replay-lang") === "es") lang = "es"; } catch (e) {}
+  function get(k, s) { try { return (s || localStorage).getItem(k); } catch (e) { return null; } }
+  function set(k, v, s) { try { (s || localStorage).setItem(k, v); } catch (e) {} }
+  function del(k, s) { try { (s || localStorage).removeItem(k); } catch (e) {} }
+  var lang = "en", scene = 0, view = 0, override = null;
+  if (get("eva-replay-lang") === "es") lang = "es";
   var qs = new URLSearchParams(location.search);
   if (qs.get("lang") === "es") lang = "es";
   var forced = qs.get("mode") === "wristband" || qs.get("mode") === "phone" ? qs.get("mode") : null;
   var bandMq = window.matchMedia ? matchMedia(BAND) : { matches: false };
   function isBand() { return forced ? forced === "wristband" : bandMq.matches; }
   var seat = "4B";
-  try { var ss = localStorage.getItem("eva-replay-seat"); if (["4B", "3B", "1B"].indexOf(ss) >= 0) seat = ss; } catch (e) {}
+  var ss = get("eva-replay-seat"); if (["4B", "3B", "1B"].indexOf(ss) >= 0) seat = ss;
   function viewIndex(id) { var k = -1; VIEWS.forEach(function (v, i) { if (v.id === id) k = i; }); return k; }
+  function sceneIndex(id) { var k = -1; SCENES.forEach(function (s, i) { if (s.id === id) k = i; }); return k; }
   function seatOf(v) { return v.kind === "wrist" ? v.seat : v.kind === "phone" ? v.id : null; }
   // in the Android app the site and the old board are not reachable: hide those links
   var inApp = / EvaAndroid\//.test(navigator.userAgent) || location.hostname === "appassets.androidplatform.net";
+  function post(msg) { msg.eva = "launcher"; try { $("frame").contentWindow.postMessage(msg, "*"); } catch (e) {} }
 
-  function svgGo() { return '<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19L19 5M9 5h10v10"/></svg>'; }
+  // ---------------------------------------------------------------- text size (A / A+ / A++)
+  var ts = parseInt(get("eva-ts"), 10); if (!(ts >= 0 && ts <= 2)) ts = 0;
+  function applyTs() {
+    document.documentElement.setAttribute("data-ts", String(ts));
+    document.querySelectorAll("[data-ts]").forEach(function (b) { if (b.tagName === "BUTTON") b.setAttribute("aria-pressed", String(+b.getAttribute("data-ts") === ts)); });
+    post({ type: "ts", ts: ts });
+  }
+
+  // ---------------------------------------------------------------- Eva online? (same check and cache as the screens)
+  var HOSTED_API = "https://eva-wearmeds.vercel.app/api/eva/";
+  function apiBase() {
+    if (location.protocol === "http:" && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return "/api/eva/";
+    if (location.protocol !== "https:") return null;
+    return location.hostname === "appassets.androidplatform.net" ? HOSTED_API : "/api/eva/";
+  }
+  var online = null;
+  function paintStatus() {
+    var on = online !== false && !!apiBase(), t = T[lang][on ? "on" : "off"];
+    $("status").setAttribute("data-on", String(on)); $("stT").textContent = t[0]; $("stS").textContent = " " + t[1];
+  }
+  function setOnline(v) { online = v; set("eva-live-status", JSON.stringify({ on: v, t: Date.now() }), sessionStorage); paintStatus(); }
+  function probe() {
+    var base = apiBase();
+    if (!base || navigator.onLine === false || !window.fetch) return setOnline(false);
+    try { var c = JSON.parse(get("eva-live-status", sessionStorage) || "null"); if (c && Date.now() - c.t < 180000) { online = !!c.on; return paintStatus(); } } catch (e) {}
+    var ctl = window.AbortController ? new AbortController() : null, to = setTimeout(function () { if (ctl) ctl.abort(); }, 6000);
+    fetch(base + "chat", { method: "POST", mode: "cors", credentials: "omit", cache: "no-store", headers: { "content-type": "application/json" }, body: JSON.stringify({ ping: true, text: "" }), signal: ctl ? ctl.signal : undefined })
+      .then(function (r) { clearTimeout(to); if (r.status === 429) return setOnline(true); if (!r.ok) return setOnline(false); return r.json().then(function (j) { setOnline(!j || j.live !== false); }, function () { setOnline(true); }); })
+      .catch(function () { clearTimeout(to); setOnline(false); });
+  }
+
+  // ---------------------------------------------------------------- the voice of the tour
+  // English: Orpheus through /api/eva/tts (cached per line); Spanish, or no answer: the browser's own voice.
+  var audio = null, cache = {}, sayToken = 0, soundOn = get("eva-tour-sound") !== "0";
+  function hushAll() {
+    sayToken++;
+    if (audio) { try { audio.pause(); } catch (e) {} audio = null; }
+    try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+  }
+  function bestVoice(want) {
+    var vs = []; try { vs = speechSynthesis.getVoices() || []; } catch (e) {}
+    var best = null, score = -1;
+    vs.forEach(function (v) { var l = (v.lang || "").toLowerCase(); for (var i = 0; i < want.length; i++) if (l.indexOf(want[i]) === 0) { var s = (want.length - i) * 10 + (/natural|neural|google|premium|enhanced/i.test(v.name) ? 5 : 0); if (s > score) { score = s; best = v; } break; } });
+    return best;
+  }
+  // resolves when the line has been said (or could not be), so the tour can go on
+  function say(text, lg) {
+    hushAll();
+    var my = sayToken;
+    if (!text) return Promise.resolve();
+    var line = text.replace(/\s+/g, " ").trim().slice(0, 400);
+    function browser() {
+      return new Promise(function (ok) {
+        try {
+          if (!window.speechSynthesis || my !== sayToken) return ok();
+          var u = new SpeechSynthesisUtterance(line), want = lg === "es" ? ["es-ar", "es-419", "es-us", "es-mx", "es"] : ["en-us", "en-gb", "en"];
+          u.voice = bestVoice(want); u.lang = u.voice ? u.voice.lang : want[0]; u.rate = 0.92;
+          u.onend = u.onerror = function () { ok(); };
+          speechSynthesis.speak(u);
+          setTimeout(ok, 15000);
+        } catch (e) { ok(); }
+      });
+    }
+    var base = apiBase();
+    if (lg === "es" || !base) return browser();
+    var key = lg + "|" + line;
+    var get_ = cache[key] ? Promise.resolve(cache[key]) : fetch(base + "tts", { method: "POST", mode: "cors", credentials: "omit", headers: { "content-type": "application/json" }, body: JSON.stringify({ text: line, lang: lg }) })
+      .then(function (r) { var ct = r.headers.get("content-type") || ""; if (r.status !== 200 || ct.indexOf("audio") < 0) throw new Error("tts " + r.status); return r.blob(); })
+      .then(function (b) { cache[key] = URL.createObjectURL(b); return cache[key]; });
+    return get_.then(function (url) {
+      if (my !== sayToken) return;
+      return new Promise(function (ok) {
+        audio = new Audio(url);
+        audio.onended = audio.onerror = function () { ok(); };
+        var p = audio.play(); if (p && p.catch) p.catch(function () { ok(); });
+        setTimeout(ok, 30000);
+      });
+    }, function () { return my === sayToken ? browser() : null; });
+  }
+
+  // ---------------------------------------------------------------- menu
+  function svgGo() { return '<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 19L19 5M9 5h10v10"/></svg>'; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function renderMenu() {
     document.documentElement.lang = lang;
-    document.querySelectorAll("[data-t]").forEach(function (e) { e.textContent = T[lang][e.getAttribute("data-t")]; });
-    document.querySelectorAll(".lang [data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
+    document.querySelectorAll("[data-t]").forEach(function (e) { var v = T[lang][e.getAttribute("data-t")]; if (typeof v === "string") e.textContent = v; });
+    document.querySelectorAll(".seg [data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
+    document.querySelectorAll(".seg [data-ts]").forEach(function (b) { b.setAttribute("aria-label", T[lang].ts[+b.getAttribute("data-ts")]); });
+    document.querySelector(".seg[data-tl]").setAttribute("aria-label", T[lang].tsLabel);
     $("scenes").innerHTML = SCENES.map(function (s, i) {
-      return '<button data-i="' + i + '" class="' + (s.al ? "al" : "") + '" aria-pressed="' + (i === scene) + '">' + s[lang] + "</button>";
+      return '<button data-i="' + i + '" class="' + (s.al ? "al" : "") + '" aria-pressed="' + (i === scene) + '">' + esc(s[lang]) + "</button>";
     }).join("");
     $("views").innerHTML = VIEWS.map(function (v, i) {
-      return '<button class="row" data-v="' + i + '"><span class="n">0' + (i + 1) + '</span><span class="t"><b>' + v[lang][0] + "</b><span>" + v[lang][1] + "</span></span>" + svgGo() + "</button>";
+      return '<button class="row" data-v="' + i + '"><span class="t"><b>' + esc(v[lang][0]) + "</b><span>" + esc(v[lang][1]) + "</span></span>" + svgGo() + "</button>";
     }).join("");
+    $("path").innerHTML = PATH.map(function (p, i) {
+      return '<li><button data-p="' + i + '"><span class="n">' + (i + 1) + '</span><span><b>' + esc(p[lang][0]) + "</b><span>" + esc(p[lang][1]) + "</span></span></button></li>";
+    }).join("");
+    paintStatus();
+    renderTour();
+    if ($("intro").classList.contains("on")) renderIntro();
   }
   function page() {
+    if (override) return override;
     var s = SCENES[scene].id, v = VIEWS[view];
     if (v.kind === "wrist") return "v/" + s + "-" + v.seat + "-" + WRIST[s] + ".html";
     return "v/" + s + "-" + (v.kind === "phone" ? v.id + "-" + PHONE[s] : v.id) + ".html";
   }
   var hintT = 0;
-  function hint(text) { var h = $("hint"); h.textContent = text; h.classList.add("on"); clearTimeout(hintT); hintT = setTimeout(function () { h.classList.remove("on"); }, 1800); }
-  function open(push) {
-    var sv = seatOf(VIEWS[view]);
-    if (sv) { seat = sv; try { localStorage.setItem("eva-replay-seat", seat); } catch (e) {} }
-    document.body.classList.toggle("band", isBand() && VIEWS[view].kind === "wrist");
-    $("frame").src = page();
-    $("frame").className = VIEWS[view].kind === "phone" ? "phone" : VIEWS[view].kind === "wrist" ? "wrist" : "";
-    $("viewer").classList.add("on");
-    $("menu").style.display = "none";
+  function hint(text) { var h = $("hint"); h.textContent = text; h.classList.add("on"); clearTimeout(hintT); hintT = setTimeout(function () { h.classList.remove("on"); }, 2200); }
+  function paintScene() {
     var s = SCENES[scene];
     $("scn").textContent = s[lang]; $("scn").className = s.al ? "al" : "";
-    var h = "#view=" + VIEWS[view].id + "&scene=" + s.id;
+  }
+  function open(push, pg) {
+    override = pg || null;
+    var v = VIEWS[view], sv = seatOf(v);
+    if (sv) { seat = sv; set("eva-replay-seat", seat); }
+    document.body.classList.toggle("band", isBand() && v.kind === "wrist");
+    $("frame").src = page();
+    $("frame").className = v.kind === "phone" ? "phone" : v.kind === "wrist" ? "wrist" : "";
+    $("viewer").className = "on k" + v.kind + (touring ? " touring" : "");
+    $("menu").style.display = "none";
+    paintScene();
+    var h = "#view=" + v.id + "&scene=" + SCENES[scene].id;
     if (push !== false && location.hash !== h) history.replaceState(null, "", h);
     wake();
   }
   function menu() {
-    $("viewer").classList.remove("on"); $("frame").src = "about:blank";
+    if (touring) endTour(false);
+    hushAll();
+    $("viewer").className = ""; $("frame").src = "about:blank";
     $("menu").style.display = ""; history.replaceState(null, "", location.pathname + location.search);
     renderMenu();
+    window.scrollTo(0, 0);
   }
   function step(d) { scene = (scene + d + SCENES.length) % SCENES.length; open(); hint(SCENES[scene][lang]); }
   function nextView() { view = (view + 1) % VIEWS.length; open(); hint(VIEWS[view][lang][0]); }
@@ -195,27 +461,118 @@ body.band #bar,body.band #hint{display:none}
     if (req) { try { var p = req.call(el); if (p && p.catch) p.catch(function () { hint(T[lang].full); }); } catch (e) { hint(T[lang].full); } }
     else hint(T[lang].full);
   }
-  // bar fades when idle, comes back on any touch or move
+  // the control bar fades a little when idle, comes back on any touch or move
   var idle = 0;
-  function wake() { $("bar").classList.remove("dim"); clearTimeout(idle); idle = setTimeout(function () { $("bar").classList.add("dim"); }, 2500); }
+  function wake() { $("bar").classList.remove("dim"); clearTimeout(idle); idle = setTimeout(function () { $("bar").classList.add("dim"); }, 3500); }
   var shut = 0;
-  function expand(on) { $("bar").classList.toggle("open", on); $("bHandle").setAttribute("aria-expanded", String(on)); clearTimeout(shut); if (on) shut = setTimeout(function () { expand(false); }, 6000); }
+  function expand(on) { $("bar").classList.toggle("open", on); $("bHandle").setAttribute("aria-expanded", String(on)); clearTimeout(shut); if (on) shut = setTimeout(function () { expand(false); }, 8000); }
   ["mousemove", "touchstart", "keydown"].forEach(function (ev) { document.addEventListener(ev, wake, { passive: true }); });
   $("bar").addEventListener("pointerenter", wake);
 
+  // ---------------------------------------------------------------- guided tour
+  var touring = false, tIdx = 0, tAskTimer = 0;
+  function tourHeight() { document.documentElement.style.setProperty("--tour-h", touring ? $("tour").offsetHeight + "px" : "0px"); }
+  function renderTour() {
+    var t = T[lang];
+    $("tSound").textContent = soundOn ? t.soundOn : t.soundOff; $("tSound").setAttribute("aria-pressed", String(soundOn));
+    $("tBack").textContent = t.back; $("tExit").textContent = t.exit;
+    if (!touring) return;
+    var st = TOUR[tIdx];
+    $("tCap").textContent = st[lang];
+    $("tStep").textContent = t.step.replace("{n}", tIdx + 1).replace("{t}", TOUR.length);
+    $("tNext").textContent = st.end ? t.finish : t.next;
+    $("tBack").disabled = tIdx === 0;
+    tourHeight();
+  }
+  function showStep() {
+    var st = TOUR[tIdx];
+    clearTimeout(tAskTimer); hushAll(); post({ type: "hush" });
+    var vi = viewIndex(st.v), si = sceneIndex(st.s);
+    if (vi >= 0) view = vi; if (si >= 0) scene = si;
+    renderTour();
+    var src = st.p || null;
+    var fr = $("frame"), loaded = false;
+    var go = function () {
+      if (loaded) return; loaded = true;
+      var said = soundOn ? say(st[lang], lang) : Promise.resolve();
+      var mine = sayToken; // anything that hushes later (Back, Next, the microphone) cancels the question
+      var after = function () {
+        if (!touring || TOUR[tIdx] !== st || sayToken !== mine) return;
+        if (st.ask) post({ type: "ask", text: st.ask[lang] });
+      };
+      said.then(function () { tAskTimer = setTimeout(after, soundOn ? 300 : 1500); });
+    };
+    fr.onload = function () { fr.onload = null; setTimeout(go, 250); };
+    open(true, src);
+  }
+  function startTour() {
+    touring = true; tIdx = 0;
+    set("eva-tour", "1", sessionStorage);
+    $("intro").classList.remove("on");
+    showStep();
+  }
+  function endTour(toMenu) {
+    touring = false; clearTimeout(tAskTimer);
+    del("eva-tour", sessionStorage);
+    hushAll(); post({ type: "hush" });
+    $("viewer").classList.remove("touring"); tourHeight();
+    if (toMenu) menu();
+  }
+  $("tNext").onclick = function () { if (TOUR[tIdx].end) { endTour(false); hint(T[lang].talkBtn); return; } tIdx = Math.min(TOUR.length - 1, tIdx + 1); showStep(); };
+  $("tBack").onclick = function () { if (tIdx > 0) { tIdx--; showStep(); } };
+  $("tExit").onclick = function () { endTour(true); };
+  $("tSound").onclick = function () { soundOn = !soundOn; set("eva-tour-sound", soundOn ? "1" : "0"); if (!soundOn) { hushAll(); post({ type: "hush" }); } renderTour(); };
+  window.addEventListener("resize", tourHeight);
+
+  // ---------------------------------------------------------------- first-time introduction
+  var iIdx = 0;
+  function renderIntro() {
+    var st = INTRO[iIdx], t = T[lang];
+    $("iPic").innerHTML = st.pic.replace(">Help<", ">" + (lang === "es" ? "Ayuda" : "Help") + "<");
+    $("iTitle").textContent = st[lang][0]; $("iText").textContent = st[lang][1];
+    $("iSkip").textContent = t.iSkip;
+    document.querySelectorAll("#iDots i").forEach(function (d, k) { d.classList.toggle("on", k === iIdx); });
+    var last = iIdx === INTRO.length - 1;
+    $("iBtns").innerHTML = (iIdx > 0 ? '<button class="btn" data-ib="back">' + esc(t.iBack) + "</button>" : "") +
+      (last ? '<button class="btn main" data-ib="tour">' + esc(t.iTour) + '</button><button class="btn" data-ib="own">' + esc(t.iOwn) + "</button>"
+            : '<button class="btn main" data-ib="next">' + esc(t.iNext) + "</button>");
+  }
+  function showIntro() { iIdx = 0; renderIntro(); $("intro").classList.add("on"); setTimeout(function () { var b = $("iBtns").querySelector(".main"); if (b) b.focus(); }, 50); }
+  function closeIntro() { set("eva-intro-done", "1"); $("intro").classList.remove("on"); }
+  $("iSkip").onclick = function () { closeIntro(); $("aTour").focus(); };
+  $("iBtns").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-ib]"); if (!b) return;
+    var k = b.getAttribute("data-ib");
+    if (k === "next") { iIdx++; renderIntro(); $("iBtns").querySelector(".main").focus(); }
+    else if (k === "back") { iIdx--; renderIntro(); }
+    else if (k === "tour") { closeIntro(); startTour(); }
+    else { closeIntro(); $("aTalk").focus(); }
+  });
+  $("again").onclick = showIntro;
+
+  // ---------------------------------------------------------------- clicks
   document.addEventListener("click", function (e) {
-    var b = e.target.closest("button"); if (!b) return;
-    if (b.dataset.lang) { lang = b.dataset.lang; try { localStorage.setItem("eva-replay-lang", lang); } catch (x) {} renderMenu(); }
+    var b = e.target.closest("button"); if (!b || b.closest("#intro") || b.closest("#tour")) return;
+    if (b.dataset.lang) { lang = b.dataset.lang; set("eva-replay-lang", lang); renderMenu(); post({ type: "lang" }); }
+    else if (b.dataset.ts && b.closest(".seg")) { ts = +b.dataset.ts; set("eva-ts", String(ts)); applyTs(); }
     else if (b.dataset.i) { scene = +b.dataset.i; renderMenu(); }
     else if (b.dataset.v) { view = +b.dataset.v; open(); }
+    else if (b.dataset.p) { var p = PATH[+b.dataset.p]; view = viewIndex(p.v); scene = sceneIndex(p.s); open(true, p.p || null); }
   });
+  $("aTour").onclick = startTour;
+  $("aTalk").onclick = function () { view = viewIndex("4B"); scene = 0; open(true, "v/s1-4B-eva.html"); };
+  $("back").onclick = menu;
+  $("talk").onclick = function () { hushAll(); post({ type: "talk" }); };
   $("bMenu").onclick = menu; $("bPrev").onclick = function () { step(-1); }; $("bNext").onclick = function () { step(1); };
   $("bView").onclick = nextView; $("bFull").onclick = full;
   $("bHandle").onclick = function () { expand(true); };
   $("bar").addEventListener("click", function (e) { if (e.target.closest("button") && e.target.closest("button").id !== "bHandle") expand(true); });
   document.addEventListener("keydown", function (e) {
+    if ($("intro").classList.contains("on")) { if (e.key === "Escape") closeIntro(); return; }
     if (!$("viewer").classList.contains("on")) return;
-    if (e.key === "ArrowRight") step(1); else if (e.key === "ArrowLeft") step(-1);
+    if (e.target.closest && e.target.closest("#tour")) return;
+    if (e.key === "ArrowRight") { if (touring) $("tNext").click(); else step(1); }
+    else if (e.key === "ArrowLeft") { if (touring) $("tBack").click(); else step(-1); }
     else if (e.key === "f" || e.key === "F") full(); else if (e.key === "Escape" && !document.fullscreenElement) menu();
     else if (e.key === "v" || e.key === "V") nextView();
   });
@@ -223,7 +580,9 @@ body.band #bar,body.band #hint{display:none}
   // the captured screens talk to their parent: story buttons move the scenario, seat links switch phones
   window.addEventListener("message", function (e) {
     var m = e.data; if (!m || m.eva !== "replay") return;
+    if (e.source !== $("frame").contentWindow) return;
     if (m.type === "story") {
+      if (touring) return;
       var a = m.action, to = -1;
       if ((a === "going" || a === "have-it") && scene < 2) to = 2;
       else if (a === "aed" && scene < 3) to = 3;
@@ -231,7 +590,15 @@ body.band #bar,body.band #hint{display:none}
       if (to >= 0) { scene = to; open(); hint(SCENES[scene][lang]); }
     } else if (m.type === "seat") {
       var k = viewIndex((VIEWS[view].kind === "wrist" ? "w" : "") + m.seat); if (k >= 0) view = k; open();
-    } else if (m.type === "key") { step(m.key === "ArrowRight" ? 1 : -1); }
+    } else if (m.type === "key") { if (touring) (m.key === "ArrowRight" ? $("tNext") : $("tBack")).click(); else step(m.key === "ArrowRight" ? 1 : -1); }
+    else if (m.type === "view") {
+      // the screen moved on by itself (a link inside it): keep the scene label and the deep link in step
+      var sc = String(m.file || "").match(/^(s\d)-/), si = sc ? sceneIndex(sc[1]) : -1;
+      if (si >= 0 && si !== scene) { scene = si; paintScene(); if (!touring) history.replaceState(null, "", "#view=" + VIEWS[view].id + "&scene=" + SCENES[scene].id); }
+      post({ type: "ts", ts: ts });
+    } else if (m.type === "status") { online = !!m.online; paintStatus(); }
+    else if (m.type === "speak") { if (touring && soundOn) say(m.text, m.lang === "es" ? "es" : "en"); }
+    else if (m.type === "hush") { hushAll(); }
   });
 
   // deep links: #view=4B&scene=s2
@@ -251,10 +618,14 @@ body.band #bar,body.band #hint{display:none}
     var k = viewIndex(VIEWS[view].seat || seat);
     if (k >= 0) { view = k; open(); }
   }
+  del("eva-tour", sessionStorage); // a tour never survives a reload
+  applyTs();
   renderMenu();
+  probe();
   if (inApp) document.querySelectorAll(".foot a").forEach(function (a) { a.style.display = "none"; });
   var opened = fromHash();
   if (isBand() && (!opened || VIEWS[view].kind !== "wrist")) toBand();
+  else if (!opened && (qs.get("intro") === "1" || (get("eva-intro-done") !== "1" && qs.get("intro") !== "0"))) showIntro();
   if (!forced && bandMq.addEventListener) bandMq.addEventListener("change", function () {
     if (bandMq.matches) toBand();
     else if ($("viewer").classList.contains("on") && VIEWS[view].kind === "wrist") toPhone();

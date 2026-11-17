@@ -8,14 +8,17 @@
 //   - the rate limit is per user and persistent (eva.eva_chat_consume, table eva.rate_limits),
 //     not per IP in memory.
 //
-// Request:  POST { "text" | "message": string, "history"?: [{role, content}], "lang"?: "en" | "es" }
+// Request:  POST { "text" | "message": string, "history"?: [{role, content}], "lang"?: "en" | "es",
+//                  "style"?: "simple", "context"?: {…demo readings} }
+//           style "simple": warm, 2 or 3 short everyday sentences and one suggestion, no "Now: / Why:" labels
+//           (the public demo sends it). Any other value, or none, keeps the labelled lines. Same guard either way.
 //           Authorization: Bearer <user access token>
 // Response: 200 { text, source: "guard", reason } | { text, source: "model", model }
 //           401 unauthenticated · 403 no_role · 429 rate_limited (retry-after) · 503 eva_offline
 //
 // EVA_GROQ_API_KEY is a function secret (eva-prefixed so it never clashes with the host app's). It is never logged or returned; logs carry a hash of the user
 // id, lengths and the guard's decision, never message text.
-import { asUserData, guardReply, MAX_HISTORY_TURNS, MAX_INPUT_CHARS, sanitize, screen, SYSTEM_PROMPT } from "./guard.ts";
+import { asUserData, demoContextLine, guardReply, MAX_HISTORY_TURNS, MAX_INPUT_CHARS, OFF_TOPIC_REPLY, replyStyle, sanitize, screen, simplifyReply, systemPrompt } from "./guard.ts";
 import { chat, CHAT_MODEL, redact, type Turn } from "./groq.ts";
 
 const ALLOWED_ORIGINS = new Set([
@@ -126,7 +129,8 @@ export async function handler(req: Request): Promise<Response> {
   } catch {
     body = {};
   }
-  const verdict = screen(body?.text ?? body?.message);
+  const style = replyStyle(body?.style);
+  const verdict = screen(body?.text ?? body?.message, style);
   if (verdict.action === "reply") {
     console.log(JSON.stringify({ ev: "eva-chat", uid: tag, decision: "guard", reason: verdict.reason, stripped: verdict.stripped, ms: Date.now() - started }));
     return json(200, { text: verdict.text, source: "guard", reason: verdict.reason }, origin);
@@ -138,10 +142,19 @@ export async function handler(req: Request): Promise<Response> {
   const lang = body?.lang === "es" ? "Answer in Spanish (Rioplatense, using 'vos')." : "Answer in English.";
   const turns: Turn[] = [...cleanHistory(body?.history), { role: "user", content: asUserData(verdict.text) }];
   try {
-    const raw = await chat(key, `${SYSTEM_PROMPT}\n${lang}`, turns);
+    const raw = await chat(key, [systemPrompt(style), demoContextLine(body?.context), lang].filter(Boolean).join("\n"), turns);
     let text = guardReply(raw) || "Sorry, I have no answer for that. Ask me about space or health.";
+    // The guard already said this is a health question; if the model still answers with the off-topic line, ask once
+    // more and say so plainly (one extra call, only in that case).
+    if (verdict.topic === "health" && text.includes(OFF_TOPIC_REPLY)) {
+      try {
+        const again = guardReply(await chat(key, [systemPrompt(style), demoContextLine(body?.context), "The next message IS a health question: answer it helpfully.", lang].filter(Boolean).join("\n"), turns));
+        if (again && !again.includes(OFF_TOPIC_REPLY)) text = again;
+      } catch { /* keep the first answer */ }
+    }
+    if (style === "simple") text = simplifyReply(text);
     text = body?.lang === "es" ? text.replace(/Super Intelligence/g, "Super Inteligencia") : text.replace(/Super Inteligencia/g, "Super Intelligence");
-    console.log(JSON.stringify({ ev: "eva-chat", uid: tag, decision: "model", topic: verdict.topic, role: auth.consume.role, inLen: verdict.text.length, outLen: text.length, ms: Date.now() - started }));
+    console.log(JSON.stringify({ ev: "eva-chat", uid: tag, decision: "model", topic: verdict.topic, style, role: auth.consume.role, inLen: verdict.text.length, outLen: text.length, ms: Date.now() - started }));
     return json(200, { text, source: "model", model: CHAT_MODEL }, origin);
   } catch (e) {
     console.error(JSON.stringify({ ev: "eva-chat", uid: tag, decision: "upstream_failed", error: redact(e instanceof Error ? e.message : "unknown") }));

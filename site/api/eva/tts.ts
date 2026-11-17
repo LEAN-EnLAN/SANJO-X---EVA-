@@ -9,7 +9,7 @@ const VOICE = process.env.EVA_TTS_VOICE ?? "hannah";
 
 export default async function handler(req: any, res: any) {
   if (preflight(req, res)) return;
-  const wait = limited(req, "tts", 20);
+  const wait = limited(req, "tts", 40);
   if (wait) { res.setHeader("retry-after", String(wait)); return res.status(429).json({ error: "rate_limited" }); }
   const body = jsonBody(req);
   const text = copyRules(String(body.text ?? "")).replace(/\s+/g, " ").trim().slice(0, 400);
